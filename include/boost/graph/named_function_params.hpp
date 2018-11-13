@@ -13,7 +13,7 @@
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>
-#include <boost/ref.hpp>
+#include <boost/core/ref.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
@@ -367,7 +367,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
       typedef boost::parameter::aux::tagged_argument<
           new_kw
-        , typename boost::remove_reference<typename T::value_type>::type
+        , typename boost::unwrap_reference<typename T::value_type>::type
       > tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
       typedef boost::parameter::aux::arg_list<tagged_arg_type, typename rest_conv::type> type;
