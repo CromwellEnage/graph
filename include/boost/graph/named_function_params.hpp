@@ -563,14 +563,17 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename Graph, typename ArgPack, typename Value, typename PM>
     struct map_maker_helper<false, Graph, ArgPack, Value, PM> {
+      typedef typename boost::mpl::has_key<
+        ArgPack
+      , boost::graph::keywords::tag::vertex_index_map
+      >::type _parameter_exists;
       typedef typename boost::remove_const<
         typename override_const_property_t<
           typename boost::parameter::value_type<
             ArgPack, boost::graph::keywords::tag::vertex_index_map, int>::type,
           boost::vertex_index_t,
           Graph,
-          boost::detail::parameter_exists<
-            ArgPack, boost::graph::keywords::tag::vertex_index_map>::value
+          _parameter_exists::value
         >::result_type>::type vi_map_type;
       typedef
         boost::shared_array_property_map<Value, vi_map_type>
@@ -591,11 +594,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename Graph, typename ArgPack, typename MapTag, typename ValueType>
     struct map_maker {
-      BOOST_STATIC_CONSTANT(
-        bool,
-        has_map =
-          (parameter_exists<ArgPack, MapTag>
-           ::value));
+      typedef typename boost::mpl::has_key<ArgPack, MapTag>::type _parameter_exists;
+      BOOST_STATIC_CONSTANT(bool, has_map = (_parameter_exists::value));
       typedef map_maker_helper<has_map, Graph, ArgPack, ValueType,
                                typename boost::remove_const<
                                  typename boost::parameter::value_type<
@@ -668,11 +668,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <class Graph, class ArgPack, class KeyT, class ValueT, class PriorityQueueTag, class KeyMapTag, class IndexInHeapMapTag, class Compare>
     struct priority_queue_maker {
-      BOOST_STATIC_CONSTANT(
-        bool,
-        g_hasQ =
-          (parameter_exists<ArgPack, PriorityQueueTag>
-           ::value));
+      typedef typename boost::mpl::has_key<ArgPack, PriorityQueueTag>::type _parameter_exists;
+      BOOST_STATIC_CONSTANT(bool, g_hasQ = (_parameter_exists::value));
       typedef boost::reference_wrapper<int> int_refw;
       typedef typename boost::parameter::value_type<
                          ArgPack,
