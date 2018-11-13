@@ -367,8 +367,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
       typedef boost::parameter::aux::tagged_argument<
           new_kw
-        , typename boost::add_lvalue_reference<
-              typename boost::add_const<typename T::value_type>::type
+        , typename boost::add_const<
+              typename boost::remove_reference<typename T::value_type>::type
           >::type
       > tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
@@ -486,11 +486,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
     template <typename K, typename A>
     struct make_arg_pack_type<void(K, A)> {
-      typedef boost::parameter::aux::tagged_argument<K, A&> type;
+      typedef boost::parameter::aux::tagged_argument<K, typename boost::remove_reference<A>::type> type;
     };
 
-#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)), typename boost::add_lvalue_reference<BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>::type>,
-#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), typename boost::add_lvalue_reference<BOOST_PP_CAT(Arg, i)>::type> const& BOOST_PP_CAT(kw, i)
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)) , typename boost::remove_reference<BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>::type>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), typename boost::remove_reference<BOOST_PP_CAT(Arg, i)>::type> const& BOOST_PP_CAT(kw, i)
 
 #define BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION(z, i, _) \
     template <BOOST_PP_ENUM_PARAMS(i, typename Keyword), BOOST_PP_ENUM_PARAMS(i, typename Arg)> \
