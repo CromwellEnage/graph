@@ -19,7 +19,8 @@
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/not.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/has_key.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -364,7 +365,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename T>
     struct convert_bgl_params_to_boost_parameter {
       typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
-      typedef boost::parameter::aux::tagged_argument<new_kw, const typename T::value_type> tagged_arg_type;
+      typedef boost::parameter::aux::tagged_argument<new_kw, typename T::value_type const&> tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
       typedef boost::parameter::aux::arg_list<tagged_arg_type, typename rest_conv::type> type;
       static type conv(const T& x) {
@@ -394,9 +395,6 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 
     struct bgl_parameter_not_found_type {};
-
-    template <typename ArgPack, typename KeywordType>
-    struct parameter_exists : boost::mpl::not_<boost::is_same<typename boost::parameter::binding<ArgPack, KeywordType, bgl_parameter_not_found_type>::type, bgl_parameter_not_found_type> > {};
   }
 
 #define BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(old_type, old_var) \
@@ -419,12 +417,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     struct override_const_property_result {
+      typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
       typedef 
         typename override_const_property_t<
                    typename boost::parameter::value_type<ArgPack, Tag, int>::type,
                    Prop,
                    Graph,
-                   boost::detail::parameter_exists<ArgPack, Tag>::value
+                   _parameter_exists::value
                  >::result_type
         type;
     };
@@ -432,18 +431,19 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_const_property_result<ArgPack, Tag, Prop, Graph>::type
     override_const_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
+    typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_const_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
              Prop,
              Graph,
-             boost::detail::parameter_exists<ArgPack, Tag>::value
+             _parameter_exists::value
            >()(g, ap[t | 0]);
     }
 
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-      result_type operator()(const Graph&, const typename boost::add_reference<ArgType>::type a) const {return a;}
+      result_type operator()(const Graph&, const typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
     };
 
     template <typename ArgType, typename Prop, typename Graph>
@@ -454,12 +454,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     struct override_property_result {
+      typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
       typedef 
         typename override_property_t<
                    typename boost::parameter::value_type<ArgPack, Tag, int>::type,
                    Prop,
                    Graph,
-                   boost::detail::parameter_exists<ArgPack, Tag>::value
+                   _parameter_exists::value
                  >::result_type
         type;
     };
@@ -467,11 +468,12 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
     override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
+    typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
              Prop,
              Graph,
-             boost::detail::parameter_exists<ArgPack, Tag>::value
+             _parameter_exists::value
            >()(g, ap[t | 0]);
     }
 
@@ -479,11 +481,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
     template <typename K, typename A>
     struct make_arg_pack_type<void(K, A)> {
-      typedef boost::parameter::aux::tagged_argument<K, A> type;
+      typedef boost::parameter::aux::tagged_argument<K, A&> type;
     };
 
-#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)),  BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
-#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)>& BOOST_PP_CAT(kw, i)
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)),  BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))&>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)&>& BOOST_PP_CAT(kw, i)
 
 #define BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION(z, i, _) \
     template <BOOST_PP_ENUM_PARAMS(i, typename Keyword), BOOST_PP_ENUM_PARAMS(i, typename Arg)> \
