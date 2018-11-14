@@ -368,9 +368,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       typedef boost::parameter::aux::tagged_argument<
           new_kw
         , typename boost::add_const<
-              typename boost::unwrap_reference<
-                  typename boost::remove_reference<typename T::value_type>::type
-              >::type
+              typename boost::remove_reference<typename T::value_type>::type
           >::type
       > tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
@@ -450,7 +448,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-      result_type operator()(const Graph&, const typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+      result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
     };
 
     template <typename ArgType, typename Prop, typename Graph>
@@ -496,15 +494,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       > type;
     };
 
-#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) \
-boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument< \
-BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)) \
-, typename boost::unwrap_reference< \
-typename boost::remove_reference<BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>::type>::type>,
-#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) \
-boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i) \
-, typename boost::unwrap_reference< \
-typename boost::remove_reference<BOOST_PP_CAT(Arg, i)>::type>::type> const& BOOST_PP_CAT(kw, i)
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)), typename boost::remove_reference<BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>::type>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), typename boost::remove_reference<BOOST_PP_CAT(Arg, i)>::type> const& BOOST_PP_CAT(kw, i)
 
 #define BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION(z, i, _) \
     template <BOOST_PP_ENUM_PARAMS(i, typename Keyword), BOOST_PP_ENUM_PARAMS(i, typename Arg)> \
@@ -556,6 +547,16 @@ typename boost::remove_reference<BOOST_PP_CAT(Arg, i)>::type>::type> const& BOOS
     typedef boost::bgl_named_params<P, T, R> old_style_params_type; \
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(old_style_params_type, old_style_params) \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
+  } \
+  \
+  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) class T, class V> \
+  typename boost::result_of< \
+    ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
+      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
+       const boost::parameter::aux::tagged_argument<T, V>&) \
+    >::type \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::tagged_argument<T, V>& tagged_arg) { \
+    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) tagged_arg); \
   } \
   \
   BOOST_PP_EXPR_IF(nfixed, template <) BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_EXPR_IF(nfixed, >) \
