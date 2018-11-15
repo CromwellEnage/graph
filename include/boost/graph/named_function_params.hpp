@@ -13,9 +13,11 @@
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/core/ref.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/preprocessor.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/type_traits.hpp>
@@ -536,23 +538,6 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
               (boost::parameter::aux::empty_arg_list() BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, kw))); \
   }
 
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-#define BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION_AUX(name, nfixed) \
-  namespace graph { \
-  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) class T, class V> \
-  typename boost::result_of< \
-    ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
-      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
-       const boost::parameter::aux::tagged_argument_rref<T, V>&) \
-    >::type \
-  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::tagged_argument_rref<T, V>& tagged_arg) { \
-    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) tagged_arg); \
-  } \
-  }
-#else
-#define BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION_AUX(name, nfixed)
-#endif
-
 #define BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(name, nfixed) \
   template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) class P, class T, class R> \
   typename boost::result_of< \
@@ -566,17 +551,15 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
   } \
   namespace graph { \
-  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) class T, class V> \
-  typename boost::result_of< \
+  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) typename ArgumentPack> \
+  typename boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack>, boost::result_of< \
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
-      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
-       const boost::parameter::aux::tagged_argument<T, V>&) \
-    >::type \
-  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::tagged_argument<T, V>& tagged_arg) { \
+      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) const ArgumentPack&) \
+  > >::type \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const ArgumentPack& tagged_arg) { \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) tagged_arg); \
   } \
   } \
-  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION_AUX(name, nfixed) \
   BOOST_PP_EXPR_IF(nfixed, template <) BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_EXPR_IF(nfixed, >) \
   BOOST_PP_EXPR_IF(nfixed, typename) boost::result_of< \
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
