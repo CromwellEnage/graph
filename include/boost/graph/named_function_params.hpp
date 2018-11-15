@@ -555,7 +555,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
        const boost::parameter::aux::tagged_argument<T, V>&) \
     >::type \
-  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::tagged_argument<T, V>& tagged_arg) { \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::tagged_argument<T, V>& tagged_arg) { \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) tagged_arg); \
   } \
   \
