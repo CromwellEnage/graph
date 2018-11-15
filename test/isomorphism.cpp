@@ -132,7 +132,7 @@ void test_isomorphism2()
 
   bool isomorphism_correct;
   clock_t start = clock();
-  BOOST_CHECK(isomorphism_correct = boost::graph::isomorphism
+  BOOST_CHECK(isomorphism_correct = boost::isomorphism
                (g1, g2, _isomorphism_map = make_assoc_property_map(mapping)));
   clock_t end = clock();
 
