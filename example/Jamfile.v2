@@ -7,7 +7,7 @@ import ../../config/checks/config : requires ;
 
 exe accum-compile-times : accum-compile-times.cpp ;
 # exe actor_clustering : actor_clustering.cpp ; # ICE
-exe adjacency_list : adjacency_list.cpp ;
+# exe adjacency_list : adjacency_list.cpp ; # ICE
 exe adjacency_list_io : adjacency_list_io.cpp ;
 exe adjacency_matrix : adjacency_matrix.cpp ;
 exe adj_list_ra_edgelist : adj_list_ra_edgelist.cpp ;
@@ -41,7 +41,7 @@ exe clustering_coefficient : clustering_coefficient.cpp ;
 exe container_gen : container_gen.cpp ;
 # exe copy-example : copy-example.cpp ; # ICE
 # exe csr-example : csr-example.cpp ;
-exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp ;
+# exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp ; # ICE
 exe cycle_canceling_example : cycle_canceling_example.cpp ;
 # exe cycle-file-dep2 : cycle-file-dep2.cpp ; # ICE
 # exe cycle-file-dep : cycle-file-dep.cpp ; # ICE
@@ -137,7 +137,7 @@ exe last-mod-time : last-mod-time.cpp  : [ requires unistd_h ] ;
 # exe make_maximal_planar : make_maximal_planar.cpp ; # ICE
 # exe matching_example : matching_example.cpp ; # ICE
 # exe max_flow : max_flow.cpp ; # ICE
-exe mcgregor_subgraphs_example : mcgregor_subgraphs_example.cpp ;
+# exe mcgregor_subgraphs_example : mcgregor_subgraphs_example.cpp ; # ICE
 exe mean_geodesic : mean_geodesic.cpp ;
 
 # This needs SGB headers, via BGL's stanford_graph.h:
@@ -153,7 +153,7 @@ exe neighbor_bfs : neighbor_bfs.cpp ;
 exe ordered_out_edges : ordered_out_edges.cpp ;
 exe ospf-example : ospf-example.cpp ../build//boost_graph ;
 exe parallel-compile-time : parallel-compile-time.cpp ;
-exe planar_face_traversal : planar_face_traversal.cpp ;
+# exe planar_face_traversal : planar_face_traversal.cpp ; # ICE
 exe prim-example : prim-example.cpp ;
 # exe prim-telephone : prim-telephone.cpp ;
 exe print-adjacent-vertices : print-adjacent-vertices.cpp ;

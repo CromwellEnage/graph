@@ -96,16 +96,25 @@ test-suite graph_test :
     [ run graph.cpp ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
-            /boost/test//boost_test_exec_monitor/<link>static
-            ../build//boost_graph
-            ../../regex/build//boost_regex : --log_level=all ]
+        /boost/test//boost_test_exec_monitor/<link>static
+        ../build//boost_graph
+        ../../regex/build//boost_regex : --log_level=all
+    ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]
-    [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
+    [ run layout_test.cpp
+        :
+        :
+        :
+            <test-info>always_show_run_output <toolset>intel:<debug-symbols>off
+    ]
 
     [ run serialize.cpp
-          ../../serialization/build//boost_serialization
-      : : : ]
+        ../../serialization/build//boost_serialization
+        :
+        :
+        :
+    ]
 
     [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
@@ -124,7 +133,11 @@ test-suite graph_test :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ]
-    [ run subgraph_add.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run subgraph_add.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+            $(TEST_DIR)
+    ]
     [ run subgraph_props.cpp ]
 
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
@@ -211,14 +224,29 @@ test-suite graph_test :
     [ run parallel_edges_loops_test.cpp
         ../../filesystem/build
         ../../system/build
-        : $(PLANAR_INPUT_FILES) ]
+        :
+            $(PLANAR_INPUT_FILES)
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
     [ run r_c_shortest_paths_test.cpp ]
     [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.graph ]
     [ compile dimacs.cpp ]
-    [ run bron_kerbosch_all_cliques.cpp ]
-    [ run tiernan_all_cycles.cpp ]
+    [ run bron_kerbosch_all_cliques.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
+    [ run tiernan_all_cycles.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
     [ run closeness_centrality.cpp ]
     [ run degree_centrality.cpp ]
     [ run mean_geodesic.cpp ]
@@ -244,7 +272,11 @@ test-suite graph_test :
     ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
-    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run mas_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+            $(TEST_DIR)
+    ]
     [ run stoer_wagner_test.cpp
         ../../test/build//boost_unit_test_framework/<link>static
         :
@@ -267,11 +299,19 @@ test-suite graph_test :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ]
     [ run hawick_circuits.cpp ]
-    [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run successive_shortest_path_nonnegative_weights_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+    ]
+    [ run cycle_canceling_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+    ]
     [ run strong_components_test.cpp ]
-    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+    ]
+    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+    ]
     [ run delete_edge.cpp ]
     ;
 
