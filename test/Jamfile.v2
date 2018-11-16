@@ -47,7 +47,12 @@ test-suite graph_test :
     [ compile adj_matrix_cc.cpp ]
     [ run bfs.cpp ../../test/build//boost_test_exec_monitor ]
     [ compile bfs_cc.cpp ]
-    [ run bellman-test.cpp ]
+    [ run bellman-test.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
     [ run bipartite_test.cpp
@@ -78,8 +83,20 @@ test-suite graph_test :
     ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
-    [ run dijkstra_heap_performance.cpp : 10000 ]
-    [ run dijkstra_no_color_map_compare.cpp : 10000 ]
+    [ run dijkstra_heap_performance.cpp
+        :
+            10000
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
+    [ run dijkstra_no_color_map_compare.cpp
+        :
+            10000
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
     [ run dominator_tree_test.cpp
         :
         :
@@ -98,7 +115,9 @@ test-suite graph_test :
     [ run graphviz_test.cpp
         /boost/test//boost_test_exec_monitor/<link>static
         ../build//boost_graph
-        ../../regex/build//boost_regex : --log_level=all
+        ../../regex/build//boost_regex
+        :
+            --log_level=all
     ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]

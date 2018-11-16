@@ -15,13 +15,28 @@ exe adjacency_list
     : adjacency_list.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe adjacency_list_io : adjacency_list_io.cpp ;
-exe adjacency_matrix : adjacency_matrix.cpp ;
+exe adjacency_list_io
+    : adjacency_list_io.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe adjacency_matrix
+    : adjacency_matrix.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe adj_list_ra_edgelist : adj_list_ra_edgelist.cpp ;
 exe astar-cities : astar-cities.cpp : [ requires unistd_h ] ;
-exe astar_maze : astar_maze.cpp ;
-exe bellman-example : bellman-example.cpp ;
-exe bellman-ford-internet : bellman-ford-internet.cpp ;
+exe astar_maze
+    : astar_maze.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe bellman-example
+    : bellman-example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe bellman-ford-internet
+    : bellman-ford-internet.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe bfs
     : bfs.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -76,8 +91,14 @@ exe city_visitor
     : city_visitor.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe closeness_centrality : closeness_centrality.cpp ;
-exe clustering_coefficient : clustering_coefficient.cpp ;
+exe closeness_centrality
+    : closeness_centrality.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe clustering_coefficient
+    : clustering_coefficient.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe components_on_edgelist
     : components_on_edgelist.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -103,7 +124,10 @@ exe cuthill_mckee_ordering
     : cuthill_mckee_ordering.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe cycle_canceling_example : cycle_canceling_example.cpp ;
+exe cycle_canceling_example
+    : cycle_canceling_example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe cycle-file-dep2
     : cycle-file-dep2.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -112,15 +136,30 @@ exe cycle-file-dep
     : cycle-file-dep.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe cycle_ratio_example : cycle_ratio_example.cpp ;
-exe dag_shortest_paths : dag_shortest_paths.cpp ;
+exe cycle_ratio_example
+    : cycle_ratio_example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe dag_shortest_paths
+    : dag_shortest_paths.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe dave
     : dave.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe default-constructor2 : default-constructor2.cpp ;
-exe default-constructor : default-constructor.cpp ;
-exe degree_centrality : degree_centrality.cpp ;
+exe default-constructor2
+    : default-constructor2.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe default-constructor
+    : default-constructor.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe degree_centrality
+    : degree_centrality.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe dfs
     : dfs.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -131,13 +170,31 @@ exe dfs-example
     ;
 
 # TODO: Duplicate?
-exe dfs_parenthesis : dfs_parenthesis.cpp ;
-# exe dfs-parenthesis : dfs-parenthesis.cpp ;
+exe dfs_parenthesis
+    : dfs_parenthesis.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+#exe dfs_parenthesis
+#    : dfs_parenthesis.cpp
+#    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+#    ;
 
-exe dijkstra-example : dijkstra-example.cpp ;
-exe dijkstra-example-listS : dijkstra-example-listS.cpp ;
-exe dijkstra-no-color-map-example : dijkstra-no-color-map-example.cpp ;
-exe directed_graph : directed_graph.cpp ;
+exe dijkstra-example
+    : dijkstra-example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe dijkstra-example-listS
+    : dijkstra-example-listS.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe dijkstra-no-color-map-example
+    : dijkstra-no-color-map-example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe directed_graph
+    : directed_graph.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe eccentricity : eccentricity.cpp ;
 exe edge_basics : edge_basics.cpp ;
 exe edge_coloring : edge_coloring.cpp ;
@@ -221,14 +278,26 @@ exe isomorphism
 exe iteration_macros : iteration_macros.cpp ;
 exe iterator-property-map-eg : iterator-property-map-eg.cpp ;
 exe johnson-eg : johnson-eg.cpp ;
-exe kevin-bacon2 : kevin-bacon2.cpp /boost//serialization ;
-exe kevin-bacon : kevin-bacon.cpp ;
+exe kevin-bacon2
+    : kevin-bacon2.cpp /boost//serialization
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe kevin-bacon
+    : kevin-bacon.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe king_ordering
     : king_ordering.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe knights_tour : knights_tour.cpp ;
-exe kruskal-example : kruskal-example.cpp ;
+exe knights_tour
+    : knights_tour.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe kruskal-example
+    : kruskal-example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 # exe kruskal-telephone : kruskal-telephone.cpp ;
 exe kuratowski_subgraph
     : kuratowski_subgraph.cpp
@@ -279,7 +348,10 @@ exe modify_graph
     : modify_graph.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe neighbor_bfs : neighbor_bfs.cpp ;
+exe neighbor_bfs
+    : neighbor_bfs.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe ordered_out_edges : ordered_out_edges.cpp ;
 exe ospf-example : ospf-example.cpp ../build//boost_graph ;
 exe parallel-compile-time : parallel-compile-time.cpp ;
@@ -287,7 +359,10 @@ exe planar_face_traversal
     : planar_face_traversal.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe prim-example : prim-example.cpp ;
+exe prim-example
+    : prim-example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 # exe prim-telephone : prim-telephone.cpp ;
 exe print-adjacent-vertices : print-adjacent-vertices.cpp ;
 exe print-edges : print-edges.cpp ;
@@ -299,7 +374,10 @@ exe push-relabel-eg : push-relabel-eg.cpp ;
 exe put-get-helper-eg : put-get-helper-eg.cpp ;
 exe quick_tour : quick_tour.cpp ;
 exe r_c_shortest_paths_example : r_c_shortest_paths_example.cpp ;
-exe read_graphviz : read_graphviz.cpp ../build//boost_graph ;
+exe read_graphviz
+    : read_graphviz.cpp ../build//boost_graph
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe read_write_dimacs-eg : read_write_dimacs-eg.cpp ;
 # exe reachable-loop-head : reachable-loop-head.cpp ;
 # exe reachable-loop-tail : reachable-loop-tail.cpp ;
@@ -334,7 +412,10 @@ exe sloan_ordering
     : sloan_ordering.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe stoer_wagner : stoer_wagner.cpp ;
+exe stoer_wagner
+    : stoer_wagner.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe strong-components
     : strong-components.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -347,12 +428,22 @@ exe subgraph_properties
     : subgraph_properties.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe subgraph : subgraph.cpp ;
+exe subgraph
+    : subgraph.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe successive_shortest_path_nonnegative_weights_example
     : successive_shortest_path_nonnegative_weights_example.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe tiernan_girth_circumference : tiernan_girth_circumference.cpp ;
-exe tiernan_print_cycles : tiernan_print_cycles.cpp ;
+exe tiernan_girth_circumference
+    : tiernan_girth_circumference.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe tiernan_print_cycles
+    : tiernan_print_cycles.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe topo-sort1
     : topo-sort1.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -392,9 +483,18 @@ exe two_graphs_common_spanning_trees
     : two_graphs_common_spanning_trees.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe undirected_adjacency_list : undirected_adjacency_list.cpp ;
-exe undirected_dfs : undirected_dfs.cpp ;
-exe undirected_graph : undirected_graph.cpp ;
+exe undirected_adjacency_list
+    : undirected_adjacency_list.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe undirected_dfs
+    : undirected_dfs.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe undirected_graph
+    : undirected_graph.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 exe vector_as_graph
     : vector_as_graph.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
@@ -409,6 +509,12 @@ exe vf2_sub_graph_iso_multi_example
     : vf2_sub_graph_iso_multi_example.cpp
     : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ;
-exe visitor : visitor.cpp ;
-exe write_graphviz : write_graphviz.cpp ;
+exe visitor
+    : visitor.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
+exe write_graphviz
+    : write_graphviz.cpp
+    : <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ;
 
