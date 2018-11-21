@@ -18,7 +18,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-test-suite graph_test :
+alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
     [ run test_graphs.cpp : : : : : <preserve-target-tests>off ]
@@ -44,27 +44,32 @@ test-suite graph_test :
     ]
     [ compile bfs_cc.cpp ]
     [ run bellman-test.cpp : : : : : <preserve-target-tests>off ]
-    [ run betweenness_centrality_test.cpp : 100 : : : : <preserve-target-tests>off ]
+    [ run betweenness_centrality_test.cpp
+        : 100 : : : : <preserve-target-tests>off
+    ]
     [ run bidir_remove_edge.cpp : : : : : <preserve-target-tests>off ]
     [ run bipartite_test.cpp : : : : : <preserve-target-tests>off ]
-    # [ run csr_graph_test.cpp : : : : : <variant>release <preserve-target-tests>off ]
+    # [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp : : : : : <preserve-target-tests>off ]
     [ run dfs.cpp
         ../../test/build//boost_test_exec_monitor
         : : : : : <preserve-target-tests>off
     ]
-    [ run undirected_dfs.cpp
-        ../../test/build//boost_test_exec_monitor
+    [ run undirected_dfs.cpp ../../test/build//boost_test_exec_monitor
         : : : : : <preserve-target-tests>off
     ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
-    [ run dijkstra_heap_performance.cpp : 10000 : : : : <preserve-target-tests>off ]
-    [ run dijkstra_no_color_map_compare.cpp : 10000 : : : : <preserve-target-tests>off ]
+    [ run dijkstra_heap_performance.cpp
+        : 10000 : : : : <preserve-target-tests>off
+    ]
+    [ run dijkstra_no_color_map_compare.cpp
+        : 10000 : : : : <preserve-target-tests>off
+    ]
     [ run dominator_tree_test.cpp : : : : : <preserve-target-tests>off ]
 
     # Unused and deprecated.
-    #[ run relaxed_heap_test.cpp : 5000 15000 : : : : <preserve-target-tests>off ]
+    #[ run relaxed_heap_test.cpp : 5000 15000 ]
 
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
@@ -77,11 +82,19 @@ test-suite graph_test :
         ../../regex/build//boost_regex
         : --log_level=all : : : : <preserve-target-tests>off
     ]
-    [ run metis_test.cpp : $(METIS_INPUT_FILE) : : : : <preserve-target-tests>off ]
+    [ run metis_test.cpp
+        : $(METIS_INPUT_FILE) : : : : <preserve-target-tests>off
+    ]
     [ run gursoy_atun_layout_test.cpp : : : : : <preserve-target-tests>off ]
     [ run layout_test.cpp
-        : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off
-        : : <preserve-target-tests>off
+        :
+        :
+        :
+            <test-info>always_show_run_output
+            <toolset>intel:<debug-symbols>off
+        :
+        :
+            <preserve-target-tests>off
     ]
 
     [ run serialize.cpp
@@ -90,10 +103,15 @@ test-suite graph_test :
     ]
 
     [ compile reverse_graph_cc.cpp ]
-    [ run sequential_vertex_coloring.cpp : : : : : <preserve-target-tests>off ]
+    [ run sequential_vertex_coloring.cpp
+        : : : : : <preserve-target-tests>off
+    ]
 
     # TODO: Merge these into a single test framework.
-    [ run subgraph.cpp ../../test/build//boost_test_exec_monitor : : : : : <preserve-target-tests>off ]
+    [ run subgraph.cpp
+        ../../test/build//boost_test_exec_monitor
+        : : : : : <preserve-target-tests>off
+    ]
     [ run subgraph_bundled.cpp : : : : : <preserve-target-tests>off ]
     [ run subgraph_add.cpp
         ../../test/build//boost_unit_test_framework/<link>static
@@ -101,7 +119,10 @@ test-suite graph_test :
     ]
     [ run subgraph_props.cpp : : : : : <preserve-target-tests>off ]
 
-    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor : : : : : <preserve-target-tests>off ]
+    [ run isomorphism.cpp
+        ../../test/build//boost_test_exec_monitor
+        : : : : : <preserve-target-tests>off
+    ]
     [ run adjacency_matrix_test.cpp : : : : : <preserve-target-tests>off ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
@@ -109,37 +130,31 @@ test-suite graph_test :
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp : : : : : <preserve-target-tests>off ]
     [ run floyd_warshall_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run astar_search_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run biconnected_components_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run biconnected_components_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
     [ run cuthill_mckee_ordering.cpp : : : : : <preserve-target-tests>off ]
     [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
     [ run matching_test.cpp : : : : : <preserve-target-tests>off ]
     [ run max_flow_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run boykov_kolmogorov_max_flow_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run boykov_kolmogorov_max_flow_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
     [ run cycle_ratio_tests.cpp
         ../build//boost_graph
         ../../regex/build//boost_regex
         : $(CYCLE_RATIO_INPUT_FILE) : : : : <preserve-target-tests>off
     ]
-    [ run basic_planarity_test.cpp : : : : : <preserve-target-tests>off ]
     [ run make_connected_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run make_bicon_planar_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run make_maximal_planar_test.cpp : : : : : <preserve-target-tests>off ]
     [ run named_vertices_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run all_planar_input_files_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off
-    ]
-    [ run parallel_edges_loops_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off
-    ]
     [ run r_c_shortest_paths_test.cpp : : : : : <preserve-target-tests>off ]
     [ run rcsp_custom_vertex_id.cpp : : : : : <preserve-target-tests>off ]
-    [ run is_straight_line_draw_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run metric_tsp_approx.cpp : metric_tsp_approx.graph : : : : <preserve-target-tests>off ]
+    [ run is_straight_line_draw_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
+    [ run metric_tsp_approx.cpp
+        : metric_tsp_approx.graph : : : : <preserve-target-tests>off
+    ]
     [ compile dimacs.cpp ]
     [ run bron_kerbosch_all_cliques.cpp : : : : : <preserve-target-tests>off ]
     [ run tiernan_all_cycles.cpp : : : : : <preserve-target-tests>off ]
@@ -150,27 +165,29 @@ test-suite graph_test :
     [ run clustering_coefficient.cpp : : : : : <preserve-target-tests>off ]
     [ run core_numbers_test.cpp : : : : : <preserve-target-tests>off ]
     [ run read_propmap.cpp : : : : : <preserve-target-tests>off ]
-    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph : : : : : <preserve-target-tests>off ]
+    [ run mcgregor_subgraphs_test.cpp
+        ../build//boost_graph
+        : : : : : <preserve-target-tests>off
+    ]
     [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run incremental_components_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run two_graphs_common_spanning_trees_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run random_spanning_tree_test.cpp ../build//boost_graph : : : : : <preserve-target-tests>off ]
+    [ run incremental_components_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
+    [ run two_graphs_common_spanning_trees_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
     [ run graphml_test.cpp
         ../build//boost_graph
         : : "graphml_test.xml" : : : <preserve-target-tests>off
     ]
-    [ run mas_test.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-        : $(TEST_DIR) : : : : <preserve-target-tests>off
-    ]
-    [ run stoer_wagner_test.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-        : $(TEST_DIR) : : : : <preserve-target-tests>off
-    ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
-    [ run vf2_sub_graph_iso_test.cpp : : : : : <preserve-target-tests>off ]
-    [ run vf2_sub_graph_iso_test_2.cpp : : : : : <preserve-target-tests>off ]
+    [ run vf2_sub_graph_iso_test.cpp
+        : : : : : <preserve-target-tests>off
+    ]
+    [ run vf2_sub_graph_iso_test_2.cpp
+        : : : : : <preserve-target-tests>off
+    ]
     [ run hawick_circuits.cpp : : : : : <preserve-target-tests>off ]
     [ run successive_shortest_path_nonnegative_weights_test.cpp
         ../../test/build//boost_unit_test_framework/<link>static
@@ -190,6 +207,46 @@ test-suite graph_test :
         : : : : : <preserve-target-tests>off
     ]
     [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
+    ;
+
+alias graph_test_no_msvc14 : :
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
+
+alias graph_test_no_msvc14 :
+    [ run astar_search_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run basic_planarity_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run make_bicon_planar_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run make_maximal_planar_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run all_planar_input_files_test.cpp
+        ../../filesystem/build
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off
+    ]
+    [ run parallel_edges_loops_test.cpp
+        ../../filesystem/build
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off
+    ]
+    [ run random_spanning_tree_test.cpp
+        ../build//boost_graph
+        : : : : : <preserve-target-tests>off
+    ]
+    [ run mas_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        : $(TEST_DIR) : : : : <preserve-target-tests>off
+    ]
+    [ run stoer_wagner_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        : $(TEST_DIR) : : : : <preserve-target-tests>off
+    ]
+    ;
+
+test-suite graph_test :
+    graph_test_regular
+    graph_test_no_msvc14
     ;
 
 # Run SDB tests only when -sSDB= is set.
