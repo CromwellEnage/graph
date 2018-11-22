@@ -22,7 +22,6 @@ int test_main(int, char* [])
     > container_type;
 
     std::vector<unsigned> V(10);
-    map_type M(V.begin(), boost::identity_property_map());
     container_type B(
         10
       , 10
