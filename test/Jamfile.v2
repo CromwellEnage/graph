@@ -133,6 +133,7 @@ alias graph_test_regular :
     [ run biconnected_components_test.cpp
         : : : : : <preserve-target-tests>off
     ]
+    [ run min_degree_empty.cpp : : : : : <preserve-target-tests>off ]
     [ run cuthill_mckee_ordering.cpp : : : : : <preserve-target-tests>off ]
     [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
     [ run matching_test.cpp : : : : : <preserve-target-tests>off ]
@@ -207,6 +208,7 @@ alias graph_test_regular :
         : : : : : <preserve-target-tests>off
     ]
     [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
+    [ run pending/bucket_sorter_2u.cpp : : : : : <preserve-target-tests>off ]
     ;
 
 alias graph_test_no_msvc14 : :

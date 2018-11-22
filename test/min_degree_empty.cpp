@@ -1,0 +1,45 @@
+//=======================================================================
+// Copyright 2017 Felix Salfelder
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
+#include <boost/graph/copy.hpp>
+#include <boost/graph/minimum_degree_ordering.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/core/lightweight_test.hpp>
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS> G;
+
+int main(int argc, char** argv)
+{
+    size_t n = 10;
+    G g(n);
+
+    std::vector<int> inverse_perm(n, 0);
+    std::vector<int> supernode_sizes(n, 1);
+    BOOST_AUTO(id, boost::get(boost::vertex_index, g));
+    std::vector<int> degree(n, 0);
+    std::vector<int> io(n, 0);
+    std::vector<int> o(n, 0);
+
+// with an edge, there is no issue.
+//    boost::add_edge(1, 2, g);
+
+    boost::minimum_degree_ordering(
+        g
+      , boost::make_iterator_property_map(degree.begin(), id, degree[0])
+      , io.begin()
+      , o.begin()
+      , boost::make_iterator_property_map(
+            supernode_sizes.begin()
+          , id
+          , supernode_sizes[0]
+        )
+      , 0
+      , id
+    );
+    return boost::report_errors();
+}
