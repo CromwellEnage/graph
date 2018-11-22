@@ -14,6 +14,12 @@
 
 int test_main(int, char* [])
 {
+    typedef boost::iterator_property_map<
+        std::vector<unsigned>::iterator
+      , boost::identity_property_map
+      , unsigned
+      , unsigned&
+    > map_type;
     typedef boost::bucket_sorter<
         unsigned
       , unsigned
@@ -22,15 +28,8 @@ int test_main(int, char* [])
     > container_type;
 
     std::vector<unsigned> V(10);
-    container_type B(
-        10
-      , 10
-      , boost::make_iterator_property_map(
-            V.begin()
-          , boost::identity_property_map()
-          , 0
-        )
-    );
+    map_type M(V.begin(), boost::identity_property_map());
+    container_type B(10, 10, M);
 
     for (unsigned i = 4; i < 10; ++i)
     {
