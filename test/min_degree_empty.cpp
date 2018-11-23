@@ -28,9 +28,6 @@ int main(int argc, char** argv)
     std::map<int,int> io;
     std::map<int,int> o;
 
-// with an edge, there is no issue.
-//    boost::add_edge(1, 2, g);
-
     boost::minimum_degree_ordering(
         g
       , boost::make_iterator_property_map(degree.begin(), id, degree[0])
@@ -44,5 +41,11 @@ int main(int argc, char** argv)
       , 0
       , id
     );
+
+    for (int k = 0; k < n; ++k)
+    {
+        BOOST_TEST(o[io[k]] == k);
+    }
+
     return boost::report_errors();
 }
