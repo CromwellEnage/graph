@@ -18,7 +18,7 @@
 #define BOOST_GRAPH_DETAIL_BUCKET_SORTER_HPP
 
 #include <vector>
-#include <cassert>
+#include <boost/assert.hpp>
 #include <boost/limits.hpp>
 #include <boost/config.hpp>
 
@@ -75,104 +75,6 @@ namespace boost {
     friend class stack;
 
   private:
-#if defined(BOOST_CLANG) && (1 == BOOST_CLANG) && defined(__APPLE_CC__)
-    typedef std::vector<size_type> SizeVec;
-    typedef typename SizeVec::size_type Index;
-    typedef std::vector<value_type> ValueVec;
-    typedef typename ValueVec::size_type IndexValueIndex;
-
-  public:
-    class stack {
-      bucket_type     bucket_id;
-      SizeVec&        head;
-      SizeVec&        next;
-      SizeVec&        prev;
-      ValueVec&       id_to_value;
-      Index           head_index;
-      Index           next_index;
-      Index           prev_index;
-      IndexValueIndex value_index;
-      ValueIndexMap   id;
-
-    public:
-      stack(
-          bucket_type _bucket_id
-        , SizeVec& h
-        , Index h_i
-        , SizeVec& n
-        , Index n_i
-        , SizeVec& p
-        , Index p_i
-        , ValueVec& v
-        , IndexValueIndex v_i
-        , const ValueIndexMap& _id
-      ) : bucket_id(_bucket_id)
-        , head(h)
-        , next(n)
-        , prev(p)
-        , id_to_value(v)
-        , head_index(h_i)
-        , next_index(n_i)
-        , prev_index(p_i)
-        , value_index(v_i)
-        , id(_id)
-      {
-      }
-
-      // Avoid using default arg for ValueIndexMap so that the default
-      // constructor of the ValueIndexMap is not required if not used.
-      stack(
-          bucket_type _bucket_id
-        , SizeVec& h
-        , Index h_i
-        , SizeVec& n
-        , Index n_i
-        , SizeVec& p
-        , Index p_i
-        , ValueVec& v
-        , IndexValueIndex v_i
-      ) : bucket_id(_bucket_id)
-        , head(h)
-        , next(n)
-        , prev(p)
-        , id_to_value(v)
-        , head_index(h_i)
-        , next_index(n_i)
-        , prev_index(p_i)
-        , value_index(v_i)
-      {
-      }
-
-      void push(const value_type& x) {
-        const size_type new_head = get(id, x);
-        const size_type current = (head.begin() + head_index)[bucket_id];
-        if ( current != invalid_value() )
-          (prev.begin() + prev_index)[current] = new_head;
-        (prev.begin() + prev_index)[new_head] = invalid_value();
-        (next.begin() + next_index)[new_head] = current;
-        (head.begin() + head_index)[bucket_id] = new_head;
-      }
-      void pop() {
-        size_type current = (head.begin() + head_index)[bucket_id];
-        size_type next_node = (next.begin() + next_index)[current];
-        (head.begin() + head_index)[bucket_id] = next_node;
-        if ( next_node != invalid_value() )
-          (prev.begin() + prev_index)[next_node] = invalid_value();
-      }
-      value_type& top() {
-        return (id_to_value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
-      }
-      const value_type& top() const {
-        return (id_to_value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
-      }
-      bool empty() const { return (head.begin() + head_index)[bucket_id] == invalid_value(); }
-    };
-
-    stack operator[](const bucket_type& i) {
-      assert(i < head.size());
-      return stack(i, head, 0, next, 0, prev, 0, id_to_value, 0, id);
-    }
-#else   // not xcode
     typedef typename std::vector<size_type>::iterator Iter;
     typedef typename std::vector<value_type>::iterator IndexValueMap;
 
@@ -217,11 +119,11 @@ namespace boost {
     };
 
     stack operator[](const bucket_type& i) {
-      assert(i < head.size());
+      BOOST_ASSERT(i < head.size());
       return stack(i, head.begin(), next.begin(), prev.begin(),
                    id_to_value.begin(), id);
     }
-#endif  // xcode
+
   protected:
     std::vector<size_type>   head;
     std::vector<size_type>   next;
