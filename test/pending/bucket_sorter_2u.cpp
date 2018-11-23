@@ -1,8 +1,8 @@
 //=======================================================================
 // Copyright 2017 Felix Salfelder
 //
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
@@ -43,7 +43,7 @@ int test_main(int, char* [])
     V[6] = 3;
     B.update(6);
 
-    while(!B[9].empty())
+    while (!B[9].empty())
     {
         B[9].pop();
     }

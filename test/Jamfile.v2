@@ -208,7 +208,7 @@ alias graph_test_regular :
         : : : : : <preserve-target-tests>off
     ]
     [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
-    [ run pending/bucket_sorter_2u.cpp : : : : : <preserve-target-tests>off ]
+    #[ run pending/bucket_sorter_2u.cpp : : : : : <preserve-target-tests>off ]
     ;
 
 alias graph_test_no_msvc14 : :

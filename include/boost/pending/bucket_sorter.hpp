@@ -160,10 +160,10 @@ namespace boost {
           (prev.begin() + prev_index)[next_node] = invalid_value();
       }
       value_type& top() {
-        return (value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
+        return (id_to_value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
       }
       const value_type& top() const {
-        return (value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
+        return (id_to_value.begin() + value_index)[ (head.begin() + head_index)[bucket_id] ];
       }
       bool empty() const { return (head.begin() + head_index)[bucket_id] == invalid_value(); }
     };
