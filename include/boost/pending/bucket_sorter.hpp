@@ -12,15 +12,13 @@
 // Revision History:
 //   13 June 2001: Changed some names for clarity. (Jeremy Siek)
 //   01 April 2001: Modified to use new <boost/limits.hpp> header. (JMaddock)
-//   28 Feb 2017: change bucket head, fix bug in remove. (Felix Salfelder)
 //
 #ifndef BOOST_GRAPH_DETAIL_BUCKET_SORTER_HPP
 #define BOOST_GRAPH_DETAIL_BUCKET_SORTER_HPP
 
 #include <vector>
-#include <boost/assert.hpp>
+#include <cassert>
 #include <boost/limits.hpp>
-#include <boost/config.hpp>
 
 namespace boost {
 
@@ -71,14 +69,13 @@ namespace boost {
     static size_type invalid_value() {
       return (std::numeric_limits<size_type>::max)();
     }
-
-    friend class stack;
-
-  private:
+    
     typedef typename std::vector<size_type>::iterator Iter;
     typedef typename std::vector<value_type>::iterator IndexValueMap;
-
+    
   public:
+    friend class stack;
+
     class stack {
     public:
       stack(bucket_type _bucket_id, Iter h, Iter n, Iter p, IndexValueMap v,
@@ -89,7 +86,7 @@ namespace boost {
       // constructor of the ValueIndexMap is not required if not used.
       stack(bucket_type _bucket_id, Iter h, Iter n, Iter p, IndexValueMap v)
         : bucket_id(_bucket_id), head(h), next(n), prev(p), value(v) {}
-
+      
       void push(const value_type& x) {
         const size_type new_head = get(id, x);
         const size_type current = head[bucket_id];
@@ -117,13 +114,12 @@ namespace boost {
       IndexValueMap value;
       ValueIndexMap id;
     };
-
+    
     stack operator[](const bucket_type& i) {
-      BOOST_ASSERT(i < head.size());
+      assert(i < head.size());
       return stack(i, head.begin(), next.begin(), prev.begin(),
                    id_to_value.begin(), id);
     }
-
   protected:
     std::vector<size_type>   head;
     std::vector<size_type>   next;
