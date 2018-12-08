@@ -369,9 +369,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
       typedef boost::parameter::aux::tagged_argument<
           new_kw
-        , typename boost::add_const<
-              typename boost::remove_reference<typename T::value_type>::type
-          >::type
+        , typename boost::add_const<typename T::value_type>::type
       > tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
       typedef boost::parameter::aux::arg_list<tagged_arg_type, typename rest_conv::type> type;
