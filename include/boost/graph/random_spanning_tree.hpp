@@ -21,6 +21,9 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
 
 namespace boost {
 
@@ -95,6 +98,18 @@ namespace boost {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    random_spanning_tree(g,
+                         gen,
+                         arg_pack[_root_vertex | *vertices(g).first],
+                         arg_pack[_predecessor_map],
+                         arg_pack[_weight_map | static_property_map<double>(1.)],
+                         boost::detail::make_color_map_from_arg_pack(g, arg_pack));
+  }
+
+  template <typename Graph, typename Gen, typename Args>
+  void random_spanning_tree(const Graph& g, Gen& gen, const Args& arg_pack,
+                            typename boost::enable_if<parameter::is_argument_pack<Args>, mpl::true_>::type = mpl::true_()) {
+    using namespace boost::graph::keywords;
     random_spanning_tree(g,
                          gen,
                          arg_pack[_root_vertex | *vertices(g).first],

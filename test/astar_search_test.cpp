@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <utility>
 #include <vector>
 #include <list>
@@ -190,16 +191,19 @@ int main(int, char **)
 
   try {
     // call astar named parameter interface
+    using namespace boost::graph::keywords;
     astar_search
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       predecessor_map(make_iterator_property_map(p.begin(), idx)).
-       distance_map(make_iterator_property_map(d.begin(), idx)).
-       visitor(astar_goal_visitor<vertex>(goal)).distance_inf(my_float((std::numeric_limits<float>::max)())));
+       (_predecessor_map = make_iterator_property_map(p.begin(), idx),
+       _distance_map = make_iterator_property_map(d.begin(), idx),
+       _visitor = astar_goal_visitor<vertex>(goal),
+       _distance_inf = my_float((std::numeric_limits<float>::max)()))
+       );
   
   
-  } catch(found_goal fg) { // found a path to the goal
+  } catch(found_goal const& fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
       shortest_path.push_front(v);
@@ -218,6 +222,6 @@ int main(int, char **)
   
   cout << "Didn't find a path from " << name[start] << "to"
        << name[goal] << "!" << endl;
-  return 0;
+  return boost::report_errors();
   
 }

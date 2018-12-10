@@ -150,8 +150,8 @@ alias graph_test_no_msvc14 :
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
-    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run mas_test.cpp : $(TEST_DIR) ]
+    [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     ;
 
 test-suite graph_test :
