@@ -130,14 +130,14 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     ;
 
-#alias graph_test_no_msvc14 : :
+alias graph_test_no_msvc14 : :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
         # Tried using Boost.Parameter exclusively vice bgl_named_params: no change.
-#        <toolset>msvc
-#        <toolset-msvc:version>14.0
-#        <address-model>64
-#    ;
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
 
 alias graph_test_no_msvc14 :
     [ run astar_search_test.cpp ]
@@ -149,13 +149,13 @@ alias graph_test_no_msvc14 :
     [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     ;
 
-#alias graph_test_with_filesystem : :
+alias graph_test_with_filesystem : :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
-#        <toolset>msvc
-#        <toolset-msvc:version>14.0
-#        <address-model>64
-#    ;
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
 
 alias graph_test_with_filesystem : :
         # The tests below started failing to compile for xcode with cxxstd=11
@@ -176,9 +176,9 @@ alias graph_test_with_filesystem :
     ;
 
 test-suite graph_test :
+    graph_test_regular
     graph_test_no_msvc14
     graph_test_with_filesystem
-    graph_test_regular
     ;
 
 # Run SDB tests only when -sSDB= is set.
