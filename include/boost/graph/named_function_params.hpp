@@ -445,7 +445,12 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
+#if BOOST_WORKAROUND(BOOST_MSVC, >= 1910) && \
+    BOOST_WORKAROUND(BOOST_MSVC, < 1920)
+      result_type operator()(const Graph&, const typename boost::add_reference<ArgType>::type a) const {return a;}
+#else
       result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+#endif
     };
 
     template <typename ArgType, typename Prop, typename Graph>
