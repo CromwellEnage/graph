@@ -491,8 +491,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       > type;
     };
 
-#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)), typename boost::remove_reference<BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>::type>,
-#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), typename boost::remove_reference<BOOST_PP_CAT(Arg, i)>::type> const& BOOST_PP_CAT(kw, i)
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)), BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)>& BOOST_PP_CAT(kw, i)
 
 #define BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION(z, i, _) \
     template <BOOST_PP_ENUM_PARAMS(i, typename Keyword), BOOST_PP_ENUM_PARAMS(i, typename Arg)> \

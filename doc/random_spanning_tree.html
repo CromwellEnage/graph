@@ -24,13 +24,18 @@
 
 <P>
 <PRE>
-<i>// named parameter version</i>
-template &lt;class Graph, class Gen, class class P, class T, class R&gt;
+<i>// named parameter versions</i>
+template &lt;class Graph, class Gen, class P, class T, class R&gt;
 void random_spanning_tree(Graph&amp; G,
   Gen&amp; gen,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
+  const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
 
-<i>// non-named parameter versions</i>
+template &lt;class Graph, class Gen, class ArgumentPack&gt;
+void random_spanning_tree(Graph&amp; G,
+  Gen&amp; gen,
+  const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+
+<i>// non-named parameter version</i>
 template &lt;class Graph, class Gen, class PredMap, class WeightMap, class ColorMap&gt;
 void random_spanning_tree(const Graph&amp; g, Gen&amp; gen, vertex_descriptor root,
   PredMap pred, WeightMap weight, ColorMap color);
@@ -83,14 +88,16 @@ IN: <tt>Gen&amp; gen</tt>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>root_vertex(vertex_descriptor root)</tt>
+IN: <tt>root_vertex(vertex_descriptor root)</tt><br />
+Alternative usage: <tt>boost::graph::keywords::_root_vertex = root</tt>
 <blockquote>
   This parameter, whose type must be the vertex descriptor type of
   <tt>Graph</tt>, gives the root of the tree to be generated.  The default is
   <tt>*vertices(g).first</tt>.<br>
 </blockquote>
 
-UTIL: <tt>color_map(ColorMap color)</tt>
+UTIL: <tt>color_map(ColorMap color)</tt><br />
+Alternative usage: <tt>boost::graph::keywords::_color_map = color</tt>
 <blockquote>
   This is used by the algorithm to keep track of its progress through
   the graph. The type <tt>ColorMap</tt> must be a model of <a
@@ -103,7 +110,8 @@ UTIL: <tt>color_map(ColorMap color)</tt>
   map.<br>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt><br />
+Alternative usage: <tt>boost::graph::keywords::_vertex_index_map = i_map</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
   num_vertices(g))</tt>. This parameter is only necessary when the
@@ -115,7 +123,8 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   type of the map.<br>
 </blockquote>
 
-OUT: <tt>predecessor_map(PredMap pred)</tt>
+OUT: <tt>predecessor_map(PredMap pred)</tt><br />
+Alternative usage: <tt>boost::graph::keywords::_predecessor_map = pred</tt>
 <blockquote>
   This map, on output, will contain the predecessor of each vertex in the graph
   in the spanning tree.  The value
@@ -127,7 +136,8 @@ OUT: <tt>predecessor_map(PredMap pred)</tt>
   Map</a>. The key and value types of the map must both be the graph's vertex type.<br>
 </blockquote>
 
-IN: <tt>weight_map(WeightMap weight)</tt>
+IN: <tt>weight_map(WeightMap weight)</tt><br />
+Alternative usage: <tt>boost::graph::keywords::_weight_map = weight</tt>
 <blockquote>
   This map contains the weight of each edge in the graph.  The probability of
   any given spanning tree being produced as the result of the algorithm is
