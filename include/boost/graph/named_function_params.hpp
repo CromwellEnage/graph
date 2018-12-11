@@ -483,12 +483,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
     template <typename K, typename A>
     struct make_arg_pack_type<void(K, A)> {
-      typedef boost::parameter::aux::tagged_argument<
-          K
-        , typename boost::unwrap_reference<
-              typename boost::remove_reference<A>::type
-          >::type
-      > type;
+      typedef boost::parameter::aux::tagged_argument<K, A> type;
     };
 
 #define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)), BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
