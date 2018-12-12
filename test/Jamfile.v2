@@ -130,7 +130,11 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     ;
 
-alias graph_test_no_msvc14 : :
+alias graph_test_no_msvc14 :
+    [ run basic_planarity_test.cpp ]
+    [ run make_bicon_planar_test.cpp ]
+    [ run make_maximal_planar_test.cpp ]
+    :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
         # Tried using Boost.Parameter exclusively vice bgl_named_params: no change.
