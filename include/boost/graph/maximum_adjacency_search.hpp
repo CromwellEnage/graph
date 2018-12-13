@@ -235,10 +235,11 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
 
           boost::null_visitor null_vis;
           boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
+          vertex_descriptor v = vertex_descriptor();
           boost::detail::make_property_map_from_arg_pack_gen<
               boost::graph::keywords::tag::vertex_assignment_map,
               vertex_descriptor
-          > map_gen(vertex_descriptor());
+          > map_gen(v);
           typename boost::detail::map_maker<
               Graph,
               ArgPack,
@@ -280,10 +281,11 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
 
           boost::null_visitor null_vis;
           boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
+          vertex_descriptor v = vertex_descriptor();
           boost::detail::make_property_map_from_arg_pack_gen<
               boost::graph::keywords::tag::vertex_assignment_map,
               vertex_descriptor
-          > map_gen(vertex_descriptor());
+          > map_gen(v);
           typename boost::detail::map_maker<
               Graph,
               ArgPack,
