@@ -98,11 +98,12 @@ namespace boost {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    static_property_map<double> default_weight_map(1.);
     random_spanning_tree(g,
                          gen,
                          arg_pack[_root_vertex | *vertices(g).first],
                          arg_pack[_predecessor_map],
-                         arg_pack[_weight_map | static_property_map<double>(1.)],
+                         arg_pack[_weight_map | default_weight_map],
                          boost::detail::make_color_map_from_arg_pack(g, arg_pack));
   }
 
@@ -110,11 +111,12 @@ namespace boost {
   void random_spanning_tree(const Graph& g, Gen& gen, const Args& arg_pack,
                             typename boost::enable_if<parameter::is_argument_pack<Args>, mpl::true_>::type = mpl::true_()) {
     using namespace boost::graph::keywords;
+    static_property_map<double> default_weight_map(1.);
     random_spanning_tree(g,
                          gen,
                          arg_pack[_root_vertex | *vertices(g).first],
                          arg_pack[_predecessor_map],
-                         arg_pack[_weight_map | static_property_map<double>(1.)],
+                         arg_pack[_weight_map | default_weight_map],
                          boost::detail::make_color_map_from_arg_pack(g, arg_pack));
   }
 }

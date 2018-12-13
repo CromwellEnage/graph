@@ -444,17 +444,21 @@ namespace boost {
     typedef typename boost::property_traits<distance_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, W>(W())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
        detail::make_color_map_from_arg_pack(g, arg_pack),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -484,17 +488,21 @@ namespace boost {
     typedef typename boost::property_traits<distance_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, W>(W())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
        detail::make_color_map_from_arg_pack(g, arg_pack),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -525,15 +533,19 @@ namespace boost {
     typedef typename boost::property_traits<distance_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_tree
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, W>(W())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -563,15 +575,19 @@ namespace boost {
     typedef typename boost::property_traits<distance_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_tree
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, W>(W())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -594,17 +610,22 @@ namespace boost {
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_no_init
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, D>(D())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        detail::make_color_map_from_arg_pack(g, arg_pack),
        detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -626,17 +647,22 @@ namespace boost {
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_no_init
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, D>(D())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        detail::make_color_map_from_arg_pack(g, arg_pack),
        detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -659,15 +685,20 @@ namespace boost {
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_no_init_tree
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, D>(D())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }
@@ -689,15 +720,20 @@ namespace boost {
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
+    dummy_property_map dummy_prop;
+    closed_plus<D> default_combine(inf);
     astar_search_no_init_tree
       (g, s, h,
-       arg_pack[_visitor | make_astar_visitor(null_visitor())],
-       arg_pack[_predecessor_map | dummy_property_map()],
+       arg_pack[_visitor | null_vis],
+       arg_pack[_predecessor_map | dummy_prop],
        detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
        detail::make_property_map_from_arg_pack_gen<tag::distance_map, D>(D())(g, arg_pack),
        detail::override_const_property(arg_pack, _weight_map, g, edge_weight),
        arg_pack[_distance_compare | std::less<D>()],
-       arg_pack[_distance_combine | closed_plus<D>(inf)],
+       arg_pack[_distance_combine | default_combine],
        inf,
        arg_pack[_distance_zero | D()]);
   }

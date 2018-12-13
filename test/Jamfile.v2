@@ -96,7 +96,10 @@ alias graph_test_regular :
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
     [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
+    [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
+    [ run make_bicon_planar_test.cpp ]
+    [ run make_maximal_planar_test.cpp ]
     [ run named_vertices_test.cpp ]
     [ run r_c_shortest_paths_test.cpp ]
     [ run rcsp_custom_vertex_id.cpp ]
@@ -131,9 +134,9 @@ alias graph_test_regular :
     ;
 
 alias graph_test_no_msvc14 :
-    [ run basic_planarity_test.cpp ]
-    [ run make_bicon_planar_test.cpp ]
-    [ run make_maximal_planar_test.cpp ]
+    [ run astar_search_test.cpp ]
+    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
+    [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
@@ -145,15 +148,17 @@ alias graph_test_no_msvc14 :
 
 alias graph_test_no_msvc14 :
     [ run astar_search_test.cpp ]
-    [ run basic_planarity_test.cpp ]
-    [ run make_bicon_planar_test.cpp ]
-    [ run make_maximal_planar_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run mas_test.cpp : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
     ;
 
-alias graph_test_with_filesystem : :
+alias graph_test_with_filesystem :
+    [ run all_planar_input_files_test.cpp
+        ../../filesystem/build
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+    :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
         <toolset>msvc
