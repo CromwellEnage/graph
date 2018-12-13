@@ -101,7 +101,7 @@ namespace boost {
     static_property_map<double> default_weight_map(1.);
     typename boost::parameter::value_type<
         arg_pack_type, 
-        boost::graph::keywords::tag::edge_weight_map,
+        boost::graph::keywords::tag::weight_map,
         static_property_map<double>
     >::type e_w_map = arg_pack[_weight_map | default_weight_map];
     typename boost::detail::map_maker<
@@ -125,7 +125,7 @@ namespace boost {
     static_property_map<double> default_weight_map(1.);
     typename boost::parameter::value_type<
         Args, 
-        boost::graph::keywords::tag::edge_weight_map,
+        boost::graph::keywords::tag::weight_map,
         static_property_map<double>
     >::type e_w_map = arg_pack[_weight_map | default_weight_map];
     typename boost::detail::map_maker<
