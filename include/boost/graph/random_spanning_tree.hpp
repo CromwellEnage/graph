@@ -101,7 +101,7 @@ namespace boost {
     static_property_map<double> default_weight_map(1.);
     typename boost::detail::map_maker<
         Graph,
-        Args,
+        arg_pack_type,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
