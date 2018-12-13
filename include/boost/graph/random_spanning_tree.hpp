@@ -98,6 +98,13 @@ namespace boost {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+    vertex_descriptor default_vertex = *vertices(g).first;
+    vertex_descriptor start_vertex = arg_pack[_root_vertex | default_vertex];
+    typename boost::parameter::binding<
+        arg_pack_type, 
+        boost::graph::keywords::tag::predecessor_map
+    >::type pred_map = arg_pack[_predecessor_map];
     static_property_map<double> default_weight_map(1.);
     typename boost::parameter::value_type<
         arg_pack_type, 
@@ -110,18 +117,20 @@ namespace boost {
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
-    random_spanning_tree(g,
-                         gen,
-                         arg_pack[_root_vertex | *vertices(g).first],
-                         arg_pack[_predecessor_map],
-                         e_w_map,
-                         c_map);
+    random_spanning_tree(g, gen, start_vertex, pred_map, e_w_map, c_map);
   }
 
   template <typename Graph, typename Gen, typename Args>
   void random_spanning_tree(const Graph& g, Gen& gen, const Args& arg_pack,
                             typename boost::enable_if<parameter::is_argument_pack<Args>, mpl::true_>::type = mpl::true_()) {
     using namespace boost::graph::keywords;
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+    vertex_descriptor default_vertex = *vertices(g).first;
+    vertex_descriptor start_vertex = arg_pack[_root_vertex | default_vertex];
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::predecessor_map
+    >::type pred_map = arg_pack[_predecessor_map];
     static_property_map<double> default_weight_map(1.);
     typename boost::parameter::value_type<
         Args, 
@@ -134,12 +143,7 @@ namespace boost {
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
-    random_spanning_tree(g,
-                         gen,
-                         arg_pack[_root_vertex | *vertices(g).first],
-                         arg_pack[_predecessor_map],
-                         e_w_map,
-                         c_map);
+    random_spanning_tree(g, gen, start_vertex, pred_map, e_w_map, c_map);
   }
 }
 
