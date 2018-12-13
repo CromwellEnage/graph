@@ -88,7 +88,6 @@ alias graph_test_regular :
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
-    [ run astar_search_test.cpp ]
     [ run biconnected_components_test.cpp ]
     [ run min_degree_empty.cpp ]
     [ run cuthill_mckee_ordering.cpp ]
@@ -137,17 +136,18 @@ alias graph_test_regular :
     [ run delete_edge.cpp ]
     ;
 
-#alias graph_test_no_msvc14 : :
+alias graph_test_no_msvc14 : :
         # TODO: Track down and fix memory access violations in this environment.
         # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
         # Tried using Boost.Parameter exclusively vice bgl_named_params: no change.
-#        <toolset>msvc
-#        <toolset-msvc:version>14.0
-#        <address-model>64
-#    ;
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
 
-#alias graph_test_no_msvc14 :
-#    ;
+alias graph_test_no_msvc14 :
+    [ run astar_search_test.cpp ]
+    ;
 
 #alias graph_test_with_filesystem : :
         # TODO: Track down and fix memory access violations in this environment.
