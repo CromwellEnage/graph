@@ -479,8 +479,8 @@ namespace boost {
     weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
     typename boost::detail::override_const_property_result<
         arg_pack_type,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
         VertexListGraph
     >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
     typename boost::detail::map_maker<
@@ -576,8 +576,8 @@ namespace boost {
     weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
     typename boost::detail::override_const_property_result<
         Args,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
         VertexListGraph
     >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
     typename boost::detail::map_maker<
@@ -844,8 +844,8 @@ namespace boost {
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
     typename boost::detail::override_const_property_result<
         arg_pack_type,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
         VertexListGraph
     >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
     std::less<D> default_compare;
@@ -938,8 +938,8 @@ namespace boost {
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
     typename boost::detail::override_const_property_result<
         Args,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
         VertexListGraph
     >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
     std::less<D> default_compare;
