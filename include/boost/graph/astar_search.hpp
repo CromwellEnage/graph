@@ -441,7 +441,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -458,7 +459,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -468,7 +469,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -537,7 +538,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -554,7 +556,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -564,7 +566,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -634,7 +636,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -651,7 +654,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -661,7 +664,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -716,7 +719,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -733,7 +737,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -743,7 +747,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -796,7 +800,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -813,7 +818,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -823,7 +828,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -889,7 +894,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -906,7 +912,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -916,7 +922,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -983,7 +989,8 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
     null_visitor null_vis;
     astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
@@ -1000,7 +1007,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -1010,7 +1017,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -1062,7 +1069,10 @@ namespace boost {
     >::type weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
     const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_d = arg_pack[_distance_zero | D()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
+    null_visitor null_vis;
+    astar_visitor<null_visitor> default_visitor(null_vis);
     typename boost::parameter::binding<
         Args, 
         boost::graph::keywords::tag::visitor,
@@ -1077,7 +1087,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    > rank_map_gen(D());
+    > rank_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -1087,7 +1097,7 @@ namespace boost {
     boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    > dist_map_gen(D());
+    > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
