@@ -455,20 +455,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -551,20 +551,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -648,20 +648,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -730,20 +730,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -810,20 +810,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -903,20 +903,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -997,20 +997,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
@@ -1074,20 +1074,20 @@ namespace boost {
         boost::graph::keywords::tag::predecessor_map,
         dummy_property_map&
     >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::rank_map,
         D
-    >::type rank_map_gen(D());
+    > rank_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::rank_map,
         D
     >::map_type r_map = rank_map_gen(g, arg_pack);
-    typename boost::detail::make_property_map_from_arg_pack_gen<
+    boost::detail::make_property_map_from_arg_pack_gen<
         boost::graph::keywords::tag::distance_map,
         D
-    >::type dist_map_gen(D());
+    > dist_map_gen(D());
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
