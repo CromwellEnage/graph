@@ -521,8 +521,17 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param)> \
       (BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param) BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, ArgumentPack)) \
   BOOST_PP_EXPR_IF(nnamed, >) >::type \
-  name(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, nfixed, Param, const& param) BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, ArgumentPack, const& tagged_arg)) { \
-    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS_Z(z, nfixed, param) BOOST_PP_COMMA_IF(nfixed) (BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg))); \
+  name( \
+    BOOST_PP_ENUM_BINARY_PARAMS_Z(z, nfixed, Param, const& param) \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, ArgumentPack, const& tagged_arg) \
+  ) \
+  { \
+    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)( \
+      BOOST_PP_ENUM_PARAMS_Z(z, nfixed, param) \
+      BOOST_PP_COMMA_IF(nnamed) BOOST_PP_LPAREN_IF(nnamed) \
+      BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg) \
+      BOOST_PP_RPAREN_IF(nnamed) \
+    ); \
   }
 
 #define BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(name, nfixed) \
