@@ -516,10 +516,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
   template <BOOST_PP_ENUM_PARAMS_Z(z, nfixed, typename Param) BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename ArgumentPack)> \
-  typename boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack0>, boost::result_of< \
+  typename BOOST_PP_EXPR_IF(nnamed, boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack0>) \
+  BOOST_PP_COMMA_IF(nnamed) boost::result_of< \
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param)> \
       (BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param) BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, ArgumentPack)) \
-  > >::type \
+  BOOST_PP_EXPR_IF(nnamed, >) >::type \
   name(BOOST_PP_ENUM_BINARY_PARAMS_Z(z, nfixed, Param, const& param) BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, ArgumentPack, const& tagged_arg)) { \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS_Z(z, nfixed, param) BOOST_PP_COMMA_IF(nfixed) (BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg))); \
   }
