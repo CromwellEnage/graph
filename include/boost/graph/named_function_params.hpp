@@ -27,6 +27,7 @@
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
+#include <boost/typeof/typeof.hpp>
 
 namespace boost {
 
@@ -515,11 +516,14 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, BOOST_PP_SEQ_ELEM(0, seq), BOOST_PP_SEQ_ELEM(1, seq))
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
-  template <BOOST_PP_ENUM_PARAMS_Z(z, nfixed, typename Param) BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename ArgumentPack)> \
-  typename BOOST_PP_EXPR_IF(nnamed, boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack0>) \
+  template < \
+    BOOST_PP_ENUM_PARAMS_Z(z, nfixed, typename Param) \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename ArgumentPack) \
+  > \
+  typename \
+  BOOST_PP_EXPR_IF(nnamed, boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack0>) \
   BOOST_PP_COMMA_IF(nnamed) boost::result_of< \
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param)> \
-      (BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param) BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, ArgumentPack)) \
   BOOST_PP_EXPR_IF(nnamed, >) >::type \
   name( \
     BOOST_PP_ENUM_BINARY_PARAMS_Z(z, nfixed, Param, const& param) \
