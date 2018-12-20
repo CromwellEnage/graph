@@ -27,7 +27,6 @@
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
-#include <boost/typeof/typeof.hpp>
 
 namespace boost {
 
