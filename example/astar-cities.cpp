@@ -191,13 +191,14 @@ int main(int argc, char **argv)
   vector<cost> d(num_vertices(g));
   try {
     // call astar named parameter interface
+    using namespace boost::graph::keywords;
     astar_search_tree
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       predecessor_map(make_iterator_property_map(p.begin(), get(vertex_index, g))).
-       distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))).
-       visitor(astar_goal_visitor<vertex>(goal)));
+       (_predecessor_map = make_iterator_property_map(p.begin(), get(vertex_index, g)),
+        _distance_map = make_iterator_property_map(d.begin(), get(vertex_index, g)),
+        _visitor = astar_goal_visitor<vertex>(goal)));
   
   
   } catch(found_goal fg) { // found a path to the goal
