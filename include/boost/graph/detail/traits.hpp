@@ -220,12 +220,12 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(size_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(container_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(const_reference)
 }}
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/range/size.hpp>
 #include <boost/mpl/eval_if.hpp>
 
 namespace boost { namespace detail {
