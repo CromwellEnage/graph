@@ -38,7 +38,7 @@ namespace boost { namespace detail {
         : mpl::if_<
             boost::is_convertible<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                BOOST_TYPEOF_KEYWORD(!boost::declval<T>()),
+                BOOST_TYPEOF_TPL(!boost::declval<T>()),
 #else
                 decltype(!boost::declval<T>()),
 #endif
@@ -65,7 +65,7 @@ namespace boost { namespace detail {
         : mpl::apply1<
             ResultPlaceholderExpr,
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-            BOOST_TYPEOF_KEYWORD((
+            BOOST_TYPEOF_TPL((
                 boost::declval<T>()(
                     boost::declval<FirstArgument>(),
                     boost::declval<SecondArgument>()
@@ -96,7 +96,7 @@ namespace boost { namespace detail {
             _check(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_KEYWORD((
+                    BOOST_TYPEOF_TPL((
                         boost::declval<B>()(
                             boost::declval<A1>(),
                             boost::declval<A2>()
@@ -138,7 +138,7 @@ namespace boost { namespace detail {
             _check(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_KEYWORD(!boost::declval<B>())
+                    BOOST_TYPEOF_TPL(!boost::declval<B>())
 #else
                     decltype(!boost::declval<B>())
 #endif
