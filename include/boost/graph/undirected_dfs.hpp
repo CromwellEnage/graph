@@ -14,6 +14,13 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <vector>
 #include <boost/concept/assert.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/placeholders.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 
 namespace boost {
 
@@ -132,47 +139,163 @@ namespace boost {
 
   } // namespace detail
 
-  template <typename Graph, typename DFSVisitor, 
-            typename VertexColorMap, typename EdgeColorMap, 
-            typename Vertex>
-  void
-  undirected_dfs(const Graph& g, DFSVisitor vis, 
-                 VertexColorMap vertex_color, EdgeColorMap edge_color,
-                 Vertex start_vertex)
+  // Boost.Parameter-enabled variants
+  BOOST_PARAMETER_FUNCTION(
+    (void), undirected_dfs, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_edge_list_graph<mpl::_>))
+        (color_map
+          ,*(
+            is_vertex_color_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (edge_color_map
+          ,*(
+            is_edge_property_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,default_dfs_visitor()
+        )
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,detail::get_default_starting_vertex(graph)
+        )
+      )
+    )
+  )
   {
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<graph_type>::type
+    >::type Graph;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type DFSVisitor;
+
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
 
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<color_map_type>::type
+    >::type VertexColorMap;
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      put(vertex_color, *ui, Color::white());   vis.initialize_vertex(*ui, g);
+    for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
+      put(color_map, *ui, Color::white());
+      visitor.initialize_vertex(*ui, graph);
     }
     typename graph_traits<Graph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-      put(edge_color, *ei, Color::white());
+    for (boost::tie(ei, ei_end) = edges(graph); ei != ei_end; ++ei)
+      put(edge_color_map, *ei, Color::white());
 
-    if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
-      detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
+    if (root_vertex != *vertices(graph).first){
+      visitor.start_vertex(root_vertex, graph);
+      detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
+                             edge_color_map);
     }
 
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      ColorValue u_color = get(vertex_color, *ui);
-      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-        detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);
+    for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
+      ColorValue u_color = get(color_map, *ui);
+      if (u_color == Color::white()) {
+        visitor.start_vertex(*ui, graph);
+        detail::undir_dfv_impl(graph, *ui, visitor, color_map,
+                               edge_color_map);
       }
     }
   }
 
-  template <typename Graph, typename DFSVisitor, typename VertexColorMap,
-    typename EdgeColorMap>
-  void
-  undirected_dfs(const Graph& g, DFSVisitor vis, 
-                 VertexColorMap vertex_color, EdgeColorMap edge_color)
+  BOOST_PARAMETER_FUNCTION(
+    (void), undirected_dfs, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_edge_list_graph<mpl::_>))
+        (edge_color_map
+          ,*(
+            is_edge_property_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,default_dfs_visitor()
+        )
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,detail::get_default_starting_vertex(graph)
+        )
+      )
+      (optional
+        (vertex_index_map
+          ,*(
+            is_vertex_index_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,get(vertex_index, graph)
+        )
+      )
+    )
+  )
   {
-    undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
+    undirected_dfs(graph,
+                   make_shared_array_property_map(num_vertices(graph),
+                                                  white_color,
+                                                  vertex_index_map),
+                   edge_color_map, visitor, root_vertex);
   }
 
   namespace detail {
@@ -216,9 +339,8 @@ namespace boost {
     };
 
   } // namespace detail
-  
 
-  // Named Parameter Variant
+  // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
   void
   undirected_dfs(const Graph& g, 
@@ -236,16 +358,58 @@ namespace boost {
        get_param(params, vertex_color)
        );
   }
-  
 
-  template <typename IncidenceGraph, typename DFSVisitor, 
-    typename VertexColorMap, typename EdgeColorMap>
-  void undirected_depth_first_visit
-    (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-     DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
+  BOOST_PARAMETER_FUNCTION(
+    (void), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_incidence_graph<mpl::_>))
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (color_map
+          ,*(
+            is_vertex_property_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (edge_color_map
+          ,*(
+            is_edge_property_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+      )
+    )
+  )
   {
-    detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
+    detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
+                           edge_color_map);
   }
 
 

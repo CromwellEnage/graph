@@ -344,6 +344,10 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   // Declare all new tags
   namespace graph {
     namespace keywords {
+      BOOST_PARAMETER_NAME(graph)
+      BOOST_PARAMETER_NAME(sources_begin)
+      BOOST_PARAMETER_NAME(sources_end)
+      BOOST_PARAMETER_NAME(terminator_function)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS

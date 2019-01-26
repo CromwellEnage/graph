@@ -18,6 +18,8 @@
 #include <boost/graph/random.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/variate_generator.hpp>
 
 template <typename ColorMap, typename ParentMap,
   typename DiscoverTimeMap, typename FinishTimeMap>
@@ -108,7 +110,11 @@ struct dfs_test
     typename Traits::edges_size_type j;
     typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
-    boost::mt19937 gen;
+    boost::mt19937 gen, dfs_chooser_gen;
+    boost::uniform_int<> dfs_choices(0, 3);
+    boost::variate_generator<
+      boost::mt19937&, boost::uniform_int<>
+    > dfs_rand(dfs_chooser_gen, dfs_choices);
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
@@ -141,7 +147,21 @@ struct dfs_test
           vis(color, parent_pm,
               discover_time_pm, finish_time_pm);
 
-        boost::depth_first_search(g, visitor(vis).color_map(color));
+        switch (dfs_rand())
+        {
+          case 0:
+            boost::depth_first_search(g, vis, color);
+            break;
+          case 1:
+            boost::depth_first_search(vis, color, g);
+            break;
+          case 2:
+            boost::depth_first_search(color, g, vis);
+            break;
+          case 3:
+            boost::depth_first_search(g, visitor(vis).color_map(color));
+            break;
+        }
 
         // all vertices should be black
         for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)

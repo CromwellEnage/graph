@@ -19,14 +19,21 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/tti/has_member_function.hpp>
-
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/placeholders.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/quote.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <vector>
 #include <utility>
 
@@ -56,12 +63,164 @@ namespace boost {
 
   namespace detail {
 
+    template <typename T, typename G>
+    struct is_dfs_visitor_impl
+      : mpl::eval_if<
+        has_member_function_initialize_vertex<
+          T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+          ,mpl::vector<
+            typename graph_traits<T>::vertex_descriptor,
+            const G&
+          >
+#endif
+        >,
+        mpl::eval_if<
+          has_member_function_start_vertex<
+            T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+            ,mpl::vector<
+              typename graph_traits<T>::vertex_descriptor,
+              const G&
+            >
+#endif
+          >,
+          mpl::eval_if<
+            has_member_function_discover_vertex<
+              T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+              ,mpl::vector<
+                typename graph_traits<T>::vertex_descriptor,
+                const G&
+              >
+#endif
+            >,
+            mpl::eval_if<
+              has_member_function_examine_edge<
+                T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+                ,mpl::vector<
+                  typename graph_traits<T>::edge_descriptor,
+                  const G&
+                >
+#endif
+              >,
+              mpl::eval_if<
+                has_member_function_tree_edge<
+                  T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+                  ,mpl::vector<
+                    typename graph_traits<T>::edge_descriptor,
+                    const G&
+                  >
+#endif
+                >,
+                mpl::eval_if<
+                  has_member_function_back_edge<
+                    T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+                    ,mpl::vector<
+                      typename graph_traits<T>::edge_descriptor,
+                      const G&
+                    >
+#endif
+                  >,
+                  mpl::if_<
+                    has_member_function_forward_or_cross_edge<
+                      T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+                      ,mpl::vector<
+                        typename graph_traits<T>::edge_descriptor,
+                        const G&
+                      >
+#endif
+                    >,
+                    has_member_function_finish_vertex<
+                      T,void
+#if ( \
+        defined(__GNUC__) && ( \
+            (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9)) \
+        ) \
+    ) || defined(__clang__) || ( \
+        defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200) \
+    )
+                      ,mpl::vector<
+                        typename graph_traits<T>::vertex_descriptor,
+                        const G&
+                      >
+#endif
+                    >,
+                    mpl::false_
+                  >,
+                  mpl::false_
+                >,
+                mpl::false_
+              >,
+              mpl::false_
+            >,
+            mpl::false_
+          >,
+          mpl::false_
+        >,
+        mpl::false_
+      >::type
+    { };
+
+    template <typename T, typename G>
+    struct is_dfs_visitor
+      : mpl::if_<
+        is_graph<G>,
+        is_dfs_visitor_impl<T,G>,
+        mpl::false_
+      >::type
+    { };
+
     struct nontruth2 {
       template<class T, class T2>
       bool operator()(const T&, const T2&) const { return false; }
     };
-
-    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_edge)
 
     template <bool IsCallable> struct do_call_finish_edge {
       template <typename E, typename G, typename Vis>
@@ -219,48 +378,6 @@ namespace boost {
 
   } // namespace detail
 
-  template <class VertexListGraph, class DFSVisitor, class ColorMap>
-  void
-  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
-                     typename graph_traits<VertexListGraph>::vertex_descriptor start_vertex)
-  {
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, VertexListGraph> ));
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      Vertex u = implicit_cast<Vertex>(*ui);
-      put(color, u, Color::white()); vis.initialize_vertex(u, g);
-    }
-
-    if (start_vertex != detail::get_default_starting_vertex(g)){ vis.start_vertex(start_vertex, g);
-      detail::depth_first_visit_impl(g, start_vertex, vis, color,
-                                     detail::nontruth2());
-    }
-
-    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      Vertex u = implicit_cast<Vertex>(*ui);
-      ColorValue u_color = get(color, u);
-      if (u_color == Color::white()) {       vis.start_vertex(u, g);
-        detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
-      }
-    }
-  }
-
-  template <class VertexListGraph, class DFSVisitor, class ColorMap>
-  void
-  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
-  {
-    typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
-    std::pair<vi, vi> verts = vertices(g);
-    if (verts.first == verts.second)
-      return;
-
-    depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
-  }
-
   template <class Visitors = null_visitor>
   class dfs_visitor {
   public:
@@ -324,46 +441,202 @@ namespace boost {
   }
   typedef dfs_visitor<> default_dfs_visitor;
 
-  // Boost.Parameter named parameter variant
-  namespace graph {
-    namespace detail {
-      template <typename Graph>
-      struct depth_first_search_impl {
-        typedef void result_type;
-        template <typename ArgPack>
-        void operator()(const Graph& g, const ArgPack& arg_pack) const {
-          using namespace boost::graph::keywords;
-          boost::depth_first_search(g,
-                                    arg_pack[_visitor | make_dfs_visitor(null_visitor())],
-                                    boost::detail::make_color_map_from_arg_pack(g, arg_pack),
-                                    arg_pack[_root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)]);
-        }
-      };
+  // Boost.Parameter-enabled variants
+  BOOST_PARAMETER_FUNCTION(
+    (void), depth_first_search, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_vertex_list_graph<mpl::_>))
+        (color_map
+          ,*(
+            is_vertex_color_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,default_dfs_visitor()
+        )
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,detail::get_default_starting_vertex(graph)
+        )
+      )
+    )
+  )
+  {
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<graph_type>::type
+    >::type VertexListGraph;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type DFSVisitor;
+    BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, VertexListGraph> ));
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<color_map_type>::type
+    >::type ColorMap;
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+
+    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
+      Vertex u = implicit_cast<Vertex>(*ui);
+      put(color_map, u, Color::white());
+      visitor.initialize_vertex(u, graph);
     }
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_search, 1, 4)
+
+    if (root_vertex != detail::get_default_starting_vertex(graph)){
+      visitor.start_vertex(root_vertex, graph);
+      detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
+                                     detail::nontruth2());
+    }
+
+    for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
+      Vertex u = implicit_cast<Vertex>(*ui);
+      ColorValue u_color = get(color_map, u);
+      if (u_color == Color::white()) {
+        visitor.start_vertex(u, graph);
+        detail::depth_first_visit_impl(graph, u, visitor, color_map,
+                                       detail::nontruth2());
+      }
+    }
+  }
+
+  BOOST_PARAMETER_FUNCTION(
+    (void), depth_first_search, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_vertex_list_graph<mpl::_>))
+      )
+      (optional
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,default_dfs_visitor()
+        )
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,detail::get_default_starting_vertex(graph)
+        )
+      )
+      (optional
+        (vertex_index_map
+          ,*(
+            is_vertex_index_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+          ,get(vertex_index, graph)
+        )
+      )
+    )
+  )
+  {
+    depth_first_search(graph,
+                       make_shared_array_property_map(num_vertices(graph),
+                                                      white_color,
+                                                      vertex_index_map),
+                       visitor, root_vertex);
   }
 
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
 
-  template <class IncidenceGraph, class DFSVisitor, class ColorMap>
-  void depth_first_visit
-    (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
-     DFSVisitor vis, ColorMap color)
+  BOOST_PARAMETER_FUNCTION(
+    (void), depth_first_visit, ::boost::graph::keywords::tag,
+    (deduced
+      (required
+        (graph, *(is_incidence_graph<mpl::_>))
+        (root_vertex
+          ,*(
+            is_vertex_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (visitor
+          ,*(
+            is_dfs_visitor<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+        (color_map
+          ,*(
+            is_vertex_property_map_of_graph<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+            >
+          )
+        )
+      )
+      (optional
+        (terminator_function
+          ,*(
+            is_binary_function<
+              mpl::_,
+              typename boost::remove_const<
+                typename boost::remove_reference<root_vertex_type>::type
+              >::type,
+              typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+              >::type
+              mpl::quote1<is_boolean_expression>
+            >
+          )
+          ,detail::nontruth2()
+        )
+      )
+    )
+  )
   {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
-  }
-
-  template <class IncidenceGraph, class DFSVisitor, class ColorMap,
-            class TerminatorFunc>
-  void depth_first_visit
-    (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
-     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
-  {
-    vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, func);
+    visitor.start_vertex(root_vertex, graph);
+    detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
+                                   terminator_function);
   }
 } // namespace boost
 

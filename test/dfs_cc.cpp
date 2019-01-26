@@ -24,7 +24,7 @@ int main()
       allow_parallel_edge_tag, IncidenceGraph> graph_t;
     graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
-    depth_first_search(g, color_map(color));
+    depth_first_search(g, color);
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -33,7 +33,8 @@ int main()
       allow_parallel_edge_tag, IncidenceGraph> graph_t;
     graph_t& g = static_object<graph_t>::get();
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-    depth_first_search(g, vertex_index_map(v_index));
+    using namespace boost::graph::keywords;
+    depth_first_search(g, _vertex_index_map = v_index);
   }
   {
     typedef incidence_graph_archetype<vertex_t, undirected_tag, 
@@ -44,7 +45,7 @@ int main()
       graph_t;
     graph_t& g = static_object<graph_t>::get();
     dfs_visitor<> v;
-    depth_first_search(g, visitor(v));
+    depth_first_search(g, v);
   }
   return 0;
 }
