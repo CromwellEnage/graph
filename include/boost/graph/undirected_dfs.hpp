@@ -141,7 +141,7 @@ namespace boost {
 
   // Boost.Parameter-enabled variants
   BOOST_PARAMETER_FUNCTION(
-    (void), undirected_dfs, ::boost::graph::keywords::tag,
+    (bool), undirected_dfs, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_edge_list_graph<mpl::_>))
@@ -233,10 +233,12 @@ namespace boost {
                                edge_color_map);
       }
     }
+
+    return true;
   }
 
   BOOST_PARAMETER_FUNCTION(
-    (void), undirected_dfs, ::boost::graph::keywords::tag,
+    (bool), undirected_dfs, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_edge_list_graph<mpl::_>))
@@ -296,6 +298,7 @@ namespace boost {
                                                   white_color,
                                                   vertex_index_map),
                    edge_color_map, visitor, root_vertex);
+    return true;
   }
 
   namespace detail {
@@ -360,7 +363,7 @@ namespace boost {
   }
 
   BOOST_PARAMETER_FUNCTION(
-    (void), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_incidence_graph<mpl::_>))
@@ -410,6 +413,7 @@ namespace boost {
   {
     detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
                            edge_color_map);
+    return true;
   }
 
 

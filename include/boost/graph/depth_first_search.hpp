@@ -443,7 +443,7 @@ namespace boost {
 
   // Boost.Parameter-enabled variants
   BOOST_PARAMETER_FUNCTION(
-    (void), depth_first_search, ::boost::graph::keywords::tag,
+    (bool), depth_first_search, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_vertex_list_graph<mpl::_>))
@@ -521,10 +521,12 @@ namespace boost {
                                        detail::nontruth2());
       }
     }
+
+    return true;
   }
 
   BOOST_PARAMETER_FUNCTION(
-    (void), depth_first_search, ::boost::graph::keywords::tag,
+    (bool), depth_first_search, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_vertex_list_graph<mpl::_>))
@@ -574,12 +576,13 @@ namespace boost {
                                                       white_color,
                                                       vertex_index_map),
                        visitor, root_vertex);
+    return true;
   }
 
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
 
   BOOST_PARAMETER_FUNCTION(
-    (void), depth_first_visit, ::boost::graph::keywords::tag,
+    (bool), depth_first_visit, ::boost::graph::keywords::tag,
     (deduced
       (required
         (graph, *(is_incidence_graph<mpl::_>))
@@ -637,6 +640,7 @@ namespace boost {
     visitor.start_vertex(root_vertex, graph);
     detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
                                    terminator_function);
+    return true;
   }
 } // namespace boost
 
