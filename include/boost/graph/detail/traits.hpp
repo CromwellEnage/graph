@@ -22,7 +22,9 @@ namespace boost { namespace detail {
     typedef char (&graph_no_tag)[2];
 }}
 
-#include <boost/mpl/apply.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/declval.hpp>
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
@@ -31,24 +33,33 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    template <typename T, typename ResultPlaceholderExpr>
+    template <typename T>
     struct is_logically_negatable_impl
-        : mpl::apply1<
-            ResultPlaceholderExpr,
+        : mpl::if_<
+            boost::is_convertible<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-            BOOST_TYPEOF_KEYWORD(!boost::declval<T>())
+                BOOST_TYPEOF_KEYWORD(!boost::declval<T>()),
 #else
-            decltype(!boost::declval<T>())
+                decltype(!boost::declval<T>()),
 #endif
+                bool
+            >,
+            mpl::true_,
+            mpl::false_
         >::type
     {
     };
+}}
+
+#include <boost/mpl/apply.hpp>
+
+namespace boost { namespace detail {
 
     template <
-        typename T
-      , typename FirstArgument
-      , typename SecondArgument
-      , typename ResultPlaceholderExpr
+        typename T,
+        typename FirstArgument,
+        typename SecondArgument,
+        typename ResultPlaceholderExpr
     >
     struct is_binary_function_impl
         : mpl::apply1<
@@ -73,8 +84,6 @@ namespace boost { namespace detail {
     };
 }}
 
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 
 namespace boost { namespace detail {
@@ -121,7 +130,7 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    template <typename T, typename ResultPlaceholderExpr>
+    template <typename T>
     class is_logically_negatable_expr
     {
         template <typename B>
@@ -142,10 +151,10 @@ namespace boost { namespace detail {
      public:
         typedef typename mpl::if_c<
             sizeof(
-                is_logically_negatable_expr<T,ResultPlaceholderExpr>
-                ::BOOST_NESTED_TEMPLATE _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                is_logically_negatable_expr<T>::BOOST_NESTED_TEMPLATE
+                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
             ) == sizeof(graph_yes_tag),
-            is_logically_negatable_impl<T,ResultPlaceholderExpr>,
+            is_logically_negatable_impl<T>,
             mpl::false_
         >::type type;
     };
@@ -176,19 +185,17 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    template <typename T, typename ResultPlaceholderExpr>
+    template <typename T>
     struct is_logically_negatable
         : is_logically_negatable_expr<
             typename boost::add_const<
                 typename boost::remove_reference<T>::type
-            >::type,
-            ResultPlaceholderExpr
+            >::type
         >::type
     {
     };
 }}
 
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 namespace boost { namespace detail {
