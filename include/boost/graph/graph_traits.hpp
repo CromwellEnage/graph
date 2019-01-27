@@ -123,7 +123,7 @@ namespace boost {
     { };
 
     template <typename T>
-    struct is_graph : detail::has_graph_typedefs< graph_traits<T> >
+    struct is_graph : detail::has_graph_typedefs< graph_traits<T> >::type
     { };
 
     // directed_category tags
@@ -354,16 +354,16 @@ namespace boost {
                 >::value
             >
         { };
-    }
 
-    template <typename Vertex, typename Graph>
-    struct is_vertex_of_graph
-        : mpl::if_<
-            is_graph<Graph>,
-            detail::is_vertex_of_graph_impl<Vertex, Graph>,
-            mpl::false_
-        >::type
-    { };
+        template <typename Vertex, typename Graph>
+        struct is_vertex_of_graph
+            : mpl::if_<
+                is_graph<Graph>,
+                detail::is_vertex_of_graph_impl<Vertex, Graph>,
+                mpl::false_
+            >::type
+        { };
+    }
 
     /** @name Directed Graph Traits
      * These metafunctions are used to fully classify directed vs. undirected

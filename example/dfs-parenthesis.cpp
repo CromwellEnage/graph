@@ -41,7 +41,7 @@ main()
       << name[target(*e, g)] << ')' << std::endl;
   parenthesis_visitor
     paren_vis;
-  depth_first_search(g, visitor(paren_vis));
+  depth_first_search(g, paren_vis);
   std::cout << std::endl;
   return 0;
 }

@@ -12,8 +12,12 @@
 #define BOOST_GRAPH_TOPOLOGICAL_SORT_HPP
 
 #include <boost/config.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/parameter/preprocessor.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
@@ -55,23 +59,76 @@ namespace boost {
   // be a directed acyclic graph (DAG). The implementation
   // consists mainly of a call to depth-first search.
   //
+  BOOST_PARAMETER_FUNCTION(
+    (bool), topological_sort, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+      )
+      (optional
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_index_map_of_graph
+            >
+          )
+          ,detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            white_color,
+            vertex_index_map
+          )
+        )
+      )
+    )
+  )
+  {
+    depth_first_search(
+      graph,
+      vertex_index_map,
+      color_map,
+      topo_sort_visitor<
+        typename boost::remove_const<result_type>::type
+      >(result)
+    );
+    return true;
+  }
 
   template <typename VertexListGraph, typename OutputIterator,
     typename P, typename T, typename R>
   void topological_sort(VertexListGraph& g, OutputIterator result,
                         const bgl_named_params<P, T, R>& params)
   {
-    typedef topo_sort_visitor<OutputIterator> TopoVisitor;
-    depth_first_search(g, params.visitor(TopoVisitor(result)));
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    depth_first_search(
+      g,
+      boost::graph::keywords::_color_map = arg_pack[
+        boost::graph::keywords::_color_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          white_color,
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            get(vertex_index, g)
+          ]
+        )
+      ],
+      boost::graph::keywords::_visitor = topo_sort_visitor<
+        OutputIterator
+      >(result)
+    );
   }
-
-  template <typename VertexListGraph, typename OutputIterator>
-  void topological_sort(VertexListGraph& g, OutputIterator result)
-  {
-    topological_sort(g, result, 
-                     bgl_named_params<int, buffer_param_t>(0)); // bogus
-  }
-
 } // namespace boost
 
 #endif /*BOOST_GRAPH_TOPOLOGICAL_SORT_H*/

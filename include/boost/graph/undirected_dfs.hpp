@@ -139,52 +139,55 @@ namespace boost {
 
   } // namespace detail
 
-  // Boost.Parameter-enabled variants
+  // Boost.Parameter-enabled variant
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_dfs, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_edge_list_graph>))
+    )
     (deduced
       (required
-        (graph, *(is_edge_list_graph<mpl::_>))
-        (color_map
-          ,*(
-            is_vertex_color_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
-            >
-          )
-        )
         (edge_color_map
           ,*(
-            is_edge_property_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_edge_color_map_of_graph
             >
           )
         )
       )
       (optional
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_index_map_of_graph
+            >
+          )
+          ,get(vertex_index, graph)
+        )
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            white_color,
+            vertex_index_map
+          )
+        )
         (visitor
           ,*(
-            is_dfs_visitor<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_dfs_visitor
             >
           )
           ,default_dfs_visitor()
         )
         (root_vertex
           ,*(
-            is_vertex_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_of_graph
             >
           )
           ,detail::get_default_starting_vertex(graph)
@@ -237,173 +240,73 @@ namespace boost {
     return true;
   }
 
-  BOOST_PARAMETER_FUNCTION(
-    (bool), undirected_dfs, ::boost::graph::keywords::tag,
-    (deduced
-      (required
-        (graph, *(is_edge_list_graph<mpl::_>))
-        (edge_color_map
-          ,*(
-            is_edge_property_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
-            >
-          )
-        )
-      )
-      (optional
-        (visitor
-          ,*(
-            is_dfs_visitor<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
-            >
-          )
-          ,default_dfs_visitor()
-        )
-        (root_vertex
-          ,*(
-            is_vertex_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
-            >
-          )
-          ,detail::get_default_starting_vertex(graph)
-        )
-      )
-      (optional
-        (vertex_index_map
-          ,*(
-            is_vertex_index_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
-            >
-          )
-          ,get(vertex_index, graph)
-        )
-      )
-    )
-  )
-  {
-    undirected_dfs(graph,
-                   make_shared_array_property_map(num_vertices(graph),
-                                                  white_color,
-                                                  vertex_index_map),
-                   edge_color_map, visitor, root_vertex);
-    return true;
-  }
-
-  namespace detail {
-    template <typename VertexColorMap>
-    struct udfs_dispatch {
-
-      template <typename Graph, typename Vertex, 
-                typename DFSVisitor, typename EdgeColorMap,
-                typename P, typename T, typename R>
-      static void
-      apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
-            const bgl_named_params<P, T, R>&,
-            EdgeColorMap edge_color,
-            VertexColorMap vertex_color)
-      {
-        undirected_dfs(g, vis, vertex_color, edge_color, start_vertex);
-      }
-    };
-
-    template <>
-    struct udfs_dispatch<param_not_found> {
-      template <typename Graph, typename Vertex, typename DFSVisitor,
-                typename EdgeColorMap,
-                typename P, typename T, typename R>
-      static void
-      apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
-            const bgl_named_params<P, T, R>& params,
-            EdgeColorMap edge_color,
-            param_not_found)
-      {
-        std::vector<default_color_type> color_vec(num_vertices(g));
-        default_color_type c = white_color; // avoid warning about un-init
-        undirected_dfs
-          (g, vis, make_iterator_property_map
-           (color_vec.begin(),
-            choose_const_pmap(get_param(params, vertex_index),
-                              g, vertex_index), c),
-           edge_color,
-           start_vertex);
-      }
-    };
-
-  } // namespace detail
-
   // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
   void
   undirected_dfs(const Graph& g, 
                  const bgl_named_params<P, T, R>& params)
   {
-    typedef typename get_param_type< vertex_color_t, bgl_named_params<P, T, R> >::type C;
-    detail::udfs_dispatch<C>::apply
-      (g,
-       choose_param(get_param(params, graph_visitor),
-                    make_dfs_visitor(null_visitor())),
-       choose_param(get_param(params, root_vertex_t()),
-                    *vertices(g).first),
-       params,
-       get_param(params, edge_color),
-       get_param(params, vertex_color)
-       );
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    undirected_dfs(
+      g,
+      boost::graph::keywords::_edge_color_map = arg_pack[
+        boost::graph::keywords::_edge_color_map
+      ],
+      boost::graph::keywords::_color_map = arg_pack[
+        boost::graph::keywords::_color_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          white_color,
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            get(vertex_index, g)
+          ]
+        )
+      ],
+      boost::graph::keywords::_visitor = arg_pack[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<default_dfs_visitor>()
+      ],
+      boost::graph::keywords::_root_vertex = arg_pack[
+        boost::graph::keywords::_root_vertex ||
+        boost::detail::get_default_starting_vertex_t<Graph>(g)
+      ]
+    );
   }
 
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_incidence_graph>))
+    )
     (deduced
       (required
-        (graph, *(is_incidence_graph<mpl::_>))
         (root_vertex
           ,*(
-            is_vertex_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_of_graph
             >
           )
         )
         (visitor
           ,*(
-            is_dfs_visitor<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_dfs_visitor
             >
           )
         )
         (color_map
           ,*(
-            is_vertex_property_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
             >
           )
         )
         (edge_color_map
           ,*(
-            is_edge_property_map_of_graph<
-              mpl::_,
-              typename boost::remove_const<
-                typename boost::remove_reference<graph_type>::type
-              >::type
+            detail::argument_with_graph_predicate<
+              detail::is_edge_color_map_of_graph
             >
           )
         )

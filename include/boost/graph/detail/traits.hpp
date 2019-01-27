@@ -18,8 +18,30 @@
 #endif
 
 namespace boost { namespace detail {
+
     typedef char graph_yes_tag;
     typedef char (&graph_no_tag)[2];
+}}
+
+#include <boost/type_traits/add_lvalue_reference.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    typename boost::add_lvalue_reference<T>::type declref() BOOST_NOEXCEPT;
+}}
+
+#include <boost/type_traits/add_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    typename boost::add_lvalue_reference<
+        typename boost::add_const<
+            typename boost::remove_reference<T>::type
+        >::type
+    >::type declcref() BOOST_NOEXCEPT;
 }}
 
 #include <boost/mpl/bool.hpp>
@@ -130,6 +152,26 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
+    template <
+        typename T,
+        typename FirstArgument,
+        typename SecondArgument,
+        typename ResultPlaceholderExpr
+    >
+    struct is_binary_function
+        : mpl::if_<
+            typename is_binary_func<T,FirstArgument,SecondArgument>::type,
+            is_binary_function_impl<
+                T,
+                FirstArgument,
+                SecondArgument,
+                ResultPlaceholderExpr
+            >,
+            mpl::false_
+        >::type
+    {
+    };
+
     template <typename T>
     class is_logically_negatable_expr
     {
@@ -159,38 +201,76 @@ namespace boost { namespace detail {
         >::type type;
     };
 
-    template <
-        typename T,
-        typename FirstArgument,
-        typename SecondArgument,
-        typename ResultPlaceholderExpr
-    >
-    struct is_binary_function
-        : mpl::if_<
-            typename is_binary_func<T,FirstArgument,SecondArgument>::type,
-            is_binary_function_impl<
-                T,
-                FirstArgument,
-                SecondArgument,
-                ResultPlaceholderExpr
-            >,
-            mpl::false_
-        >::type
-    {
-    };
-}}
-
-#include <boost/type_traits/add_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
-namespace boost { namespace detail {
-
     template <typename T>
     struct is_logically_negatable
         : is_logically_negatable_expr<
             typename boost::add_const<
                 typename boost::remove_reference<T>::type
             >::type
+        >::type
+    {
+    };
+}}
+
+#include <boost/mpl/eval_if.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    class is_iterator_impl
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check_d(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(*boost::detail::declref<B>())
+#else
+                    decltype(*boost::detail::declref<B>())
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check_d(...);
+
+        template <typename B>
+        static graph_yes_tag
+            _check_i(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(++boost::detail::declref<B>())
+#else
+                    decltype(++boost::detail::declref<B>())
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check_i(...);
+
+     public:
+        typedef typename mpl::eval_if_c<
+            sizeof(
+                is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
+                _check_d<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag),
+            mpl::if_c<
+                sizeof(
+                    is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
+                    _check_i<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                ) == sizeof(graph_yes_tag),
+                mpl::true_,
+                mpl::false_
+            >,
+            mpl::false_
+        >::type type;
+    };
+
+    template <typename T>
+    struct is_iterator
+        : is_iterator_impl<
+            typename boost::remove_reference<T>::type
         >::type
     {
     };
@@ -225,8 +305,22 @@ namespace boost { namespace detail {
 }}
 
 #include <boost/property_map/property_map.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    struct choose_dummy_property_map
+    {
+        typedef dummy_property_map type;
+
+        inline static type call(const G& g)
+        {
+            return dummy_property_map();
+        }
+    };
+}}
+
 #include <boost/range/size.hpp>
-#include <boost/mpl/eval_if.hpp>
 
 namespace boost { namespace detail {
 
@@ -278,7 +372,7 @@ namespace boost { namespace detail {
         : mpl::if_<
             boost::is_same<
                 typename property_traits<T>::key_type,
-                typename graph_traits<T>::vertex_descriptor
+                typename graph_traits<G>::vertex_descriptor
             >,
             mpl::true_,
             mpl::false_
@@ -312,7 +406,7 @@ namespace boost { namespace detail {
         : mpl::if_<
             boost::is_same<
                 typename property_traits<T>::key_type,
-                typename graph_traits<T>::edge_descriptor
+                typename graph_traits<G>::edge_descriptor
             >,
             mpl::true_,
             mpl::false_
@@ -345,6 +439,17 @@ namespace boost { namespace detail {
 #include <boost/graph/properties.hpp>
 
 namespace boost { namespace detail {
+
+    template <typename G>
+    struct choose_vertex_index_map
+    {
+        typedef typename property_map<G,vertex_index_t>::const_type type;
+
+        inline static type call(const G& g)
+        {
+            return get(vertex_index, g);
+        }
+    };
 
     template <typename T>
     struct is_color_map_impl
@@ -426,6 +531,104 @@ namespace boost { namespace detail {
             mpl::false_
         >::type
     { };
+
+    template <template <typename> class UnaryPredicate>
+    struct argument_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef UnaryPredicate<
+                typename boost::remove_reference<Arg>::type
+            > type;
+        };
+    };
+}}
+
+#include <boost/graph/named_function_params.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    class has_internal_vertex_index_map_impl
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL((
+                        get(
+                            boost::declval<vertex_index_t>(),
+                            boost::detail::declcref<B>()
+                        )
+                    ))
+#else
+                    decltype(
+                        get(
+                            boost::declval<vertex_index_t>(),
+                            boost::detail::declcref<B>()
+                        )
+                    )
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                has_internal_vertex_index_map_impl<G>::BOOST_NESTED_TEMPLATE
+                _check<G>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
+}}
+
+#include <boost/property_map/property_map.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    inline typename mpl::eval_if<
+        typename has_internal_vertex_index_map_impl<G>::type,
+        choose_vertex_index_map<G>,
+        choose_dummy_property_map<G>
+    >::type
+        vertex_index_map_or_dummy_property_map(const G& g)
+    {
+        typedef typename mpl::if_<
+            typename has_internal_vertex_index_map_impl<G>::type,
+            choose_vertex_index_map<G>,
+            choose_dummy_property_map<G>
+        >::type impl;
+        return impl::call(g);
+    }
+}}
+
+#include <boost/type_traits/remove_const.hpp>
+
+namespace boost { namespace detail {
+
+    template <template <typename, typename> class BinaryPredicate>
+    struct argument_with_graph_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef BinaryPredicate<
+                typename boost::remove_reference<Arg>::type,
+                typename boost::remove_const<
+                    typename boost::parameter::value_type<
+                        ArgPack,
+                        boost::graph::keywords::tag::graph
+                    >::type
+                >::type
+            > type;
+        };
+    };
 }}
 
 #include <boost/tti/has_member_function.hpp>

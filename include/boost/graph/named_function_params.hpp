@@ -345,6 +345,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   namespace graph {
     namespace keywords {
       BOOST_PARAMETER_NAME(graph)
+      BOOST_PARAMETER_NAME(result)
       BOOST_PARAMETER_NAME(sources_begin)
       BOOST_PARAMETER_NAME(sources_end)
       BOOST_PARAMETER_NAME(terminator_function)

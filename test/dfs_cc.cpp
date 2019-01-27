@@ -10,6 +10,7 @@
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_archetypes.hpp>
+#include <boost/graph/properties.hpp>
 
 int main()
 {
@@ -34,7 +35,7 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
     using namespace boost::graph::keywords;
-    depth_first_search(g, _vertex_index_map = v_index);
+    depth_first_search(g, v_index);
   }
   {
     typedef incidence_graph_archetype<vertex_t, undirected_tag, 

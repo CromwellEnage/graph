@@ -72,8 +72,7 @@ int main(int, char*[])
   
   std::cout << "back edges:\n";
   detect_loops vis;
-  undirected_dfs(g, root_vertex(vertex_t(0)).visitor(vis)
-                 .edge_color_map(get(edge_color, g)));
+  undirected_dfs(g, vertex_t(0), vis, get(edge_color, g));
   std::cout << std::endl;
   
   return boost::exit_success;
