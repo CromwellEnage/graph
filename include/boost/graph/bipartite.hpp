@@ -208,11 +208,25 @@ namespace boost {
     /// Call dfs
     try
     {
-      depth_first_search (graph, vertex_index_map (index_map).visitor (make_dfs_visitor (std::make_pair (
-          detail::colorize_bipartition (partition_map), std::make_pair (detail::check_bipartition (partition_map),
-              put_property (partition_map, color_traits <partition_color_t>::white (), on_start_vertex ()))))));
+      depth_first_search(
+        graph,
+        index_map,
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              put_property(
+                partition_map,
+                color_traits<partition_color_t>::white(),
+                on_start_vertex()
+              )
+            )
+          )
+        )
+      );
     }
-    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>&)
+    catch (const detail::bipartite_visitor_error<vertex_descriptor_t>&)
     {
       return false;
     }
@@ -294,10 +308,26 @@ namespace boost {
     /// Call dfs
     try
     {
-      depth_first_search (graph, vertex_index_map (index_map).visitor (make_dfs_visitor (std::make_pair (
-          detail::colorize_bipartition (partition_map), std::make_pair (detail::check_bipartition (partition_map),
-              std::make_pair (put_property (partition_map, color_traits <partition_color_t>::white (),
-                  on_start_vertex ()), record_predecessors (predecessor_map, on_tree_edge ())))))));
+      depth_first_search(
+        graph,
+        index_map,
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              std::make_pair(
+                put_property(
+                  partition_map,
+                  color_traits<partition_color_t>::white(),
+                  on_start_vertex()
+                ),
+                record_predecessors(predecessor_map, on_tree_edge())
+              )
+            )
+          )
+        )
+      );
     }
     catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
     {

@@ -267,7 +267,7 @@ namespace boost
 
       // Perform a depth-first search to find each vertex's low point, least
       // ancestor, and dfs tree information
-      depth_first_search(g, visitor(vis).vertex_index_map(vm));
+      depth_first_search(g, vis, vm);
 
       // Sort vertices by their lowpoint - need this later in the constructor
       vertex_vector_t vertices_by_lowpoint(num_vertices(g));

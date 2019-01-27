@@ -186,7 +186,7 @@ namespace boost
     vis(comp, num_components, children_of_root, dtm, dfs_time,
         lowpt, pred, out, S, is_articulation_point, index_map, dfs_vis);
 
-    depth_first_search(g, visitor(vis).vertex_index_map(index_map));
+    depth_first_search(g, vis, index_map);
 
     return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
   }
