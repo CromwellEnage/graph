@@ -285,11 +285,14 @@ namespace boost { // should use a different namespace for this
   template <typename T>
   class buffer_archetype {
   public:
+    typedef T value_type;
+    typedef unsigned int size_type;
     void push(const T&) {}
     void pop() {}
     T& top() { return static_object<T>::get(); }
     const T& top() const { return static_object<T>::get(); }
     bool empty() const { return true; }
+    size_type size() const { return 0; }
   };
   
 } // namespace boost

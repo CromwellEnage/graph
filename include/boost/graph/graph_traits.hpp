@@ -113,6 +113,9 @@ namespace boost {
         struct graph_traits_no_impl { };
     }
 
+    // The primary template definition is SFINAE-friendly so that is_graph and
+    // its relatives can be used for template argument deduction.
+    // -- Cromwell D. Enage
     template <typename G>
     struct graph_traits
         : mpl::if_<

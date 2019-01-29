@@ -399,7 +399,7 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    struct binary_function_predicate
+    struct binary_function_graph_predicate
     {
         template <typename Arg, typename ArgPack>
         struct apply
@@ -709,11 +709,7 @@ namespace boost {
           )
         )
         (visitor
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_dfs_visitor
-            >
-          )
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
           ,default_dfs_visitor()
         )
         (root_vertex
@@ -784,7 +780,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            get(vertex_index, g)
+            detail::vertex_index_map_or_dummy_property_map(g)
           ]
         )
       ],
@@ -814,11 +810,7 @@ namespace boost {
           )
         )
         (visitor
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_dfs_visitor
-            >
-          )
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
         )
         (color_map
           ,*(
@@ -830,7 +822,7 @@ namespace boost {
       )
       (optional
         (terminator_function
-          ,*(detail::binary_function_predicate)
+          ,*(detail::binary_function_graph_predicate)
           ,detail::nontruth2()
         )
       )

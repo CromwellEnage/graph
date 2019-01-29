@@ -94,7 +94,7 @@ namespace boost {
     // c_count initialized to "nil" (with nil represented by (max)())
     comp_type c_count((std::numeric_limits<comp_type>::max)());
     detail::components_recorder<ComponentMap> vis(c, c_count);
-    depth_first_search(g, visitor(vis));
+    depth_first_search(g, vis);
     return c_count + 1;
   }
 

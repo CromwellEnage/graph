@@ -156,7 +156,7 @@ main()
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
-    breadth_first_search(g, src, boost::visitor(vis));
+    breadth_first_search(g, src, vis);
   }
 
   size_type diameter = 0;
@@ -185,10 +185,10 @@ main()
   // Do a BFS starting at the home page, recording the parent of each
   // vertex (where parent is with respect to the search tree).
   Traits::vertex_descriptor src = vertices(g).first[0];
-  breadth_first_search
-    (g, src, 
-     boost::visitor(make_bfs_visitor(record_predecessors(&parent[0],
-                                                         on_tree_edge()))));
+  breadth_first_search(
+    g, src, 
+    make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
+  );
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));

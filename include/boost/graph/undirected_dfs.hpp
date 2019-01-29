@@ -177,11 +177,7 @@ namespace boost {
           )
         )
         (visitor
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_dfs_visitor
-            >
-          )
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
           ,default_dfs_visitor()
         )
         (root_vertex
@@ -290,11 +286,7 @@ namespace boost {
           )
         )
         (visitor
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_dfs_visitor
-            >
-          )
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
         )
         (color_map
           ,*(

@@ -9,6 +9,10 @@
 #ifndef BOOST_GRAPH_DETAIL_TRAITS_HPP
 #define BOOST_GRAPH_DETAIL_TRAITS_HPP
 
+// Many of these metafunctions deserve to be in a separate library.  Until
+// such a library materializes, however, this header file shall serve as
+// their home. -- Cromwell D. Enage
+
 #include <boost/config.hpp>
 
 #if defined(BOOST_NO_CXX11_NULLPTR)
@@ -65,6 +69,64 @@ namespace boost { namespace detail {
                 decltype(!boost::declval<T>()),
 #endif
                 bool
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+}}
+
+#include <boost/type_traits/is_same.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    struct has_const_member_function_size_impl
+        : mpl::if_<
+            boost::is_same<
+                typename T::size_type,
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                BOOST_TYPEOF_TPL(boost::detail::declcref<T>().size())
+#else
+                decltype(boost::detail::declcref<T>().size())
+#endif
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <typename T>
+    struct has_const_member_function_top_impl
+        : mpl::if_<
+            boost::is_same<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                typename T::value_type,
+                BOOST_TYPEOF_TPL(boost::detail::declcref<T>().top())
+#else
+                typename T::value_type const&,
+                decltype(boost::detail::declcref<T>().top())
+#endif
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <typename T>
+    struct has_member_function_top_impl
+        : mpl::if_<
+            boost::is_same<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                typename T::value_type,
+                BOOST_TYPEOF_TPL(boost::detail::declref<T>().top())
+#else
+                typename T::value_type&,
+                decltype(boost::detail::declref<T>().top())
+#endif
             >,
             mpl::true_,
             mpl::false_
@@ -146,6 +208,68 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
+
+    template <typename T>
+    class has_member_function_pop_expr
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(boost::detail::declref<B>().pop())
+#else
+                    decltype(boost::detail::declref<B>().pop())
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                has_member_function_pop_expr<T>::BOOST_NESTED_TEMPLATE
+                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
+
+    template <typename T>
+    class has_member_function_push_expr
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(
+                        boost::detail::declref<B>().push(
+                            boost::detail::declcref<typename B::value_type>()
+                        )
+                    )
+#else
+                    decltype(
+                        boost::detail::declref<B>().push(
+                            boost::detail::declcref<typename B::value_type>()
+                        )
+                    )
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                has_member_function_push_expr<T>::BOOST_NESTED_TEMPLATE
+                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
 }}
 
 #include <boost/mpl/if.hpp>
@@ -210,11 +334,6 @@ namespace boost { namespace detail {
         >::type
     {
     };
-}}
-
-#include <boost/mpl/eval_if.hpp>
-
-namespace boost { namespace detail {
 
     template <typename T>
     class is_iterator_impl
@@ -250,19 +369,19 @@ namespace boost { namespace detail {
         static graph_no_tag _check_i(...);
 
      public:
-        typedef typename mpl::eval_if_c<
-            sizeof(
-                is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
-                _check_d<T>(BOOST_GRAPH_DETAIL_NULLPTR)
-            ) == sizeof(graph_yes_tag),
-            mpl::if_c<
+        typedef typename mpl::if_c<
+            (
+                sizeof(
+                    is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
+                    _check_d<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                ) == sizeof(graph_yes_tag)
+            ) && (
                 sizeof(
                     is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
                     _check_i<T>(BOOST_GRAPH_DETAIL_NULLPTR)
-                ) == sizeof(graph_yes_tag),
-                mpl::true_,
-                mpl::false_
-            >,
+                ) == sizeof(graph_yes_tag)
+            ),
+            mpl::true_,
             mpl::false_
         >::type type;
     };
@@ -273,6 +392,121 @@ namespace boost { namespace detail {
             typename boost::remove_reference<T>::type
         >::type
     {
+    };
+}}
+
+#include <boost/property_map/property_map.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    struct choose_dummy_property_map
+    {
+        typedef dummy_property_map type;
+
+        inline static type call(const G& g)
+        {
+            return dummy_property_map();
+        }
+    };
+
+    template <typename T>
+    struct is_predecessor_map_impl
+        : mpl::if_<
+            boost::is_same<
+                typename property_traits<T>::key_type,
+                typename property_traits<T>::value_type
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    { };
+}}
+
+#include <boost/mpl/eval_if.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    class has_member_function_top_expr
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(boost::detail::declref<B>().top())
+#else
+                    decltype(boost::detail::declref<B>().top())
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef typename mpl::eval_if_c<
+            (
+                sizeof(
+                    has_member_function_top_expr<T>::BOOST_NESTED_TEMPLATE
+                    _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    has_member_function_top_expr<T>::BOOST_NESTED_TEMPLATE
+                    _check<T const>(BOOST_GRAPH_DETAIL_NULLPTR)
+                ) == sizeof(graph_yes_tag)
+            ),
+            mpl::eval_if<
+                has_value_type<T>,
+                mpl::if_<
+                    has_const_member_function_top_impl<T>,
+                    has_member_function_top_impl<T>,
+                    mpl::false_
+                >,
+                mpl::false_
+            >,
+            mpl::false_
+        >::type type;
+    };
+}}
+
+#include <boost/range/size.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    class has_const_member_function_size_expr
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(boost::detail::declcref<B>().size())
+#else
+                    decltype(boost::detail::declcref<B>().size())
+#endif
+                >::type
+            );
+
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef typename mpl::eval_if_c<
+            sizeof(
+                has_const_member_function_size_expr<T>::BOOST_NESTED_TEMPLATE
+                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag),
+            mpl::if_<
+                has_size_type<T>,
+                has_const_member_function_size_impl<T>,
+                mpl::false_
+            >,
+            mpl::false_
+        >::type type;
     };
 }}
 
@@ -294,70 +528,99 @@ namespace boost { namespace detail {
         >::type
     {
     };
-}}
 
-#include <boost/mpl/has_xxx.hpp>
-
-namespace boost { namespace detail {
-
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(container_type)
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(const_reference)
-}}
-
-#include <boost/property_map/property_map.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename G>
-    struct choose_dummy_property_map
+    template <typename T>
+    struct has_const_member_function_empty_impl
+        : is_boolean_expression<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+            BOOST_TYPEOF_TPL(boost::detail::declcref<T>().empty())
+#else
+            decltype(boost::detail::declcref<T>().empty())
+#endif
+        >
     {
-        typedef dummy_property_map type;
-
-        inline static type call(const G& g)
-        {
-            return dummy_property_map();
-        }
     };
-}}
 
-#include <boost/range/size.hpp>
+    template <typename T>
+    class has_const_member_function_empty_expr
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL(boost::detail::declcref<B>().empty())
+#else
+                    decltype(boost::detail::declcref<B>().empty())
+#endif
+                >::type
+            );
 
-namespace boost { namespace detail {
+        template <typename B>
+        static graph_no_tag _check(...);
+
+     public:
+        typedef typename mpl::if_c<
+            sizeof(
+                has_const_member_function_empty_expr<T>::BOOST_NESTED_TEMPLATE
+                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+            ) == sizeof(graph_yes_tag),
+            has_const_member_function_empty_impl<T>,
+            mpl::false_
+        >::type type;
+    };
+
+    template <typename T>
+    struct has_const_member_function_empty
+        : has_const_member_function_empty_expr<
+            typename boost::remove_const<T>::type
+        >::type
+    {
+    };
+
+    template <typename T>
+    struct has_const_member_function_size
+        : has_const_member_function_size_expr<
+            typename boost::remove_const<T>::type
+        >::type
+    {
+    };
+
+    template <typename T>
+    struct has_member_function_top
+        : has_member_function_top_expr<
+            typename boost::remove_const<T>::type
+        >::type
+    {
+    };
+
+    template <typename T>
+    struct has_member_function_push
+        : has_member_function_push_expr<
+            typename boost::remove_const<T>::type
+        >::type
+    {
+    };
 
     template <typename T>
     struct is_buffer
         : mpl::eval_if<
-            has_value_type<T>,
+            typename has_member_function_pop_expr<
+                typename boost::remove_const<T>::type
+            >::type,
             mpl::eval_if<
-                has_size_type<T>,
+                has_const_member_function_empty<T>,
                 mpl::eval_if<
-                    has_container_type<T>,
+                    has_const_member_function_size<T>,
                     mpl::if_<
-                        has_reference<T>,
-                        has_const_reference<T>,
+                        has_member_function_top<T>,
+                        has_member_function_push<T>,
                         mpl::false_
                     >,
                     mpl::false_
                 >,
                 mpl::false_
             >,
-            mpl::false_
-        >::type
-    { };
-}}
-
-#include <boost/type_traits/is_same.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename T>
-    struct is_predecessor_map_impl
-        : mpl::if_<
-            boost::is_same<
-                typename property_traits<T>::key_type,
-                typename property_traits<T>::value_type
-            >,
-            mpl::true_,
             mpl::false_
         >::type
     { };
@@ -585,12 +848,12 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
-}}
 
-#include <boost/property_map/property_map.hpp>
-
-namespace boost { namespace detail {
-
+    // Several graph algorithms either require a vertex color map or require a
+    // vertex index map with which to build a default vertex color map.  This
+    // function allows those algorithms to not require the input graph to hold
+    // an internal vertex index map when an input color map is provided.
+    // -- Cromwell D. Enage
     template <typename G>
     inline typename mpl::eval_if<
         typename has_internal_vertex_index_map_impl<G>::type,
@@ -629,25 +892,6 @@ namespace boost { namespace detail {
             > type;
         };
     };
-}}
-
-#include <boost/tti/has_member_function.hpp>
-
-namespace boost { namespace detail {
-
-    BOOST_TTI_HAS_MEMBER_FUNCTION(initialize_vertex)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(start_vertex)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(discover_vertex)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(examine_vertex)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(examine_edge)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(tree_edge)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(back_edge)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(forward_or_cross_edge)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(non_tree_edge)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(gray_target)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(black_target)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_vertex)
-    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_edge)
 }}
 
 #endif  // include guard

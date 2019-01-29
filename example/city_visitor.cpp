@@ -121,9 +121,9 @@ int main(int, char*[])
   cout << "*** Depth First ***" << endl;
   depth_first_search
     (G, 
-     visitor(make_dfs_visitor(boost::make_list(city_arrival(names),
+     make_dfs_visitor(boost::make_list(city_arrival(names),
                                                neighbor_cities(names),
-                                               finish_city(names)))));
+                                               finish_city(names))));
   cout << endl;
 
   /* Get the source vertex */
@@ -132,9 +132,9 @@ int main(int, char*[])
 
   cout << "*** Breadth First ***" << endl;
   breadth_first_search
-    (G, s, visitor(make_bfs_visitor(boost::make_list(city_arrival(names), 
+    (G, s, make_bfs_visitor(boost::make_list(city_arrival(names), 
                                                      neighbor_cities(names), 
-                                                     finish_city(names)))));
+                                                     finish_city(names))));
   
   return 0;
 }

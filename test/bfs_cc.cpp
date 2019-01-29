@@ -25,7 +25,7 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
-    breadth_first_search(g, s, color_map(color));
+    breadth_first_search(g, s, color);
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -35,7 +35,7 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-    breadth_first_search(g, s, vertex_index_map(v_index));
+    breadth_first_search(g, s, v_index);
   }
   {
     typedef incidence_graph_archetype<vertex_t, undirected_tag, 
@@ -48,7 +48,7 @@ int main()
     vertex_t s;
     bfs_visitor<> v;
     buffer_archetype<vertex_t> b;
-    breadth_first_search(g, s, visitor(v).buffer(b));
+    breadth_first_search(g, s, v, b);
   }
   return 0;
 }
