@@ -411,7 +411,7 @@ namespace boost { namespace detail {
     };
 
     template <typename T>
-    struct is_predecessor_map_impl
+    struct is_property_map_with_same_key_and_value_type_impl
         : mpl::if_<
             boost::is_same<
                 typename property_traits<T>::key_type,
@@ -420,7 +420,8 @@ namespace boost { namespace detail {
             mpl::true_,
             mpl::false_
         >::type
-    { };
+    {
+    };
 }}
 
 #include <boost/mpl/eval_if.hpp>
@@ -507,6 +508,44 @@ namespace boost { namespace detail {
             >,
             mpl::false_
         >::type type;
+    };
+}}
+
+#include <boost/mpl/has_xxx.hpp>
+
+namespace boost { namespace graph_detail {
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(const_reference)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
+}}
+
+#include <boost/range/has_range_iterator.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    struct has_container_typedefs_impl
+        : mpl::eval_if<
+            has_value_type<T>,
+            mpl::eval_if<
+                has_size_type<T>,
+                mpl::eval_if<
+                    has_range_iterator<T>,
+                    mpl::eval_if<
+                        has_range_const_iterator<T>,
+                        mpl::if_<
+                            graph_detail::has_const_reference<T>,
+                            graph_detail::has_reference<T>,
+                            mpl::false_
+                        >,
+                        mpl::false_
+                    >,
+                    mpl::false_
+                >,
+                mpl::false_
+            >,
+            mpl::false_
+        >::type
+    {
     };
 }}
 
@@ -623,7 +662,16 @@ namespace boost { namespace detail {
             >,
             mpl::false_
         >::type
-    { };
+    {
+    };
+
+    template <typename T>
+    struct has_container_typedefs
+        : has_container_typedefs_impl<
+            typename boost::remove_const<T>::type
+        >::type
+    {
+    };
 }}
 
 #include <boost/graph/graph_traits.hpp>
@@ -634,13 +682,14 @@ namespace boost { namespace detail {
     struct is_vertex_property_map_of_graph_impl
         : mpl::if_<
             boost::is_same<
-                typename property_traits<T>::key_type,
-                typename graph_traits<G>::vertex_descriptor
+                typename graph_traits<G>::vertex_descriptor,
+                typename property_traits<T>::key_type
             >,
             mpl::true_,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
     struct is_vertex_property_map_of_graph
@@ -653,16 +702,18 @@ namespace boost { namespace detail {
             >,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
-    struct is_vertex_predecessor_map_of_graph
+    struct is_vertex_to_vertex_map_of_graph
         : mpl::if_<
             is_vertex_property_map_of_graph<T,G>,
-            is_predecessor_map_impl<T>,
+            is_property_map_with_same_key_and_value_type_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
     struct is_edge_property_map_of_graph_impl
@@ -674,7 +725,8 @@ namespace boost { namespace detail {
             mpl::true_,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
     struct is_edge_property_map_of_graph
@@ -687,16 +739,41 @@ namespace boost { namespace detail {
             >,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
-    struct is_edge_predecessor_map_of_graph
+    struct is_edge_to_edge_map_of_graph
         : mpl::if_<
             is_edge_property_map_of_graph<T,G>,
-            is_predecessor_map_impl<T>,
+            is_property_map_with_same_key_and_value_type_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
+
+    template <typename T, typename G2>
+    struct is_orig_to_copy_vertex_map_impl
+        : mpl::if_<
+            boost::is_same<
+                typename property_traits<T>::value_type,
+                typename graph_traits<G2>::vertex_descriptor
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <typename T, typename G1, typename G2>
+    struct is_orig_to_copy_vertex_map
+        : mpl::if_<
+            is_vertex_property_map_of_graph<T,G1>,
+            is_orig_to_copy_vertex_map_impl<T,G2>,
+            mpl::false_
+        >::type
+    {
+    };
 }}
 
 #include <boost/graph/properties.hpp>
@@ -737,7 +814,8 @@ namespace boost { namespace detail {
             mpl::true_,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
     struct is_vertex_color_map_of_graph
@@ -746,7 +824,8 @@ namespace boost { namespace detail {
             is_color_map_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
     struct is_edge_color_map_of_graph
@@ -755,7 +834,8 @@ namespace boost { namespace detail {
             is_color_map_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
 }}
 
 #include <boost/type_traits/is_integral.hpp>
@@ -763,7 +843,7 @@ namespace boost { namespace detail {
 namespace boost { namespace detail {
 
     template <typename T>
-    struct is_index_map_impl
+    struct is_integral_value_map_impl
         : mpl::eval_if<
             // Ensure that color maps are not mistaken for index maps during
             // type deduction. -- Cromwell D. Enage
@@ -775,25 +855,28 @@ namespace boost { namespace detail {
                 mpl::false_
             >
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
-    struct is_vertex_index_map_of_graph
+    struct is_vertex_to_integer_map_of_graph
         : mpl::if_<
             is_vertex_property_map_of_graph<T,G>,
-            is_index_map_impl<T>,
+            is_integral_value_map_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <typename T, typename G>
-    struct is_edge_index_map_of_graph
+    struct is_edge_to_integer_map_of_graph
         : mpl::if_<
             is_edge_property_map_of_graph<T,G>,
-            is_index_map_impl<T>,
+            is_integral_value_map_impl<T>,
             mpl::false_
         >::type
-    { };
+    {
+    };
 
     template <template <typename> class UnaryPredicate>
     struct argument_predicate
@@ -875,6 +958,16 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
+    template <typename Args, typename Tag>
+    struct mutable_value_type
+        : boost::remove_const<
+            typename boost::remove_reference<
+                typename boost::parameter::value_type<Args,Tag>::type
+            >::type
+        >
+    {
+    };
+
     template <template <typename, typename> class BinaryPredicate>
     struct argument_with_graph_predicate
     {
@@ -883,14 +976,54 @@ namespace boost { namespace detail {
         {
             typedef BinaryPredicate<
                 typename boost::remove_reference<Arg>::type,
-                typename boost::remove_const<
-                    typename boost::parameter::value_type<
-                        ArgPack,
-                        boost::graph::keywords::tag::graph
-                    >::type
+                typename mutable_value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::graph
                 >::type
             > type;
         };
+    };
+
+    template <typename Args, typename Tag>
+    struct property_map_value
+    {
+        typedef typename property_traits<
+            typename mutable_value_type<Args,Tag>::type
+        >::value_type type;
+    };
+
+    struct orig_to_copy_vertex_map_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef is_orig_to_copy_vertex_map<
+                typename boost::remove_reference<Arg>::type,
+                typename mutable_value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::graph
+                >::type,
+                typename mutable_value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::result
+                >::type
+            > type;
+        };
+    };
+}}
+
+#include <cstddef>
+#include <utility>
+
+namespace boost { namespace detail {
+
+    template <typename Args, typename Tag>
+    struct make_size_t_value_pair
+    {
+        typedef std::pair<
+            std::size_t,
+            typename mutable_value_type<Args,Tag>::type
+        > type;
     };
 }}
 

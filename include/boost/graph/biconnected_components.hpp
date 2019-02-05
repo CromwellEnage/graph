@@ -20,6 +20,13 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/mpl/has_key.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
@@ -190,7 +197,500 @@ namespace boost
 
     return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
   }
+  }
 
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::false_
+        >::type,
+        detail::make_size_t_value_pair<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (component_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_edge_property_map_of_graph
+            >
+          )
+        )
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+      )
+    )
+    (optional
+      (discover_time_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (lowpoint_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (predecessor_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_vertex_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (visitor
+        ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+        ,default_dfs_visitor()
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      component_map,
+      result,
+      get(vertex_index, graph),
+      discover_time_map,
+      lowpoint_map,
+      predecessor_map,
+      visitor
+    );
+  }
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::false_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        detail::make_size_t_value_pair<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (component_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_edge_property_map_of_graph
+            >
+          )
+        )
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,default_dfs_visitor()
+        )
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      component_map,
+      result,
+      vertex_index_map,
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        detail::get_null_vertex(graph),
+        vertex_index_map
+      ),
+      visitor
+    );
+  }
+
+  namespace graph_detail {
+    struct dummy_output_iterator
+    {
+      typedef std::output_iterator_tag iterator_category;
+      typedef void value_type;
+      typedef void pointer;
+      typedef void difference_type;
+
+      struct reference {
+        template<typename T>
+        reference& operator=(const T&) { return *this; }
+      };
+
+      reference operator*() const { return reference(); }
+      dummy_output_iterator& operator++() { return *this; }
+      dummy_output_iterator operator++(int) { return *this; }
+    };
+  } // end namespace graph_detail
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::true_
+        >::type,
+        std::size_t
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (component_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_edge_property_map_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (discover_time_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            num_vertices(graph) - num_vertices(graph),
+            get(vertex_index, graph)
+          )
+        )
+        (predecessor_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_vertex_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            detail::get_null_vertex(graph),
+            get(vertex_index, graph)
+          )
+        )
+        (visitor
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,default_dfs_visitor()
+        )
+      )
+    )
+    (optional
+      (lowpoint_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      component_map,
+      graph_detail::dummy_output_iterator(),
+      get(vertex_index, graph),
+      discover_time_map,
+      lowpoint_map,
+      predecessor_map,
+      visitor
+    ).first;
+  }
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::true_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        std::size_t
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (component_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_edge_property_map_of_graph
+            >
+          )
+        )
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,default_dfs_visitor()
+        )
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      component_map,
+      graph_detail::dummy_output_iterator(),
+      vertex_index_map,
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        detail::get_null_vertex(graph),
+        vertex_index_map
+      ),
+      visitor
+    ).first;
+  }
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::false_
+        >::type,
+        detail::mutable_value_type<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+      )
+      (optional
+        (discover_time_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            num_vertices(graph) - num_vertices(graph),
+            get(vertex_index, graph)
+          )
+        )
+        (predecessor_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_vertex_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            detail::get_null_vertex(graph),
+            get(vertex_index, graph)
+          )
+        )
+        (visitor
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,default_dfs_visitor()
+        )
+      )
+    )
+    (optional
+      (lowpoint_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      dummy_property_map(),
+      result,
+      get(vertex_index, graph),
+      discover_time_map,
+      lowpoint_map,
+      predecessor_map,
+      visitor
+    ).second;
+  }
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          typename detail::has_internal_vertex_index_map_impl<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >::type,
+          mpl::false_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        detail::mutable_value_type<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,default_dfs_visitor()
+        )
+      )
+    )
+  )
+  {
+    return detail::biconnected_components_impl(
+      graph,
+      dummy_property_map(),
+      result,
+      vertex_index_map,
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        num_vertices(graph) - num_vertices(graph),
+        vertex_index_map
+      ),
+      make_shared_array_property_map(
+        num_vertices(graph),
+        detail::get_null_vertex(graph),
+        vertex_index_map
+      ),
+      visitor
+    ).second;
+  }
+
+  namespace detail
+  {
     template <typename PredecessorMap>
     struct bicomp_dispatch3
     {
@@ -320,22 +820,6 @@ namespace boost
 
   }
 
-  template<typename Graph, typename ComponentMap, typename OutputIterator,
-      typename DiscoverTimeMap, typename LowPointMap>
-  std::pair<std::size_t, OutputIterator>
-  biconnected_components(const Graph& g, ComponentMap comp, 
-      OutputIterator out, DiscoverTimeMap dtm, LowPointMap lowpt)
-  {
-    typedef param_not_found dispatch_type;
-
-    return detail::bicomp_dispatch3<dispatch_type>::apply
-            (g, comp, out, 
-             get(vertex_index, g), 
-             dtm, lowpt, 
-             bgl_named_params<int, buffer_param_t>(0), 
-             param_not_found());
-  }
-
   template <typename Graph, typename ComponentMap, typename OutputIterator,
       typename P, typename T, typename R>
   std::pair<std::size_t, OutputIterator>
@@ -349,33 +833,6 @@ namespace boost
         params, get_param(params, vertex_discover_time));
   }
 
-  template < typename Graph, typename ComponentMap, typename OutputIterator>
-  std::pair<std::size_t, OutputIterator>
-  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
-  {
-    return biconnected_components(g, comp, out,  
-        bgl_named_params<int, buffer_param_t>(0));
-  }
-
-  namespace graph_detail {
-    struct dummy_output_iterator
-    {
-      typedef std::output_iterator_tag iterator_category;
-      typedef void value_type;
-      typedef void pointer;
-      typedef void difference_type;
-
-      struct reference {
-        template<typename T>
-        reference& operator=(const T&) { return *this; }
-      };
-
-      reference operator*() const { return reference(); }
-      dummy_output_iterator& operator++() { return *this; }
-      dummy_output_iterator operator++(int) { return *this; }
-    };
-  } // end namespace graph_detail
-
   template <typename Graph, typename ComponentMap,
       typename P, typename T, typename R>
   std::size_t
@@ -384,14 +841,6 @@ namespace boost
   {
     return biconnected_components(g, comp,
         graph_detail::dummy_output_iterator(), params).first;
-  }
-
-  template <typename Graph, typename ComponentMap>
-  std::size_t
-  biconnected_components(const Graph& g, ComponentMap comp)
-  {
-    return biconnected_components(g, comp,
-                                  graph_detail::dummy_output_iterator()).first;
   }
 
   template<typename Graph, typename OutputIterator, 
@@ -403,15 +852,6 @@ namespace boost
     return biconnected_components(g, dummy_property_map(), out, 
         params).second;
   }
-
-  template<typename Graph, typename OutputIterator>
-  OutputIterator
-  articulation_points(const Graph& g, OutputIterator out)
-  {
-    return biconnected_components(g, dummy_property_map(), out, 
-        bgl_named_params<int, buffer_param_t>(0)).second;
-  }
-
 }                               // namespace boost
 
 #endif  /* BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP */

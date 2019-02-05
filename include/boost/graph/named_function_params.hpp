@@ -346,9 +346,9 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     namespace keywords {
       BOOST_PARAMETER_NAME(graph)
       BOOST_PARAMETER_NAME(result)
-      BOOST_PARAMETER_NAME(sources_begin)
-      BOOST_PARAMETER_NAME(sources_end)
       BOOST_PARAMETER_NAME(terminator_function)
+      BOOST_PARAMETER_NAME(partition_map)
+      BOOST_PARAMETER_NAME(component_map)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS

@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -18,7 +17,8 @@
 using namespace std;
 using namespace boost;
 
-void generate_graph(int n, double p, vector< vector<int> >& r1)
+template <class Graph>
+void generate_graph(int n, double p, Graph& r1)
 {
   static class {
   public:
@@ -26,12 +26,12 @@ void generate_graph(int n, double p, vector< vector<int> >& r1)
       return double(rand())/RAND_MAX;
     }
   } gen;  
-  r1.clear();
-  r1.resize(n);
+  for (int i = 0; i < n; ++i)
+    add_vertex(r1);
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < n; ++j) 
       if (gen() < p)
-        r1[i].push_back(j);
+        add_edge(vertex(i, r1), vertex(j, r1), r1);
 }
 
 template <class Graph>
@@ -108,16 +108,14 @@ bool check_transitive_closure(Graph& g, GraphTC& tc)
 
 bool test(int n, double p)
 {
-  vector< vector<int> > g1, g1_tc;
+  adjacency_list<> g1, g1_tc;
   generate_graph(n, p, g1);
   cout << "Created graph with " << n << " vertices.\n";
-
-  vector< vector<int> > g1_c(g1);
 
   {
     progress_timer t;
     cout << "transitive_closure" << endl;
-    transitive_closure(g1, g1_tc, vertex_index_map(get(boost::vertex_index, g1)));
+    transitive_closure(g1, g1_tc);
   }
 
   if(check_transitive_closure(g1, g1_tc))
@@ -131,10 +129,11 @@ bool test(int n, double p)
   }
 }
 
+#include <boost/core/lightweight_test.hpp>
 
 int main()
 {
-  srand(time(0));
+  srand(static_cast<unsigned int>(time(0)));
   static class {
   public:
     double operator()() {
@@ -146,11 +145,8 @@ int main()
   for (size_t i = 0; i < 100; ++i) {
     int n = 0 + int(20*gen());
     double p = gen();
-    if (!test(n, p)) {
-      cout << "Failed." << endl;
-      return 1; 
-    }
+    BOOST_TEST(test(n, p));
   }
-  cout << "Passed." << endl;
+  return boost::report_errors();
 }
 

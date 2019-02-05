@@ -15,11 +15,17 @@
 #include <stack>
 #include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/type_traits/conversion_traits.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/mpl/has_key.hpp>
+#include <boost/type_traits/conversion_traits.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 
@@ -85,15 +91,15 @@ namespace boost {
     };
     
     template <class Graph, class ComponentMap, class RootMap,
-              class DiscoverTime, class P, class T, class R>
+              class DiscoverTime, class ColorMap>
     typename property_traits<ComponentMap>::value_type
     strong_components_impl
       (const Graph& g,    // Input
        ComponentMap comp, // Output
        // Internal record keeping
-       RootMap root, 
+       RootMap root,
        DiscoverTime discover_time,
-       const bgl_named_params<P, T, R>& params)
+       ColorMap color)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ComponentMap, Vertex> ));
@@ -108,116 +114,91 @@ namespace boost {
       detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
         std::stack<Vertex> > 
         vis(comp, root, discover_time, total, s);
-      depth_first_search(g, params.visitor(vis));
+      depth_first_search(g, vis, color);
       return total;
     }
-
-    //-------------------------------------------------------------------------
-    // The dispatch functions handle the defaults for the rank and discover
-    // time property maps.
-    // dispatch with class specialization to avoid VC++ bug
-
-    template <class DiscoverTimeMap>
-    struct strong_comp_dispatch2 {
-      template <class Graph, class ComponentMap, class RootMap, class P, class T, class R>
-      inline static typename property_traits<ComponentMap>::value_type
-      apply(const Graph& g,
-            ComponentMap comp,
-            RootMap r_map,
-            const bgl_named_params<P, T, R>& params,
-            DiscoverTimeMap time_map)
-      {
-        return strong_components_impl(g, comp, r_map, time_map, params);
-      }
-    };
-
-
-    template <>
-    struct strong_comp_dispatch2<param_not_found> {
-      template <class Graph, class ComponentMap, class RootMap,
-                class P, class T, class R>
-      inline static typename property_traits<ComponentMap>::value_type
-      apply(const Graph& g,
-            ComponentMap comp,
-            RootMap r_map,
-            const bgl_named_params<P, T, R>& params,
-            param_not_found)
-      {
-        typedef typename graph_traits<Graph>::vertices_size_type size_type;
-        size_type       n = num_vertices(g) > 0 ? num_vertices(g) : 1;
-        std::vector<size_type> time_vec(n);
-        return strong_components_impl
-          (g, comp, r_map,
-           make_iterator_property_map(time_vec.begin(), choose_const_pmap
-                                      (get_param(params, vertex_index),
-                                       g, vertex_index), time_vec[0]),
-           params);
-      }
-    };
-
-    template <class Graph, class ComponentMap, class RootMap,
-              class P, class T, class R, class DiscoverTimeMap>
-    inline typename property_traits<ComponentMap>::value_type
-    scc_helper2(const Graph& g,
-                ComponentMap comp,
-                RootMap r_map,
-                const bgl_named_params<P, T, R>& params,
-                DiscoverTimeMap time_map)
-    {
-      return strong_comp_dispatch2<DiscoverTimeMap>::apply(g, comp, r_map, params, time_map);
-    }
-
-    template <class RootMap>
-    struct strong_comp_dispatch1 {
-
-      template <class Graph, class ComponentMap, class P, class T, class R>
-      inline static typename property_traits<ComponentMap>::value_type
-      apply(const Graph& g,
-            ComponentMap comp,
-            const bgl_named_params<P, T, R>& params,
-            RootMap r_map)
-      {
-        return scc_helper2(g, comp, r_map, params, get_param(params, vertex_discover_time));
-      }
-    };
-    template <>
-    struct strong_comp_dispatch1<param_not_found> {
-
-      template <class Graph, class ComponentMap, 
-                class P, class T, class R>
-      inline static typename property_traits<ComponentMap>::value_type
-      apply(const Graph& g,
-            ComponentMap comp,
-            const bgl_named_params<P, T, R>& params,
-            param_not_found)
-      {
-        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-        typename std::vector<Vertex>::size_type
-          n = num_vertices(g) > 0 ? num_vertices(g) : 1;
-        std::vector<Vertex> root_vec(n);
-        return scc_helper2
-          (g, comp, 
-           make_iterator_property_map(root_vec.begin(), choose_const_pmap
-                                      (get_param(params, vertex_index),
-                                       g, vertex_index), root_vec[0]),
-           params, 
-           get_param(params, vertex_discover_time));
-      }
-    };
-
-    template <class Graph, class ComponentMap, class RootMap,
-              class P, class T, class R>
-    inline typename property_traits<ComponentMap>::value_type
-    scc_helper1(const Graph& g,
-               ComponentMap comp,
-               const bgl_named_params<P, T, R>& params,
-               RootMap r_map)
-    {
-      return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
-                                                           r_map);
-    }
-
   } // namespace detail 
+
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::has_key<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >::type,
+        detail::property_map_value<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >
+      >
+    ), strong_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (component_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_property_map_of_graph
+          >
+        )
+      )
+    )
+    (optional
+      (vertex_index_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,detail::vertex_index_map_or_dummy_property_map(graph)
+      )
+      (root_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_vertex_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          vertex_index_map
+        )
+      )
+      (discover_time_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          vertex_index_map
+        )
+      )
+      (color_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_color_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+      )
+    )
+  )
+  {
+    typedef typename graph_traits<
+      typename boost::remove_const<
+        typename boost::remove_reference<graph_type>::type
+      >::type
+    >::directed_category DirCat;
+    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+    return detail::strong_components_impl(graph, component_map, root_map,
+                                          discover_time_map, color_map);
+  }
 
   template <class Graph, class ComponentMap, 
             class P, class T, class R>
@@ -228,19 +209,45 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    return detail::scc_helper1(g, comp, params, 
-                               get_param(params, vertex_root_t()));
-  }
-
-  template <class Graph, class ComponentMap>
-  inline typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g, ComponentMap comp
-                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
-  {
-    typedef typename graph_traits<Graph>::directed_category DirCat;
-    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    bgl_named_params<int, int> params(0);
-    return strong_components(g, comp, params);
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    return detail::strong_components_impl(
+      g,
+      comp,
+      boost::graph::keywords::_root_map = arg_pack[
+        boost::graph::keywords::_root_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          graph_traits<Graph>::null_vertex(),
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ],
+      boost::graph::keywords::_discover_time_map = arg_pack[
+        boost::graph::keywords::_discover_time_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          typename graph_traits<Graph>::vertices_size_type(),
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ],
+      boost::graph::keywords::_color_map = arg_pack[
+        boost::graph::keywords::_color_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          white_color,
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ]
+    );
   }
 
   template <typename Graph, typename ComponentMap, typename ComponentLists>

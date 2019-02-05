@@ -76,7 +76,7 @@ int main(int, char*[])
   print_graph(G);
 
   std::vector<default_color_type> color(num_vertices(G));
-  depth_first_search(G, visitor(TalkativeVisitor<Graph>()));
+  depth_first_search(G, TalkativeVisitor<Graph>());
 
   return 0;
 }

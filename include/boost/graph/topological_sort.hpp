@@ -72,7 +72,7 @@ namespace boost {
         (vertex_index_map
           ,*(
             detail::argument_with_graph_predicate<
-              detail::is_vertex_index_map_of_graph
+              detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,detail::vertex_index_map_or_dummy_property_map(graph)

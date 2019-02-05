@@ -90,17 +90,17 @@ main(int, char*[])
   std::vector<size_type> f(num_vertices(G));
 
   cout << "DFS categorized directed graph" << endl;
-  depth_first_search(G, visitor(make_dfs_visitor(
+  depth_first_search(G, make_dfs_visitor(
       make_list(print_edge("tree", on_tree_edge()),
                 print_edge("back", on_back_edge()),
                 print_edge("forward or cross", on_forward_or_cross_edge())
-                ))));
+                )));
 
   cout << endl << "BFS categorized directed graph" << endl;
   boost::breadth_first_search
-    (G, vertex(0, G), visitor(make_bfs_visitor(
+    (G, vertex(0, G), make_bfs_visitor(
      std::make_pair(print_edge("tree", on_tree_edge()),
-                    print_edge("cycle", on_non_tree_edge())))));
+                    print_edge("cycle", on_non_tree_edge()))));
 
   return 0;
 }

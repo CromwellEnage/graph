@@ -344,18 +344,16 @@ namespace boost { namespace detail {
                     is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
                     _check_back_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
                   ) == sizeof(graph_yes_tag),
-                  mpl::eval_if_c<
+                  mpl::if_c<
                     sizeof(
                       is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
                       _check_forc_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
                     ) == sizeof(graph_yes_tag),
-                    mpl::if_c<
+                    mpl::bool_<
                       sizeof(
                         is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
                         _check_end_v<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-                      ) == sizeof(graph_yes_tag),
-                      mpl::true_,
-                      mpl::false_
+                      ) == sizeof(graph_yes_tag)
                     >,
                     mpl::false_
                   >,
@@ -691,7 +689,7 @@ namespace boost {
         (vertex_index_map
           ,*(
             detail::argument_with_graph_predicate<
-              detail::is_vertex_index_map_of_graph
+              detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,detail::vertex_index_map_or_dummy_property_map(graph)

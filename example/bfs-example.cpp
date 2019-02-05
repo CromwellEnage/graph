@@ -66,7 +66,7 @@ main()
 
   Size time = 0;
   bfs_time_visitor < dtime_pm_type >vis(dtime_pm, time);
-  breadth_first_search(g, vertex(s, g), visitor(vis));
+  breadth_first_search(g, vertex(s, g), vis);
 
   // Use std::sort to order the vertices by their discover time
   std::vector<graph_traits<graph_t>::vertices_size_type > discover_order(N);

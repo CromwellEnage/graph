@@ -101,7 +101,7 @@ namespace boost {
             BOOST_GRAPH_PULL_OPT_MEMBER(degree_size_type)
 #undef BOOST_GRAPH_PULL_OPT_MEMBER
 
-            static inline vertex_descriptor null_vertex();
+            static vertex_descriptor null_vertex();
         };
 
         template <typename G>
@@ -109,7 +109,6 @@ namespace boost {
         graph_traits_impl<G>::null_vertex()
         { return G::null_vertex(); }
 
-        template <typename G>
         struct graph_traits_no_impl { };
     }
 
@@ -121,7 +120,7 @@ namespace boost {
         : mpl::if_<
             detail::has_graph_typedefs<G>,
             detail::graph_traits_impl<G>,
-            detail::graph_traits_no_impl<G>
+            detail::graph_traits_no_impl
         >::type
     { };
 
@@ -281,7 +280,7 @@ namespace boost {
             : mpl::bool_<
                 is_convertible<
                     typename graph_traits<Graph>::traversal_category,
-                    vertex_list_graph_tag
+                    edge_list_graph_tag
                 >::value
             >
         { };

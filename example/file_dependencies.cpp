@@ -156,7 +156,7 @@ int main(int,char*[])
   {
     cout << "A change to yow.h will cause what to be re-made?" << endl;
     print_visitor vis;
-    breadth_first_search(g, vertex(yow_h, g), visitor(vis));
+    breadth_first_search(g, vertex(yow_h, g), vis);
     cout << endl;
   }
   cout << endl;
@@ -165,7 +165,7 @@ int main(int,char*[])
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, visitor(vis));
+    depth_first_search(g, vis);
     cout << "The graph has a cycle? " << has_cycle << endl;
   }
   cout << endl;
@@ -181,7 +181,7 @@ int main(int,char*[])
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, visitor(vis));
+    depth_first_search(g, vis);
     cout << "The graph has a cycle now? " << has_cycle << endl;
   }
 

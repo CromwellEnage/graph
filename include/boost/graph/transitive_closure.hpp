@@ -17,8 +17,12 @@
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/concept/assert.hpp>
 
 namespace boost
@@ -26,10 +30,11 @@ namespace boost
 
   namespace detail
   {
+    template <typename T>
     inline void
-      union_successor_sets(const std::vector < std::size_t > &s1,
-                           const std::vector < std::size_t > &s2,
-                           std::vector < std::size_t > &s3)
+      union_successor_sets(const std::vector < T > &s1,
+                           const std::vector < T > &s2,
+                           std::vector < T > &s3)
     {
       BOOST_USING_STD_MIN();
       for (std::size_t k = 0; k < s1.size(); ++k)
@@ -62,15 +67,47 @@ namespace boost
     }
   }                             // namespace detail
 
-  template < typename Graph, typename GraphTC,
-    typename G_to_TC_VertexMap,
-    typename VertexIndexMap >
-    void transitive_closure(const Graph & g, GraphTC & tc,
-                            G_to_TC_VertexMap g_to_tc_map,
-                            VertexIndexMap index_map)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), transitive_closure, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<is_graph>))
+      )
+      (optional
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+        (orig_to_copy
+          ,*(detail::orig_to_copy_vertex_map_predicate)
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            detail::get_null_vertex(result),
+            vertex_index_map
+          )
+        )
+      )
+    )
+  )
   {
-    if (num_vertices(g) == 0)
-      return;
+    if (num_vertices(graph) == 0)
+      return true;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<graph_type>::type
+    >::type Graph;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<result_type>::type
+    >::type GraphTC;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<vertex_index_map_type>::type
+    >::type VertexIndexMap;
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
     typedef typename graph_traits < Graph >::vertex_iterator vertex_iterator;
     typedef typename property_traits < VertexIndexMap >::value_type size_type;
@@ -85,15 +122,18 @@ namespace boost
       vertex > ));
 
     typedef size_type cg_vertex;
-    std::vector < cg_vertex > component_number_vec(num_vertices(g));
-    iterator_property_map < cg_vertex *, VertexIndexMap, cg_vertex, cg_vertex& >
-      component_number(&component_number_vec[0], index_map);
+    std::vector<cg_vertex> component_number_vec(num_vertices(graph));
+    iterator_property_map<
+      typename std::vector<cg_vertex>::iterator,
+      VertexIndexMap,
+      cg_vertex,
+      cg_vertex&
+    > component_number(component_number_vec.begin(), vertex_index_map);
 
-    int num_scc = strong_components(g, component_number,
-                                    vertex_index_map(index_map));
+    size_type num_scc = strong_components(graph, component_number, vertex_index_map);
 
     std::vector < std::vector < vertex > >components;
-    build_component_lists(g, num_scc, component_number, components);
+    build_component_lists(graph, num_scc, component_number, components);
 
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS> CG_t;
     CG_t CG(num_scc);
@@ -102,7 +142,7 @@ namespace boost
       for (size_type i = 0; i < components[s].size(); ++i) {
         vertex u = components[s][i];
         adjacency_iterator v, v_end;
-        for (boost::tie(v, v_end) = adjacent_vertices(u, g); v != v_end; ++v) {
+        for (boost::tie(v, v_end) = adjacent_vertices(u, graph); v != v_end; ++v) {
           cg_vertex t = component_number[*v];
           if (s != t)           // Avoid loops in the condensation graph
             adj.push_back(t);
@@ -122,7 +162,7 @@ namespace boost
     std::vector<cg_vertex> topo_order;
     std::vector<cg_vertex> topo_number(num_vertices(CG));
     topological_sort(CG, std::back_inserter(topo_order),
-                     vertex_index_map(identity_property_map()));
+                     identity_property_map());
     std::reverse(topo_order.begin(), topo_order.end());
     size_type n = 0;
     for (typename std::vector<cg_vertex>::iterator iter = topo_order.begin();
@@ -210,8 +250,8 @@ namespace boost
     // Add vertices to the transitive closure graph
     {
       vertex_iterator i, i_end;
-      for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
-        g_to_tc_map[*i] = add_vertex(tc);
+      for (boost::tie(i, i_end) = vertices(graph); i != i_end; ++i)
+        orig_to_copy[*i] = add_vertex(result);
     }
     // Add edges between all the vertices in two adjacent SCCs
     typename std::vector<std::vector<cg_vertex> >::const_iterator si, si_end;
@@ -222,8 +262,8 @@ namespace boost
         cg_vertex t = *i;
         for (size_type k = 0; k < components[s].size(); ++k)
           for (size_type l = 0; l < components[t].size(); ++l)
-            add_edge(g_to_tc_map[components[s][k]],
-                     g_to_tc_map[components[t][l]], tc);
+            add_edge(orig_to_copy[components[s][k]],
+                     orig_to_copy[components[t][l]], result);
       }
     }
     // Add edges connecting all vertices in a SCC
@@ -232,41 +272,26 @@ namespace boost
         for (size_type k = 0; k < components[i].size(); ++k)
           for (size_type l = 0; l < components[i].size(); ++l) {
             vertex u = components[i][k], v = components[i][l];
-            add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
+            add_edge(orig_to_copy[u], orig_to_copy[v], result);
           }
 
     // Find loopbacks in the original graph.
     // Need to add it to transitive closure.
     {
       vertex_iterator i, i_end;
-      for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
+      for (boost::tie(i, i_end) = vertices(graph); i != i_end; ++i)
         {
           adjacency_iterator ab, ae;
-          for (boost::tie(ab, ae) = adjacent_vertices(*i, g); ab != ae; ++ab)
+          for (boost::tie(ab, ae) = adjacent_vertices(*i, graph); ab != ae; ++ab)
             {
               if (*ab == *i)
                 if (components[component_number[*i]].size() == 1)
-                  add_edge(g_to_tc_map[*i], g_to_tc_map[*i], tc);
+                  add_edge(orig_to_copy[*i], orig_to_copy[*i], result);
             }
         }
     }
-  }
 
-  template <typename Graph, typename GraphTC>
-  void transitive_closure(const Graph & g, GraphTC & tc)
-  {
-    if (num_vertices(g) == 0)
-      return;
-    typedef typename property_map<Graph, vertex_index_t>::const_type
-      VertexIndexMap;
-    VertexIndexMap index_map = get(vertex_index, g);
-
-    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
-    std::vector<tc_vertex> to_tc_vec(num_vertices(g));
-    iterator_property_map < tc_vertex *, VertexIndexMap, tc_vertex, tc_vertex&>
-      g_to_tc_map(&to_tc_vec[0], index_map);
-
-    transitive_closure(g, tc, g_to_tc_map, index_map);
+    return true;
   }
 
   namespace detail

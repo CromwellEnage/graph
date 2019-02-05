@@ -818,7 +818,7 @@ namespace boost
 
       v_size_t num_odd_components;
       detail::odd_components_counter<v_size_t> occ(num_odd_components);
-      depth_first_search(fg, visitor(occ).vertex_index_map(vm));
+      depth_first_search(fg, acc, vm);
 
       if (2 * matching_size(g,mate,vm) == num_vertices(g) + num_odd_vertices - num_odd_components)
         return true;

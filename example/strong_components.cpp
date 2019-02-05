@@ -60,9 +60,9 @@ int main(int, char*[])
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
   int num = strong_components(G, make_iterator_property_map(component.begin(), get(vertex_index, G)), 
-                              root_map(make_iterator_property_map(root.begin(), get(vertex_index, G))).
-                              color_map(make_iterator_property_map(color.begin(), get(vertex_index, G))).
-                              discover_time_map(make_iterator_property_map(discover_time.begin(), get(vertex_index, G))));
+	_root_map = make_iterator_property_map(root.begin(), get(vertex_index, G)),
+	_color_map = make_iterator_property_map(color.begin(), get(vertex_index, G)),
+	_discover_time_map = make_iterator_property_map(discover_time.begin(), get(vertex_index, G)));
     
   std::cout << "Total number of components: " << num << std::endl;
   std::vector<int>::size_type i;
