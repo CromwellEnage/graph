@@ -269,7 +269,13 @@ namespace boost {
       bfs_vis(h, vis, Q, predecessor, cost, distance, weight,
               color, combine, compare, zero);
 
-    breadth_first_visit(g, s, Q, bfs_vis, color);
+    breadth_first_visit(
+      g,
+      s,
+      boost::graph::keywords::_buffer = Q,
+      boost::graph::keywords::_visitor = bfs_vis,
+      boost::graph::keywords::_color_map = color
+    );
   }
 
   namespace graph_detail {

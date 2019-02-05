@@ -641,13 +641,15 @@ namespace boost { namespace detail {
                 typename boost::remove_const<T>::type
             >::type,
             mpl::eval_if<
-                has_member_function_push<T>,
-                mpl::eval_if<
 #endif
-                    has_const_member_function_empty<T>,
+                has_member_function_top<T>,
+#if !defined(BOOST_NO_CXX11_DECLTYPE)
+                mpl::eval_if<
+                    has_member_function_push<T>,
+#endif
                     mpl::if_<
+                        has_const_member_function_empty<T>,
                         has_const_member_function_size<T>,
-                        has_member_function_top<T>,
                         mpl::false_
                     >,
                     mpl::false_
