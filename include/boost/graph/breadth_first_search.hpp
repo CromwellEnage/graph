@@ -642,8 +642,22 @@ namespace boost {
         typename boost::remove_reference<graph_type>::type
       >::type
     >::vertex_descriptor sources[1] = {root_vertex};
-    breadth_first_visit(graph, sources, sources + 1, buffer, visitor,
-                        color_map);
+    breadth_first_visit(
+      graph,
+      sources,
+      sources + 1,
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+      buffer,
+#else
+      const_cast<
+        typename boost::remove_const<
+          typename boost::remove_reference<buffer_type>::type
+        >::type&
+      >(buffer),
+#endif
+      visitor,
+      color_map
+    );
     return true;
   }
 
@@ -720,8 +734,22 @@ namespace boost {
         typename boost::remove_reference<graph_type>::type
       >::type
     >::vertex_descriptor sources[1] = {root_vertex};
-    breadth_first_search(graph, sources, sources + 1, buffer, visitor,
-                         color_map);
+    breadth_first_search(
+      graph,
+      sources,
+      sources + 1,
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+      buffer,
+#else
+      const_cast<
+        typename boost::remove_const<
+          typename boost::remove_reference<buffer_type>::type
+        >::type&
+      >(buffer),
+#endif
+      visitor,
+      color_map
+    );
     return true;
   }
 
