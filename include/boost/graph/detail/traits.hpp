@@ -209,6 +209,7 @@ namespace boost { namespace detail {
         > type;
     };
 
+#if !defined(BOOST_NO_CXX11_DECLTYPE)
     template <typename T>
     class has_member_function_pop_expr
     {
@@ -216,11 +217,7 @@ namespace boost { namespace detail {
         static graph_yes_tag
             _check(
                 typename boost::add_pointer<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL(boost::detail::declref<B>().pop())
-#else
                     decltype(boost::detail::declref<B>().pop())
-#endif
                 >::type
             );
 
@@ -243,19 +240,11 @@ namespace boost { namespace detail {
         static graph_yes_tag
             _check(
                 typename boost::add_pointer<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL(
-                        boost::detail::declref<B>().push(
-                            boost::detail::declcref<typename B::value_type>()
-                        )
-                    )
-#else
                     decltype(
                         boost::detail::declref<B>().push(
                             boost::detail::declcref<typename B::value_type>()
                         )
                     )
-#endif
                 >::type
             );
 
@@ -270,6 +259,7 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE)
 }}
 
 #include <boost/mpl/if.hpp>
@@ -633,6 +623,7 @@ namespace boost { namespace detail {
     {
     };
 
+#if !defined(BOOST_NO_CXX11_DECLTYPE)
     template <typename T>
     struct has_member_function_push
         : has_member_function_push_expr<
@@ -640,27 +631,32 @@ namespace boost { namespace detail {
         >::type
     {
     };
+#endif
 
     template <typename T>
     struct is_buffer
         : mpl::eval_if<
+#if !defined(BOOST_NO_CXX11_DECLTYPE)
             typename has_member_function_pop_expr<
                 typename boost::remove_const<T>::type
             >::type,
             mpl::eval_if<
-                has_const_member_function_empty<T>,
+                has_member_function_push<T>,
                 mpl::eval_if<
-                    has_const_member_function_size<T>,
+#endif
+                    has_const_member_function_empty<T>,
                     mpl::if_<
+                        has_const_member_function_size<T>,
                         has_member_function_top<T>,
-                        has_member_function_push<T>,
                         mpl::false_
                     >,
                     mpl::false_
+#if !defined(BOOST_NO_CXX11_DECLTYPE)
                 >,
                 mpl::false_
             >,
             mpl::false_
+#endif
         >::type
     {
     };
