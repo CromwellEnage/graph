@@ -8,9 +8,10 @@
 
 #include <boost/config.hpp>
 #include <iostream>
-#include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+
+bool is_called = false;
 
 template<typename graph_t>
 struct TalkativeVisitor
@@ -46,6 +47,7 @@ struct TalkativeVisitor
   // }
   void finish_edge(edge_descriptor u, const graph_t&) { // uncalled!
       std::cout << "finish_edge: " << u << std::endl;
+      is_called = true;
   }
 };
 
@@ -54,6 +56,7 @@ std::ostream &operator<<(std::ostream &os, const std::pair<t,t> &x) {
   return os << "(" << x.first << ", " << x.second << ")";
 }
 
+#include <boost/core/lightweight_test.hpp>
 
 int main(int, char*[])
 {
@@ -75,8 +78,8 @@ int main(int, char*[])
   std::cout << "The example graph:" << std::endl;
   print_graph(G);
 
-  std::vector<default_color_type> color(num_vertices(G));
   depth_first_search(G, TalkativeVisitor<Graph>());
+  BOOST_TEST(is_called);
 
-  return 0;
+  return boost::report_errors();
 }
