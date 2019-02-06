@@ -974,7 +974,7 @@ namespace boost { namespace detail {
                 has_internal_vertex_index_map_impl<G>,
                 mpl::eval_if<
                     has_container_typedefs<G>, // for vector_as_graph
-                    has_internal_vertex_index_map_dispatch<G>,
+                    has_internal_vertex_index_map_impl<G>,
                     mpl::eval_if<
                         graph_detail::has_graph_type<G>, // for adaptors
                         has_internal_vertex_index_map_dispatch<G>,
