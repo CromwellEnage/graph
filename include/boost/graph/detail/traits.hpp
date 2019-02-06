@@ -518,6 +518,17 @@ namespace boost { namespace detail {
 namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(const_reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(is_rand_access)
+}}
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    struct has_random_access_vertex_list_impl
+    {
+        typedef typename G::is_rand_access type;
+    };
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -942,6 +953,39 @@ namespace boost { namespace detail {
         > type;
     };
 
+    // TODO:
+    // Implement a more robust check. -- Cromwell D. Enage
+    template <typename G>
+    struct has_internal_vertex_index_map;
+
+    template <typename G>
+    struct has_internal_vertex_index_map_dispatch
+    {
+        typedef has_internal_vertex_index_map<typename G::graph_type> type;
+    };
+
+    template <typename G>
+    struct has_internal_vertex_index_map
+        : mpl::eval_if<
+            graph_detail::has_is_rand_access<G>,  // for adjacency_list
+            has_random_access_vertex_list_impl<G>,
+            mpl::eval_if<
+                is_adjacency_matrix<G>,  // for adjacency_matrix
+                has_internal_vertex_index_map_impl<G>,
+                mpl::eval_if<
+                    has_container_typedefs<G>, // for vector_as_graph
+                    has_internal_vertex_index_map_dispatch<G>,
+                    mpl::eval_if<
+                        graph_detail::has_graph_type<G>, // for adaptors
+                        has_internal_vertex_index_map_dispatch<G>,
+                        mpl::false_
+                    >
+                >
+            >
+        >::type
+    {
+    };
+
     // Several graph algorithms either require a vertex color map or require a
     // vertex index map with which to build a default vertex color map.  This
     // function allows those algorithms to not require the input graph to hold
@@ -949,14 +993,14 @@ namespace boost { namespace detail {
     // -- Cromwell D. Enage
     template <typename G>
     inline typename mpl::eval_if<
-        typename has_internal_vertex_index_map_impl<G>::type,
+        has_internal_vertex_index_map<G>,
         choose_vertex_index_map<G>,
         choose_dummy_property_map<G>
     >::type
         vertex_index_map_or_dummy_property_map(const G& g)
     {
         typedef typename mpl::if_<
-            typename has_internal_vertex_index_map_impl<G>::type,
+            has_internal_vertex_index_map<G>,
             choose_vertex_index_map<G>,
             choose_dummy_property_map<G>
         >::type impl;
