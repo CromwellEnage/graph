@@ -903,7 +903,10 @@ namespace boost { namespace detail {
     };
 }}
 
-#include <boost/graph/detail/adjacency_list.hpp>
+namespace boost {
+
+    struct vec_adj_list_tag;
+}
 
 namespace boost { namespace detail {
 
