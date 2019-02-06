@@ -209,7 +209,7 @@ namespace boost { namespace detail {
         > type;
     };
 
-#if !defined(BOOST_NO_CXX11_DECLTYPE)
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
     template <typename T>
     class has_member_function_pop_expr
     {
@@ -217,7 +217,11 @@ namespace boost { namespace detail {
         static graph_yes_tag
             _check(
                 typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD(boost::detail::declref<B>().pop())
+#else
                     decltype(boost::detail::declref<B>().pop())
+#endif
                 >::type
             );
 
@@ -240,11 +244,19 @@ namespace boost { namespace detail {
         static graph_yes_tag
             _check(
                 typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD(
+                        boost::detail::declref<B>().push(
+                            boost::detail::declcref<typename B::value_type>()
+                        )
+                    )
+#else
                     decltype(
                         boost::detail::declref<B>().push(
                             boost::detail::declcref<typename B::value_type>()
                         )
                     )
+#endif
                 >::type
             );
 
@@ -259,7 +271,7 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
-#endif  // !defined(BOOST_NO_CXX11_DECLTYPE)
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 
 #include <boost/mpl/if.hpp>
@@ -623,7 +635,7 @@ namespace boost { namespace detail {
     {
     };
 
-#if !defined(BOOST_NO_CXX11_DECLTYPE)
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
     template <typename T>
     struct has_member_function_push
         : has_member_function_push_expr<
@@ -636,14 +648,14 @@ namespace boost { namespace detail {
     template <typename T>
     struct is_buffer
         : mpl::eval_if<
-#if !defined(BOOST_NO_CXX11_DECLTYPE)
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
             typename has_member_function_pop_expr<
                 typename boost::remove_const<T>::type
             >::type,
             mpl::eval_if<
 #endif
                 has_member_function_top<T>,
-#if !defined(BOOST_NO_CXX11_DECLTYPE)
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
                 mpl::eval_if<
                     has_member_function_push<T>,
 #endif
@@ -653,7 +665,7 @@ namespace boost { namespace detail {
                         mpl::false_
                     >,
                     mpl::false_
-#if !defined(BOOST_NO_CXX11_DECLTYPE)
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
                 >,
                 mpl::false_
             >,
@@ -1008,6 +1020,84 @@ namespace boost { namespace detail {
             > type;
         };
     };
+}}
+
+#include <boost/mpl/quote.hpp>
+
+namespace boost { namespace detail {
+
+    struct binary_function_graph_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef is_binary_function<
+                typename boost::remove_reference<Arg>::type,
+                typename boost::remove_const<
+                    typename boost::parameter::value_type<
+                        ArgPack,
+                        boost::graph::keywords::tag::root_vertex
+                    >::type
+                >::type,
+                typename boost::remove_const<
+                    typename boost::parameter::value_type<
+                        ArgPack,
+                        boost::graph::keywords::tag::graph
+                    >::type
+                >::type,
+                mpl::quote1<is_boolean_expression>
+            > type;
+        };
+    };
+
+#if defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
+    // Without decltype() or BOOST_TYPEOF_KEYWORD(), we can detect a
+    // Visitor model only by what it isn't rather than by what it is.
+    // -- Cromwell D. Enage
+    template <typename T, typename G>
+    struct is_visitor_impl
+        : mpl::eval_if<
+            is_vertex_of_graph<T,G>,
+            mpl::false_,
+            mpl::eval_if<
+                is_vertex_property_map_of_graph<T,G>,
+                mpl::false_,
+                mpl::eval_if<
+                    is_edge_property_map_of_graph<T,G>,
+                    mpl::false_,
+                    mpl::if_<is_buffer<T>,mpl::false_,mpl::true_>
+                >
+            >
+        >::type
+    {
+    };
+}}
+
+#include <boost/mpl/apply_wrap.hpp>
+
+namespace boost { namespace detail {
+
+    struct visitor_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef typename mpl::eval_if<
+                typename mpl::apply_wrap2<
+                    binary_function_graph_predicate,
+                    Arg,
+                    ArgPack
+                >::type,
+                mpl::false_,
+                mpl::apply_wrap2<
+                    argument_with_graph_predicate<is_visitor_impl>
+                    Arg,
+                    ArgPack
+                >
+            >::type type;
+        };
+    };
+#endif  // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
 }}
 
 #include <cstddef>

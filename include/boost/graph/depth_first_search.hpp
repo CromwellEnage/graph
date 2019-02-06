@@ -25,6 +25,7 @@
 #include <boost/typeof/typeof.hpp>
 #endif
 
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 namespace boost { namespace detail {
 
     template <typename T, typename G>
@@ -37,7 +38,7 @@ namespace boost { namespace detail {
             _check(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().finish_edge(
                             boost::declval<
                                 typename graph_traits<P>::edge_descriptor
@@ -70,12 +71,14 @@ namespace boost { namespace detail {
         > type;
     };
 }}
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
 
 namespace boost { namespace detail {
 
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
     template <typename T, typename G>
     class is_dfs_visitor_impl
     {
@@ -86,7 +89,7 @@ namespace boost { namespace detail {
             _check_init_v(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().initialize_vertex(
                             boost::declval<
                                 typename graph_traits<P>::vertex_descriptor
@@ -115,7 +118,7 @@ namespace boost { namespace detail {
             _check_start_v(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().start_vertex(
                             boost::declval<
                                 typename graph_traits<P>::vertex_descriptor
@@ -144,7 +147,7 @@ namespace boost { namespace detail {
             _check_disc_v(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().discover_vertex(
                             boost::declval<
                                 typename graph_traits<P>::vertex_descriptor
@@ -173,7 +176,7 @@ namespace boost { namespace detail {
             _check_exam_e(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().examine_edge(
                             boost::declval<
                                 typename graph_traits<P>::edge_descriptor
@@ -202,7 +205,7 @@ namespace boost { namespace detail {
             _check_tree_e(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().tree_edge(
                             boost::declval<
                                 typename graph_traits<P>::edge_descriptor
@@ -231,7 +234,7 @@ namespace boost { namespace detail {
             _check_back_e(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().back_edge(
                             boost::declval<
                                 typename graph_traits<P>::edge_descriptor
@@ -260,7 +263,7 @@ namespace boost { namespace detail {
             _check_forc_e(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().forward_or_cross_edge(
                             boost::declval<
                                 typename graph_traits<P>::edge_descriptor
@@ -289,7 +292,7 @@ namespace boost { namespace detail {
             _check_end_v(
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
+                    BOOST_TYPEOF_KEYWORD((
                         boost::detail::declref<B>().finish_vertex(
                             boost::declval<
                                 typename graph_traits<P>::vertex_descriptor
@@ -388,38 +391,20 @@ namespace boost { namespace detail {
         mpl::false_
       >::type
     { };
+
+    typedef argument_with_graph_predicate<
+      is_dfs_visitor
+    > dfs_visitor_predicate;
+#else   // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
+    typedef visitor_predicate dfs_visitor_predicate;
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 
 #include <boost/graph/named_function_params.hpp>
 #include <boost/parameter.hpp>
-#include <boost/mpl/quote.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 
 namespace boost { namespace detail {
-
-    struct binary_function_graph_predicate
-    {
-        template <typename Arg, typename ArgPack>
-        struct apply
-        {
-            typedef is_binary_function<
-                typename boost::remove_reference<Arg>::type,
-                typename boost::remove_const<
-                    typename boost::parameter::value_type<
-                        ArgPack,
-                        boost::graph::keywords::tag::root_vertex
-                    >::type
-                >::type,
-                typename boost::remove_const<
-                    typename boost::parameter::value_type<
-                        ArgPack,
-                        boost::graph::keywords::tag::graph
-                    >::type
-                >::type,
-                mpl::quote1<is_boolean_expression>
-            > type;
-        };
-    };
 }}
 
 #include <boost/graph/graph_concepts.hpp>
@@ -480,7 +465,11 @@ namespace boost {
     template <typename E, typename G, typename Vis>
     void call_finish_edge(Vis& vis, E e, const G& g) { // Only call if method exists
       do_call_finish_edge<
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
         is_dfs_visitor_with_finish_edge<Vis,G>::value
+#else
+        false
+#endif
       >::call_finish_edge(vis, e, g);
     }
 
@@ -707,7 +696,7 @@ namespace boost {
           )
         )
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(detail::dfs_visitor_predicate)
           ,default_dfs_visitor()
         )
         (root_vertex
@@ -807,9 +796,7 @@ namespace boost {
             >
           )
         )
-        (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
-        )
+        (visitor, *(detail::dfs_visitor_predicate))
         (color_map
           ,*(
             detail::argument_with_graph_predicate<
