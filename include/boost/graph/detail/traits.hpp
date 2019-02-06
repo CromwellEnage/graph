@@ -519,16 +519,7 @@ namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(const_reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(is_rand_access)
-}}
-
-namespace boost { namespace detail {
-
-    template <typename G>
-    struct has_random_access_vertex_list_impl
-    {
-        typedef typename G::is_rand_access type;
-    };
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_tag)
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -912,6 +903,17 @@ namespace boost { namespace detail {
     };
 }}
 
+#include <boost/graph/detail/adjacency_list.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    struct has_vec_adj_list_graph_tag
+        : boost::is_same<typename G::graph_tag,vec_adj_list_tag>
+    {
+    };
+}}
+
 #include <boost/graph/named_function_params.hpp>
 
 namespace boost { namespace detail {
@@ -959,16 +961,20 @@ namespace boost { namespace detail {
     struct has_internal_vertex_index_map;
 
     template <typename G>
-    struct has_internal_vertex_index_map_dispatch
+    struct has_graph_type_with_internal_vertex_index_map
     {
-        typedef has_internal_vertex_index_map<typename G::graph_type> type;
+        typedef typename mpl::if_<
+            boost::is_same<typename G::graph_type,G>,
+            mpl::false_,
+            has_internal_vertex_index_map<typename G::graph_type>
+        >::type type;
     };
 
     template <typename G>
     struct has_internal_vertex_index_map
         : mpl::eval_if<
-            graph_detail::has_is_rand_access<G>,  // for adjacency_list
-            has_random_access_vertex_list_impl<G>,
+            graph_detail::has_graph_tag<G>,  // for adjacency_list
+            has_vec_adj_list_graph_tag<G>,
             mpl::eval_if<
                 is_adjacency_matrix<G>,  // for adjacency_matrix
                 has_internal_vertex_index_map_impl<G>,
@@ -977,7 +983,7 @@ namespace boost { namespace detail {
                     has_internal_vertex_index_map_impl<G>,
                     mpl::eval_if<
                         graph_detail::has_graph_type<G>, // for adaptors
-                        has_internal_vertex_index_map_dispatch<G>,
+                        has_graph_type_with_internal_vertex_index_map<G>,
                         mpl::false_
                     >
                 >
