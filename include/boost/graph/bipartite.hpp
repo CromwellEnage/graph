@@ -288,6 +288,7 @@ namespace boost {
    * @return The final iterator value after writing.
    */
 
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -418,6 +419,133 @@ namespace boost {
 
     return result;
   }
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  template <typename Graph, typename IndexMap, typename PartitionMap, typename OutputIterator>
+  OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, PartitionMap partition_map,
+      OutputIterator result)
+  {
+    /// General types and variables
+    typedef typename property_traits <PartitionMap>::value_type partition_color_t;
+    typedef typename graph_traits <Graph>::vertex_descriptor vertex_descriptor_t;
+    typedef typename graph_traits <Graph>::vertex_iterator vertex_iterator_t;
+    vertex_iterator_t vertex_iter, vertex_end;
+
+    /// Declare predecessor map
+    typedef std::vector <vertex_descriptor_t> predecessors_t;
+    typedef iterator_property_map <typename predecessors_t::iterator, IndexMap, vertex_descriptor_t,
+        vertex_descriptor_t&> predecessor_map_t;
+
+    predecessors_t predecessors (num_vertices (graph), graph_traits <Graph>::null_vertex ());
+    predecessor_map_t predecessor_map (predecessors.begin (), index_map);
+
+    /// Initialize predecessor map
+    for (boost::tie (vertex_iter, vertex_end) = vertices (graph); vertex_iter != vertex_end; ++vertex_iter)
+    {
+      put (predecessor_map, *vertex_iter, *vertex_iter);
+    }
+
+    /// Call dfs
+    try
+    {
+      depth_first_search(
+        graph,
+        index_map,
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              std::make_pair(
+                put_property(
+                  partition_map,
+                  color_traits<partition_color_t>::white(),
+                  on_start_vertex()
+                ),
+                record_predecessors(predecessor_map, on_tree_edge())
+              )
+            )
+          )
+        )
+      );
+    }
+    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
+    {
+      typedef std::vector <vertex_descriptor_t> path_t;
+
+      path_t path1, path2;
+      vertex_descriptor_t next, current;
+
+      /// First path
+      next = error.witnesses.first;
+      do
+      {
+        current = next;
+        path1.push_back (current);
+        next = predecessor_map[current];
+      }
+      while (current != next);
+
+      /// Second path
+      next = error.witnesses.second;
+      do
+      {
+        current = next;
+        path2.push_back (current);
+        next = predecessor_map[current];
+      }
+      while (current != next);
+
+      /// Find beginning of common suffix
+      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = detail::reverse_mismatch (
+          std::make_pair (path1.begin (), path1.end ()), std::make_pair (path2.begin (), path2.end ()));
+
+      /// Copy the odd-length cycle
+      result = std::copy (path1.begin (), mismatch.first + 1, result);
+      return std::reverse_copy (path2.begin (), mismatch.second, result);
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks a given graph for bipartiteness. If the graph is not bipartite, a
+   * sequence of vertices, producing an odd-cycle, is written to the output
+   * iterator. The final iterator value is returned. Runs in linear time in the
+   * size of the graph, if access to the property maps is in constant time.
+   *
+   * @param graph The given graph.
+   * @param index_map An index map associating vertices with an index.
+   * @param result An iterator to write the odd-cycle vertices to.
+   * @return The final iterator value after writing.
+   */
+
+  template <typename Graph, typename IndexMap, typename OutputIterator>
+  OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, OutputIterator result)
+  {
+    typedef one_bit_color_map <IndexMap> partition_map_t;
+    partition_map_t partition_map (num_vertices (graph), index_map);
+
+    return find_odd_cycle (graph, index_map, partition_map, result);
+  }
+
+  /**
+   * Checks a given graph for bipartiteness. If the graph is not bipartite, a
+   * sequence of vertices, producing an odd-cycle, is written to the output
+   * iterator. The final iterator value is returned. The graph must have an
+   * internal vertex_index property. Runs in linear time in the size of the
+   * graph, if access to the property maps is in constant time.
+   *
+   * @param graph The given graph.
+   * @param result An iterator to write the odd-cycle vertices to.
+   * @return The final iterator value after writing.
+   */
+
+  template <typename Graph, typename OutputIterator>
+  OutputIterator find_odd_cycle (const Graph& graph, OutputIterator result)
+  {
+    return find_odd_cycle (graph, get (vertex_index, graph), result);
+  }
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
 }
 
 #endif /// BOOST_GRAPH_BIPARTITE_HPP
