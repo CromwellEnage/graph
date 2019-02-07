@@ -55,10 +55,11 @@ int main(int, char*[])
   std::cout << std::endl;
 
   typedef graph_traits<adjacency_list<vecS, vecS, directedS> >::vertex_descriptor Vertex;
-    
+
   std::vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
+  using namespace boost::graph::keywords;
   int num = strong_components(G, make_iterator_property_map(component.begin(), get(vertex_index, G)), 
 	_root_map = make_iterator_property_map(root.begin(), get(vertex_index, G)),
 	_color_map = make_iterator_property_map(color.begin(), get(vertex_index, G)),

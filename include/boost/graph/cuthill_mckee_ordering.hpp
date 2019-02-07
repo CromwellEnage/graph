@@ -51,7 +51,7 @@ namespace boost {
       }
     protected:
       OutputIterator *permutation;
-      int index_begin;
+      typename Buffer::size_type index_begin;
       Buffer *Qptr;
       DegreeMap degree;
     };
@@ -95,11 +95,10 @@ namespace boost {
       put(color, *ui, Color::white());
     }
 
-
     while( !vertex_queue.empty() ) {
       Vertex s = vertex_queue.front();
       vertex_queue.pop_front();
-      
+
       //call BFS with visitor
       breadth_first_visit(g, s, Q, vis, color);
     }

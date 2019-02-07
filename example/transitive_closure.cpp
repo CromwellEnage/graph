@@ -36,7 +36,7 @@ main(int, char *[])
   print_graph(G, get(vertex_name, G));
 
   adjacency_list <> TC;
-  transitive_closure(G, TC);
+  transitive_closure(G, TC, get(vertex_index, G));
 
   std::cout << std::endl << "Graph G+:" << std::endl;
   char name[] = "abcd";

@@ -9,6 +9,7 @@
 //=======================================================================
 
 #include <boost/config.hpp>
+#include <cstddef>
 #include <vector>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
@@ -35,7 +36,7 @@ int main(int , char* [])
   using namespace std;
   typedef adjacency_list<vecS, vecS, undirectedS, 
      property<vertex_color_t, default_color_type,
-       property<vertex_degree_t,int> > > Graph;
+       property<vertex_degree_t,std::size_t> > > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::vertices_size_type size_type;
 

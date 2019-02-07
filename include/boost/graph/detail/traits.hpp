@@ -285,41 +285,6 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
-
-    template <typename T>
-    class has_member_function_push_expr
-    {
-        template <typename B>
-        static graph_yes_tag
-            _check(
-                typename boost::add_pointer<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_KEYWORD(
-                        boost::detail::declref<B>().push(
-                            boost::detail::declcref<typename B::value_type>()
-                        )
-                    )
-#else
-                    decltype(
-                        boost::detail::declref<B>().push(
-                            boost::detail::declcref<typename B::value_type>()
-                        )
-                    )
-#endif
-                >::type
-            );
-
-        template <typename B>
-        static graph_no_tag _check(...);
-
-     public:
-        typedef mpl::bool_<
-            sizeof(
-                has_member_function_push_expr<T>::BOOST_NESTED_TEMPLATE
-                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
-            ) == sizeof(graph_yes_tag)
-        > type;
-    };
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 
@@ -460,7 +425,9 @@ namespace boost { namespace detail {
     template <typename T>
     struct has_const_member_function_empty
         : has_const_member_function_empty_expr<
-            typename boost::remove_const<T>::type
+            typename boost::remove_const<
+                typename boost::remove_reference<T>::type
+            >::type
         >::type
     {
     };
@@ -546,7 +513,9 @@ namespace boost { namespace detail {
     template <typename T>
     struct has_member_function_top
         : has_member_function_top_expr<
-            typename boost::remove_const<T>::type
+            typename boost::remove_const<
+                typename boost::remove_reference<T>::type
+            >::type
         >::type
     {
     };
@@ -592,44 +561,32 @@ namespace boost { namespace detail {
     template <typename T>
     struct has_const_member_function_size
         : has_const_member_function_size_expr<
-            typename boost::remove_const<T>::type
+            typename boost::remove_const<
+                typename boost::remove_reference<T>::type
+            >::type
         >::type
     {
     };
-
-#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
-    template <typename T>
-    struct has_member_function_push
-        : has_member_function_push_expr<
-            typename boost::remove_const<T>::type
-        >::type
-    {
-    };
-#endif
 
     template <typename T>
     struct is_buffer
         : mpl::eval_if<
 #if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
             typename has_member_function_pop_expr<
-                typename boost::remove_const<T>::type
+                typename boost::remove_const<
+                    typename boost::remove_reference<T>::type
+                >::type
             >::type,
             mpl::eval_if<
 #endif
                 has_member_function_top<T>,
-#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
-                mpl::eval_if<
-                    has_member_function_push<T>,
-#endif
-                    mpl::if_<
-                        has_const_member_function_empty<T>,
-                        has_const_member_function_size<T>,
-                        mpl::false_
-                    >,
+                mpl::if_<
+                    has_const_member_function_empty<T>,
+                    has_const_member_function_size<T>,
                     mpl::false_
-#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
                 >,
                 mpl::false_
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
             >,
             mpl::false_
 #endif
@@ -681,7 +638,9 @@ namespace boost { namespace detail {
     template <typename T>
     struct has_container_typedefs
         : has_container_typedefs_impl<
-            typename boost::remove_const<T>::type
+            typename boost::remove_const<
+                typename boost::remove_reference<T>::type
+            >::type
         >::type
     {
     };
@@ -962,7 +921,7 @@ namespace boost { namespace detail {
     // TODO:
     // Implement a more robust check. -- Cromwell D. Enage
     template <typename G>
-    struct has_internal_vertex_index_map;
+    struct has_internal_vertex_index_map_dispatch;
 
     template <typename G>
     struct has_graph_type_with_internal_vertex_index_map
@@ -970,15 +929,19 @@ namespace boost { namespace detail {
         typedef typename mpl::if_<
             boost::is_same<typename G::graph_type,G>,
             mpl::false_,
-            has_internal_vertex_index_map<typename G::graph_type>
+            has_internal_vertex_index_map_dispatch<typename G::graph_type>
         >::type type;
     };
 
     template <typename G>
-    struct has_internal_vertex_index_map
+    struct has_internal_vertex_index_map_dispatch
         : mpl::eval_if<
-            graph_detail::has_graph_tag<G>,  // for adjacency_list
-            has_vec_adj_list_graph_tag<G>,
+            typename mpl::eval_if<  // for adjacency_list
+                graph_detail::has_graph_tag<G>,
+                has_vec_adj_list_graph_tag<G>,
+                mpl::false_
+            >::type,
+            mpl::true_,
             mpl::eval_if<
                 is_adjacency_matrix<G>,  // for adjacency_matrix
                 has_internal_vertex_index_map_impl<G>,
@@ -993,6 +956,16 @@ namespace boost { namespace detail {
                 >
             >
         >::type
+    {
+    };
+
+    template <typename G>
+    struct has_internal_vertex_index_map
+        : has_internal_vertex_index_map_dispatch<
+            typename boost::remove_const<
+                typename boost::remove_reference<G>::type
+            >::type
+        >
     {
     };
 
@@ -1016,11 +989,6 @@ namespace boost { namespace detail {
         >::type impl;
         return impl::call(g);
     }
-}}
-
-#include <boost/type_traits/remove_const.hpp>
-
-namespace boost { namespace detail {
 
     template <typename Args, typename Tag>
     struct mutable_value_type
