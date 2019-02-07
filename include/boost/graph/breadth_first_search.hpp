@@ -649,23 +649,15 @@ namespace boost {
       typename boost::remove_const<
         typename boost::remove_reference<graph_type>::type
       >::type
-    >::vertex_descriptor sources[1] = {root_vertex};
-    breadth_first_visit(
-      graph,
-      sources,
-      sources + 1,
+    >::vertex_descriptor srcs[1] = {root_vertex};
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      buffer,
+    breadth_first_visit(graph, srcs, srcs + 1, buffer, visitor, color_map);
 #else
-      const_cast<
-        typename boost::remove_const<
-          typename boost::remove_reference<buffer_type>::type
-        >::type&
-      >(buffer),
+    typename boost::remove_const<
+      typename boost::remove_reference<buffer_type>::type
+    >::type Q = buffer;
+    breadth_first_visit(graph, srcs, srcs + 1, Q, visitor, color_map);
 #endif
-      visitor,
-      color_map
-    );
     return true;
   }
 
@@ -741,23 +733,15 @@ namespace boost {
       typename boost::remove_const<
         typename boost::remove_reference<graph_type>::type
       >::type
-    >::vertex_descriptor sources[1] = {root_vertex};
-    breadth_first_search(
-      graph,
-      sources,
-      sources + 1,
+    >::vertex_descriptor srcs[1] = {root_vertex};
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      buffer,
+    breadth_first_search(graph, srcs, srcs + 1, buffer, visitor, color_map);
 #else
-      const_cast<
-        typename boost::remove_const<
-          typename boost::remove_reference<buffer_type>::type
-        >::type&
-      >(buffer),
+    typename boost::remove_const<
+      typename boost::remove_reference<buffer_type>::type
+    >::type Q = buffer;
+    breadth_first_search(graph, srcs, srcs + 1, Q, visitor, color_map);
 #endif
-      visitor,
-      color_map
-    );
     return true;
   }
 

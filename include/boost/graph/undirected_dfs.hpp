@@ -209,27 +209,48 @@ namespace boost {
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    DFSVisitor vis = visitor;
+#endif
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
+
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       put(color_map, *ui, Color::white());
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       visitor.initialize_vertex(*ui, graph);
+#else
+      vis.initialize_vertex(*ui, graph);
+#endif
     }
+
     typename graph_traits<Graph>::edge_iterator ei, ei_end;
+
     for (boost::tie(ei, ei_end) = edges(graph); ei != ei_end; ++ei)
       put(edge_color_map, *ei, Color::white());
 
-    if (root_vertex != *vertices(graph).first){
+    if (root_vertex != detail::get_default_starting_vertex(graph)) {
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       visitor.start_vertex(root_vertex, graph);
       detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
                              edge_color_map);
+#else
+      vis.start_vertex(root_vertex, graph);
+      detail::undir_dfv_impl(graph, root_vertex, vis, color_map,
+                             edge_color_map);
+#endif
     }
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       ColorValue u_color = get(color_map, *ui);
       if (u_color == Color::white()) {
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
         visitor.start_vertex(*ui, graph);
         detail::undir_dfv_impl(graph, *ui, visitor, color_map,
                                edge_color_map);
+#else
+        vis.start_vertex(*ui, graph);
+        detail::undir_dfv_impl(graph, *ui, vis, color_map, edge_color_map);
+#endif
       }
     }
 
@@ -304,8 +325,17 @@ namespace boost {
     )
   )
   {
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
                            edge_color_map);
+#else
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type DFSVisitor;
+    DFSVisitor& vis = const_cast<DFSVisitor&>(visitor);
+    detail::undir_dfv_impl(graph, root_vertex, vis, color_map,
+                           edge_color_map);
+#endif
     return true;
   }
 

@@ -12,6 +12,7 @@
 #define BOOST_GRAPH_TOPOLOGICAL_SORT_HPP
 
 #include <boost/config.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -98,7 +99,9 @@ namespace boost {
       vertex_index_map,
       color_map,
       topo_sort_visitor<
-        typename boost::remove_const<result_type>::type
+        typename boost::remove_const<
+          typename boost::remove_reference<result_type>::type
+        >::type
       >(result)
     );
     return true;
