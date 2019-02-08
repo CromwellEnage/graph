@@ -74,7 +74,7 @@ namespace boost
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<is_graph>))
+        (result, *(detail::argument_predicate<is_bgl_graph>))
       )
       (optional
         (vertex_index_map

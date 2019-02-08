@@ -14,9 +14,7 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
 
-
 using namespace boost;
-
 
 template <typename Graph>
 void reset_edge_index(Graph& g)
@@ -28,8 +26,6 @@ void reset_edge_index(Graph& g)
     put(index, *ei, cnt++);
 }
 
-
-
 template <typename Graph>
 void reset_vertex_index(Graph& g)
 {
@@ -40,9 +36,8 @@ void reset_vertex_index(Graph& g)
     put(index, *vi, cnt++);
 }
 
-
 template <typename Graph>
-void make_disconnected_cycles(Graph& g, int num_cycles, int cycle_size)
+void make_disconnected_cycles(Graph& g, std::size_t num_cycles, std::size_t cycle_size)
 {
   // This graph will consist of num_cycles cycles, each of which
   // has cycle_size vertices and edges. The entire graph has
@@ -51,12 +46,12 @@ void make_disconnected_cycles(Graph& g, int num_cycles, int cycle_size)
 
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
 
-  for(int i = 0; i < num_cycles; ++i)
+  for(std::size_t i = 0; i < num_cycles; ++i)
     {
       vertex_t first_vertex = add_vertex(g);
       vertex_t prev_vertex;
       vertex_t curr_vertex = first_vertex;
-      for(int j = 1; j < cycle_size; ++j)
+      for(std::size_t j = 1; j < cycle_size; ++j)
         {
           prev_vertex = curr_vertex;
           curr_vertex = add_vertex(g);
@@ -72,8 +67,8 @@ int main(int, char* [])
     <vecS,
     vecS,
     undirectedS,
-    property<vertex_index_t, int>,
-    property<edge_index_t, int>
+    property<vertex_index_t, std::size_t>,
+    property<edge_index_t, std::size_t>
     >
     VVgraph_t;
 
@@ -81,8 +76,8 @@ int main(int, char* [])
     <vecS,
     listS,
     undirectedS,
-    property<vertex_index_t, int>,
-    property<edge_index_t, int>
+    property<vertex_index_t, std::size_t>,
+    property<edge_index_t, std::size_t>
     >
     VLgraph_t;
 
@@ -90,8 +85,8 @@ int main(int, char* [])
     <listS,
     vecS,
     undirectedS,
-    property<vertex_index_t, int>,
-    property<edge_index_t, int>
+    property<vertex_index_t, std::size_t>,
+    property<edge_index_t, std::size_t>
     >
     LVgraph_t;
 
@@ -99,8 +94,8 @@ int main(int, char* [])
     <listS,
     listS,
     undirectedS,
-    property<vertex_index_t, int>,
-    property<edge_index_t, int>
+    property<vertex_index_t, std::size_t>,
+    property<edge_index_t, std::size_t>
     >
     LLgraph_t;
 
@@ -109,13 +104,12 @@ int main(int, char* [])
   std::size_t cycle_size = 10;
   make_disconnected_cycles(gVV, num_cycles, cycle_size);
   reset_edge_index(gVV);
-  std::vector<int> gVV_components(num_vertices(gVV));
+  std::vector<std::size_t> gVV_components(num_vertices(gVV));
   boost::iterator_property_map<
-    std::vector<int>::iterator,
+    std::vector<std::size_t>::iterator,
     boost::property_map<VVgraph_t, boost::vertex_index_t>::const_type
   > gVV_components_pm(gVV_components.begin(), get(boost::vertex_index, gVV));
-  BOOST_TEST(connected_components(gVV, gVV_components_pm) ==
-             static_cast<int>(num_cycles));
+  BOOST_TEST(connected_components(gVV, gVV_components_pm) == num_cycles);
   make_connected(gVV);
   BOOST_TEST(connected_components(gVV, gVV_components_pm) == 1);
   BOOST_TEST(num_edges(gVV) == num_cycles * cycle_size + num_cycles - 1);

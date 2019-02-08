@@ -31,7 +31,7 @@ public:
 struct VertexProps {
   boost::default_color_type color;
   std::size_t discover_time;
-  unsigned int index;
+  std::size_t index;
 };
 
 int
@@ -77,7 +77,7 @@ main()
   std::vector < Size > dtime(num_vertices(g));
   typedef
     iterator_property_map<std::vector<Size>::iterator,
-                          property_map<graph_t, unsigned int VertexProps::*>::type>
+                          property_map<graph_t, std::size_t VertexProps::*>::type>
     dtime_pm_type;
   graph_traits<graph_t>::vertex_iterator vi, vi_end;
   std::size_t c = 0;

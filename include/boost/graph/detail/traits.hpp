@@ -669,7 +669,7 @@ namespace boost { namespace detail {
         : mpl::eval_if<
             is_property_map<T>,
             mpl::if_<
-                is_graph<G>,
+                is_bgl_graph<G>,
                 is_vertex_property_map_of_graph_impl<T,G>,
                 mpl::false_
             >,
@@ -706,7 +706,7 @@ namespace boost { namespace detail {
         : mpl::eval_if<
             is_property_map<T>,
             mpl::if_<
-                is_graph<G>,
+                is_bgl_graph<G>,
                 is_edge_property_map_of_graph_impl<T,G>,
                 mpl::false_
             >,
@@ -753,11 +753,12 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
+    // The primary template specialization will handle the cases of
+    // PropertyType == boost::no_property and
+    // PropertyType == user-defined bundled property type
+    // -- Cromwell D. Enage
     template <typename PropertyType, typename Tag>
-    struct property_type_contains;
-
-    template <typename Tag>
-    struct property_type_contains<boost::no_property,Tag> : mpl::false_
+    struct property_type_contains : mpl::false_
     {
     };
 

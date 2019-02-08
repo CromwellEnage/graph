@@ -166,6 +166,12 @@ namespace boost {
       typedef std::pair<IncIter,IncIter> type;
     };
 
+    template <class EdgeList, class Alloc>
+    typename EdgeList::value_type
+    get_default_starting_vertex(const std::vector<EdgeList, Alloc>& g)
+    {
+      return g.empty() ? -1 : 0;
+    }
   } // namesapce detail
 
   template <class EdgeList, class Alloc>
@@ -203,7 +209,7 @@ namespace boost {
   vertices(const std::vector<EdgeList, Alloc>& v)
   {
     typedef boost::counting_iterator<typename EdgeList::value_type> Iter;
-    return std::make_pair(Iter(0), Iter(v.size()));
+    return std::make_pair(Iter(0), Iter(static_cast<typename EdgeList::value_type>(v.size())));
   }
 
   template <class EdgeList, class Alloc>

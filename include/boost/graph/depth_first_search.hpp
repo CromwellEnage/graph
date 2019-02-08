@@ -377,7 +377,7 @@ namespace boost { namespace detail {
     template <typename T, typename G>
     struct is_dfs_visitor
       : mpl::eval_if<
-        is_graph<G>,
+        is_bgl_graph<G>,
         is_dfs_visitor_impl<T,G>,
         mpl::false_
       >::type

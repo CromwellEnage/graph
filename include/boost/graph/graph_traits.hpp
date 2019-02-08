@@ -112,7 +112,7 @@ namespace boost {
         struct graph_traits_no_impl { };
     }
 
-    // The primary template definition is SFINAE-friendly so that is_graph and
+    // The primary template definition is SFINAE-friendly so that is_bgl_graph and
     // its relatives can be used for template argument deduction.
     // -- Cromwell D. Enage
     template <typename G>
@@ -125,7 +125,7 @@ namespace boost {
     { };
 
     template <typename T>
-    struct is_graph : detail::has_graph_typedefs< graph_traits<T> >::type
+    struct is_bgl_graph : detail::has_graph_typedefs< graph_traits<T> >::type
     { };
 
     // directed_category tags
@@ -172,7 +172,7 @@ namespace boost {
     template <typename Graph>
     struct is_directed_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_directed_graph_impl<Graph>,
             mpl::false_
         >::type
@@ -181,7 +181,7 @@ namespace boost {
     template <typename Graph>
     struct is_undirected_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             mpl::not_< is_directed_graph<Graph> >,
             mpl::false_
         >::type
@@ -226,7 +226,7 @@ namespace boost {
     template <typename Graph>
     struct is_multigraph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_multigraph_impl<Graph>,
             mpl::false_
         >::type
@@ -303,7 +303,7 @@ namespace boost {
     template <typename Graph>
     struct is_incidence_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_incidence_graph_impl<Graph>,
             mpl::false_
         >::type
@@ -312,7 +312,7 @@ namespace boost {
     template <typename Graph>
     struct is_bidirectional_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_bidirectional_graph_impl<Graph>,
             mpl::false_
         >::type
@@ -321,7 +321,7 @@ namespace boost {
     template <typename Graph>
     struct is_vertex_list_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_vertex_list_graph_impl<Graph>,
             mpl::false_
         >::type
@@ -330,7 +330,7 @@ namespace boost {
     template <typename Graph>
     struct is_edge_list_graph
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_edge_list_graph_impl<Graph>,
             mpl::false_
         >::type
@@ -339,7 +339,7 @@ namespace boost {
     template <typename Graph>
     struct is_adjacency_matrix
         : mpl::if_<
-            is_graph<Graph>,
+            is_bgl_graph<Graph>,
             detail::is_adjacency_matrix_impl<Graph>,
             mpl::false_
         >::type
@@ -360,7 +360,7 @@ namespace boost {
         template <typename Vertex, typename Graph>
         struct is_vertex_of_graph
             : mpl::if_<
-                is_graph<Graph>,
+                is_bgl_graph<Graph>,
                 detail::is_vertex_of_graph_impl<Vertex, Graph>,
                 mpl::false_
             >::type
