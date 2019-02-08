@@ -603,6 +603,7 @@ namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_tag)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(vertex_property_type)
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -751,6 +752,42 @@ namespace boost { namespace detail {
 #include <boost/graph/properties.hpp>
 
 namespace boost { namespace detail {
+
+    template <typename PropertyType, typename Tag>
+    struct property_type_contains;
+
+    template <typename Tag>
+    struct property_type_contains<boost::no_property,Tag> : mpl::false_
+    {
+    };
+
+    template <typename T, typename Tail, typename Tag>
+    struct property_type_contains<boost::property<Tag,T,Tail>,Tag>
+      : mpl::true_
+    {
+    };
+
+    template <typename P, typename T, typename Tail, typename Tag>
+    struct property_type_contains<boost::property<P,T,Tail>,Tag>
+      : property_type_contains<Tail,Tag>
+    {
+    };
+
+    template <typename G, typename Tag>
+    struct is_graph_with_vertex_property_type_impl
+        : property_type_contains<typename G::vertex_property_type,Tag>
+    {
+    };
+
+    template <typename G, typename Tag>
+    struct is_graph_with_vertex_property_type
+        : mpl::if_<
+            graph_detail::has_vertex_property_type<G>,
+            is_graph_with_vertex_property_type_impl<G,Tag>,
+            mpl::false_
+        >::type
+    {
+    };
 
     template <typename G>
     struct choose_vertex_index_map
@@ -946,12 +983,16 @@ namespace boost { namespace detail {
                 is_adjacency_matrix<G>,  // for adjacency_matrix
                 has_internal_vertex_index_map_impl<G>,
                 mpl::eval_if<
-                    has_container_typedefs<G>, // for vector_as_graph
+                    has_container_typedefs<G>,  // for vector_as_graph
                     has_internal_vertex_index_map_impl<G>,
                     mpl::eval_if<
-                        graph_detail::has_graph_type<G>, // for adaptors
-                        has_graph_type_with_internal_vertex_index_map<G>,
-                        mpl::false_
+                        is_graph_with_vertex_property_type<G,vertex_index_t>,
+                        has_internal_vertex_index_map_impl<G>,
+                        mpl::eval_if<
+                            graph_detail::has_graph_type<G>,  // for adaptors
+                            has_graph_type_with_internal_vertex_index_map<G>,
+                            mpl::false_
+                        >
                     >
                 >
             >

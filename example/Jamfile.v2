@@ -192,7 +192,7 @@ exe subgraph : subgraph.cpp ;
 exe successive_shortest_path_nonnegative_weights_example : successive_shortest_path_nonnegative_weights_example.cpp ;
 exe tiernan_girth_circumference : tiernan_girth_circumference.cpp ;
 exe tiernan_print_cycles : tiernan_print_cycles.cpp ;
-#exe topo-sort1 : topo-sort1.cpp ;
+exe topo-sort1 : topo-sort1.cpp ;
 exe topo-sort2 : topo-sort2.cpp ;
 exe topo_sort : topo_sort.cpp ;
 exe topo-sort-file-dep2 : topo-sort-file-dep2.cpp ;
