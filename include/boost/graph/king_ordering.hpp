@@ -299,9 +299,9 @@ namespace boost {
       return permutation;
 
     std::vector<default_color_type> colors(num_vertices(G));
-    return king_ordering(G, permutation, 
-                         make_iterator_property_map(&colors[0], index_map,
-                                                    colors[0]),
+    return king_ordering(G, permutation,
+                         make_iterator_property_map(colors.begin(), index_map,
+                                                    white_color),
                          make_out_degree_map(G), index_map);
   }
 

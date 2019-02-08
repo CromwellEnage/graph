@@ -168,12 +168,12 @@ namespace boost {
   {
     if (boost::graph::has_no_vertices(G))
       return permutation;
-    
+
     std::vector<default_color_type> colors(num_vertices(G));
-    return cuthill_mckee_ordering(G, permutation, 
-                                  make_iterator_property_map(&colors[0], 
+    return cuthill_mckee_ordering(G, permutation,
+                                  make_iterator_property_map(colors.begin(), 
                                                              index_map,
-                                                             colors[0]),
+                                                             white_color),
                                   make_out_degree_map(G));
   }
 
