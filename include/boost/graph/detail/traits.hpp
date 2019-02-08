@@ -1076,7 +1076,9 @@ namespace boost { namespace detail {
         struct apply
         {
             typedef is_orig_to_copy_vertex_map<
-                typename boost::remove_reference<Arg>::type,
+                typename boost::remove_const<
+                    typename boost::remove_reference<Arg>::type
+                >::type,
                 typename mutable_value_type<
                     ArgPack,
                     boost::graph::keywords::tag::graph

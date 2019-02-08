@@ -350,7 +350,7 @@ namespace boost {
         template <typename Vertex, typename Graph>
         struct is_vertex_of_graph_impl
             : mpl::bool_<
-                is_convertible<
+                is_same<
                     Vertex,
                     typename graph_traits<Graph>::vertex_descriptor
                 >::value
