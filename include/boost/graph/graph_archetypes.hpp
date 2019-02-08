@@ -194,31 +194,31 @@ namespace boost { // should use a different namespace for this
   struct property_graph_archetype : public GraphArchetype
   {
     typedef property_graph_archetype_tag graph_tag;
-    typedef ValueArch vertex_property_type;
-    typedef ValueArch edge_property_type;
+    typedef boost::property<Property, ValueArch> vertex_property_type;
+    typedef boost::property<Property, ValueArch> edge_property_type;
   };
 
   struct choose_edge_property_map_archetype {
     template <typename Graph, typename Property, typename Tag>
     struct bind_ {
       typedef mutable_lvalue_property_map_archetype
-        <typename Graph::edge_descriptor, Property> type;
+        <typename Graph::edge_descriptor, typename Property::value_type> type;
       typedef lvalue_property_map_archetype
-        <typename Graph::edge_descriptor, Property> const_type;
+        <typename Graph::edge_descriptor, typename Property::value_type> const_type;
     };
   };
   template <>
   struct edge_property_selector<property_graph_archetype_tag> {
     typedef choose_edge_property_map_archetype type;
   };
-  
+
   struct choose_vertex_property_map_archetype {
     template <typename Graph, typename Property, typename Tag>
     struct bind_ {
       typedef mutable_lvalue_property_map_archetype
-        <typename Graph::vertex_descriptor, Property> type;
+        <typename Graph::vertex_descriptor, typename Property::value_type> type;
       typedef lvalue_property_map_archetype
-        <typename Graph::vertex_descriptor, Property> const_type;
+        <typename Graph::vertex_descriptor, typename Property::value_type> const_type;
     };
   };
 

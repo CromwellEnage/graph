@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -17,8 +18,7 @@
 using namespace std;
 using namespace boost;
 
-template <class Graph>
-void generate_graph(int n, double p, Graph& r1)
+void generate_graph(int n, double p, vector< vector<int> >& r1)
 {
   static class {
   public:
@@ -26,12 +26,12 @@ void generate_graph(int n, double p, Graph& r1)
       return double(rand())/RAND_MAX;
     }
   } gen;  
-  for (int i = 0; i < n; ++i)
-    add_vertex(r1);
+  r1.clear();
+  r1.resize(n);
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < n; ++j) 
       if (gen() < p)
-        add_edge(vertex(i, r1), vertex(j, r1), r1);
+        r1[i].push_back(j);
 }
 
 template <class Graph>
@@ -108,7 +108,7 @@ bool check_transitive_closure(Graph& g, GraphTC& tc)
 
 bool test(int n, double p)
 {
-  adjacency_list<> g1, g1_tc;
+  vector< vector<int> > g1, g1_tc;
   generate_graph(n, p, g1);
   cout << "Created graph with " << n << " vertices.\n";
 

@@ -34,7 +34,6 @@ int main()
       allow_parallel_edge_tag, IncidenceGraph> graph_t;
     graph_t& g = static_object<graph_t>::get();
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-    using namespace boost::graph::keywords;
     depth_first_search(g, v_index);
   }
   {
