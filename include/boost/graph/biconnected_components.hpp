@@ -48,9 +48,9 @@ namespace boost
          OutputIterator out, Stack& S,
          ArticulationVector& is_articulation_point, IndexMap index_map,
          DFSVisitor vis)
-          : comp(comp), c(c), children_of_root(children_of_root),
-            dtm(dtm), dfs_time(dfs_time), lowpt(lowpt),
-            pred(pred), out(out), S(S),
+          : dfs_visitor<>(), comp(comp), c(c),
+            children_of_root(children_of_root), dtm(dtm), dfs_time(dfs_time),
+            lowpt(lowpt), pred(pred), out(out), S(S),
             is_articulation_point(is_articulation_point),
             index_map(index_map), vis(vis) { }
 

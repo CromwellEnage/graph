@@ -16,7 +16,6 @@
 #include <boost/graph/graph_utility.hpp>
 #include <algorithm>
 
-
 /*
   (Reverse) Cuthill-McKee Algorithm for matrix reordering
 */
@@ -31,12 +30,17 @@ namespace boost {
     class bfs_rcm_visitor:public default_bfs_visitor
     {
     public:
-      bfs_rcm_visitor(OutputIterator *iter, Buffer *b, DegreeMap deg): 
-        permutation(iter), Qptr(b), degree(deg) { }
+      bfs_rcm_visitor(OutputIterator& iter, Buffer& b, DegreeMap deg): 
+        default_bfs_visitor(), permutation(iter), index_begin(0), Qref(b),
+        degree(deg) { }
+      bfs_rcm_visitor(bfs_rcm_visitor const& copy):
+        default_bfs_visitor(), permutation(copy.permutation),
+        index_begin(copy.index_begin), Qref(copy.Qref),
+        degree(copy.degree) { }
       template <class Vertex, class Graph>
       void examine_vertex(Vertex u, Graph&) {
-        *(*permutation)++ = u;
-        index_begin = Qptr->size();
+        *permutation++ = u;
+        index_begin = Qref.size();
       }
       template <class Vertex, class Graph>
       void finish_vertex(Vertex, Graph&) {
@@ -46,13 +50,13 @@ namespace boost {
 
         typedef indirect_cmp<DegreeMap, std::less<ds_type> > Compare;
         Compare comp(degree);
-                
-        sort(Qptr->begin()+index_begin, Qptr->end(), comp);
+
+        sort(Qref.begin()+index_begin, Qref.end(), comp);
       }
     protected:
-      OutputIterator *permutation;
+      OutputIterator& permutation;
       typename Buffer::size_type index_begin;
-      Buffer *Qptr;
+      Buffer& Qref;
       DegreeMap degree;
     };
 
@@ -69,7 +73,7 @@ namespace boost {
   OutputIterator
   cuthill_mckee_ordering(const Graph& g,
                          std::deque< typename
-                         graph_traits<Graph>::vertex_descriptor > vertex_queue,
+                         graph_traits<Graph>::vertex_descriptor >& vertex_queue,
                          OutputIterator permutation, 
                          ColorMap color, DegreeMap degree)
   {
@@ -85,7 +89,7 @@ namespace boost {
     queue Q;
 
     //create a bfs_rcm_visitor as defined above
-    Visitor     vis(&permutation, &Q, degree);
+    Visitor     vis(permutation, Q, degree);
 
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;    
 
@@ -117,7 +121,7 @@ namespace boost {
   {
 
     std::deque< typename graph_traits<Graph>::vertex_descriptor > vertex_queue;
-    vertex_queue.push_front( s );
+    vertex_queue.push_back( s );
 
     return cuthill_mckee_ordering(g, vertex_queue, permutation, color, degree);
   
@@ -146,17 +150,19 @@ namespace boost {
     // Find one vertex from each connected component 
     BGL_FORALL_VERTICES_T(v, G, Graph) {
       if (get(color, v) == Color::white()) {
-        depth_first_visit(G, v, dfs_visitor<>(), color);
+        Vertex u = v;
+        depth_first_visit(G, u, dfs_visitor<>(), color);
         vertex_queue.push_back(v);
       }
     }
 
     // Find starting nodes for all vertices
     // TBD: How to do this with a directed graph?
-    for (typename std::deque<Vertex>::iterator i = vertex_queue.begin();
-         i != vertex_queue.end(); ++i)
-      *i = find_starting_node(G, *i, color, degree);
-    
+    for (typename std::deque<Vertex>::size_type i = 0;
+         i < vertex_queue.size(); ++i) {
+      vertex_queue[i] = find_starting_node(G, vertex_queue[i], color, degree);
+    }
+
     return cuthill_mckee_ordering(G, vertex_queue, permutation,
                                   color, degree);
   }

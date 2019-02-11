@@ -462,7 +462,7 @@ namespace boost {
   template <class Visitors = null_visitor>
   class bfs_visitor {
   public:
-    bfs_visitor() { }
+    bfs_visitor() : m_vis() { }
     bfs_visitor(Visitors vis) : m_vis(vis) { }
 
     template <class Vertex, class Graph>
@@ -596,6 +596,47 @@ namespace boost {
     } // end while
   } // breadth_first_visit
 
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  template <class IncidenceGraph, class Buffer, class BFSVisitor,
+            class ColorMap, class SourceIterator>
+  void breadth_first_visit
+    (const IncidenceGraph& g,
+     SourceIterator sources_begin, SourceIterator sources_end,
+     Buffer const& default_buffer, BFSVisitor vis, ColorMap color)
+  {
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<IncidenceGraph> ));
+    typedef graph_traits<IncidenceGraph> GTraits;
+    typedef typename GTraits::vertex_descriptor Vertex;
+    BOOST_CONCEPT_ASSERT(( BFSVisitorConcept<BFSVisitor, IncidenceGraph> ));
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ColorMap, Vertex> ));
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+    Buffer Q(default_buffer);
+    typename GTraits::out_edge_iterator ei, ei_end;
+
+    for (; sources_begin != sources_end; ++sources_begin) {
+      Vertex s = *sources_begin;
+      put(color, s, Color::gray());           vis.discover_vertex(s, g);
+      Q.push(s);
+    }
+    while (! Q.empty()) {
+      Vertex u = Q.top(); Q.pop();            vis.examine_vertex(u, g);
+      for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+        Vertex v = target(*ei, g);            vis.examine_edge(*ei, g);
+        ColorValue v_color = get(color, v);
+        if (v_color == Color::white()) {      vis.tree_edge(*ei, g);
+          put(color, v, Color::gray());       vis.discover_vertex(v, g);
+          Q.push(v);
+        } else {                              vis.non_tree_edge(*ei, g);
+          if (v_color == Color::gray())       vis.gray_target(*ei, g);
+          else                                vis.black_target(*ei, g);
+        }
+      } // end for
+      put(color, u, Color::black());          vis.finish_vertex(u, g);
+    } // end while
+  } // breadth_first_visit
+#endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+
   // Boost.Parameter-enabled single-source variant
   BOOST_PARAMETER_FUNCTION(
     (bool), breadth_first_visit, ::boost::graph::keywords::tag,
@@ -650,14 +691,7 @@ namespace boost {
         typename boost::remove_reference<graph_type>::type
       >::type
     >::vertex_descriptor srcs[1] = {root_vertex};
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_visit(graph, srcs, srcs + 1, buffer, visitor, color_map);
-#else
-    typename boost::remove_const<
-      typename boost::remove_reference<buffer_type>::type
-    >::type Q = buffer;
-    breadth_first_visit(graph, srcs, srcs + 1, Q, visitor, color_map);
-#endif
     return true;
   }
 
@@ -679,6 +713,27 @@ namespace boost {
     }
     breadth_first_visit(g, sources_begin, sources_end, Q, vis, color);
   }
+
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  template <class VertexListGraph, class SourceIterator,
+            class Buffer, class BFSVisitor,
+            class ColorMap>
+  void breadth_first_search
+    (const VertexListGraph& g,
+     SourceIterator sources_begin, SourceIterator sources_end,
+     Buffer const& default_buffer, BFSVisitor vis, ColorMap color)
+  {
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+    typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
+    for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i) {
+      vis.initialize_vertex(*i, g);
+      put(color, *i, Color::white());
+    }
+    Buffer Q(default_buffer);
+    breadth_first_visit(g, sources_begin, sources_end, Q, vis, color);
+  }
+#endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 
   // Boost.Parameter-enabled single-source variant
   BOOST_PARAMETER_FUNCTION(
@@ -734,14 +789,7 @@ namespace boost {
         typename boost::remove_reference<graph_type>::type
       >::type
     >::vertex_descriptor srcs[1] = {root_vertex};
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_search(graph, srcs, srcs + 1, buffer, visitor, color_map);
-#else
-    typename boost::remove_const<
-      typename boost::remove_reference<buffer_type>::type
-    >::type Q = buffer;
-    breadth_first_search(graph, srcs, srcs + 1, Q, visitor, color_map);
-#endif
     return true;
   }
 

@@ -607,7 +607,7 @@ namespace boost {
   template <class Visitors = null_visitor>
   class dfs_visitor {
   public:
-    dfs_visitor() { }
+    dfs_visitor() : m_vis() { }
     dfs_visitor(Visitors vis) : m_vis(vis) { }
 
     template <class Vertex, class Graph>
@@ -740,17 +740,21 @@ namespace boost {
 #endif
     }
 
-    if (root_vertex != detail::get_default_starting_vertex(graph)) {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    if (root_vertex != detail::get_default_starting_vertex(graph)) {
       visitor.start_vertex(root_vertex, graph);
       detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
                                      detail::nontruth2());
-#else
-      vis.start_vertex(root_vertex, graph);
-      detail::depth_first_visit_impl(graph, root_vertex, vis, color_map,
-                                     detail::nontruth2());
-#endif
     }
+#else
+    Vertex s = root_vertex;
+
+    if (s != detail::get_default_starting_vertex(graph)) {
+      vis.start_vertex(s, graph);
+      detail::depth_first_visit_impl(graph, s, vis, color_map,
+                                     detail::nontruth2());
+    }
+#endif
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       Vertex u = implicit_cast<Vertex>(*ui);
@@ -840,10 +844,13 @@ namespace boost {
                                    terminator_function);
 #else
     typename boost::remove_const<
+      typename boost::remove_reference<root_vertex_type>::type
+    >::type s = root_vertex;
+    typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
     >::type vis = visitor;
-    vis.start_vertex(root_vertex, graph);
-    detail::depth_first_visit_impl(graph, root_vertex, vis, color_map,
+    vis.start_vertex(s, graph);
+    detail::depth_first_visit_impl(graph, s, vis, color_map,
                                    terminator_function);
 #endif
     return true;

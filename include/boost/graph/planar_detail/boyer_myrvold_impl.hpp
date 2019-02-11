@@ -37,7 +37,8 @@ namespace boost
     planar_dfs_visitor(LowPointMap lpm, DFSParentMap dfs_p,
                        DFSNumberMap dfs_n, LeastAncestorMap lam,
                        DFSParentEdgeMap dfs_edge)
-      : low(lpm),
+      : dfs_visitor<>(),
+        low(lpm),
         parent(dfs_p),
         df_number(dfs_n),
         least_ancestor(lam),

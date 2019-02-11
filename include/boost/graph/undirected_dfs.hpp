@@ -228,17 +228,21 @@ namespace boost {
     for (boost::tie(ei, ei_end) = edges(graph); ei != ei_end; ++ei)
       put(edge_color_map, *ei, Color::white());
 
-    if (root_vertex != detail::get_default_starting_vertex(graph)) {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    if (root_vertex != detail::get_default_starting_vertex(graph)) {
       visitor.start_vertex(root_vertex, graph);
       detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
                              edge_color_map);
-#else
-      vis.start_vertex(root_vertex, graph);
-      detail::undir_dfv_impl(graph, root_vertex, vis, color_map,
-                             edge_color_map);
-#endif
     }
+#else
+    Vertex s = root_vertex;
+
+    if (s != detail::get_default_starting_vertex(graph)) {
+      vis.start_vertex(s, graph);
+      detail::undir_dfv_impl(graph, s, vis, color_map,
+                             edge_color_map);
+    }
+#endif
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       ColorValue u_color = get(color_map, *ui);
@@ -329,12 +333,13 @@ namespace boost {
     detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
                            edge_color_map);
 #else
-    typedef typename boost::remove_const<
+    typename boost::remove_const<
+      typename boost::remove_reference<root_vertex_type>::type
+    >::type s = root_vertex;
+    typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
-    >::type DFSVisitor;
-    DFSVisitor& vis = const_cast<DFSVisitor&>(visitor);
-    detail::undir_dfv_impl(graph, root_vertex, vis, color_map,
-                           edge_color_map);
+    >::type vis = visitor;
+    detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
 #endif
     return true;
   }

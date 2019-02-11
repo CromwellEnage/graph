@@ -603,7 +603,6 @@ namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_tag)
-    BOOST_MPL_HAS_XXX_TRAIT_DEF(vertex_property_type)
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -783,7 +782,7 @@ namespace boost { namespace detail {
     template <typename G, typename Tag>
     struct is_graph_with_vertex_property_type
         : mpl::if_<
-            graph_detail::has_vertex_property_type<G>,
+            detail::has_vertex_property_type<G>,
             is_graph_with_vertex_property_type_impl<G,Tag>,
             mpl::false_
         >::type
