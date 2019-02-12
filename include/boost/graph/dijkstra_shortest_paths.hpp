@@ -512,7 +512,7 @@ namespace boost {
      Compare compare, Combine combine, DistInf inf, DistZero zero,
      DijkstraVisitor vis)
   {
-    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
     dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance,
                             weight, index_map,
                             compare, combine, inf, zero, vis);
