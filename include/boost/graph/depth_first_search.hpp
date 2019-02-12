@@ -15,6 +15,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/mpl/vector.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -36,6 +37,7 @@ namespace boost { namespace detail {
         template <typename B, typename P>
         static graph_yes_tag
             _check(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -56,25 +58,22 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check(...);
 
     public:
         typedef mpl::bool_<
             sizeof(
-                has_finish_edge_impl<T,G>::BOOST_NESTED_TEMPLATE
-                _check<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
+                has_finish_edge_impl<T,G>::_check(
+                    static_cast<mpl::vector<T,G>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag)
         > type;
     };
 }}
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
-
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/eval_if.hpp>
 
 namespace boost { namespace detail {
 
@@ -87,6 +86,7 @@ namespace boost { namespace detail {
         template <typename B, typename P>
         static graph_yes_tag
             _check_init_v(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -107,15 +107,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_init_v(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_start_v(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -136,15 +136,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_start_v(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_disc_v(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -165,15 +165,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_disc_v(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_exam_e(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -194,15 +194,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_exam_e(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_tree_e(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -223,15 +223,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_tree_e(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_back_e(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -252,15 +252,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_back_e(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_forc_e(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -281,15 +281,15 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_forc_e(...);
 
         template <typename B, typename P>
         static graph_yes_tag
             _check_end_v(
+                mpl::vector<B,P>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD((
@@ -310,69 +310,85 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename P>
         static graph_no_tag _check_end_v(...);
 
     public:
-      typedef typename mpl::eval_if_c<
-        sizeof(
-          is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-          _check_init_v<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-        ) == sizeof(graph_yes_tag),
-        mpl::eval_if_c<
-          sizeof(
-            is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-            _check_start_v<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-          ) == sizeof(graph_yes_tag),
-          mpl::eval_if_c<
-            sizeof(
-              is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-              _check_disc_v<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-            ) == sizeof(graph_yes_tag),
-            mpl::eval_if_c<
-              sizeof(
-                is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-                _check_exam_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-              ) == sizeof(graph_yes_tag),
-              mpl::eval_if_c<
+        typedef mpl::bool_<
+            (
                 sizeof(
-                  is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-                  _check_tree_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-                ) == sizeof(graph_yes_tag),
-                mpl::eval_if_c<
-                  sizeof(
-                    is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-                    _check_back_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-                  ) == sizeof(graph_yes_tag),
-                  mpl::if_c<
-                    sizeof(
-                      is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-                      _check_forc_e<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-                    ) == sizeof(graph_yes_tag),
-                    mpl::bool_<
-                      sizeof(
-                        is_dfs_visitor_impl<T,G>::BOOST_NESTED_TEMPLATE
-                        _check_end_v<_m_T,G>(BOOST_GRAPH_DETAIL_NULLPTR)
-                      ) == sizeof(graph_yes_tag)
-                    >,
-                    mpl::false_
-                  >,
-                  mpl::false_
-                >,
-                mpl::false_
-              >,
-              mpl::false_
-            >,
-            mpl::false_
-          >,
-          mpl::false_
-        >,
-        mpl::false_
-      >::type type;
+                    is_dfs_visitor_impl<T,G>::_check_init_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_start_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_disc_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_exam_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_tree_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_back_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_forc_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_dfs_visitor_impl<T,G>::_check_end_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            )
+        > type;
     };
+}}
+
+#include <boost/mpl/eval_if.hpp>
+
+namespace boost { namespace detail {
 
     template <typename T, typename G>
     struct is_dfs_visitor
@@ -401,20 +417,16 @@ namespace boost { namespace detail {
 }}
 
 #include <boost/graph/named_function_params.hpp>
-#include <boost/parameter.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
-namespace boost { namespace detail {
-}}
-
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
+#include <boost/parameter.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/functional/value_factory.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/concept/assert.hpp>
 #include <vector>
 #include <utility>

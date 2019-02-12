@@ -168,6 +168,7 @@ namespace boost { namespace detail {
     };
 }}
 
+#include <boost/mpl/vector.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 
 namespace boost { namespace detail {
@@ -178,6 +179,7 @@ namespace boost { namespace detail {
         template <typename B, typename A1, typename A2>
         static graph_yes_tag
             _check(
+                mpl::vector<B,A1,A2>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL((
@@ -194,17 +196,19 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B, typename A1, typename A2>
         static graph_no_tag _check(...);
 
      public:
         typedef mpl::bool_<
             sizeof(
-                is_binary_func<T,FirstArg,SecondArg>::BOOST_NESTED_TEMPLATE
-                _check<T,FirstArg,SecondArg>(BOOST_GRAPH_DETAIL_NULLPTR)
+                is_binary_func<T,FirstArg,SecondArg>::_check(
+                    static_cast<mpl::vector<T,FirstArg,SecondArg>*>(
+                        BOOST_GRAPH_DETAIL_NULLPTR
+                    )
+                )
             ) == sizeof(graph_yes_tag)
         > type;
     };
@@ -215,44 +219,50 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check_d(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(*boost::detail::declref<B>())
 #else
                     decltype(*boost::detail::declref<B>())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check_d(...);
 
         template <typename B>
         static graph_yes_tag
             _check_i(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(++boost::detail::declref<B>())
 #else
                     decltype(++boost::detail::declref<B>())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check_i(...);
 
      public:
         typedef mpl::bool_<
             (
                 sizeof(
-                    is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
-                    _check_d<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                    is_iterator_impl<T>::_check_d(
+                        static_cast<mpl::vector<T>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
                 ) == sizeof(graph_yes_tag)
             ) && (
                 sizeof(
-                    is_iterator_impl<T>::BOOST_NESTED_TEMPLATE
-                    _check_i<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                    is_iterator_impl<T>::_check_i(
+                        static_cast<mpl::vector<T>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
                 ) == sizeof(graph_yes_tag)
             )
         > type;
@@ -265,23 +275,24 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_KEYWORD(boost::detail::declref<B>().pop())
 #else
                     decltype(boost::detail::declref<B>().pop())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef mpl::bool_<
             sizeof(
-                has_member_function_pop_expr<T>::BOOST_NESTED_TEMPLATE
-                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                has_member_function_pop_expr<T>::_check(
+                    static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag)
         > type;
     };
@@ -318,23 +329,24 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(!boost::declval<B>())
 #else
                     decltype(!boost::declval<B>())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef typename mpl::if_c<
             sizeof(
-                is_logically_negatable_expr<T>::BOOST_NESTED_TEMPLATE
-                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                is_logically_negatable_expr<T>::_check(
+                    static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag),
             is_logically_negatable_impl<T>,
             mpl::false_
@@ -399,23 +411,24 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(boost::detail::declcref<B>().empty())
 #else
                     decltype(boost::detail::declcref<B>().empty())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef typename mpl::if_c<
             sizeof(
-                has_const_member_function_empty_expr<T>::BOOST_NESTED_TEMPLATE
-                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                has_const_member_function_empty_expr<T>::_check(
+                    static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag),
             has_const_member_function_empty_impl<T>,
             mpl::false_
@@ -472,29 +485,35 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(boost::detail::declref<B>().top())
 #else
                     decltype(boost::detail::declref<B>().top())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef typename mpl::eval_if_c<
             (
                 sizeof(
-                    has_member_function_top_expr<T>::BOOST_NESTED_TEMPLATE
-                    _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                    has_member_function_top_expr<T>::_check(
+                        static_cast<mpl::vector<T>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
                 ) == sizeof(graph_yes_tag)
             ) && (
                 sizeof(
-                    has_member_function_top_expr<T>::BOOST_NESTED_TEMPLATE
-                    _check<T const>(BOOST_GRAPH_DETAIL_NULLPTR)
+                    has_member_function_top_expr<T>::_check(
+                        static_cast<mpl::vector<T const>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
                 ) == sizeof(graph_yes_tag)
             ),
             mpl::eval_if<
@@ -531,23 +550,24 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL(boost::detail::declcref<B>().size())
 #else
                     decltype(boost::detail::declcref<B>().size())
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef typename mpl::eval_if_c<
             sizeof(
-                has_const_member_function_size_expr<T>::BOOST_NESTED_TEMPLATE
-                _check<T>(BOOST_GRAPH_DETAIL_NULLPTR)
+                has_const_member_function_size_expr<T>::_check(
+                    static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag),
             mpl::if_<
                 has_size_type<T>,
@@ -926,6 +946,7 @@ namespace boost { namespace detail {
         template <typename B>
         static graph_yes_tag
             _check(
+                mpl::vector<B>*,
                 typename boost::add_pointer<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL((
@@ -942,17 +963,17 @@ namespace boost { namespace detail {
                         )
                     )
 #endif
-                >::type
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
             );
 
-        template <typename B>
         static graph_no_tag _check(...);
 
      public:
         typedef mpl::bool_<
             sizeof(
-                has_internal_vertex_index_map_impl<G>::BOOST_NESTED_TEMPLATE
-                _check<G>(BOOST_GRAPH_DETAIL_NULLPTR)
+                has_internal_vertex_index_map_impl<G>::_check(
+                    static_cast<mpl::vector<G>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
             ) == sizeof(graph_yes_tag)
         > type;
     };

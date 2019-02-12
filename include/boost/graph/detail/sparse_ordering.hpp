@@ -153,6 +153,17 @@ namespace boost {
     return std::make_pair(Q.spouse(), Q.eccentricity());
   }
 
+  // Original Pseudo peripheral interface
+  template <class Graph, class Vertex, class ColorMap, class DegreeMap>
+  Vertex
+  pseudo_peripheral_pair(Graph const& G, Vertex u, int& ecc,
+                         ColorMap color, DegreeMap degree)
+  {
+    std::pair<Vertex, std::size_t> result = pseudo_peripheral_pair(G, u, color, degree);
+    ecc = static_cast<int>(result.second);
+    return result.first;
+  }
+
   // Find a good starting node
   //
   // This is to find a good starting node for the

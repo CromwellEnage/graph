@@ -62,7 +62,6 @@ namespace boost {
 
   } // namespace detail  
 
-
   // Reverse Cuthill-McKee algorithm with a given starting Vertex.
   //
   // If user provides a reverse iterator, this will be a reverse-cuthill-mckee
@@ -77,14 +76,12 @@ namespace boost {
                          OutputIterator permutation, 
                          ColorMap color, DegreeMap degree)
   {
-
     //create queue, visitor...don't forget namespaces!
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
     typedef typename detail::bfs_rcm_visitor<OutputIterator, queue, DegreeMap> Visitor;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
-
 
     queue Q;
 

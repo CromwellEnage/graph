@@ -111,9 +111,9 @@ struct gursoy_shortest<dummy_property_map>
       dummy_property_map)
   {
     boost::breadth_first_search(g, s,
-      visitor(boost::make_bfs_visitor(std::make_pair(
+      boost::make_bfs_visitor(std::make_pair(
         boost::record_distances(node_distance, boost::on_tree_edge()),
-        update_position))));
+        update_position)));
   }
 };
 

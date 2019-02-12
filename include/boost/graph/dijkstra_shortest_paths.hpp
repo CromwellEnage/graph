@@ -316,7 +316,8 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
   {
-    dijkstra_shortest_paths_no_init(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths_no_init(g, srcs, srcs + 1, predecessor, distance,
                                     weight, index_map, compare, combine, zero,
                                     vis);
   }
@@ -373,7 +374,8 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis, ColorMap color)
   {
-    dijkstra_shortest_paths_no_init(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths_no_init(g, srcs, srcs + 1, predecessor, distance,
                                     weight, index_map, compare, combine,
                                     zero, vis, color);
   }
@@ -418,7 +420,8 @@ namespace boost {
      const bgl_named_params<T, Tag, Base>&
      BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance, weight,
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
                             index_map, compare, combine, inf, zero, vis);
   }
 
@@ -468,7 +471,8 @@ namespace boost {
      Compare compare, Combine combine, DistInf inf, DistZero zero,
      DijkstraVisitor vis, ColorMap color)
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance, weight,
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
                             index_map, compare, combine, inf, zero,
                             vis, color);
   }
@@ -508,7 +512,8 @@ namespace boost {
      Compare compare, Combine combine, DistInf inf, DistZero zero,
      DijkstraVisitor vis)
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance,
                             weight, index_map,
                             compare, combine, inf, zero, vis);
   }
