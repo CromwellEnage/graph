@@ -61,7 +61,8 @@ namespace boost { namespace detail {
 
     template <typename T>
     struct is_logically_negatable_impl
-        : mpl::if_<
+    {
+        typedef typename mpl::if_<
             boost::is_convertible<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                 BOOST_TYPEOF_TPL(!boost::declval<T>()),
@@ -72,8 +73,7 @@ namespace boost { namespace detail {
             >,
             mpl::true_,
             mpl::false_
-        >::type
-    {
+        >::type type;
     };
 }}
 
@@ -83,7 +83,8 @@ namespace boost { namespace detail {
 
     template <typename T>
     struct has_const_member_function_size_impl
-        : mpl::if_<
+    {
+        typedef typename mpl::if_<
             boost::is_same<
                 typename T::size_type,
 #if defined(BOOST_NO_CXX11_DECLTYPE)
@@ -94,13 +95,13 @@ namespace boost { namespace detail {
             >,
             mpl::true_,
             mpl::false_
-        >::type
-    {
+        >::type type;
     };
 
     template <typename T>
     struct has_const_member_function_top_impl
-        : mpl::if_<
+    {
+        typedef typename mpl::if_<
             boost::is_same<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                 typename T::value_type,
@@ -112,26 +113,7 @@ namespace boost { namespace detail {
             >,
             mpl::true_,
             mpl::false_
-        >::type
-    {
-    };
-
-    template <typename T>
-    struct has_member_function_top_impl
-        : mpl::if_<
-            boost::is_same<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                typename T::value_type,
-                BOOST_TYPEOF_TPL(boost::detail::declref<T>().top())
-#else
-                typename T::value_type&,
-                decltype(boost::detail::declref<T>().top())
-#endif
-            >,
-            mpl::true_,
-            mpl::false_
-        >::type
-    {
+        >::type type;
     };
 }}
 
@@ -146,7 +128,8 @@ namespace boost { namespace detail {
         typename ResultPlaceholderExpr
     >
     struct is_binary_function_impl
-        : mpl::apply1<
+    {
+        typedef typename mpl::apply1<
             ResultPlaceholderExpr,
 #if defined(BOOST_NO_CXX11_DECLTYPE)
             BOOST_TYPEOF_TPL((
@@ -163,8 +146,7 @@ namespace boost { namespace detail {
                 )
             )
 #endif
-        >::type
-    {
+        >::type type;
     };
 }}
 
@@ -299,7 +281,7 @@ namespace boost { namespace detail {
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 
-#include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
 
 namespace boost { namespace detail {
 
@@ -310,7 +292,7 @@ namespace boost { namespace detail {
         typename ResultPlaceholderExpr
     >
     struct is_binary_function
-        : mpl::if_<
+        : mpl::eval_if<
             typename is_binary_func<T,FirstArgument,SecondArgument>::type,
             is_binary_function_impl<
                 T,
@@ -342,7 +324,7 @@ namespace boost { namespace detail {
         static graph_no_tag _check(...);
 
      public:
-        typedef typename mpl::if_c<
+        typedef typename mpl::eval_if_c<
             sizeof(
                 is_logically_negatable_expr<T>::_check(
                     static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
@@ -361,6 +343,24 @@ namespace boost { namespace detail {
             >::type
         >::type
     {
+    };
+
+    template <typename T>
+    struct has_member_function_top_impl
+    {
+        typedef typename mpl::eval_if<
+            boost::is_same<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                typename T::value_type,
+                BOOST_TYPEOF_TPL(boost::detail::declref<T>().top())
+#else
+                typename T::value_type&,
+                decltype(boost::detail::declref<T>().top())
+#endif
+            >,
+            has_const_member_function_top_impl<T>,
+            mpl::false_
+        >::type type;
     };
 }}
 
@@ -395,14 +395,14 @@ namespace boost { namespace detail {
 
     template <typename T>
     struct has_const_member_function_empty_impl
-        : is_boolean_expression<
+    {
+        typedef is_boolean_expression<
 #if defined(BOOST_NO_CXX11_DECLTYPE)
             BOOST_TYPEOF_TPL(boost::detail::declcref<T>().empty())
 #else
             decltype(boost::detail::declcref<T>().empty())
 #endif
-        >
-    {
+        > type;
     };
 
     template <typename T>
@@ -424,7 +424,7 @@ namespace boost { namespace detail {
         static graph_no_tag _check(...);
 
      public:
-        typedef typename mpl::if_c<
+        typedef typename mpl::eval_if_c<
             sizeof(
                 has_const_member_function_empty_expr<T>::_check(
                     static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
@@ -518,11 +518,7 @@ namespace boost { namespace detail {
             ),
             mpl::eval_if<
                 has_value_type<T>,
-                mpl::if_<
-                    has_const_member_function_top_impl<T>,
-                    has_member_function_top_impl<T>,
-                    mpl::false_
-                >,
+                has_member_function_top_impl<T>,
                 mpl::false_
             >,
             mpl::false_
@@ -569,7 +565,7 @@ namespace boost { namespace detail {
                     static_cast<mpl::vector<T>*>(BOOST_GRAPH_DETAIL_NULLPTR)
                 )
             ) == sizeof(graph_yes_tag),
-            mpl::if_<
+            mpl::eval_if<
                 has_size_type<T>,
                 has_const_member_function_size_impl<T>,
                 mpl::false_
