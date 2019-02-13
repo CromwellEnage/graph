@@ -119,7 +119,11 @@ struct dfs_test
     typename Traits::edge_iterator ei, ei_end;
 
     boost::mt19937 gen, dfs_chooser_gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     boost::uniform_int<> dfs_choices(0, 6);
+#else
+    boost::uniform_int<> dfs_choices(0, 1);
+#endif
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
     > dfs_rand(dfs_chooser_gen, dfs_choices);
@@ -159,29 +163,31 @@ struct dfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::undirected_dfs(g, e_color, color, vis);
-            break;
-          case 1:
-            boost::undirected_dfs(g, e_color, vis, color);
-            break;
-          case 2:
-            boost::undirected_dfs(g, color, e_color, vis);
-            break;
-          case 3:
-            boost::undirected_dfs(g, color, vis, e_color);
-            break;
-          case 4:
-            boost::undirected_dfs(g, vis, e_color, color);
-            break;
-          case 5:
-            boost::undirected_dfs(g, vis, color, e_color);
-            break;
-          case 6:
             boost::undirected_dfs(
               g,
               visitor(boost::ref(vis)).color_map(color).edge_color_map(e_color)
             );
             break;
+          case 1:
+            boost::undirected_dfs(g, vis, color, e_color);
+            break;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+          case 2:
+            boost::undirected_dfs(g, vis, e_color, color);
+            break;
+          case 3:
+            boost::undirected_dfs(g, color, e_color, vis);
+            break;
+          case 4:
+            boost::undirected_dfs(g, color, vis, e_color);
+            break;
+          case 5:
+            boost::undirected_dfs(g, e_color, color, vis);
+            break;
+          case 6:
+            boost::undirected_dfs(g, e_color, vis, color);
+            break;
+#endif
         }
 
         // all vertices should be black

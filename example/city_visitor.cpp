@@ -132,7 +132,11 @@ int main(int, char*[])
 
   cout << "*** Breadth First ***" << endl;
   breadth_first_search
-    (G, s, make_bfs_visitor(boost::make_list(city_arrival(names), 
+    (G, s,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+     boost::graph::keywords::_visitor =
+#endif
+     make_bfs_visitor(boost::make_list(city_arrival(names), 
                                                      neighbor_cities(names), 
                                                      finish_city(names))));
   

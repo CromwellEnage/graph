@@ -69,11 +69,20 @@ int main(int, char*[])
   add_edge(5, 6, g);
   add_edge(6, 11, g);
   add_edge(7, 14, g);
-  
+
   std::cout << "back edges:\n";
   detect_loops vis;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   undirected_dfs(g, vertex_t(0), vis, get(edge_color, g));
+#else
+  undirected_dfs(
+    g,
+    vis,
+    boost::graph::keywords::_edge_color_map = get(edge_color, g),
+    boost::graph::keywords::_root_vertex = vertex_t(0)
+  );
+#endif
   std::cout << std::endl;
-  
+
   return boost::exit_success;
 }

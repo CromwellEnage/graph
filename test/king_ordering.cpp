@@ -20,14 +20,14 @@
 /*
   Sample Output
   original bandwidth: 8
-  Reverse Cuthill-McKee ordering starting at: 6
-    8 3 0 9 2 5 1 4 7 6 
+  King ordering starting at: 6
+    8 9 2 3 0 1 4 5 7 6 
     bandwidth: 4
-  Reverse Cuthill-McKee ordering starting at: 0
+  King ordering starting at: 0
     9 1 4 6 7 2 8 5 3 0 
     bandwidth: 4
-  Reverse Cuthill-McKee ordering:
-    0 8 5 7 3 6 4 2 1 9 
+  King ordering:
+    8 0 5 7 3 6 2 4 1 9 
     bandwidth: 4
  */
 int main(int , char* [])

@@ -71,7 +71,16 @@ main()
   typedef property_map<graph_t, std::size_t VertexProps::*>::type dtime_map_t;
   dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   breadth_first_search(g, vertex(s, g), get(&VertexProps::color, g), vis);
+#else
+  breadth_first_search(
+    g,
+    vertex(s, g),
+    boost::graph::keywords::_color_map = get(&VertexProps::color, g),
+    boost::graph::keywords::_visitor = vis
+  );
+#endif
 
   // a vector to hold the discover time property for each vertex
   std::vector < Size > dtime(num_vertices(g));

@@ -140,6 +140,7 @@ namespace boost {
   } // namespace detail
 
   // Boost.Parameter-enabled variant
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_dfs, ::boost::graph::keywords::tag,
     (required
@@ -162,7 +163,7 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,get(vertex_index, graph)
+          ,detail::vertex_index_map_or_dummy_property_map(graph)
         )
         (color_map
           ,*(
@@ -191,6 +192,20 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), undirected_dfs, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (visitor, *)
+      (color_map, *)
+      (edge_color_map, *)
+    )
+    (optional
+      (root_vertex, *, detail::get_default_starting_vertex(graph))
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
@@ -271,8 +286,9 @@ namespace boost {
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     undirected_dfs(
       g,
-      boost::graph::keywords::_edge_color_map = arg_pack[
-        boost::graph::keywords::_edge_color_map
+      boost::graph::keywords::_visitor = arg_pack[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<default_dfs_visitor>()
       ],
       boost::graph::keywords::_color_map = arg_pack[
         boost::graph::keywords::_color_map |
@@ -285,9 +301,8 @@ namespace boost {
           ]
         )
       ],
-      boost::graph::keywords::_visitor = arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<default_dfs_visitor>()
+      boost::graph::keywords::_edge_color_map = arg_pack[
+        boost::graph::keywords::_edge_color_map
       ],
       boost::graph::keywords::_root_vertex = arg_pack[
         boost::graph::keywords::_root_vertex ||
@@ -296,6 +311,7 @@ namespace boost {
     );
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -328,6 +344,18 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+      (visitor, *)
+      (color_map, *)
+      (edge_color_map, *)
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
@@ -343,9 +371,6 @@ namespace boost {
 #endif
     return true;
   }
-
-
 } // namespace boost
-
 
 #endif

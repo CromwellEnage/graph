@@ -48,10 +48,13 @@ namespace boost { namespace detail {
     >::type declcref() BOOST_NOEXCEPT;
 }}
 
+#include <boost/graph/named_function_params.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/declval.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -76,9 +79,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/type_traits/is_same.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -116,9 +121,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/mpl/apply.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <
@@ -149,10 +156,12 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/mpl/vector.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T, typename FirstArg, typename SecondArg>
@@ -280,9 +289,11 @@ namespace boost { namespace detail {
     };
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/mpl/eval_if.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <
@@ -363,9 +374,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/type_traits/remove_const.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -445,6 +458,7 @@ namespace boost { namespace detail {
     {
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/property_map/property_map.hpp>
 
@@ -477,6 +491,7 @@ namespace boost { namespace detail {
 
 #include <boost/mpl/eval_if.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -535,9 +550,11 @@ namespace boost { namespace detail {
     {
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/range/size.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -610,6 +627,7 @@ namespace boost { namespace detail {
     {
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -815,10 +833,15 @@ namespace boost { namespace detail {
             return get(vertex_index, g);
         }
     };
+}}
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+namespace boost { namespace detail {
 
     template <typename T>
     struct is_color_map_impl
-        : mpl::if_<
+    {
+        typedef typename mpl::if_<
             // This is required by the ColorValue concept.
             boost::is_same<
                 typename property_traits<T>::value_type,
@@ -838,13 +861,12 @@ namespace boost { namespace detail {
             >,
             mpl::true_,
             mpl::false_
-        >::type
-    {
+        >::type type;
     };
 
     template <typename T, typename G>
     struct is_vertex_color_map_of_graph
-        : mpl::if_<
+        : mpl::eval_if<
             is_vertex_property_map_of_graph<T,G>,
             is_color_map_impl<T>,
             mpl::false_
@@ -854,7 +876,7 @@ namespace boost { namespace detail {
 
     template <typename T, typename G>
     struct is_edge_color_map_of_graph
-        : mpl::if_<
+        : mpl::eval_if<
             is_edge_property_map_of_graph<T,G>,
             is_color_map_impl<T>,
             mpl::false_
@@ -862,9 +884,11 @@ namespace boost { namespace detail {
     {
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/type_traits/is_integral.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -872,7 +896,7 @@ namespace boost { namespace detail {
         : mpl::eval_if<
             // Ensure that color maps are not mistaken for index maps during
             // type deduction. -- Cromwell D. Enage
-            is_color_map_impl<T>,
+            typename is_color_map_impl<T>::type,
             mpl::false_,
             mpl::if_<
                 boost::is_integral<typename property_traits<T>::value_type>,
@@ -902,6 +926,9 @@ namespace boost { namespace detail {
         >::type
     {
     };
+}}
+
+namespace boost { namespace detail {
 
     template <template <typename> class UnaryPredicate>
     struct argument_predicate
@@ -917,6 +944,7 @@ namespace boost { namespace detail {
         };
     };
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 namespace boost {
 
@@ -932,8 +960,7 @@ namespace boost { namespace detail {
     };
 }}
 
-#include <boost/graph/named_function_params.hpp>
-
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 namespace boost { namespace detail {
 
     template <typename G>
@@ -973,6 +1000,10 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
+}}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+
+namespace boost { namespace detail {
 
     // TODO:
     // Implement a more robust check. -- Cromwell D. Enage
@@ -1000,10 +1031,18 @@ namespace boost { namespace detail {
             mpl::true_,
             mpl::eval_if<
                 is_adjacency_matrix<G>,  // for adjacency_matrix
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
                 has_internal_vertex_index_map_impl<G>,
+#else
+                mpl::true_,
+#endif
                 mpl::eval_if<
                     has_container_typedefs<G>,  // for vector_as_graph
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
                     has_internal_vertex_index_map_impl<G>,
+#else
+                    mpl::true_,
+#endif
                     mpl::eval_if<
                         is_graph_with_vertex_property_type<G,vertex_index_t>,
                         has_internal_vertex_index_map_impl<G>,
@@ -1060,6 +1099,18 @@ namespace boost { namespace detail {
     {
     };
 
+    template <typename Args, typename Tag>
+    struct property_map_value
+    {
+        typedef typename property_traits<
+            typename mutable_value_type<Args,Tag>::type
+        >::value_type type;
+    };
+}}
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+namespace boost { namespace detail {
+
     template <template <typename, typename> class BinaryPredicate>
     struct argument_with_graph_predicate
     {
@@ -1076,14 +1127,6 @@ namespace boost { namespace detail {
                 >::type
             > type;
         };
-    };
-
-    template <typename Args, typename Tag>
-    struct property_map_value
-    {
-        typedef typename property_traits<
-            typename mutable_value_type<Args,Tag>::type
-        >::value_type type;
     };
 
     struct orig_to_copy_vertex_map_predicate
@@ -1185,6 +1228,7 @@ namespace boost { namespace detail {
     };
 #endif  // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <cstddef>
 #include <utility>

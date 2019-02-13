@@ -62,7 +62,7 @@ namespace boost {
 
   // This function computes the connected components of an undirected
   // graph using a single application of depth first search.
-
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -111,6 +111,40 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::has_key<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >::type,
+        detail::property_map_value<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >
+      >
+    ), connected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+    )
+    (optional
+      (vertex_index_map
+        ,*
+        ,detail::vertex_index_map_or_dummy_property_map(graph)
+      )
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     if (num_vertices(graph) == 0) return 0;
 
@@ -129,7 +163,11 @@ namespace boost {
     // c_count initialized to "nil" (with nil represented by (max)())
     comp_type c_count((std::numeric_limits<comp_type>::max)());
     detail::components_recorder<ComponentMap> vis(component_map, c_count);
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     depth_first_search(graph, vis, vertex_index_map, color_map);
+#else
+    depth_first_search(graph, vis, color_map);
+#endif
     return c_count + 1;
   }
 

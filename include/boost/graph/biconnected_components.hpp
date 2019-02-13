@@ -199,16 +199,17 @@ namespace boost
     }
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
         >::type,
@@ -276,6 +277,63 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::false_
+        >::type,
+        detail::make_size_t_value_pair<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+      (result, *)
+    )
+    (optional
+      (discover_time_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (lowpoint_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (predecessor_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (visitor
+        ,*
+        ,default_dfs_visitor()
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,
@@ -289,16 +347,17 @@ namespace boost
     );
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
@@ -337,6 +396,37 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::false_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        detail::make_size_t_value_pair<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+      (result, *)
+      (vertex_index_map, *)
+    )
+    (optional
+      (visitor, *, default_dfs_visitor())
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,
@@ -381,16 +471,17 @@ namespace boost
     };
   } // end namespace graph_detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::true_
         >::type,
@@ -456,6 +547,56 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::true_
+        >::type,
+        std::size_t
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+    )
+    (optional
+      (discover_time_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (predecessor_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (visitor, *, default_dfs_visitor())
+      (lowpoint_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,
@@ -469,16 +610,17 @@ namespace boost
     ).first;
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::true_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
@@ -513,6 +655,33 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::true_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        std::size_t
+      >
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+      (vertex_index_map, *)
+    )
+    (optional
+      (visitor, *, default_dfs_visitor())
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,
@@ -538,16 +707,17 @@ namespace boost
     ).first;
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
         >::type,
@@ -610,6 +780,63 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::false_
+        >::type,
+        detail::mutable_value_type<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (result, *)
+    )
+    (optional
+      (discover_time_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (predecessor_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          get(vertex_index, graph)
+        )
+      )
+      (visitor, *, default_dfs_visitor())
+      (lowpoint_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          get(vertex_index, graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,
@@ -623,16 +850,17 @@ namespace boost
     ).second;
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          typename detail::has_internal_vertex_index_map_impl<
+          detail::has_internal_vertex_index_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type
-          >::type,
+          >,
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
@@ -664,6 +892,36 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::eval_if<
+          detail::has_internal_vertex_index_map<
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::graph
+            >::type
+          >,
+          mpl::false_,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>
+        >::type,
+        detail::mutable_value_type<
+          Args,
+          boost::graph::keywords::tag::result
+        >
+      >
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (result, *)
+      (vertex_index_map, *)
+    )
+    (optional
+      (visitor, *, default_dfs_visitor())
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     return detail::biconnected_components_impl(
       graph,

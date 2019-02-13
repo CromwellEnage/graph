@@ -117,8 +117,9 @@ namespace boost {
       depth_first_search(g, vis, color);
       return total;
     }
-  } // namespace detail 
+  } // namespace detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -189,6 +190,56 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::has_key<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >::type,
+        detail::property_map_value<
+          Args,
+          boost::graph::keywords::tag::component_map
+        >
+      >
+    ), strong_components, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (component_map, *)
+    )
+    (optional
+      (vertex_index_map
+        ,*
+        ,detail::vertex_index_map_or_dummy_property_map(graph)
+      )
+      (root_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          vertex_index_map
+        )
+      )
+      (discover_time_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          vertex_index_map
+        )
+      )
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     typedef typename graph_traits<
       typename boost::remove_const<

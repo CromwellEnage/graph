@@ -268,7 +268,15 @@ namespace boost
 
       // Perform a depth-first search to find each vertex's low point, least
       // ancestor, and dfs tree information
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
       depth_first_search(g, vis, vm);
+#else
+      depth_first_search(
+        g,
+        vis,
+        make_shared_array_property_map(num_vertices(g), white_color, vm)
+      );
+#endif
 
       // Sort vertices by their lowpoint - need this later in the constructor
       vertex_vector_t vertices_by_lowpoint(num_vertices(g));

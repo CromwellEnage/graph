@@ -156,7 +156,11 @@ main()
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     breadth_first_search(g, src, vis);
+#else
+    breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
+#endif
   }
 
   size_type diameter = 0;
@@ -186,7 +190,10 @@ main()
   // vertex (where parent is with respect to the search tree).
   Traits::vertex_descriptor src = vertices(g).first[0];
   breadth_first_search(
-    g, src, 
+    g, src,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+    boost::graph::keywords::_visitor =
+#endif
     make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
   );
 
@@ -207,7 +214,11 @@ main()
     tree_printer(node_name, &dfs_distances[0]);
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
-  
+#else
+  depth_first_visit(search_tree, tree_printer, get(vertex_color, g), src);
+#endif
+
   return EXIT_SUCCESS;
 }

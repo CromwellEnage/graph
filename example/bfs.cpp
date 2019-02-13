@@ -133,7 +133,7 @@ int main(int , char* [])
   p[s] = s;
   boost::breadth_first_search
     (G, s, 
-     boost::make_bfs_visitor
+     boost::graph::keywords::_visitor = boost::make_bfs_visitor
      (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
                      std::make_pair
                      (boost::record_predecessors(&p[0], 

@@ -819,7 +819,15 @@ namespace boost
 
       v_size_t num_odd_components;
       detail::odd_components_counter<v_size_t> occ(num_odd_components);
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
       depth_first_search(fg, occ, vm);
+#else
+      depth_first_search(
+        fg,
+        occ,
+        make_shared_array_property_map(num_vertices(fg), white_color, vm)
+      );
+#endif
 
       if (2 * matching_size(g,mate,vm) == num_vertices(g) + num_odd_vertices - num_odd_components)
         return true;

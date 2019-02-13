@@ -67,6 +67,7 @@ namespace boost
     }
   }                             // namespace detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), transitive_closure, ::boost::graph::keywords::tag,
     (required
@@ -96,9 +97,18 @@ namespace boost
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  template < typename Graph, typename GraphTC,
+    typename G_to_TC_VertexMap,
+    typename VertexIndexMap >
+    bool transitive_closure(const Graph & graph, GraphTC & result,
+                            G_to_TC_VertexMap orig_to_copy,
+                            VertexIndexMap vertex_index_map)
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     if (num_vertices(graph) == 0)
       return true;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
@@ -108,6 +118,7 @@ namespace boost
     typedef typename boost::remove_const<
       typename boost::remove_reference<vertex_index_map_type>::type
     >::type VertexIndexMap;
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
     typedef typename graph_traits < Graph >::vertex_iterator vertex_iterator;
     typedef typename property_traits < VertexIndexMap >::value_type size_type;
@@ -293,6 +304,25 @@ namespace boost
 
     return true;
   }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  template <typename Graph, typename GraphTC>
+  void transitive_closure(const Graph & g, GraphTC & tc)
+  {
+    if (num_vertices(g) == 0)
+      return;
+    typedef typename property_map<Graph, vertex_index_t>::const_type
+      VertexIndexMap;
+    VertexIndexMap index_map = get(vertex_index, g);
+
+    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+    std::vector<tc_vertex> to_tc_vec(num_vertices(g));
+    iterator_property_map < tc_vertex *, VertexIndexMap, tc_vertex, tc_vertex&>
+      g_to_tc_map(&to_tc_vec[0], index_map);
+
+    transitive_closure(g, tc, g_to_tc_map, index_map);
+  }
+#endif
 
   namespace detail
   {

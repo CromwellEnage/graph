@@ -13,6 +13,7 @@
 #ifndef BOOST_GRAPH_RECURSIVE_DFS_HPP
 #define BOOST_GRAPH_RECURSIVE_DFS_HPP
 
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/mpl/vector.hpp>
@@ -21,6 +22,8 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
 #include <boost/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -415,8 +418,8 @@ namespace boost { namespace detail {
     typedef visitor_predicate dfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
-#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
@@ -477,7 +480,9 @@ namespace boost {
     template <typename E, typename G, typename Vis>
     void call_finish_edge(Vis& vis, E e, const G& g) { // Only call if method exists
       do_call_finish_edge<
-#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS) && ( \
+    !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+)
         is_dfs_visitor_with_finish_edge<Vis,G>::value
 #else
         false
@@ -680,6 +685,7 @@ namespace boost {
   typedef dfs_visitor<> default_dfs_visitor;
 
   // Boost.Parameter-enabled variant
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_search, ::boost::graph::keywords::tag,
     (required
@@ -722,6 +728,26 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), depth_first_search, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+    )
+    (optional
+      (visitor, *, default_dfs_visitor())
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+      )
+      (root_vertex, *, detail::get_default_starting_vertex(graph))
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
@@ -796,6 +822,10 @@ namespace boost {
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     depth_first_search(
       g,
+      boost::graph::keywords::_visitor = arg_pack[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<default_dfs_visitor>()
+      ],
       boost::graph::keywords::_color_map = arg_pack[
         boost::graph::keywords::_color_map |
         make_shared_array_property_map(
@@ -807,10 +837,6 @@ namespace boost {
           ]
         )
       ],
-      boost::graph::keywords::_visitor = arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<default_dfs_visitor>()
-      ],
       boost::graph::keywords::_root_vertex = arg_pack[
         boost::graph::keywords::_root_vertex ||
         boost::detail::get_default_starting_vertex_t<Graph>(g)
@@ -818,6 +844,7 @@ namespace boost {
     );
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -849,6 +876,20 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+      (visitor, *)
+      (color_map, *)
+    )
+    (optional
+      (terminator_function, *, detail::nontruth2())
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     visitor.start_vertex(root_vertex, graph);

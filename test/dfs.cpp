@@ -112,7 +112,11 @@ struct dfs_test
     typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
     boost::mt19937 gen, dfs_chooser_gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     boost::uniform_int<> dfs_choices(0, 2);
+#else
+    boost::uniform_int<> dfs_choices(0, 1);
+#endif
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
     > dfs_rand(dfs_chooser_gen, dfs_choices);
@@ -151,14 +155,16 @@ struct dfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::depth_first_search(g, color, vis);
+            boost::depth_first_search(g, visitor(boost::ref(vis)).color_map(color));
             break;
           case 1:
             boost::depth_first_search(g, vis, color);
             break;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
           case 2:
-            boost::depth_first_search(g, visitor(boost::ref(vis)).color_map(color));
+            boost::depth_first_search(g, color, vis);
             break;
+#endif
         }
 
         // all vertices should be black

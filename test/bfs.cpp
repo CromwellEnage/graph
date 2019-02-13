@@ -126,7 +126,11 @@ struct bfs_test
     typename Traits::vertex_iterator ui, ui_end;
 
     boost::mt19937 gen, dfs_chooser_gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     boost::uniform_int<> dfs_choices(0, 6);
+#else
+    boost::uniform_int<> dfs_choices(0, 1);
+#endif
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
     > dfs_rand(dfs_chooser_gen, dfs_choices);
@@ -173,29 +177,40 @@ struct bfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::breadth_first_search(g, start, color_pm, vis);
-            break;
-          case 1:
-            boost::breadth_first_search(g, start, vis, color_pm);
-            break;
-          case 2:
-            boost::breadth_first_search(g, vis, start, color_pm);
-            break;
-          case 3:
-            boost::breadth_first_search(g, vis, color_pm, start);
-            break;
-          case 4:
-            boost::breadth_first_search(g, color_pm, start, vis);
-            break;
-          case 5:
-            boost::breadth_first_search(g, color_pm, vis, start);
-            break;
-          case 6:
             boost::breadth_first_search(
               g, start,
               visitor(boost::ref(vis)).color_map(boost::ref(color_pm))
             );
             break;
+          case 1:
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+            boost::breadth_first_search(g, start, vis, color_pm);
+#else
+            boost::breadth_first_search(
+              g,
+              start,
+              boost::graph::keywords::_visitor = vis,
+              boost::graph::keywords::_color_map = color_pm
+            );
+#endif
+            break;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+          case 2:
+            boost::breadth_first_search(g, start, color_pm, vis);
+            break;
+          case 3:
+            boost::breadth_first_search(g, vis, start, color_pm);
+            break;
+          case 4:
+            boost::breadth_first_search(g, vis, color_pm, start);
+            break;
+          case 5:
+            boost::breadth_first_search(g, color_pm, start, vis);
+            break;
+          case 6:
+            boost::breadth_first_search(g, color_pm, vis, start);
+            break;
+#endif
         }
 
         // All white vertices should be unreachable from the source.

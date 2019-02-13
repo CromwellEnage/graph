@@ -14,6 +14,7 @@
 /*
   Breadth First Search Algorithm (Cormen, Leiserson, and Rivest p. 470)
 */
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/mpl/vector.hpp>
@@ -24,6 +25,8 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
 #include <boost/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -421,6 +424,7 @@ namespace boost { namespace detail {
     typedef visitor_predicate bfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #include <boost/pending/queue.hpp>
 
@@ -438,7 +442,6 @@ namespace boost { namespace detail {
 #include <boost/parameter.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
@@ -650,6 +653,7 @@ namespace boost {
 #endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 
   // Boost.Parameter-enabled single-source variant
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), breadth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -697,6 +701,27 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), breadth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (visitor, *, default_bfs_visitor())
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     typename graph_traits<
       typename boost::remove_const<
@@ -748,6 +773,7 @@ namespace boost {
 #endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 
   // Boost.Parameter-enabled single-source variant
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), breadth_first_search, ::boost::graph::keywords::tag,
     (required
@@ -795,6 +821,27 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), breadth_first_search, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (visitor, *, default_bfs_visitor())
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     typename graph_traits<
       typename boost::remove_const<
@@ -905,6 +952,14 @@ namespace boost {
     breadth_first_visit(
       ng,
       boost::graph::keywords::_root_vertex = s,
+      boost::graph::keywords::_buffer = arg_pack[
+        boost::graph::keywords::_buffer ||
+        boost::value_factory<
+          boost::queue<
+            typename graph_traits<IncidenceGraph>::vertex_descriptor
+          >
+        >()
+      ],
       boost::graph::keywords::_visitor = arg_pack[
         boost::graph::keywords::_visitor ||
         boost::value_factory<default_bfs_visitor>()
@@ -919,14 +974,6 @@ namespace boost {
             detail::vertex_index_map_or_dummy_property_map(ng)
           ]
         )
-      ],
-      boost::graph::keywords::_buffer = arg_pack[
-        boost::graph::keywords::_buffer ||
-        boost::value_factory<
-          boost::queue<
-            typename graph_traits<IncidenceGraph>::vertex_descriptor
-          >
-        >()
       ]
     );
   }

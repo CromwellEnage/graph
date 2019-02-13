@@ -27,6 +27,12 @@
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
+#include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
+
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1900)
+#define BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif
 
 namespace boost {
 

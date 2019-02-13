@@ -79,7 +79,8 @@ int main(int, char*[])
   print_graph(G);
 
   depth_first_search(G, TalkativeVisitor<Graph>());
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
   BOOST_TEST(is_called);
-
+#endif
   return boost::report_errors();
 }

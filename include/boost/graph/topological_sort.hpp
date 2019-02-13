@@ -60,6 +60,7 @@ namespace boost {
   // be a directed acyclic graph (DAG). The implementation
   // consists mainly of a call to depth-first search.
   //
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
     (bool), topological_sort, ::boost::graph::keywords::tag,
     (required
@@ -93,16 +94,41 @@ namespace boost {
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), topological_sort, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (result, *)
+    )
+    (optional
+      (vertex_index_map
+        ,*
+        ,detail::vertex_index_map_or_dummy_property_map(graph)
+      )
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
     depth_first_search(
       graph,
-      vertex_index_map,
-      color_map,
       topo_sort_visitor<
         typename boost::remove_const<
           typename boost::remove_reference<result_type>::type
         >::type
-      >(result)
+      >(result),
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+      vertex_index_map,
+#endif
+      color_map
     );
     return true;
   }
@@ -116,6 +142,9 @@ namespace boost {
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     depth_first_search(
       g,
+      boost::graph::keywords::_visitor = topo_sort_visitor<
+        OutputIterator
+      >(result)
       boost::graph::keywords::_color_map = arg_pack[
         boost::graph::keywords::_color_map |
         make_shared_array_property_map(
@@ -127,9 +156,6 @@ namespace boost {
           ]
         )
       ],
-      boost::graph::keywords::_visitor = topo_sort_visitor<
-        OutputIterator
-      >(result)
     );
   }
 } // namespace boost
