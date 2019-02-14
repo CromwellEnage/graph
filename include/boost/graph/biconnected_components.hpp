@@ -628,7 +628,15 @@ namespace boost
               >::type
             >
           >::type,
-          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::eval_if<
+            detail::is_vertex_property_map_of_graph_argument<
+              Args,
+              boost::graph::keywords::tag::discover_time_map,
+              boost::graph::keywords::tag::graph
+            >,
+            mpl::false_,
+            mpl::has_key<Args,boost::graph::keywords::tag::result>
+          >,
           mpl::true_
         >::type,
         std::size_t
