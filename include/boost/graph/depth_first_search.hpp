@@ -741,7 +741,7 @@ namespace boost {
           detail::bgl_named_params_base,
           typename detail::mutable_value_type<
             Args,
-            boost::graph::keywords::tag::vertex_index_map
+            boost::graph::keywords::tag::visitor
           >::type
         >,
         bool
