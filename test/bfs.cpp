@@ -178,7 +178,8 @@ struct bfs_test
         {
           case 0:
             boost::breadth_first_search(
-              g, start,
+              g,
+              start,
               visitor(boost::ref(vis)).color_map(boost::ref(color_pm))
             );
             break;

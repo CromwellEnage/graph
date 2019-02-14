@@ -26,6 +26,12 @@
 #include <boost/static_assert.hpp>
 #include <boost/concept/assert.hpp>
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#endif
+
 namespace boost {
 
   namespace detail {
@@ -115,9 +121,19 @@ namespace boost {
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
-        typename mpl::has_key<
-          Args,
-          boost::graph::keywords::tag::component_map
+        typename mpl::eval_if<
+          boost::is_base_of<
+            detail::bgl_named_params_base,
+            typename detail::mutable_value_type<
+              Args,
+              boost::graph::keywords::tag::vertex_index_map
+            >::type
+          >,
+          mpl::false_,
+          mpl::has_key<
+            Args,
+            boost::graph::keywords::tag::component_map
+          >
         >::type,
         detail::property_map_value<
           Args,

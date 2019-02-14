@@ -23,6 +23,11 @@
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#include <boost/core/enable_if.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#endif
+
 namespace boost { 
 
 
@@ -96,7 +101,18 @@ namespace boost {
   )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
-    (bool), topological_sort, ::boost::graph::keywords::tag,
+    (
+      boost::disable_if<
+        boost::is_base_of<
+          detail::bgl_named_params_base,
+          typename detail::mutable_value_type<
+            Args,
+            boost::graph::keywords::tag::vertex_index_map
+          >::type
+        >,
+        bool
+      >
+    ), topological_sort, ::boost::graph::keywords::tag,
     (required
       (graph, *)
       (result, *)

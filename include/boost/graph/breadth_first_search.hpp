@@ -450,6 +450,11 @@ namespace boost { namespace detail {
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#include <boost/core/enable_if.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#endif
+
 namespace boost {
 
   template <class Visitor, class Graph>
@@ -703,7 +708,18 @@ namespace boost {
   )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
-    (bool), breadth_first_visit, ::boost::graph::keywords::tag,
+    (
+      boost::disable_if<
+        boost::is_base_of<
+          detail::bgl_named_params_base,
+          typename detail::mutable_value_type<
+            Args,
+            boost::graph::keywords::tag::buffer
+          >::type
+        >,
+        bool
+      >
+    ), breadth_first_visit, ::boost::graph::keywords::tag,
     (required
       (graph, *)
       (root_vertex, *)
@@ -823,7 +839,18 @@ namespace boost {
   )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   BOOST_PARAMETER_FUNCTION(
-    (bool), breadth_first_search, ::boost::graph::keywords::tag,
+    (
+      boost::disable_if<
+        boost::is_base_of<
+          detail::bgl_named_params_base,
+          typename detail::mutable_value_type<
+            Args,
+            boost::graph::keywords::tag::buffer
+          >::type
+        >,
+        bool
+      >
+    ), breadth_first_search, ::boost::graph::keywords::tag,
     (required
       (graph, *)
       (root_vertex, *)

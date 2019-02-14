@@ -122,8 +122,17 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+    namespace detail {
+        struct bgl_named_params_base;
+    }
+#endif
+
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+    : detail::bgl_named_params_base
+#endif
   {
     typedef bgl_named_params self;
     typedef Base next_type;
