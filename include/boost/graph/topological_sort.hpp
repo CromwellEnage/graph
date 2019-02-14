@@ -144,7 +144,7 @@ namespace boost {
       g,
       boost::graph::keywords::_visitor = topo_sort_visitor<
         OutputIterator
-      >(result)
+      >(result),
       boost::graph::keywords::_color_map = arg_pack[
         boost::graph::keywords::_color_map |
         make_shared_array_property_map(
@@ -155,7 +155,7 @@ namespace boost {
             get(vertex_index, g)
           ]
         )
-      ],
+      ]
     );
   }
 } // namespace boost

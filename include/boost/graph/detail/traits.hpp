@@ -1045,7 +1045,11 @@ namespace boost { namespace detail {
 #endif
                     mpl::eval_if<
                         is_graph_with_vertex_property_type<G,vertex_index_t>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
                         has_internal_vertex_index_map_impl<G>,
+#else
+                        mpl::true_,
+#endif
                         mpl::eval_if<
                             graph_detail::has_graph_type<G>,  // for adaptors
                             has_graph_type_with_internal_vertex_index_map<G>,
