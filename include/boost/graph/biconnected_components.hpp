@@ -30,10 +30,6 @@
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-#include <boost/type_traits/is_base_of.hpp>
-#endif
-
 namespace boost
 {
   namespace detail
@@ -593,7 +589,7 @@ namespace boost
               mpl::true_,
               detail::is_bgl_named_param_argument<
                 Args,
-                boost::graph::keywords::tag::vertex_predecessor_map
+                boost::graph::keywords::tag::predecessor_map
               >
             >::type,
             mpl::false_,
@@ -890,11 +886,7 @@ namespace boost
       )
       (visitor, *, default_dfs_visitor())
       (lowpoint_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
-          >
-        )
+        ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
           num_vertices(graph) - num_vertices(graph),

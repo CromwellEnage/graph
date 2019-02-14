@@ -31,6 +31,7 @@
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/concept/assert.hpp>

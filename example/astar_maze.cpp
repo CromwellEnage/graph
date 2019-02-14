@@ -192,7 +192,7 @@ bool maze::solve() {
                  _predecessor_map = pred_pmap,
                  _distance_map = dist_pmap,
                  _visitor = visitor);
-  } catch(found_goal fg) {
+  } catch(found_goal) {
     // Walk backwards from the goal through the predecessor chain adding
     // vertices to the solution path.
     for (vertex_descriptor u = g; u != s; u = predecessor[u])
@@ -302,7 +302,7 @@ int main (int argc, char const *argv[]) {
     y = boost::lexical_cast<std::size_t>(argv[2]);
   }
 
-  random_generator.seed(std::time(0));
+  random_generator.seed(static_cast<unsigned int>(std::time(0)));
   maze m = random_maze(x, y);
 
   if (m.solve())

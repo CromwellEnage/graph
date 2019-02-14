@@ -29,7 +29,6 @@
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
-#include <boost/type_traits/is_base_of.hpp>
 #endif
 
 namespace boost {

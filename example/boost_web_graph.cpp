@@ -215,9 +215,9 @@ main()
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-  depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
-#else
   depth_first_visit(search_tree, tree_printer, get(vertex_color, g), src);
+#else
+  depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
 #endif
 
   return EXIT_SUCCESS;
