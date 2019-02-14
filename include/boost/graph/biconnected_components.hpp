@@ -615,9 +615,21 @@ namespace boost
                 boost::graph::keywords::tag::discover_time_map
               >,
               mpl::true_,
-              detail::is_bgl_named_param_argument<
-                Args,
-                boost::graph::keywords::tag::predecessor_map
+              mpl::eval_if<
+                detail::is_bgl_named_param_argument<
+                  Args,
+                  boost::graph::keywords::tag::predecessor_map
+                >
+                mpl::true_,
+                mpl::eval_if<
+                  detail::is_vertex_property_map_of_graph_argument<
+                    Args,
+                    boost::graph::keywords::tag::discover_time_map,
+                    boost::graph::keywords::tag::graph
+                  >,
+                  mpl::false_,
+                  mpl::true_
+                >
               >
             >::type,
             mpl::false_,
@@ -628,15 +640,7 @@ namespace boost
               >::type
             >
           >::type,
-          mpl::eval_if<
-            detail::is_vertex_property_map_of_graph_argument<
-              Args,
-              boost::graph::keywords::tag::discover_time_map,
-              boost::graph::keywords::tag::graph
-            >,
-            mpl::false_,
-            mpl::has_key<Args,boost::graph::keywords::tag::result>
-          >,
+          mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::true_
         >::type,
         std::size_t
