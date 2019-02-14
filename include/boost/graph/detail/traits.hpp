@@ -1233,6 +1233,18 @@ namespace boost { namespace detail {
 #endif  // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
 }}
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+namespace boost { namespace detail {
+
+    template <typename Args, typename VertexTag, typename GraphTag>
+    struct is_vertex_property_map_of_graph_argument_impl
+        : is_vertex_property_map_of_graph<
+            typename mutable_value_type<Args,VertexTag>::type,
+            typename mutable_value_type<Args,GraphTag>::type
+        >
+    {
+    };
+}}
+
 #include <boost/type_traits/is_base_of.hpp>
 
 namespace boost { namespace detail {
@@ -1254,6 +1266,24 @@ namespace boost { namespace detail {
 #include <boost/mpl/has_key.hpp>
 
 namespace boost { namespace detail {
+
+    template <typename Args, typename VertexTag, typename GraphTag>
+    struct is_vertex_property_map_of_graph_argument
+        : mpl::if_<
+            typename mpl::eval_if<
+                mpl::has_key<Args,VertexTag>,
+                mpl::has_key<Args,GraphTag>,
+                mpl::false_
+            >::type,
+            is_vertex_property_map_of_graph_argument_impl<
+                Args,
+                VertexTag,
+                GraphTag
+            >,
+            mpl::false_
+        >::type
+    {
+    };
 
     template <typename Args, typename Tag>
     struct is_bgl_named_param_argument

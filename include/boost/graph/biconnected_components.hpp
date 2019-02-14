@@ -193,7 +193,19 @@ namespace boost
       vis(comp, num_components, children_of_root, dtm, dfs_time,
           lowpt, pred, out, S, is_articulation_point, index_map, dfs_vis);
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
       depth_first_search(g, vis, index_map);
+#else
+      depth_first_search(
+        g,
+        vis,
+        make_shared_array_property_map(
+          num_vertices(g),
+          white_color,
+          index_map
+        )
+      );
+#endif
 
       return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
     }
@@ -302,7 +314,15 @@ namespace boost
               >::type
             >
           >::type,
-          mpl::has_key<Args,boost::graph::keywords::tag::result>,
+          mpl::eval_if<
+            detail::is_vertex_property_map_of_graph_argument<
+              Args,
+              boost::graph::keywords::tag::result,
+              boost::graph::keywords::tag::graph
+            >,
+            mpl::false_,
+            mpl::has_key<Args,boost::graph::keywords::tag::result>
+          >,
           mpl::false_
         >::type,
         detail::make_size_t_value_pair<
@@ -436,7 +456,15 @@ namespace boost
             >
           >::type,
           mpl::false_,
-          mpl::has_key<Args,boost::graph::keywords::tag::result>
+          mpl::eval_if<
+            detail::is_vertex_property_map_of_graph_argument<
+              Args,
+              boost::graph::keywords::tag::result,
+              boost::graph::keywords::tag::graph
+            >,
+            mpl::false_,
+            mpl::has_key<Args,boost::graph::keywords::tag::result>
+          >
         >::type,
         detail::make_size_t_value_pair<
           Args,
