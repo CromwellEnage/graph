@@ -288,20 +288,14 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::result
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::result
               >,
               mpl::true_,
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::discover_time_map
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::discover_time_map
               >
             >::type,
             mpl::false_,
@@ -427,23 +421,17 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::result
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::result
               >,
               mpl::true_,
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::vertex_index_map
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::vertex_index_map
               >
             >::type,
-            mpl::false_,
+            mpl::true_,
             detail::has_internal_vertex_index_map<
               typename detail::mutable_value_type<
                 Args,
@@ -598,20 +586,14 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::discover_time_map
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::discover_time_map
               >,
               mpl::true_,
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::vertex_predecessor_map
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::vertex_predecessor_map
               >
             >::type,
             mpl::false_,
@@ -726,23 +708,17 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::vertex_index_map
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::vertex_index_map
               >,
               mpl::true_,
-              boost::is_base_of<
-                detail::bgl_named_params_base,
-                typename detail::mutable_value_type<
-                  Args,
-                  boost::graph::keywords::tag::visitor
-                >::type
+              detail::is_bgl_named_param_argument<
+                Args,
+                boost::graph::keywords::tag::visitor
               >
             >::type,
-            mpl::false_,
+            mpl::true_,
             detail::has_internal_vertex_index_map<
               typename detail::mutable_value_type<
                 Args,
@@ -870,12 +846,9 @@ namespace boost
       boost::lazy_enable_if<
         typename mpl::eval_if<
           typename mpl::eval_if<
-            boost::is_base_of<
-              detail::bgl_named_params_base,
-              typename detail::mutable_value_type<
-                Args,
-                boost::graph::keywords::tag::discover_time_map
-              >::type
+            detail::is_bgl_named_param_argument<
+              Args,
+              boost::graph::keywords::tag::discover_time_map
             >,
             mpl::false_,
             detail::has_internal_vertex_index_map<
@@ -992,14 +965,11 @@ namespace boost
       boost::lazy_enable_if<
         typename mpl::eval_if<
           typename mpl::eval_if<
-            boost::is_base_of<
-              detail::bgl_named_params_base,
-              typename detail::mutable_value_type<
-                Args,
-                boost::graph::keywords::tag::vertex_index_map
-              >::type
+            detail::is_bgl_named_param_argument<
+              Args,
+              boost::graph::keywords::tag::vertex_index_map
             >,
-            mpl::false_,
+            mpl::true_,
             detail::has_internal_vertex_index_map<
               typename detail::mutable_value_type<
                 Args,

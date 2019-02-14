@@ -103,12 +103,9 @@ namespace boost {
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
-        boost::is_base_of<
-          detail::bgl_named_params_base,
-          typename detail::mutable_value_type<
-            Args,
-            boost::graph::keywords::tag::vertex_index_map
-          >::type
+        detail::is_bgl_named_param_argument<
+          Args,
+          boost::graph::keywords::tag::vertex_index_map
         >,
         bool
       >

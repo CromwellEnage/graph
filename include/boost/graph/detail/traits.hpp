@@ -1232,7 +1232,40 @@ namespace boost { namespace detail {
     };
 #endif  // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#include <boost/type_traits/is_base_of.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename Args, typename Tag>
+    struct is_bgl_named_param_argument_impl
+        : mpl::if_<
+            boost::is_base_of<
+                detail::bgl_named_params_base,
+                typename detail::mutable_value_type<Args,Tag>::type
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+}}
+
+#include <boost/mpl/has_key.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename Args, typename Tag>
+    struct is_bgl_named_param_argument
+        : mpl::if_<
+            typename mpl::has_key<Args,Tag>::type,
+            is_bgl_named_param_argument_impl<Args,Tag>,
+            mpl::false_
+        >::type
+    {
+    };
+}}
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
 
 #include <cstddef>
 #include <utility>
