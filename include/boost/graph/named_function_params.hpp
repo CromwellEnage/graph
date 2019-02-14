@@ -124,7 +124,7 @@ namespace boost {
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     namespace detail {
-        struct bgl_named_params_base;
+        struct bgl_named_params_base { };
     }
 #endif
 

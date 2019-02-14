@@ -156,8 +156,7 @@ int main(int argc, char **argv)
     96, 134, 143, 65, 115, 133, 117, 116, 74, 56,
     84, 73, 69, 70, 116, 147, 173, 183, 74, 71, 124
   };
-  
-  
+
   // create graph
   mygraph_t g(N);
   WeightMap weightmap = get(edge_weight, g);
@@ -167,17 +166,15 @@ int main(int argc, char **argv)
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
-  
-  
+
   // pick random start/goal
-  boost::mt19937 gen(time(0));
+  boost::mt19937 gen(static_cast<unsigned int>(time(0)));
   vertex start = random_vertex(g, gen);
   vertex goal = random_vertex(g, gen);
-  
-  
+
   cout << "Start vertex: " << name[start] << endl;
   cout << "Goal vertex: " << name[goal] << endl;
-  
+
   ofstream dotfile;
   dotfile.open("test-astar-cities.dot");
   write_graphviz(dotfile, g,
@@ -185,8 +182,7 @@ int main(int argc, char **argv)
                   (name, locations, 73.46, 78.86, 40.67, 44.93,
                    480, 400),
                  time_writer<WeightMap>(weightmap));
-  
-  
+
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
   try {
@@ -196,11 +192,9 @@ int main(int argc, char **argv)
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       (_predecessor_map = make_iterator_property_map(p.begin(), get(vertex_index, g)),
-        _distance_map = make_iterator_property_map(d.begin(), get(vertex_index, g)),
-        _visitor = astar_goal_visitor<vertex>(goal)));
-  
-  
+       _predecessor_map = make_iterator_property_map(p.begin(), get(vertex_index, g)),
+       _distance_map = make_iterator_property_map(d.begin(), get(vertex_index, g)),
+       _visitor = astar_goal_visitor<vertex>(goal));
   } catch(found_goal fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
