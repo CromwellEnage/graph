@@ -1271,7 +1271,7 @@ namespace boost { namespace detail {
     struct is_vertex_property_map_of_graph_argument
         : mpl::if_<
             typename mpl::eval_if<
-                mpl::has_key<Args,VertexTag>,
+                typename mpl::has_key<Args,VertexTag>::type,
                 mpl::has_key<Args,GraphTag>,
                 mpl::false_
             >::type,
