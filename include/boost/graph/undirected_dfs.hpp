@@ -22,6 +22,15 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 namespace boost {
 
   namespace detail {
@@ -193,33 +202,36 @@ namespace boost {
     )
   )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-  BOOST_PARAMETER_FUNCTION(
-    (bool), undirected_dfs, ::boost::graph::keywords::tag,
-    (required
-      (graph, *)
-      (visitor, *)
-      (color_map, *)
-      (edge_color_map, *)
-    )
-    (optional
-      (root_vertex, *, detail::get_default_starting_vertex(graph))
-    )
+  template <typename Graph, typename DFSVisitor,
+            typename VertexColorMap, typename EdgeColorMap,
+            typename Vertex>
+  void
+  undirected_dfs(
+    const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
+    EdgeColorMap edge_color, Vertex start_vertex, typename boost::disable_if<
+      parameter::are_tagged_arguments<
+        DFSVisitor, VertexColorMap, EdgeColorMap, Vertex
+      >,
+      mpl::true_
+    >::type = mpl::true_()
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
   {
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
     typedef typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
     >::type DFSVisitor;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<color_map_type>::type
+    >::type VertexColorMap;
+#endif
 
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
 
-    typedef typename boost::remove_const<
-      typename boost::remove_reference<color_map_type>::type
-    >::type VertexColorMap;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
@@ -275,6 +287,49 @@ namespace boost {
 
     return true;
   }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+  template <typename Graph, typename DFSVisitor, typename VertexColorMap,
+    typename EdgeColorMap>
+  void
+  undirected_dfs(
+    const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
+    EdgeColorMap edge_color, typename boost::disable_if<
+      parameter::are_tagged_arguments<
+        DFSVisitor, VertexColorMap, EdgeColorMap
+      >,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    undirected_dfs(
+      g,
+      vis,
+      vertex_color,
+      edge_color,
+      detail::get_default_starting_vertex(g)
+    );
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph &g \
+     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments<BOOST_PP_ENUM_PARAMS_Z(z, n, TA)>, \
+       mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
   // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>

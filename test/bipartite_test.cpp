@@ -84,7 +84,11 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
 
   typename vertex_vector_t::iterator second_first = odd_cycle.begin ();
   typename vertex_vector_t::iterator second_beyond = boost::find_odd_cycle
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   (g, second_first, index_map, partition_map);
+#else
+  (g, index_map, partition_map, second_first);
+#endif
 
   if (is_bipartite)
   {
@@ -96,7 +100,12 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
     check_odd_cycle (g, second_first, second_beyond);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   second_beyond = boost::find_odd_cycle (g, second_first, index_map);
+#else
+  second_beyond = boost::find_odd_cycle (g, index_map, second_first);
+#endif
+
   if (is_bipartite)
   {
     BOOST_TEST (second_beyond == second_first);
