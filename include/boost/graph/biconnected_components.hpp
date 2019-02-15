@@ -619,7 +619,7 @@ namespace boost
                 detail::is_bgl_named_param_argument<
                   Args,
                   boost::graph::keywords::tag::predecessor_map
-                >
+                >,
                 mpl::true_,
                 mpl::eval_if<
                   detail::is_vertex_property_map_of_graph_argument<
