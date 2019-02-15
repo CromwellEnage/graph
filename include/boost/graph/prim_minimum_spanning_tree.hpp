@@ -160,10 +160,10 @@ namespace boost {
   }
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph, typename TA \
+  template <typename Graph, typename PredMap, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
   inline void name \
-    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+    (const Graph &g, PredMap p_map, \
      const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
      typename boost::enable_if< \
        parameter::are_tagged_arguments< \
@@ -171,7 +171,7 @@ namespace boost {
        >, mpl::true_ \
      >::type = mpl::true_()) \
   { \
-    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+    name(g, p_map, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, prim_minimum_spanning_tree)
