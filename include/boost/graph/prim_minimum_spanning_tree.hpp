@@ -51,8 +51,12 @@ namespace boost {
     (const VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s, 
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-     IndexMap index_map,
-     DijkstraVisitor vis)
+     IndexMap index_map, DijkstraVisitor vis, typename boost::disable_if<
+       parameter::are_tagged_arguments<
+         PredecessorMap, DistanceMap, WeightMap, IndexMap, DijkstraVisitor
+       >,
+       mpl::true_
+     >::type = mpl::true_())
   {
     typedef typename property_traits<WeightMap>::value_type W;
     std::less<W> compare;
@@ -76,15 +80,103 @@ namespace boost {
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
 
+  template <class VertexListGraph, class PredecessorMap, class Args>
+  inline void prim_minimum_spanning_tree
+    (const VertexListGraph& g, PredecessorMap p_map,
+     const Args& arg_pack, typename boost::enable_if<
+       parameter::is_argument_pack<Args>, mpl::true_
+     >::type = mpl::true_())
+  {
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+      Args,
+      boost::graph::keywords::tag::weight_map,
+      edge_weight_t,
+      VertexListGraph
+    >::type weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D zero_actual = D();
+    boost::detail::make_property_map_from_arg_pack_gen<
+      boost::graph::keywords::tag::distance_map,
+      D
+    > dist_map_gen(zero_actual);
+    typename boost::detail::map_maker<
+      VertexListGraph,
+      Args,
+      boost::graph::keywords::tag::distance_map,
+      D
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = detail::override_const_property(
+      arg_pack,
+      _weight_map,
+      g,
+      edge_weight
+    );
+    typedef typename boost::property_traits<weight_map_type>::value_type W;
+    std::less<W> compare;
+    detail::_project2nd<W,W> combine;
+    null_visitor null_vis;
+    dijkstra_visitor<null_visitor> default_visitor(null_vis);
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::visitor,
+        dijkstra_visitor<null_visitor>&
+    >::type vis = arg_pack[_visitor | default_visitor];
+    dijkstra_shortest_paths(
+      g,
+      arg_pack[
+        boost::graph::keywords::_root_vertex ||
+        boost::detail::get_default_starting_vertex_t<VertexListGraph>(g)
+      ],
+      _predecessor_map = p_map,
+      _distance_map = dist_map,
+      _weight_map = w_map,
+      _vertex_index_map = arg_pack[
+        _vertex_index_map |
+        detail::vertex_index_map_or_dummy_property_map(g)
+      ],
+      _distance_compare = compare,
+      _distance_combine = combine,
+      _distance_inf = (std::numeric_limits<W>::max)(),
+      _visitor = vis,
+      _color_map = arg_pack[
+        _color_map |
+        make_two_bit_color_map(
+          num_vertices(g),
+          arg_pack[
+            _vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ]
+    );
+  }
+
   template <class VertexListGraph, class PredecessorMap>
   inline void prim_minimum_spanning_tree
     (const VertexListGraph& g, PredecessorMap p_map)
   {
-    detail::prim_mst_impl
-      (g, *vertices(g).first, predecessor_map(p_map).
-       weight_map(get(edge_weight, g)),
-       get(edge_weight, g));
+    prim_minimum_spanning_tree(g, p_map, parameter::compose());
   }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, prim_minimum_spanning_tree)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
 } // namespace boost
 

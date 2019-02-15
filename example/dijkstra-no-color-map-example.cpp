@@ -42,9 +42,13 @@ main(int, char *[])
   std::vector<int> d(num_vertices(g));
   vertex_descriptor s = vertex(A, g);
 
-  dijkstra_shortest_paths_no_color_map(g, s,
-                                       predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g))).
-                                       distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))));
+  dijkstra_shortest_paths_no_color_map(
+    g, s,
+    boost::graph::keywords::_predecessor_map =
+    boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g)),
+    boost::graph::keywords::_distance_map =
+    boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
+  );
 
   std::cout << "distances and parents:" << std::endl;
   graph_traits < graph_t >::vertex_iterator vi, vend;

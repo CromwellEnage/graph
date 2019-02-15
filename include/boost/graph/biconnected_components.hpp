@@ -610,10 +610,10 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              mpl::has_key<
+              typename mpl::has_key<
                 Args,
                 boost::graph::keywords::tag::discover_time_map
-              >,
+              >::type,
               mpl::eval_if<
                 detail::is_bgl_named_param_argument<
                   Args,

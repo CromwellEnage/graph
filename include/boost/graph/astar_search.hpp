@@ -37,7 +37,7 @@
 #include <boost/concept/assert.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
 namespace boost {
 
@@ -453,7 +453,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename P, typename T, typename R>
-  void
+  inline void
   astar_search
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -480,7 +480,7 @@ namespace boost {
     typename boost::parameter::binding<
         arg_pack_type, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -551,7 +551,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
-  void
+  inline void
   astar_search
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -577,7 +577,7 @@ namespace boost {
     typename boost::parameter::binding<
         Args, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -648,7 +648,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename P, typename T, typename R>
-  void
+  inline void
   astar_search_tree
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -675,7 +675,7 @@ namespace boost {
     typename boost::parameter::binding<
         arg_pack_type, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -732,7 +732,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
-  void
+  inline void
   astar_search_tree
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -758,7 +758,7 @@ namespace boost {
     typename boost::parameter::binding<
         Args, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -815,7 +815,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename P, typename T, typename R>
-  void
+  inline void
   astar_search_no_init
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -839,7 +839,7 @@ namespace boost {
     typename boost::parameter::binding<
         arg_pack_type, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -910,7 +910,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
-  void
+  inline void
   astar_search_no_init
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -933,7 +933,7 @@ namespace boost {
     typename boost::parameter::binding<
         Args, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -1004,7 +1004,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename P, typename T, typename R>
-  void
+  inline void
   astar_search_no_init_tree
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -1028,7 +1028,7 @@ namespace boost {
     typename boost::parameter::binding<
         arg_pack_type, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -1085,7 +1085,7 @@ namespace boost {
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
-  void
+  inline void
   astar_search_no_init_tree
     (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
@@ -1108,7 +1108,7 @@ namespace boost {
     typename boost::parameter::binding<
         Args, 
         boost::graph::keywords::tag::visitor,
-        dummy_property_map&
+        astar_visitor<null_visitor>&
     >::type vis = arg_pack[_visitor | default_visitor];
     dummy_property_map dummy_prop;
     typename boost::parameter::binding<
@@ -1165,7 +1165,7 @@ namespace boost {
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
   template <typename Graph, typename H, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  void name \
+  inline void name \
     (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, H h, \
      const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
      typename boost::enable_if< \
@@ -1177,10 +1177,10 @@ namespace boost {
     name(g, s, h, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT(10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search)
-BOOST_PP_REPEAT(8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_tree)
-BOOST_PP_REPEAT(10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init)
-BOOST_PP_REPEAT(8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init_tree)
+BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search)
+BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_tree)
+BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init)
+BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 

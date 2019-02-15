@@ -94,10 +94,17 @@ struct gursoy_shortest
       NodeDistanceMap node_distance,  UpdatePosition& update_position,
       EdgeWeightMap weight)
   {
-    boost::dijkstra_shortest_paths(g, s, weight_map(weight).
-      visitor(boost::make_dijkstra_visitor(std::make_pair(
-       boost::record_distances(node_distance, boost::on_edge_relaxed()),
-        update_position))));
+    boost::dijkstra_shortest_paths(
+      g,
+      s,
+      boost::graph::keywords::_weight_map = weight,
+      boost::graph::keywords::_visitor = boost::make_dijkstra_visitor(
+        std::make_pair(
+          boost::record_distances(node_distance, boost::on_edge_relaxed()),
+          update_position
+        )
+      )
+    );
   }
 };
 
@@ -110,11 +117,16 @@ struct gursoy_shortest<dummy_property_map>
       NodeDistanceMap node_distance,  UpdatePosition& update_position,
       dummy_property_map)
   {
-    boost::breadth_first_search(g, s,
-      boost::graph::keywords::_visitor =
-      boost::make_bfs_visitor(std::make_pair(
-        boost::record_distances(node_distance, boost::on_tree_edge()),
-        update_position)));
+    boost::breadth_first_search(
+      g,
+      s,
+      boost::graph::keywords::_visitor = boost::make_bfs_visitor(
+        std::make_pair(
+          boost::record_distances(node_distance, boost::on_tree_edge()),
+          update_position
+        )
+      )
+    );
   }
 };
 

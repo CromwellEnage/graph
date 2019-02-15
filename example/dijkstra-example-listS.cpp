@@ -55,7 +55,12 @@ main(int, char *[])
     d = get(vertex_distance, g);
   property_map<graph_t, vertex_predecessor_t>::type
     p = get(vertex_predecessor, g);
-  dijkstra_shortest_paths(g, s, predecessor_map(p).distance_map(d));
+  dijkstra_shortest_paths(
+    g,
+    s,
+    boost::graph::keywords::_predecessor_map = p,
+    boost::graph::keywords::_distance_map = d
+  );
 
   std::cout << "distances and parents:" << std::endl;
   graph_traits < graph_t >::vertex_iterator vi, vend;
