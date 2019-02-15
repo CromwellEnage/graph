@@ -610,27 +610,34 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              detail::is_bgl_named_param_argument<
+              mpl::has_key<
                 Args,
                 boost::graph::keywords::tag::discover_time_map
               >,
-              mpl::true_,
               mpl::eval_if<
                 detail::is_bgl_named_param_argument<
                   Args,
-                  boost::graph::keywords::tag::predecessor_map
+                  boost::graph::keywords::tag::discover_time_map
                 >,
                 mpl::true_,
                 mpl::eval_if<
-                  detail::is_vertex_property_map_of_graph_argument<
+                  detail::is_bgl_named_param_argument<
                     Args,
-                    boost::graph::keywords::tag::discover_time_map,
-                    boost::graph::keywords::tag::graph
+                    boost::graph::keywords::tag::predecessor_map
                   >,
-                  mpl::false_,
-                  mpl::true_
+                  mpl::true_,
+                  mpl::eval_if<
+                    detail::is_vertex_property_map_of_graph_argument<
+                      Args,
+                      boost::graph::keywords::tag::discover_time_map,
+                      boost::graph::keywords::tag::graph
+                    >,
+                    mpl::false_,
+                    mpl::true_
+                  >
                 >
-              >
+              >,
+              mpl::false_
             >::type,
             mpl::false_,
             detail::has_internal_vertex_index_map<

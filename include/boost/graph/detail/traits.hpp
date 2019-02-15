@@ -823,6 +823,22 @@ namespace boost { namespace detail {
     {
     };
 
+    template <typename G, typename Tag>
+    struct is_graph_with_edge_property_type_impl
+        : property_type_contains<typename G::edge_property_type,Tag>
+    {
+    };
+
+    template <typename G, typename Tag>
+    struct is_graph_with_edge_property_type
+        : mpl::if_<
+            detail::has_edge_property_type<G>,
+            is_graph_with_edge_property_type_impl<G,Tag>,
+            mpl::false_
+        >::type
+    {
+    };
+
     template <typename G>
     struct choose_vertex_index_map
     {
@@ -831,6 +847,17 @@ namespace boost { namespace detail {
         inline static type call(const G& g)
         {
             return get(vertex_index, g);
+        }
+    };
+
+    template <typename G>
+    struct choose_edge_weight_map
+    {
+        typedef typename property_map<G,edge_weight_t>::const_type type;
+
+        inline static type call(const G& g)
+        {
+            return get(edge_weight, g);
         }
     };
 }}
@@ -1000,15 +1027,56 @@ namespace boost { namespace detail {
             ) == sizeof(graph_yes_tag)
         > type;
     };
+
+    template <typename G>
+    class has_internal_edge_weight_map_impl
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                mpl::vector<B>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL((
+                        get(
+                            boost::declval<edge_weight_t>(),
+                            boost::detail::declcref<B>()
+                        )
+                    ))
+#else
+                    decltype(
+                        get(
+                            boost::declval<edge_weight_t>(),
+                            boost::detail::declcref<B>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                has_internal_edge_weight_map_impl<G>::_check(
+                    static_cast<mpl::vector<G>*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
 }}
 #endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 namespace boost { namespace detail {
 
     // TODO:
-    // Implement a more robust check. -- Cromwell D. Enage
+    // Implement more robust checks. -- Cromwell D. Enage
     template <typename G>
     struct has_internal_vertex_index_map_dispatch;
+
+    template <typename G>
+    struct has_internal_edge_weight_map_dispatch;
 
     template <typename G>
     struct has_graph_type_with_internal_vertex_index_map
@@ -1017,6 +1085,16 @@ namespace boost { namespace detail {
             boost::is_same<typename G::graph_type,G>,
             mpl::false_,
             has_internal_vertex_index_map_dispatch<typename G::graph_type>
+        >::type type;
+    };
+
+    template <typename G>
+    struct has_graph_type_with_internal_edge_weight_map
+    {
+        typedef typename mpl::if_<
+            boost::is_same<typename G::graph_type,G>,
+            mpl::false_,
+            has_internal_edge_weight_map_dispatch<typename G::graph_type>
         >::type type;
     };
 
@@ -1063,8 +1141,36 @@ namespace boost { namespace detail {
     };
 
     template <typename G>
+    struct has_internal_edge_weight_map_dispatch
+        : mpl::eval_if<
+            is_graph_with_edge_property_type<G,edge_weight_t>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+            has_internal_edge_weight_map_impl<G>,
+#else
+            mpl::true_,
+#endif
+            mpl::eval_if<
+                graph_detail::has_graph_type<G>,  // for adaptors
+                has_graph_type_with_internal_edge_weight_map<G>,
+                mpl::false_
+            >
+        >::type
+    {
+    };
+
+    template <typename G>
     struct has_internal_vertex_index_map
         : has_internal_vertex_index_map_dispatch<
+            typename boost::remove_const<
+                typename boost::remove_reference<G>::type
+            >::type
+        >
+    {
+    };
+
+    template <typename G>
+    struct has_internal_edge_weight_map
+        : has_internal_edge_weight_map_dispatch<
             typename boost::remove_const<
                 typename boost::remove_reference<G>::type
             >::type
@@ -1088,6 +1194,22 @@ namespace boost { namespace detail {
         typedef typename mpl::if_<
             has_internal_vertex_index_map<G>,
             choose_vertex_index_map<G>,
+            choose_dummy_property_map<G>
+        >::type impl;
+        return impl::call(g);
+    }
+
+    template <typename G>
+    inline typename mpl::eval_if<
+        has_internal_edge_weight_map<G>,
+        choose_edge_weight_map<G>,
+        choose_dummy_property_map<G>
+    >::type
+        edge_weight_map_or_dummy_property_map(const G& g)
+    {
+        typedef typename mpl::if_<
+            has_internal_edge_weight_map<G>,
+            choose_edge_weight_map<G>,
             choose_dummy_property_map<G>
         >::type impl;
         return impl::call(g);
