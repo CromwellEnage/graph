@@ -64,8 +64,7 @@ int main(int, char**) {
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st.dot");
   random_spanning_tree(g, gen, _predecessor_map = pred);
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st2.dot");
-
-  random_spanning_tree(g, gen, (_predecessor_map = pred, _weight_map = weight));
+  random_spanning_tree(g, gen, _predecessor_map = pred, _weight_map = weight);
   // write_spanning_tree(g, pred, weight, "weight_random_st.dot");
 
   return boost::report_errors();

@@ -24,10 +24,11 @@
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 #include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #endif
 
@@ -292,7 +293,7 @@ namespace boost {
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
   template <typename Graph, typename DFSVisitor, typename VertexColorMap,
     typename EdgeColorMap>
-  void
+  inline void
   undirected_dfs(
     const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
     EdgeColorMap edge_color, typename boost::disable_if<
@@ -312,18 +313,61 @@ namespace boost {
     );
   }
 
+  template <typename Graph, typename Args>
+  inline void
+  undirected_dfs(
+    const Graph& g,
+    const Args& arg_pack,
+    typename boost::enable_if<
+      parameter::is_argument_pack<Args>,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    undirected_dfs(
+      g,
+      arg_pack[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<default_dfs_visitor>()
+      ],
+      arg_pack[
+        boost::graph::keywords::_color_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          white_color,
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            get(vertex_index, g)
+          ]
+        )
+      ],
+      arg_pack[
+        boost::graph::keywords::_edge_color_map
+      ],
+      arg_pack[
+        boost::graph::keywords::_root_vertex ||
+        boost::detail::get_default_starting_vertex_t<Graph>(g)
+      ]
+    );
+  }
+
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph \
+  template <typename Graph, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline typename boost::enable_if< \
-    parameter::are_tagged_arguments<BOOST_PP_ENUM_PARAMS_Z(z, n, TA)>, \
-    bool \
-  >::type name \
-    (const Graph &g \
-     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta)) \
+  inline void name \
+    (const Graph &g, const TA &ta \
+     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, \
+       mpl::true_ \
+     >::type = mpl::true_()) \
   { \
-    name(g, parameter::compose(BOOST_PP_ENUM_PARAMS_Z(z, n, ta))); \
-    return true; \
+    name( \
+      g, \
+      parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+    ); \
   }
 
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
