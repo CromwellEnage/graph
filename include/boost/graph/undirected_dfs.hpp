@@ -315,15 +315,15 @@ namespace boost {
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
   template <typename Graph \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline void name \
+  inline typename boost::enable_if< \
+    parameter::are_tagged_arguments<BOOST_PP_ENUM_PARAMS_Z(z, n, TA)>, \
+    bool \
+  >::type name \
     (const Graph &g \
-     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-     typename boost::enable_if< \
-       parameter::are_tagged_arguments<BOOST_PP_ENUM_PARAMS_Z(z, n, TA)>, \
-       mpl::true_ \
-     >::type = mpl::true_()) \
+     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta)) \
   { \
     name(g, parameter::compose(BOOST_PP_ENUM_PARAMS_Z(z, n, ta))); \
+    return true; \
   }
 
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)

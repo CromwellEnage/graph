@@ -280,6 +280,13 @@ namespace boost {
             )
           )
         )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+#endif
       );
     }
     catch (const detail::bipartite_visitor_error<vertex_descriptor_t>&)
