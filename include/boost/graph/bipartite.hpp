@@ -481,6 +481,11 @@ namespace boost {
               )
             )
           )
+        ),
+        make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          index_map
         )
       );
     }

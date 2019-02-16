@@ -284,7 +284,9 @@ namespace boost {
       }
     }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
     return true;
+#endif
   }
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
@@ -321,7 +323,7 @@ namespace boost {
        mpl::true_ \
      >::type = mpl::true_()) \
   { \
-    name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+    name(g, parameter::compose(BOOST_PP_ENUM_PARAMS_Z(z, n, ta))); \
   }
 
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)

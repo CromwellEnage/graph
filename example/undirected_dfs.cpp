@@ -77,7 +77,7 @@ int main(int, char*[])
 #else
   undirected_dfs(
     g,
-    vis,
+    boost::graph::keywords::_visitor = vis,
     boost::graph::keywords::_edge_color_map = get(edge_color, g),
     boost::graph::keywords::_root_vertex = vertex_t(0)
   );
