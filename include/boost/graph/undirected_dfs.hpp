@@ -267,14 +267,9 @@ namespace boost {
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       ColorValue u_color = get(color_map, *ui);
       if (u_color == Color::white()) {
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
         visitor.start_vertex(*ui, graph);
         detail::undir_dfv_impl(graph, *ui, visitor, color_map,
                                edge_color_map);
-#else
-        vis.start_vertex(*ui, graph);
-        detail::undir_dfv_impl(graph, *ui, vis, color_map, edge_color_map);
-#endif
       }
     }
 
@@ -318,7 +313,7 @@ namespace boost {
     name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
+BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
