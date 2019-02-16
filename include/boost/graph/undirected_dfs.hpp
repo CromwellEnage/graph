@@ -202,15 +202,15 @@ namespace boost {
     )
   )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-  template <typename Graph, typename DFSVisitor,
-            typename VertexColorMap, typename EdgeColorMap,
-            typename Vertex>
+  template <typename Graph, typename visitor_type, typename color_map_type,
+            typename EdgeColorMap, typename Vertex>
   void
   undirected_dfs(
-    const Graph& graph, DFSVisitor visitor, VertexColorMap vertex_color,
-    EdgeColorMap edge_color, Vertex root_vertex, typename boost::disable_if<
+    const Graph& graph, visitor_type visitor, color_map_type color_map,
+    EdgeColorMap edge_color_map, Vertex root_vertex,
+    typename boost::disable_if<
       parameter::are_tagged_arguments<
-        DFSVisitor, VertexColorMap, EdgeColorMap, Vertex
+        visitor_type, color_map_type, EdgeColorMap, Vertex
       >,
       mpl::true_
     >::type = mpl::true_()
@@ -221,13 +221,13 @@ namespace boost {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
+#endif
     typedef typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
     >::type DFSVisitor;
     typedef typename boost::remove_const<
       typename boost::remove_reference<color_map_type>::type
     >::type VertexColorMap;
-#endif
 
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
@@ -236,11 +236,18 @@ namespace boost {
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    DFSVisitor vis = visitor;
+#endif
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       put(color_map, *ui, Color::white());
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       visitor.initialize_vertex(*ui, graph);
+#else
+      vis.initialize_vertex(*ui, graph);
+#endif
     }
 
     typename graph_traits<Graph>::edge_iterator ei, ei_end;
@@ -258,18 +265,22 @@ namespace boost {
     Vertex s = root_vertex;
 
     if (s != detail::get_default_starting_vertex(graph)) {
-      visitor.start_vertex(s, graph);
-      detail::undir_dfv_impl(graph, s, visitor, color_map,
-                             edge_color_map);
+      vis.start_vertex(s, graph);
+      detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
     }
 #endif
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       ColorValue u_color = get(color_map, *ui);
       if (u_color == Color::white()) {
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
         visitor.start_vertex(*ui, graph);
         detail::undir_dfv_impl(graph, *ui, visitor, color_map,
                                edge_color_map);
+#else
+        vis.start_vertex(*ui, graph);
+        detail::undir_dfv_impl(graph, *ui, vis, color_map, edge_color_map);
+#endif
       }
     }
 
