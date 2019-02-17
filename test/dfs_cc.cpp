@@ -25,10 +25,12 @@ int main()
       allow_parallel_edge_tag, IncidenceGraph> graph_t;
     graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, color);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     depth_first_search(g, boost::graph::keywords::_color_map = color);
+#else
+    depth_first_search(g, boost::color_map(color));
 #endif
   }
   {
@@ -38,7 +40,7 @@ int main()
       allow_parallel_edge_tag, IncidenceGraph> graph_t;
     graph_t& g = static_object<graph_t>::get();
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, v_index);
 #else
     depth_first_search(g, vertex_index_map(v_index));

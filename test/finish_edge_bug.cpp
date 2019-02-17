@@ -79,7 +79,7 @@ int main(int, char*[])
   print_graph(G);
 
   depth_first_search(G, TalkativeVisitor<Graph>());
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS) && ( \
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
         !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
     )
   BOOST_TEST(is_called);

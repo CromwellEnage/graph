@@ -119,7 +119,7 @@ struct dfs_test
     typename Traits::edge_iterator ei, ei_end;
 
     boost::mt19937 gen, dfs_chooser_gen;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::uniform_int<> dfs_choices(0, 6);
 #else
     boost::uniform_int<> dfs_choices(0, 1);
@@ -171,7 +171,7 @@ struct dfs_test
           case 1:
             boost::undirected_dfs(g, vis, color, e_color);
             break;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
           case 2:
             boost::undirected_dfs(g, vis, e_color, color);
             break;

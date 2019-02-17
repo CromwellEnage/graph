@@ -819,7 +819,7 @@ namespace boost
 
       v_size_t num_odd_components;
       detail::odd_components_counter<v_size_t> occ(num_odd_components);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
       depth_first_search(fg, occ, vm);
 #else
       depth_first_search(

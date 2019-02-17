@@ -29,17 +29,20 @@
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/concept/assert.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/type_traits.hpp>
 #include <boost/core/enable_if.hpp>
-#include <boost/concept/assert.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
@@ -478,13 +481,17 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis, ColorMap color, typename boost::disable_if<
+     DijkstraVisitor vis, ColorMap color
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          PredecessorMap, DistanceMap, WeightMap, IndexMap,
          Compare, Combine, DistInf, DistZero, DijkstraVisitor, ColorMap
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
     typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
     dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
@@ -525,13 +532,17 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis, typename boost::disable_if<
+     DijkstraVisitor vis
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          PredecessorMap, DistanceMap, WeightMap, IndexMap,
          Compare, Combine, DistInf, DistZero, DijkstraVisitor
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
     typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
     dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance,
@@ -616,6 +627,7 @@ namespace boost {
        params);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename Graph, typename Args>
   inline void dijkstra_shortest_paths
     (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
@@ -718,6 +730,7 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

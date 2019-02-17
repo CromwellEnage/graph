@@ -22,12 +22,15 @@
 #include <boost/graph/one_bit_color_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/bind.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/bind.hpp>
+#endif
 
 namespace boost {
 
@@ -198,7 +201,7 @@ namespace boost {
    * @param partition_map A color map to fill with the bipartition.
    * @return true if and only if the given graph is bipartite.
    */
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), is_bipartite, ::boost::graph::keywords::tag,
     (required
@@ -225,7 +228,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), is_bipartite, ::boost::graph::keywords::tag,
     (required
@@ -239,7 +242,12 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename graph_type, typename IndexMap,
+            typename partition_map_type>
+  bool is_bipartite(const graph_type& graph, const IndexMap vertex_index_map,
+                    partition_map_type partition_map)
+#endif
   {
     /// General types and variables
     typedef typename property_traits<
@@ -264,7 +272,7 @@ namespace boost {
     {
       depth_first_search(
         graph,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         vertex_index_map,
 #endif
         make_dfs_visitor(
@@ -280,7 +288,7 @@ namespace boost {
             )
           )
         )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         ,make_shared_array_property_map(
           num_vertices(graph),
           white_color,
@@ -311,7 +319,7 @@ namespace boost {
    * @param result An iterator to write the odd-cycle vertices to.
    * @return The final iterator value after writing.
    */
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -442,7 +450,7 @@ namespace boost {
 
     return result;
   }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   // Fall back on the old public interface. -- Cromwell D. Enage
   template <typename Graph, typename IndexMap, typename PartitionMap, typename OutputIterator>
   OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, PartitionMap partition_map,
@@ -549,7 +557,7 @@ namespace boost {
   {
     return find_odd_cycle (graph, get (vertex_index, graph), result);
   }
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 }
 
 #endif /// BOOST_GRAPH_BIPARTITE_HPP

@@ -148,7 +148,11 @@ namespace boost {
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       if (get(color, *ui) != Color::red()) put(color, *ui, Color::white());
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_visit(G, u, Q, boost::graph::keywords::_color_map = color);
+#else
+    breadth_first_visit(G, u, buffer(Q).color_map(color));
+#endif
 
     return std::make_pair(Q.spouse(), Q.eccentricity());
   }

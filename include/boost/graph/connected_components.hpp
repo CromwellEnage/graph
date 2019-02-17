@@ -18,17 +18,21 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/concept/assert.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/concept/assert.hpp>
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
+#endif
 #endif
 
 namespace boost {
@@ -67,7 +71,8 @@ namespace boost {
 
   // This function computes the connected components of an undirected
   // graph using a single application of depth first search.
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -116,7 +121,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -156,7 +161,7 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     if (num_vertices(graph) == 0) return 0;
 
@@ -175,13 +180,34 @@ namespace boost {
     // c_count initialized to "nil" (with nil represented by (max)())
     comp_type c_count((std::numeric_limits<comp_type>::max)());
     detail::components_recorder<ComponentMap> vis(component_map, c_count);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(graph, vis, vertex_index_map, color_map);
 #else
     depth_first_search(graph, vis, color_map);
 #endif
     return c_count + 1;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <class Graph, class ComponentMap>
+  inline typename property_traits<ComponentMap>::value_type
+  connected_components(const Graph& g, ComponentMap c
+                       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+  {
+    if (num_vertices(g) == 0) return 0;
+
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<ComponentMap, Vertex> ));
+    // typedef typename boost::graph_traits<Graph>::directed_category directed;
+    // BOOST_STATIC_ASSERT((boost::is_same<directed, undirected_tag>::value));
+
+    typedef typename property_traits<ComponentMap>::value_type comp_type;
+    // c_count initialized to "nil" (with nil represented by (max)())
+    comp_type c_count((std::numeric_limits<comp_type>::max)());
+    detail::components_recorder<ComponentMap> vis(c, c_count);
+    depth_first_search(g, visitor(vis));
+    return c_count + 1;
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class Graph, class ComponentMap, class P, class T, class R>
   inline typename property_traits<ComponentMap>::value_type

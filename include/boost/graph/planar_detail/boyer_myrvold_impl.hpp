@@ -268,7 +268,7 @@ namespace boost
 
       // Perform a depth-first search to find each vertex's low point, least
       // ancestor, and dfs tree information
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
       depth_first_search(g, vis, vm);
 #else
       depth_first_search(

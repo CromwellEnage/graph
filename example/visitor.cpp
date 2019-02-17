@@ -97,14 +97,24 @@ main(int, char*[])
                 )));
 
   cout << endl << "BFS categorized directed graph" << endl;
-  boost::breadth_first_search
-    (G, vertex(0, G),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-     boost::graph::keywords::_visitor =
+  boost::breadth_first_search(
+    G,
+    vertex(0, G),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
 #endif
-     make_bfs_visitor(
-     std::make_pair(print_edge("tree", on_tree_edge()),
-                    print_edge("cycle", on_non_tree_edge()))));
+    make_bfs_visitor(
+      std::make_pair(
+        print_edge("tree", on_tree_edge()),
+        print_edge("cycle", on_non_tree_edge())
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 
   return 0;
 }

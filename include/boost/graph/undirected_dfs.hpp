@@ -22,7 +22,8 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
@@ -149,8 +150,9 @@ namespace boost {
 
   } // namespace detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   // Boost.Parameter-enabled variant
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_dfs, ::boost::graph::keywords::tag,
     (required
@@ -202,7 +204,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   template <typename Graph, typename visitor_type, typename color_map_type,
             typename EdgeColorMap, typename Vertex>
   void
@@ -216,9 +218,9 @@ namespace boost {
       mpl::true_
     >::type = mpl::true_()
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
@@ -285,12 +287,12 @@ namespace boost {
       }
     }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     return true;
 #endif
   }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   template <typename Graph, typename DFSVisitor, typename VertexColorMap,
     typename EdgeColorMap>
   inline void
@@ -374,7 +376,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
   // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
@@ -411,7 +413,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
     );
   }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -444,7 +446,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -455,7 +457,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
       (edge_color_map, *)
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     detail::undir_dfv_impl(graph, root_vertex, visitor, color_map,
@@ -471,6 +473,123 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
 #endif
     return true;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename DFSVisitor, 
+            typename VertexColorMap, typename EdgeColorMap, 
+            typename Vertex>
+  void
+  undirected_dfs(const Graph& g, DFSVisitor vis, 
+                 VertexColorMap vertex_color, EdgeColorMap edge_color,
+                 Vertex start_vertex)
+  {
+    BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+
+    typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+
+    typename graph_traits<Graph>::vertex_iterator ui, ui_end;
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      put(vertex_color, *ui, Color::white());   vis.initialize_vertex(*ui, g);
+    }
+    typename graph_traits<Graph>::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+      put(edge_color, *ei, Color::white());
+
+    if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
+      detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
+    }
+
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      ColorValue u_color = get(vertex_color, *ui);
+      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
+        detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);
+      }
+    }
+  }
+
+  template <typename Graph, typename DFSVisitor, typename VertexColorMap,
+    typename EdgeColorMap>
+  void
+  undirected_dfs(const Graph& g, DFSVisitor vis, 
+                 VertexColorMap vertex_color, EdgeColorMap edge_color)
+  {
+    undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
+  }
+
+  namespace detail {
+    template <typename VertexColorMap>
+    struct udfs_dispatch {
+
+      template <typename Graph, typename Vertex, 
+                typename DFSVisitor, typename EdgeColorMap,
+                typename P, typename T, typename R>
+      static void
+      apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
+            const bgl_named_params<P, T, R>&,
+            EdgeColorMap edge_color,
+            VertexColorMap vertex_color)
+      {
+        undirected_dfs(g, vis, vertex_color, edge_color, start_vertex);
+      }
+    };
+
+    template <>
+    struct udfs_dispatch<param_not_found> {
+      template <typename Graph, typename Vertex, typename DFSVisitor,
+                typename EdgeColorMap,
+                typename P, typename T, typename R>
+      static void
+      apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
+            const bgl_named_params<P, T, R>& params,
+            EdgeColorMap edge_color,
+            param_not_found)
+      {
+        std::vector<default_color_type> color_vec(num_vertices(g));
+        default_color_type c = white_color; // avoid warning about un-init
+        undirected_dfs
+          (g, vis, make_iterator_property_map
+           (color_vec.begin(),
+            choose_const_pmap(get_param(params, vertex_index),
+                              g, vertex_index), c),
+           edge_color,
+           start_vertex);
+      }
+    };
+
+  } // namespace detail
+  
+
+  // Named Parameter Variant
+  template <typename Graph, typename P, typename T, typename R>
+  void
+  undirected_dfs(const Graph& g, 
+                 const bgl_named_params<P, T, R>& params)
+  {
+    typedef typename get_param_type< vertex_color_t, bgl_named_params<P, T, R> >::type C;
+    detail::udfs_dispatch<C>::apply
+      (g,
+       choose_param(get_param(params, graph_visitor),
+                    make_dfs_visitor(null_visitor())),
+       choose_param(get_param(params, root_vertex_t()),
+                    *vertices(g).first),
+       params,
+       get_param(params, edge_color),
+       get_param(params, vertex_color)
+       );
+  }
+  
+
+  template <typename IncidenceGraph, typename DFSVisitor, 
+    typename VertexColorMap, typename EdgeColorMap>
+  void undirected_depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
+  {
+    detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 } // namespace boost
 
 #endif

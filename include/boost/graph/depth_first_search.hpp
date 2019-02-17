@@ -16,14 +16,14 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
-#include <boost/config.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -418,7 +418,7 @@ namespace boost { namespace detail {
     typedef visitor_predicate dfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
@@ -434,7 +434,7 @@ namespace boost { namespace detail {
 #include <vector>
 #include <utility>
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
 #endif
 
@@ -484,7 +484,7 @@ namespace boost {
     template <typename E, typename G, typename Vis>
     void call_finish_edge(Vis& vis, E e, const G& g) { // Only call if method exists
       do_call_finish_edge<
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS) && ( \
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
     !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
 )
         is_dfs_visitor_with_finish_edge<Vis,G>::value
@@ -688,8 +688,9 @@ namespace boost {
   }
   typedef dfs_visitor<> default_dfs_visitor;
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   // Boost.Parameter-enabled variant
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_search, ::boost::graph::keywords::tag,
     (required
@@ -732,7 +733,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
@@ -759,7 +760,7 @@ namespace boost {
       (root_vertex, *, detail::get_default_starting_vertex(graph))
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
@@ -856,7 +857,7 @@ namespace boost {
     );
   }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -888,7 +889,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -901,7 +902,7 @@ namespace boost {
       (terminator_function, *, detail::nontruth2())
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     visitor.start_vertex(root_vertex, graph);
@@ -920,6 +921,49 @@ namespace boost {
 #endif
     return true;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  // Boost.Parameter named parameter variant
+  namespace graph {
+    namespace detail {
+      template <typename Graph>
+      struct depth_first_search_impl {
+        typedef void result_type;
+        template <typename ArgPack>
+        void operator()(const Graph& g, const ArgPack& arg_pack) const {
+          using namespace boost::graph::keywords;
+          boost::depth_first_search(g,
+                                    arg_pack[_visitor | make_dfs_visitor(null_visitor())],
+                                    boost::detail::make_color_map_from_arg_pack(g, arg_pack),
+                                    arg_pack[_root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)]);
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_search, 1, 4)
+  }
+
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
+
+  template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+  void depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
+     DFSVisitor vis, ColorMap color)
+  {
+    vis.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
+  }
+
+  template <class IncidenceGraph, class DFSVisitor, class ColorMap,
+            class TerminatorFunc>
+  void depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
+     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
+  {
+    vis.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis, color, func);
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)

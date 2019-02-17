@@ -60,12 +60,19 @@ int main(int, char**) {
   BGL_FORALL_EDGES(e, g, graph_type) {put(weight, e, (1. + get(edge_index, g, e)) / num_edges(g));}
 
   boost::mt19937 gen;
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   random_spanning_tree(g, gen, _predecessor_map = pred);
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st.dot");
   random_spanning_tree(g, gen, _predecessor_map = pred);
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st2.dot");
   random_spanning_tree(g, gen, _predecessor_map = pred, _weight_map = weight);
   // write_spanning_tree(g, pred, weight, "weight_random_st.dot");
+#else
+  random_spanning_tree(g, gen, boost::predecessor_map(pred));
+  random_spanning_tree(g, gen, boost::predecessor_map(pred));
+  random_spanning_tree(g, gen, boost::predecessor_map(pred).weight_map(weight));
+#endif
 
   return boost::report_errors();
 }

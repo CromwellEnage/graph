@@ -18,14 +18,17 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/type_traits/conversion_traits.hpp>
+#include <boost/concept/assert.hpp>
+#include <boost/static_assert.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/mpl/has_key.hpp>
-#include <boost/type_traits/conversion_traits.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/concept/assert.hpp>
-#include <boost/static_assert.hpp>
+#endif
 
 namespace boost {
 
@@ -117,9 +120,117 @@ namespace boost {
       depth_first_search(g, vis, color);
       return total;
     }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    //-------------------------------------------------------------------------
+    // The dispatch functions handle the defaults for the rank and discover
+    // time property maps.
+    // dispatch with class specialization to avoid VC++ bug
+
+    template <class DiscoverTimeMap>
+    struct strong_comp_dispatch2 {
+      template <class Graph, class ComponentMap, class RootMap, class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+            ComponentMap comp,
+            RootMap r_map,
+            const bgl_named_params<P, T, R>& params,
+            DiscoverTimeMap time_map)
+      {
+        return strong_components_impl(g, comp, r_map, time_map, params);
+      }
+    };
+
+
+    template <>
+    struct strong_comp_dispatch2<param_not_found> {
+      template <class Graph, class ComponentMap, class RootMap,
+                class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+            ComponentMap comp,
+            RootMap r_map,
+            const bgl_named_params<P, T, R>& params,
+            param_not_found)
+      {
+        typedef typename graph_traits<Graph>::vertices_size_type size_type;
+        size_type       n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+        std::vector<size_type> time_vec(n);
+        return strong_components_impl
+          (g, comp, r_map,
+           make_iterator_property_map(time_vec.begin(), choose_const_pmap
+                                      (get_param(params, vertex_index),
+                                       g, vertex_index), time_vec[0]),
+           params);
+      }
+    };
+
+    template <class Graph, class ComponentMap, class RootMap,
+              class P, class T, class R, class DiscoverTimeMap>
+    inline typename property_traits<ComponentMap>::value_type
+    scc_helper2(const Graph& g,
+                ComponentMap comp,
+                RootMap r_map,
+                const bgl_named_params<P, T, R>& params,
+                DiscoverTimeMap time_map)
+    {
+      return strong_comp_dispatch2<DiscoverTimeMap>::apply(g, comp, r_map, params, time_map);
+    }
+
+    template <class RootMap>
+    struct strong_comp_dispatch1 {
+
+      template <class Graph, class ComponentMap, class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+            ComponentMap comp,
+            const bgl_named_params<P, T, R>& params,
+            RootMap r_map)
+      {
+        return scc_helper2(g, comp, r_map, params, get_param(params, vertex_discover_time));
+      }
+    };
+    template <>
+    struct strong_comp_dispatch1<param_not_found> {
+
+      template <class Graph, class ComponentMap, 
+                class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+            ComponentMap comp,
+            const bgl_named_params<P, T, R>& params,
+            param_not_found)
+      {
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        typename std::vector<Vertex>::size_type
+          n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+        std::vector<Vertex> root_vec(n);
+        return scc_helper2
+          (g, comp, 
+           make_iterator_property_map(root_vec.begin(), choose_const_pmap
+                                      (get_param(params, vertex_index),
+                                       g, vertex_index), root_vec[0]),
+           params, 
+           get_param(params, vertex_discover_time));
+      }
+    };
+
+    template <class Graph, class ComponentMap, class RootMap,
+              class P, class T, class R>
+    inline typename property_traits<ComponentMap>::value_type
+    scc_helper1(const Graph& g,
+               ComponentMap comp,
+               const bgl_named_params<P, T, R>& params,
+               RootMap r_map)
+    {
+      return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
+                                                           r_map);
+    }
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   } // namespace detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -190,7 +301,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
@@ -239,7 +350,7 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     typedef typename graph_traits<
       typename boost::remove_const<
@@ -250,6 +361,18 @@ namespace boost {
     return detail::strong_components_impl(graph, component_map, root_map,
                                           discover_time_map, color_map);
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <class Graph, class ComponentMap>
+  inline typename property_traits<ComponentMap>::value_type
+  strong_components(const Graph& g, ComponentMap comp
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+  {
+    typedef typename graph_traits<Graph>::directed_category DirCat;
+    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+    bgl_named_params<int, int> params(0);
+    return strong_components(g, comp, params);
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class Graph, class ComponentMap, 
             class P, class T, class R>

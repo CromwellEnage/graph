@@ -21,6 +21,8 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
@@ -30,6 +32,7 @@
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 namespace boost {
 
@@ -126,6 +129,7 @@ namespace boost {
     random_spanning_tree(g, gen, start_vertex, pred_map, e_w_map, c_map);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename Graph, typename Gen, typename Args>
   void random_spanning_tree(const Graph& g, Gen& gen, const Args& arg_pack,
                             typename boost::enable_if<parameter::is_argument_pack<Args>, mpl::true_>::type = mpl::true_()) {
@@ -156,7 +160,7 @@ namespace boost {
   template <typename Graph, typename Gen, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
   inline void name \
-    (const Graph &g, Gen& gen, \
+    (const Graph& g, Gen& gen, \
      const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
      typename boost::enable_if< \
        parameter::are_tagged_arguments< \
@@ -170,6 +174,7 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, random_spanning_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 }
 

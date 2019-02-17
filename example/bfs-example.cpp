@@ -66,11 +66,15 @@ main()
 
   Size time = 0;
   bfs_time_visitor < dtime_pm_type >vis(dtime_pm, time);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   breadth_first_search(g, vertex(s, g), vis);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   breadth_first_search(
     g, vertex(s, g), boost::graph::keywords::_visitor = vis
+  );
+#else
+  breadth_first_search(
+    g, vertex(s, g), boost::visitor(vis)
   );
 #endif
 

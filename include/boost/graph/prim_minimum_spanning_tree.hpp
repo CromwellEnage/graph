@@ -80,6 +80,7 @@ namespace boost {
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <class VertexListGraph, class PredecessorMap, class Args>
   inline void prim_minimum_spanning_tree
     (const VertexListGraph& g, PredecessorMap p_map,
@@ -151,14 +152,23 @@ namespace boost {
       ]
     );
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class VertexListGraph, class PredecessorMap>
   inline void prim_minimum_spanning_tree
     (const VertexListGraph& g, PredecessorMap p_map)
   {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     prim_minimum_spanning_tree(g, p_map, parameter::compose());
+#else
+    detail::prim_mst_impl
+      (g, *vertices(g).first, predecessor_map(p_map).
+       weight_map(get(edge_weight, g)),
+       get(edge_weight, g));
+#endif
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
   template <typename Graph, typename PredMap, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
@@ -177,6 +187,7 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, prim_minimum_spanning_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

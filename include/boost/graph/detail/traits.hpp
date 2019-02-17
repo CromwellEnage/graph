@@ -54,7 +54,7 @@ namespace boost { namespace detail {
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/declval.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -79,11 +79,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/type_traits/is_same.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -121,11 +121,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/mpl/apply.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <
@@ -156,12 +156,12 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/mpl/vector.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T, typename FirstArg, typename SecondArg>
@@ -289,11 +289,11 @@ namespace boost { namespace detail {
     };
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/mpl/eval_if.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <
@@ -374,11 +374,11 @@ namespace boost { namespace detail {
         >::type type;
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/type_traits/remove_const.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -458,7 +458,7 @@ namespace boost { namespace detail {
     {
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/property_map/property_map.hpp>
 
@@ -491,7 +491,7 @@ namespace boost { namespace detail {
 
 #include <boost/mpl/eval_if.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -550,11 +550,11 @@ namespace boost { namespace detail {
     {
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/range/size.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -627,7 +627,7 @@ namespace boost { namespace detail {
     {
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -862,7 +862,7 @@ namespace boost { namespace detail {
     };
 }}
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -911,11 +911,11 @@ namespace boost { namespace detail {
     {
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/type_traits/is_integral.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename T>
@@ -971,7 +971,7 @@ namespace boost { namespace detail {
         };
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost {
 
@@ -987,7 +987,7 @@ namespace boost { namespace detail {
     };
 }}
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename G>
@@ -1066,7 +1066,7 @@ namespace boost { namespace detail {
         > type;
     };
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost { namespace detail {
 
@@ -1109,21 +1109,21 @@ namespace boost { namespace detail {
             mpl::true_,
             mpl::eval_if<
                 is_adjacency_matrix<G>,  // for adjacency_matrix
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
                 has_internal_vertex_index_map_impl<G>,
 #else
                 mpl::true_,
 #endif
                 mpl::eval_if<
                     has_container_typedefs<G>,  // for vector_as_graph
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
                     has_internal_vertex_index_map_impl<G>,
 #else
                     mpl::true_,
 #endif
                     mpl::eval_if<
                         is_graph_with_vertex_property_type<G,vertex_index_t>,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
                         has_internal_vertex_index_map_impl<G>,
 #else
                         mpl::true_,
@@ -1144,7 +1144,7 @@ namespace boost { namespace detail {
     struct has_internal_edge_weight_map_dispatch
         : mpl::eval_if<
             is_graph_with_edge_property_type<G,edge_weight_t>,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
             has_internal_edge_weight_map_impl<G>,
 #else
             mpl::true_,
@@ -1234,7 +1234,7 @@ namespace boost { namespace detail {
     };
 }}
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <template <typename, typename> class BinaryPredicate>
@@ -1354,7 +1354,7 @@ namespace boost { namespace detail {
     };
 #endif  // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
 }}
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename Args, typename VertexTag, typename GraphTag>
@@ -1417,7 +1417,7 @@ namespace boost { namespace detail {
     {
     };
 }}
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 
 #include <cstddef>
 #include <utility>

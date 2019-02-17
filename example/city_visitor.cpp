@@ -131,14 +131,25 @@ int main(int, char*[])
     s = vertex(SanJose,G);
 
   cout << "*** Breadth First ***" << endl;
-  breadth_first_search
-    (G, s,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
-     boost::graph::keywords::_visitor =
+  breadth_first_search(
+    G,
+    s,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
 #endif
-     make_bfs_visitor(boost::make_list(city_arrival(names), 
-                                                     neighbor_cities(names), 
-                                                     finish_city(names))));
-  
+    make_bfs_visitor(
+      boost::make_list(
+        city_arrival(names),
+        neighbor_cities(names),
+        finish_city(names)
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
+
   return 0;
 }

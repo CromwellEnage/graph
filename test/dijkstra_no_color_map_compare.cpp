@@ -51,15 +51,27 @@ void run_dijkstra_test(const Graph& graph)
 
   // Run dijkstra algoirthms
   dijkstra_shortest_paths(
-    graph, vertex(0, graph),
+    graph,
+    vertex(0, graph),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_predecessor_map = default_predecessor_map,
     boost::graph::keywords::_distance_map = default_distance_map
+#else
+    boost::predecessor_map(default_predecessor_map)
+    .distance_map(default_distance_map)
+#endif
   );
-                                       
+
   dijkstra_shortest_paths_no_color_map(
-    graph, vertex(0, graph),
+    graph,
+    vertex(0, graph),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_predecessor_map = no_color_map_predecessor_map,
     boost::graph::keywords::_distance_map = no_color_map_distance_map
+#else
+    boost::predecessor_map(no_color_map_predecessor_map)
+    .distance_map(no_color_map_distance_map)
+#endif
   );
 
   // Verify that predecessor maps are equal

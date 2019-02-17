@@ -97,6 +97,7 @@ struct gursoy_shortest
     boost::dijkstra_shortest_paths(
       g,
       s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = weight,
       boost::graph::keywords::_visitor = boost::make_dijkstra_visitor(
         std::make_pair(
@@ -104,6 +105,16 @@ struct gursoy_shortest
           update_position
         )
       )
+#else
+      boost::weight_map(weight).visitor(
+        boost::make_dijkstra_visitor(
+          std::make_pair(
+            boost::record_distances(node_distance, boost::on_edge_relaxed()),
+            update_position
+          )
+        )
+      )
+#endif
     );
   }
 };
@@ -120,12 +131,23 @@ struct gursoy_shortest<dummy_property_map>
     boost::breadth_first_search(
       g,
       s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_visitor = boost::make_bfs_visitor(
         std::make_pair(
           boost::record_distances(node_distance, boost::on_tree_edge()),
           update_position
         )
       )
+#else
+      boost::visitor(
+        boost::make_bfs_visitor(
+          std::make_pair(
+            boost::record_distances(node_distance, boost::on_tree_edge()),
+            update_position
+          )
+        )
+      )
+#endif
     );
   }
 };

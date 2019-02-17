@@ -72,14 +72,19 @@ int main(int, char*[])
 
   std::cout << "back edges:\n";
   detect_loops vis;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   undirected_dfs(g, vertex_t(0), vis, get(edge_color, g));
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   undirected_dfs(
     g,
     boost::graph::keywords::_visitor = vis,
     boost::graph::keywords::_edge_color_map = get(edge_color, g),
     boost::graph::keywords::_root_vertex = vertex_t(0)
+  );
+#else
+  undirected_dfs(
+    g,
+    boost::visitor(vis).edge_color_map(get(edge_color, g)).root_vertex(vertex_t(0))
   );
 #endif
   std::cout << std::endl;

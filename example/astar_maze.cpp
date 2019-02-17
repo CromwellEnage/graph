@@ -188,10 +188,18 @@ bool maze::solve() {
   try {
     using namespace boost::graph::keywords;
     astar_search(m_barrier_grid, s, heuristic,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                  _weight_map = weight,
                  _predecessor_map = pred_pmap,
                  _distance_map = dist_pmap,
-                 _visitor = visitor);
+                 _visitor = visitor
+#else
+                 boost::weight_map(weight)
+                 .predecessor_map(pred_pmap)
+                 .distance_map(dist_pmap)
+                 .visitor(visitor)
+#endif
+                 );
   } catch(found_goal) {
     // Walk backwards from the goal through the predecessor chain adding
     // vertices to the solution path.

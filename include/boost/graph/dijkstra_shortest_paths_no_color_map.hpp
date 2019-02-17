@@ -136,15 +136,18 @@ namespace boost {
      DistanceWeightCombine distance_weight_combine,
      DistanceInfinity distance_infinity,
      DistanceZero distance_zero,
-     DijkstraVisitor visitor,
-     typename boost::disable_if<
+     DijkstraVisitor visitor
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          PredecessorMap, DistanceMap, WeightMap, VertexIndexMap,
          DistanceCompare, DistanceWeightCombine, DistanceInfinity,
          DistanceZero, DijkstraVisitor
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
     // Initialize vertices
     BGL_FORALL_VERTICES_T(current_vertex, graph, Graph) {
@@ -244,6 +247,7 @@ namespace boost {
        params);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename Graph, typename Args>
   inline void dijkstra_shortest_paths_no_color_map
     (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
@@ -350,6 +354,7 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths_no_color_map)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

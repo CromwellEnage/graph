@@ -156,10 +156,12 @@ main()
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     breadth_first_search(g, src, vis);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
+#else
+    breadth_first_search(g, src, boost::visitor(vis));
 #endif
   }
 
@@ -191,10 +193,15 @@ main()
   Traits::vertex_descriptor src = vertices(g).first[0];
   breadth_first_search(
     g, src,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
-    make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
+    make_bfs_visitor(record_predecessors(parent.begin(), on_tree_edge()))
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
   );
 
   // Add all the search tree edges into a new graph
@@ -214,7 +221,7 @@ main()
     tree_printer(node_name, &dfs_distances[0]);
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   depth_first_visit(search_tree, tree_printer, get(vertex_color, g), src);
 #else
   depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));

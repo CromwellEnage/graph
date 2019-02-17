@@ -156,12 +156,16 @@ int main(int,char*[])
   {
     cout << "A change to yow.h will cause what to be re-made?" << endl;
     print_visitor vis;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     breadth_first_search(g, vertex(yow_h, g), vis);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_search(
-      g, vertex(yow_h, g), boost::graph::keywords::_visitor = vis
+      g,
+      vertex(yow_h, g),
+      boost::graph::keywords::_visitor = vis
     );
+#else
+    breadth_first_search(g, vertex(yow_h, g), boost::visitor(vis));
 #endif
     cout << endl;
   }

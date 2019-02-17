@@ -192,9 +192,13 @@ namespace boost
         prim_minimum_spanning_tree(
             g,
             pred_pmap,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::graph::keywords::_root_vertex = start,
             boost::graph::keywords::_vertex_index_map = indexmap,
             boost::graph::keywords::_weight_map = weightmap
+#else
+            boost::root_vertex(start).vertex_index_map(indexmap).weight_map(weightmap)
+#endif
         );
 
         // Build a MST using the predecessor map from prim mst

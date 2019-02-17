@@ -30,9 +30,41 @@
 #include <boost/config.hpp>
 #include <boost/config/workaround.hpp>
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1900)
-#define BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && ( \
+        (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000)) || ( \
+            BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+            BOOST_WORKAROUND(BOOST_MSVC, < 1910) \
+        ) \
+    )
+#define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 #endif
+
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1900) \
+    )
+#define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+
+#if defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#else   // !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif
+#if defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#define BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#endif  // BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 
 namespace boost {
 
@@ -122,7 +154,7 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     namespace detail {
         struct bgl_named_params_base { };
     }
@@ -130,7 +162,7 @@ namespace boost {
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     : detail::bgl_named_params_base
 #endif
   {

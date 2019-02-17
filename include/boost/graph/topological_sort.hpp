@@ -23,7 +23,8 @@
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
 #endif
 
@@ -64,7 +65,8 @@ namespace boost {
   // be a directed acyclic graph (DAG). The implementation
   // consists mainly of a call to depth-first search.
   //
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), topological_sort, ::boost::graph::keywords::tag,
     (required
@@ -98,7 +100,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
@@ -128,7 +130,7 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     depth_first_search(
       graph,
@@ -137,13 +139,21 @@ namespace boost {
           typename boost::remove_reference<result_type>::type
         >::type
       >(result),
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
       vertex_index_map,
 #endif
       color_map
     );
     return true;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename VertexListGraph, typename OutputIterator>
+  void topological_sort(VertexListGraph& g, OutputIterator result)
+  {
+    topological_sort(g, result, 
+                     bgl_named_params<int, buffer_param_t>(0)); // bogus
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename VertexListGraph, typename OutputIterator,
     typename P, typename T, typename R>

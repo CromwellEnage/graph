@@ -28,16 +28,19 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/property_map/function_property_map.hpp>
+#include <boost/core/enable_if.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/core/enable_if.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 namespace boost {
 
@@ -548,6 +551,7 @@ namespace boost {
        zero_d);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
@@ -644,6 +648,7 @@ namespace boost {
        inf,
        zero_d);
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename VertexListGraph,
             typename AStarHeuristic,
@@ -729,6 +734,7 @@ namespace boost {
        zero_d);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
@@ -811,6 +817,7 @@ namespace boost {
        inf,
        zero_d);
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename VertexListGraph,
             typename AStarHeuristic,
@@ -907,6 +914,7 @@ namespace boost {
        zero_d);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
@@ -1000,6 +1008,7 @@ namespace boost {
        inf,
        zero_d);
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename VertexListGraph,
             typename AStarHeuristic,
@@ -1082,6 +1091,7 @@ namespace boost {
        zero_d);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename Args>
@@ -1183,6 +1193,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no
 BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

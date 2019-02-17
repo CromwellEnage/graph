@@ -17,16 +17,15 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
-#include <boost/config.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
 #include <boost/typeof/typeof.hpp>
@@ -424,7 +423,7 @@ namespace boost { namespace detail {
     typedef visitor_predicate bfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 #include <boost/pending/queue.hpp>
 
@@ -450,7 +449,7 @@ namespace boost { namespace detail {
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
 #endif
 
@@ -615,6 +614,7 @@ namespace boost {
     } // end while
   } // breadth_first_visit
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
   template <class IncidenceGraph, class Buffer, class BFSVisitor,
             class ColorMap, class SourceIterator>
@@ -657,7 +657,7 @@ namespace boost {
 #endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 
   // Boost.Parameter-enabled single-source variant
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), breadth_first_visit, ::boost::graph::keywords::tag,
     (required
@@ -705,7 +705,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
@@ -733,7 +733,7 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     typename graph_traits<
       typename boost::remove_const<
@@ -743,6 +743,19 @@ namespace boost {
     breadth_first_visit(graph, srcs, srcs + 1, buffer, visitor, color_map);
     return true;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  // Single-source version
+  template <class IncidenceGraph, class Buffer, class BFSVisitor,
+            class ColorMap>
+  void breadth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+     Buffer& Q, BFSVisitor vis, ColorMap color)
+  {
+    typename graph_traits<IncidenceGraph>::vertex_descriptor sources[1] = {s};
+    breadth_first_visit(g, sources, sources + 1, Q, vis, color);
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class VertexListGraph, class SourceIterator,
             class Buffer, class BFSVisitor,
@@ -763,6 +776,7 @@ namespace boost {
     breadth_first_visit(g, sources_begin, sources_end, Q, vis, color);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
   template <class VertexListGraph, class SourceIterator,
             class Buffer, class BFSVisitor,
@@ -785,7 +799,7 @@ namespace boost {
 #endif  // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 
   // Boost.Parameter-enabled single-source variant
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), breadth_first_search, ::boost::graph::keywords::tag,
     (required
@@ -833,7 +847,7 @@ namespace boost {
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
@@ -861,7 +875,7 @@ namespace boost {
       )
     )
   )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     typename graph_traits<
       typename boost::remove_const<
@@ -871,6 +885,7 @@ namespace boost {
     breadth_first_search(graph, srcs, srcs + 1, buffer, visitor, color_map);
     return true;
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   namespace detail {
 
@@ -908,7 +923,6 @@ namespace boost {
 #endif // BOOST_GRAPH_USE_MPI
   } // namespace detail
 
-#if 1
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
   void breadth_first_search
@@ -921,6 +935,7 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     VertexListGraph& ng = const_cast<VertexListGraph&>(g);
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     breadth_first_search(
@@ -950,9 +965,12 @@ namespace boost {
         >()
       ]
     );
+#else
+    typedef typename get_param_type< vertex_color_t, bgl_named_params<P,T,R> >::type C;
+    detail::bfs_dispatch<C>::apply(ng, s, params,
+                                   get_param(params, vertex_color));
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   }
-#endif
-
 
   // This version does not initialize colors, user has to.
 
@@ -967,6 +985,7 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     IncidenceGraph& ng = const_cast<IncidenceGraph&>(g);
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     breadth_first_visit(
@@ -996,7 +1015,46 @@ namespace boost {
         )
       ]
     );
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    typedef graph_traits<IncidenceGraph> Traits;
+    // Buffer default
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    typedef boost::queue<vertex_descriptor> queue_t;
+    queue_t Q;
+
+    breadth_first_visit
+      (ng, s,
+       choose_param(get_param(params, buffer_param_t()), boost::ref(Q)).get(),
+       choose_param(get_param(params, graph_visitor),
+                    make_bfs_visitor(null_visitor())),
+       choose_pmap(get_param(params, vertex_color), ng, vertex_color)
+       );
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  namespace graph {
+    namespace detail {
+      template <typename Graph, typename Source>
+      struct breadth_first_search_impl {
+        typedef void result_type;
+        template <typename ArgPack>
+        void operator()(const Graph& g, const Source& source, const ArgPack& arg_pack) {
+          using namespace boost::graph::keywords;
+          typename boost::graph_traits<Graph>::vertex_descriptor sources[1] = {source};
+          boost::queue<typename boost::graph_traits<Graph>::vertex_descriptor> Q;
+          boost::breadth_first_search(g,
+                                      &sources[0],
+                                      &sources[1], 
+                                      boost::unwrap_ref(arg_pack[_buffer | boost::ref(Q)]),
+                                      arg_pack[_visitor | make_bfs_visitor(null_visitor())],
+                                      boost::detail::make_color_map_from_arg_pack(g, arg_pack));
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(breadth_first_search, 2, 4)
+  }
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)

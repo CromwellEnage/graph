@@ -48,16 +48,26 @@ int main()
     readable_property_map_archetype<vertex_t, int> index;
     read_write_property_map_archetype<vertex_t, std::size_t> distance;
     dijkstra_shortest_paths(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_vertex_index_map = index,
       boost::graph::keywords::_weight_map = weight,
       boost::graph::keywords::_distance_map = distance
+#else
+      boost::vertex_index_map(index).weight_map(weight).distance_map(distance)
+#endif
     );
     dijkstra_shortest_paths_no_color_map(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_vertex_index_map = index,
       boost::graph::keywords::_weight_map = weight,
       boost::graph::keywords::_distance_map = distance
+#else
+      boost::vertex_index_map(index).weight_map(weight).distance_map(distance)
+#endif
     );
   }
   {
@@ -73,14 +83,24 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     dijkstra_shortest_paths(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_predecessor_map = pred,
       boost::graph::keywords::_weight_map = weight
+#else
+      boost::predecessor_map(pred).weight_map(weight)
+#endif
     );
     dijkstra_shortest_paths_no_color_map(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_predecessor_map = pred,
       boost::graph::keywords::_weight_map = weight
+#else
+      boost::predecessor_map(pred).weight_map(weight)
+#endif
     );
   }
   {
@@ -95,14 +115,24 @@ int main()
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     readable_property_map_archetype<vertex_t, int> index;
     dijkstra_shortest_paths(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_predecessor_map = pred,
       boost::graph::keywords::_vertex_index_map = index
+#else
+      boost::predecessor_map(pred).vertex_index_map(index)
+#endif
     );
     dijkstra_shortest_paths_no_color_map(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_predecessor_map = pred,
       boost::graph::keywords::_vertex_index_map = index
+#else
+      boost::predecessor_map(pred).vertex_index_map(index)
+#endif
     );
   }
   {
@@ -126,7 +156,9 @@ int main()
     dijkstra_visitor<> vis;
 
     dijkstra_shortest_paths(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_color_map = color,
       boost::graph::keywords::_vertex_index_map = index,
       boost::graph::keywords::_weight_map = weight,
@@ -134,15 +166,27 @@ int main()
       boost::graph::keywords::_distance_combine = combine,
       boost::graph::keywords::_distance_compare = compare,
       boost::graph::keywords::_visitor = vis
+#else
+      boost::color_map(color).vertex_index_map(index).weight_map(weight)
+      .distance_map(distance).distance_combine(combine)
+      .distance_compare(compare).visitor(vis)
+#endif
     );
     dijkstra_shortest_paths_no_color_map(
-      g, s,
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_vertex_index_map = index,
       boost::graph::keywords::_weight_map = weight,
       boost::graph::keywords::_distance_map = distance,
       boost::graph::keywords::_distance_combine = combine,
       boost::graph::keywords::_distance_compare = compare,
       boost::graph::keywords::_visitor = vis
+#else
+      boost::vertex_index_map(index).weight_map(weight)
+      .distance_map(distance).distance_combine(combine)
+      .distance_compare(compare).visitor(vis)
+#endif
     );
   }
   return 0;

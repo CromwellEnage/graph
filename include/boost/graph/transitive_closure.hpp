@@ -20,10 +20,13 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/concept/assert.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/concept/assert.hpp>
+#endif
 
 namespace boost
 {
@@ -67,7 +70,7 @@ namespace boost
     }
   }                             // namespace detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), transitive_closure, ::boost::graph::keywords::tag,
     (required
@@ -97,18 +100,18 @@ namespace boost
       )
     )
   )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   template < typename Graph, typename GraphTC,
     typename G_to_TC_VertexMap,
     typename VertexIndexMap >
     bool transitive_closure(const Graph & graph, GraphTC & result,
                             G_to_TC_VertexMap orig_to_copy,
                             VertexIndexMap vertex_index_map)
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     if (num_vertices(graph) == 0)
       return true;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
@@ -118,7 +121,7 @@ namespace boost
     typedef typename boost::remove_const<
       typename boost::remove_reference<vertex_index_map_type>::type
     >::type VertexIndexMap;
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
     typedef typename graph_traits < Graph >::vertex_iterator vertex_iterator;
     typedef typename property_traits < VertexIndexMap >::value_type size_type;
@@ -305,7 +308,7 @@ namespace boost
     return true;
   }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   template <typename Graph, typename GraphTC>
   void transitive_closure(const Graph & g, GraphTC & tc)
   {

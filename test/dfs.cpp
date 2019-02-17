@@ -112,7 +112,7 @@ struct dfs_test
     typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
     boost::mt19937 gen, dfs_chooser_gen;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::uniform_int<> dfs_choices(0, 2);
 #else
     boost::uniform_int<> dfs_choices(0, 1);
@@ -160,7 +160,7 @@ struct dfs_test
           case 1:
             boost::depth_first_search(g, vis, color);
             break;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_PARAMETERS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
           case 2:
             boost::depth_first_search(g, color, vis);
             break;
