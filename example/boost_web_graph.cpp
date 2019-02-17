@@ -198,7 +198,7 @@ main()
 #elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
-    make_bfs_visitor(record_predecessors(parent.begin(), on_tree_edge()))
+    make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     )
 #endif
