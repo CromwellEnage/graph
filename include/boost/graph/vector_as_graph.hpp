@@ -105,7 +105,7 @@ namespace boost {
         typedef directed_tag directed_category;
         typedef allow_parallel_edge_tag edge_parallel_category;
         typedef vector_as_graph_traversal_tag traversal_category;
-        typedef typename EdgeListVector::size_type vertices_size_type;
+        typedef typename std::vector<EdgeList,Alloc>::size_type vertices_size_type;
         typedef void edges_size_type;
         typedef typename std::vector<EdgeList,Alloc>::size_type degree_size_type;
         static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
