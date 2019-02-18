@@ -41,7 +41,11 @@ main()
       << name[target(*e, g)] << ')' << std::endl;
   parenthesis_visitor
     paren_vis;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   depth_first_search(g, paren_vis);
+#else
+  depth_first_search(g, boost::visitor(paren_vis));
+#endif
   std::cout << std::endl;
   return 0;
 }

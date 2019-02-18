@@ -305,6 +305,40 @@ namespace boost {
     return true;
   }
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  /**
+   * Checks a given graph for bipartiteness.
+   *
+   * @param graph The given graph.
+   * @param index_map An index map associating vertices with an index.
+   * @return true if and only if the given graph is bipartite.
+   */
+
+  template <typename Graph, typename IndexMap>
+  bool is_bipartite (const Graph& graph, const IndexMap index_map)
+  {
+    typedef one_bit_color_map <IndexMap> partition_map_t;
+    partition_map_t partition_map (num_vertices (graph), index_map);
+
+    return is_bipartite (graph, index_map, partition_map);
+  }
+
+  /**
+   * Checks a given graph for bipartiteness. The graph must
+   * have an internal vertex_index property. Runs in linear time in the
+   * size of the graph, if access to the property maps is in constant time.
+   *
+   * @param graph The given graph.
+   * @return true if and only if the given graph is bipartite.
+   */
+
+  template <typename Graph>
+  bool is_bipartite (const Graph& graph)
+  {
+    return is_bipartite (graph, get (vertex_index, graph));
+  }
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
   /**
    * Checks a given graph for bipartiteness and fills a given color map with
    * white and black according to the bipartition. If the graph is not

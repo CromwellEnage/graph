@@ -625,6 +625,50 @@ namespace boost {
 
   } // namespace detail
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  void
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
+                     typename graph_traits<VertexListGraph>::vertex_descriptor start_vertex)
+  {
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, VertexListGraph> ));
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+
+    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      Vertex u = implicit_cast<Vertex>(*ui);
+      put(color, u, Color::white()); vis.initialize_vertex(u, g);
+    }
+
+    if (start_vertex != detail::get_default_starting_vertex(g)){ vis.start_vertex(start_vertex, g);
+      detail::depth_first_visit_impl(g, start_vertex, vis, color,
+                                     detail::nontruth2());
+    }
+
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      Vertex u = implicit_cast<Vertex>(*ui);
+      ColorValue u_color = get(color, u);
+      if (u_color == Color::white()) {       vis.start_vertex(u, g);
+        detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
+      }
+    }
+  }
+
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  void
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  {
+    typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
+    std::pair<vi, vi> verts = vertices(g);
+    if (verts.first == verts.second)
+      return;
+
+    depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
+  }
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
   template <class Visitors = null_visitor>
   class dfs_visitor {
   public:

@@ -55,7 +55,11 @@ int main()
       graph_t;
     graph_t& g = static_object<graph_t>::get();
     dfs_visitor<> v;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     depth_first_search(g, v);
+#else
+    depth_first_search(g, visitor(v));
+#endif
   }
   return 0;
 }

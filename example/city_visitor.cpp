@@ -119,11 +119,22 @@ int main(int, char*[])
 #endif
 
   cout << "*** Depth First ***" << endl;
-  depth_first_search
-    (G, 
-     make_dfs_visitor(boost::make_list(city_arrival(names),
-                                               neighbor_cities(names),
-                                               finish_city(names))));
+  depth_first_search(
+    G,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#endif
+    make_dfs_visitor(
+      boost::make_list(
+        city_arrival(names),
+        neighbor_cities(names),
+        finish_city(names)
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
   cout << endl;
 
   /* Get the source vertex */
