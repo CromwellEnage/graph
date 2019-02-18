@@ -89,5 +89,6 @@ int main(int, char*[])
     )
   BOOST_TEST(is_called);
 #endif
+
   return boost::report_errors();
 }

@@ -44,7 +44,7 @@ main()
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::vertex_index_map(
 #endif
-    identity_property_map()
+    typed_identity_property_map<int>()
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     )
 #endif

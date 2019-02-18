@@ -34,93 +34,111 @@
   user can choose any STL container, so long as the value_type of the
   container is convertible to the size_type of the vector. For now any
   graph properties must be stored seperately.
-
-  This module requires the C++ compiler to support partial
-  specialization for the graph_traits class, so this is not portable
-  to VC++.
-
 */
-
-
 
 namespace boost { namespace detail {
 
-    template <class EdgeList> struct val_out_edge_ret;
-    template <class EdgeList> struct val_out_edge_iter;
-    template <class EdgeList> struct val_edge;
+    template <typename EdgeList> struct val_out_edge_ret;
+    template <typename EdgeList> struct val_out_edge_iter;
+    template <typename EdgeList> struct val_edge;
 }}
 
 namespace boost {
 
-  struct vector_as_graph_traversal_tag
-    : public vertex_list_graph_tag,
-      public adjacency_graph_tag,
-      public incidence_graph_tag { };
+    struct vector_as_graph_traversal_tag :
+        public vertex_list_graph_tag,
+        public adjacency_graph_tag,
+        public incidence_graph_tag
+    {
+    };
 }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename EdgeListVector>
     class val_graph_traits
     {
-      typedef typename EdgeListVector::value_type EdgeList;
+        typedef typename EdgeListVector::value_type EdgeList;
+
     public:
-      typedef typename EdgeList::value_type vertex_descriptor;
-      typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
-      typedef typename EdgeList::const_iterator adjacency_iterator;
-      typedef typename detail::val_out_edge_iter<EdgeList>::type
-        out_edge_iterator;
-      typedef void in_edge_iterator;
-      typedef void edge_iterator;
-      typedef counting_iterator<vertex_descriptor> vertex_iterator;
-      typedef directed_tag directed_category;
-      typedef allow_parallel_edge_tag edge_parallel_category;
-      typedef vector_as_graph_traversal_tag traversal_category;
-      typedef typename EdgeListVector::size_type vertices_size_type;
-      typedef void edges_size_type;
-      typedef typename EdgeList::size_type degree_size_type;
-      static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
+        typedef typename EdgeList::value_type vertex_descriptor;
+        typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
+        typedef typename EdgeList::const_iterator adjacency_iterator;
+        typedef typename detail::val_out_edge_iter<EdgeList>::type
+            out_edge_iterator;
+        typedef void in_edge_iterator;
+        typedef void edge_iterator;
+        typedef counting_iterator<vertex_descriptor> vertex_iterator;
+        typedef directed_tag directed_category;
+        typedef allow_parallel_edge_tag edge_parallel_category;
+        typedef vector_as_graph_traversal_tag traversal_category;
+        typedef typename EdgeListVector::size_type vertices_size_type;
+        typedef void edges_size_type;
+        typedef typename EdgeList::size_type degree_size_type;
+        static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
     };
 }}
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
 
-  template <typename EdgeList, typename Alloc>
-  struct graph_traits< std::vector<EdgeList,Alloc> >
-    : public mpl::if_<
-      detail::has_container_typedefs<EdgeList>,
-      detail::val_graph_traits< std::vector<EdgeList,Alloc> >,
-      detail::graph_traits_no_impl
-    >::type
-  {
-  };
+    template <typename EdgeList, typename Alloc>
+    struct graph_traits< std::vector<EdgeList,Alloc> >
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        : public mpl::if_<
+            detail::has_container_typedefs<EdgeList>,
+            detail::val_graph_traits< std::vector<EdgeList,Alloc> >,
+            detail::graph_traits_no_impl
+        >::type
+#endif
+    {
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        typedef typename std::vector<EdgeList,Alloc>::value_type EdgeList;
 
-  template <typename EdgeList, typename Alloc>
-  struct edge_property_type< std::vector<EdgeList,Alloc> >
-  {
-    typedef void type;
-  };
+    public:
+        typedef typename EdgeList::value_type vertex_descriptor;
+        typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
+        typedef typename EdgeList::const_iterator adjacency_iterator;
+        typedef typename detail::val_out_edge_iter<EdgeList>::type
+            out_edge_iterator;
+        typedef void in_edge_iterator;
+        typedef void edge_iterator;
+        typedef counting_iterator<vertex_descriptor> vertex_iterator;
+        typedef directed_tag directed_category;
+        typedef allow_parallel_edge_tag edge_parallel_category;
+        typedef vector_as_graph_traversal_tag traversal_category;
+        typedef typename EdgeListVector::size_type vertices_size_type;
+        typedef void edges_size_type;
+        typedef typename EdgeList::size_type degree_size_type;
+        static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    };
 
-  template <typename EdgeList, typename Alloc>
-  struct vertex_property_type< std::vector<EdgeList,Alloc> >
-  {
-    typedef void type;
-  };
+    template <typename EdgeList, typename Alloc>
+    struct edge_property_type< std::vector<EdgeList,Alloc> >
+    {
+        typedef void type;
+    };
 
-  template <typename EdgeList, typename Alloc>
-  struct graph_property_type< std::vector<EdgeList,Alloc> >
-  {
-    typedef void type;
-  };
+    template <typename EdgeList, typename Alloc>
+    struct vertex_property_type< std::vector<EdgeList,Alloc> >
+    {
+        typedef void type;
+    };
+
+    template <typename EdgeList, typename Alloc>
+    struct graph_property_type< std::vector<EdgeList,Alloc> >
+    {
+        typedef void type;
+    };
 }
 
-namespace boost {
-
-  namespace detail {
+namespace boost { namespace detail {
 
     // "val" is short for Vector Adjacency List
 
-    template <class EdgeList>
+    template <typename EdgeList>
     struct val_edge
     {
       typedef typename EdgeList::value_type V;
@@ -128,53 +146,57 @@ namespace boost {
     };
 
     // need rewrite this using boost::iterator_adaptor
-    template <class V, class Iter>
+    template <typename V, typename Iter>
     class val_out_edge_iterator
     {
-      typedef val_out_edge_iterator self;
-      typedef std::pair<V,V> Edge;
+        typedef val_out_edge_iterator self;
+        typedef std::pair<V,V> Edge;
+
     public:
-      typedef std::input_iterator_tag iterator_category;
-      typedef std::pair<V,V> value_type;
-      typedef std::ptrdiff_t difference_type;
-      typedef std::pair<V,V>* pointer;
-      typedef const std::pair<V,V> reference;
-      val_out_edge_iterator() { }
-      val_out_edge_iterator(V s, Iter i) : _source(s), _iter(i) { }
-      Edge operator*() const { return Edge(_source, *_iter); }
-      self& operator++() { ++_iter; return *this; }
-      self operator++(int) { self t = *this; ++_iter; return t; }
-      bool operator==(const self& x) const { return _iter == x._iter; }
-      bool operator!=(const self& x) const { return _iter != x._iter; }
+        typedef std::input_iterator_tag iterator_category;
+        typedef std::pair<V,V> value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef std::pair<V,V>* pointer;
+        typedef const std::pair<V,V> reference;
+        val_out_edge_iterator() { }
+        val_out_edge_iterator(V s, Iter i) : _source(s), _iter(i) { }
+        Edge operator*() const { return Edge(_source, *_iter); }
+        self& operator++() { ++_iter; return *this; }
+        self operator++(int) { self t = *this; ++_iter; return t; }
+        bool operator==(const self& x) const { return _iter == x._iter; }
+        bool operator!=(const self& x) const { return _iter != x._iter; }
+
     protected:
-      V _source;
-      Iter _iter;
+        V _source;
+        Iter _iter;
     };
 
-    template <class EdgeList>
+    template <typename EdgeList>
     struct val_out_edge_iter
     {
-      typedef typename EdgeList::value_type V;
-      typedef typename EdgeList::const_iterator Iter;
-      typedef val_out_edge_iterator<V,Iter> type;
+        typedef typename EdgeList::value_type V;
+        typedef typename EdgeList::const_iterator Iter;
+        typedef val_out_edge_iterator<V,Iter> type;
     };
 
-    template <class EdgeList>
+    template <typename EdgeList>
     struct val_out_edge_ret
     {
-      typedef typename val_out_edge_iter<EdgeList>::type IncIter;
-      typedef std::pair<IncIter,IncIter> type;
+        typedef typename val_out_edge_iter<EdgeList>::type IncIter;
+        typedef std::pair<IncIter,IncIter> type;
     };
 
-    template <class EdgeList, class Alloc>
+    template <typename EdgeList, typename Alloc>
     typename EdgeList::value_type
     get_default_starting_vertex(const std::vector<EdgeList, Alloc>& g)
     {
-      return g.empty() ? -1 : 0;
+        return g.empty() ? -1 : 0;
     }
-  } // namesapce detail
+}} // namesapce boost::detail
 
-  template <class EdgeList, class Alloc>
+namespace boost {
+
+  template <typename EdgeList, typename Alloc>
   typename detail::val_out_edge_ret<EdgeList>::type
   out_edges(typename EdgeList::value_type v,
             const std::vector<EdgeList, Alloc>& g)
@@ -184,7 +206,7 @@ namespace boost {
     return return_type(Iter(v, g[v].begin()), Iter(v, g[v].end()));
   }
 
-  template <class EdgeList, class Alloc>
+  template <typename EdgeList, typename Alloc>
   typename EdgeList::size_type
   out_degree(typename EdgeList::value_type v,
              const std::vector<EdgeList, Alloc>& g)
@@ -192,7 +214,7 @@ namespace boost {
     return g[v].size();
   }
 
-  template <class EdgeList, class Alloc>
+  template <typename EdgeList, typename Alloc>
   std::pair<typename EdgeList::const_iterator,
             typename EdgeList::const_iterator>
   adjacent_vertices(typename EdgeList::value_type v,
@@ -203,7 +225,7 @@ namespace boost {
 
   // source() and target() already provided for pairs in graph_traits.hpp
 
-  template <class EdgeList, class Alloc>
+  template <typename EdgeList, typename Alloc>
   std::pair<boost::counting_iterator<typename EdgeList::value_type>,
             boost::counting_iterator<typename EdgeList::value_type> >
   vertices(const std::vector<EdgeList, Alloc>& v)
@@ -212,14 +234,14 @@ namespace boost {
     return std::make_pair(Iter(0), Iter(static_cast<typename EdgeList::value_type>(v.size())));
   }
 
-  template <class EdgeList, class Alloc>
+  template <typename EdgeList, typename Alloc>
   typename std::vector<EdgeList, Alloc>::size_type
   num_vertices(const std::vector<EdgeList, Alloc>& v)
   {
     return v.size();
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
   add_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
            std::vector<EdgeList, Allocator>& g)
@@ -229,7 +251,7 @@ namespace boost {
     return std::make_pair(edge_type(u, v), true);
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
   edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
        std::vector<EdgeList, Allocator>& g)
@@ -242,7 +264,7 @@ namespace boost {
     return std::make_pair(edge_type(), false);
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   void
   remove_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
               std::vector<EdgeList, Allocator>& g)
@@ -252,7 +274,7 @@ namespace boost {
       g[u].erase(i, g[u].end());
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   void
   remove_edge(typename detail::val_edge<EdgeList>::type e,
               std::vector<EdgeList, Allocator>& g)
@@ -266,7 +288,7 @@ namespace boost {
       g[u].erase(i, g[u].end());
   }
 
-  template<class EdgeList, class Allocator, class Predicate>
+  template <typename EdgeList, typename Allocator, typename Predicate>
   void
   remove_edge_if(Predicate p,
                  std::vector<EdgeList, Allocator>& g)
@@ -297,7 +319,7 @@ namespace boost {
       }
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   typename EdgeList::value_type
   add_vertex(std::vector<EdgeList, Allocator>& g)
   {
@@ -305,7 +327,7 @@ namespace boost {
     return g.size()-1;
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   void
   clear_vertex(typename EdgeList::value_type u,
                std::vector<EdgeList, Allocator>& g)
@@ -315,7 +337,7 @@ namespace boost {
       remove_edge(i, u, g);
   }
 
-  template<class EdgeList, class Allocator>
+  template <typename EdgeList, typename Allocator>
   void
   remove_vertex(typename EdgeList::value_type u,
                 std::vector<EdgeList, Allocator>& g)
@@ -330,21 +352,21 @@ namespace boost {
           --*it;
   }
 
-  template<typename EdgeList, typename Allocator>
-  struct property_map<std::vector<EdgeList, Allocator>, vertex_index_t>
+  template <typename EdgeList, typename Allocator>
+  struct property_map< std::vector<EdgeList, Allocator>, vertex_index_t>
   {
     typedef typed_identity_property_map<typename EdgeList::value_type> type;
     typedef type const_type;
   };
 
-  template<typename EdgeList, typename Allocator>
+  template <typename EdgeList, typename Allocator>
   typed_identity_property_map<typename EdgeList::value_type>
   get(vertex_index_t, const std::vector<EdgeList, Allocator>&)
   {
     return typed_identity_property_map<typename EdgeList::value_type>();
   }
 
-  template<typename EdgeList, typename Allocator>
+  template <typename EdgeList, typename Allocator>
   typed_identity_property_map<typename EdgeList::value_type>
   get(vertex_index_t, std::vector<EdgeList, Allocator>&)
   {
