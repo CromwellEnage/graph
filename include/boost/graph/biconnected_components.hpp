@@ -1226,14 +1226,6 @@ namespace boost
     return biconnected_components(g, comp,
                                   graph_detail::dummy_output_iterator()).first;
   }
-
-  template<typename Graph, typename OutputIterator>
-  OutputIterator
-  articulation_points(const Graph& g, OutputIterator out)
-  {
-    return biconnected_components(g, dummy_property_map(), out, 
-        bgl_named_params<int, buffer_param_t>(0)).second;
-  }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename Graph, typename ComponentMap, typename OutputIterator,
@@ -1242,11 +1234,59 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    return detail::biconnected_components_impl(
+      g,
+      comp,
+      out,
+      arg_pack[
+        boost::graph::keywords::_vertex_index_map |
+        detail::vertex_index_map_or_dummy_property_map(g)
+      ],
+      arg_pack[
+        boost::graph::keywords::_discover_time_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          num_vertices(g) - num_vertices(g),
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ],
+      arg_pack[
+        boost::graph::keywords::_lowpoint_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          num_vertices(g) - num_vertices(g),
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ],
+      arg_pack[
+        boost::graph::keywords::_predecessor_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          detail::get_null_vertex(g),
+          arg_pack[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_index_map_or_dummy_property_map(g)
+          ]
+        )
+      ],
+      arg_pack[boost::graph::keywords::_visitor | default_dfs_visitor()]
+    );
+#else
     typedef typename get_param_type< vertex_discover_time_t, bgl_named_params<P,T,R> >::type dispatch_type;
 
     return detail::bicomp_dispatch1<dispatch_type>::apply(g, comp, out, 
         choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
         params, get_param(params, vertex_discover_time));
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   }
 
   template <typename Graph, typename ComponentMap,
@@ -1268,6 +1308,16 @@ namespace boost
     return biconnected_components(g, dummy_property_map(), out, 
         params).second;
   }
-}                               // namespace boost
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template<typename Graph, typename OutputIterator>
+  OutputIterator
+  articulation_points(const Graph& g, OutputIterator out)
+  {
+    return biconnected_components(g, dummy_property_map(), out, 
+        bgl_named_params<int, buffer_param_t>(0)).second;
+  }
+#endif
+} // namespace boost
 
 #endif  /* BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP */
