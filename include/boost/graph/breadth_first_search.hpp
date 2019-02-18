@@ -885,6 +885,17 @@ namespace boost {
     breadth_first_search(graph, srcs, srcs + 1, buffer, visitor, color_map);
     return true;
   }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <class VertexListGraph, class Buffer, class BFSVisitor,
+            class ColorMap>
+  void breadth_first_search
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     Buffer& Q, BFSVisitor vis, ColorMap color)
+  {
+    typename graph_traits<VertexListGraph>::vertex_descriptor sources[1] = {s};
+    breadth_first_search(g, sources, sources + 1, Q, vis, color);
+  }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   namespace detail {
