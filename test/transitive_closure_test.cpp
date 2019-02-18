@@ -115,7 +115,11 @@ bool test(int n, double p)
   {
     progress_timer t;
     cout << "transitive_closure" << endl;
+#if defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000)
+    transitive_closure(g1, g1_tc, vertex_index_map(get(boost::vertex_index, g1)));
+#else
     transitive_closure(g1, g1_tc);
+#endif
   }
 
   if(check_transitive_closure(g1, g1_tc))

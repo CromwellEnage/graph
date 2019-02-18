@@ -33,7 +33,7 @@
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && ( \
         (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000)) || ( \
             BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
-            BOOST_WORKAROUND(BOOST_MSVC, < 1910) \
+            BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
         ) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
@@ -668,7 +668,9 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
                                         >::type> helper;
       typedef typename helper::map_type map_type;
       static map_type make_map(const Graph& g, const ArgPack& ap, ValueType default_value) {
-        return helper::make_map(g, default_value, ap[::boost::parameter::keyword<MapTag>::instance | 0], ap);
+        return helper::make_map(
+          g, default_value, ap[::boost::parameter::keyword<MapTag>::instance | 0], ap
+        );
       }
     };
 
