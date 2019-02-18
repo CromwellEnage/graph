@@ -94,9 +94,6 @@ namespace boost {
 #endif
     {
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        typedef typename std::vector<EdgeList,Alloc>::value_type EdgeList;
-
-    public:
         typedef typename EdgeList::value_type vertex_descriptor;
         typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
         typedef typename EdgeList::const_iterator adjacency_iterator;
