@@ -17,11 +17,11 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/mpl/bool.hpp>
 #include <boost/config.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -921,6 +921,61 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        boost::mpl::true_);
 #endif // BOOST_GRAPH_USE_MPI
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    //-------------------------------------------------------------------------
+    // Choose between default color and color parameters. Using
+    // function dispatching so that we don't require vertex index if
+    // the color default is not being used.
+
+    template <class ColorMap>
+    struct bfs_dispatch {
+      template <class VertexListGraph, class P, class T, class R>
+      static void apply
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       const bgl_named_params<P, T, R>& params,
+       ColorMap color)
+      {
+        bfs_helper
+          (g, s, color,
+           choose_param(get_param(params, graph_visitor),
+                        make_bfs_visitor(null_visitor())),
+           params,
+           boost::mpl::bool_<
+             boost::is_base_and_derived<
+               distributed_graph_tag,
+               typename graph_traits<VertexListGraph>::traversal_category>::value>());
+      }
+    };
+
+    template <>
+    struct bfs_dispatch<param_not_found> {
+      template <class VertexListGraph, class P, class T, class R>
+      static void apply
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       const bgl_named_params<P, T, R>& params,
+       param_not_found)
+      {
+        null_visitor null_vis;
+
+        bfs_helper
+          (g, s,
+           make_two_bit_color_map
+           (num_vertices(g),
+            choose_const_pmap(get_param(params, vertex_index),
+                              g, vertex_index)),
+           choose_param(get_param(params, graph_visitor),
+                        make_bfs_visitor(null_vis)),
+           params,
+           boost::mpl::bool_<
+             boost::is_base_and_derived<
+               distributed_graph_tag,
+               typename graph_traits<VertexListGraph>::traversal_category>::value>());
+      }
+    };
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   } // namespace detail
 
   // Named Parameter Variant
