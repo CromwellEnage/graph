@@ -23,7 +23,8 @@
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/mpl/bool.hpp>
@@ -213,7 +214,8 @@ namespace boost
       return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
     }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
+    (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
     template <typename PredecessorMap>
     struct bicomp_dispatch3
     {
@@ -343,7 +345,8 @@ namespace boost
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   } // end namespace detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
@@ -661,7 +664,8 @@ namespace boost
     };
   } // end namespace graph_detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
@@ -1234,7 +1238,8 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     return detail::biconnected_components_impl(
@@ -1309,7 +1314,8 @@ namespace boost
         params).second;
   }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
+    (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
   template<typename Graph, typename OutputIterator>
   OutputIterator
   articulation_points(const Graph& g, OutputIterator out)
