@@ -224,6 +224,7 @@ namespace boost {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type Graph;
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 #endif
     typedef typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
@@ -235,7 +236,6 @@ namespace boost {
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
 
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
