@@ -53,7 +53,6 @@ namespace boost {
     };
 }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail {
 
     template <typename EdgeListVector>
@@ -79,37 +78,17 @@ namespace boost { namespace detail {
         static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
     };
 }}
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
 
     template <typename EdgeList, typename Alloc>
     struct graph_traits< std::vector<EdgeList,Alloc> >
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         : public mpl::if_<
             detail::has_container_typedefs<EdgeList>,
             detail::val_graph_traits< std::vector<EdgeList,Alloc> >,
             detail::graph_traits_no_impl
         >::type
-#endif
     {
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        typedef typename EdgeList::value_type vertex_descriptor;
-        typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
-        typedef typename EdgeList::const_iterator adjacency_iterator;
-        typedef typename detail::val_out_edge_iter<EdgeList>::type
-            out_edge_iterator;
-        typedef void in_edge_iterator;
-        typedef void edge_iterator;
-        typedef counting_iterator<vertex_descriptor> vertex_iterator;
-        typedef directed_tag directed_category;
-        typedef allow_parallel_edge_tag edge_parallel_category;
-        typedef vector_as_graph_traversal_tag traversal_category;
-        typedef typename std::vector<EdgeList,Alloc>::size_type vertices_size_type;
-        typedef void edges_size_type;
-        typedef typename std::vector<EdgeList,Alloc>::size_type degree_size_type;
-        static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     };
 
     template <typename EdgeList, typename Alloc>
