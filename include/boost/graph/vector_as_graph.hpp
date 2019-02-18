@@ -107,7 +107,7 @@ namespace boost {
         typedef vector_as_graph_traversal_tag traversal_category;
         typedef typename EdgeListVector::size_type vertices_size_type;
         typedef void edges_size_type;
-        typedef typename EdgeList::size_type degree_size_type;
+        typedef typename std::vector<EdgeList,Alloc>::size_type degree_size_type;
         static vertex_descriptor null_vertex() {return vertex_descriptor(-1);}
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     };
