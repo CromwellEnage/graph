@@ -361,17 +361,6 @@ namespace boost {
     return detail::strong_components_impl(graph, component_map, root_map,
                                           discover_time_map, color_map);
   }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <class Graph, class ComponentMap>
-  inline typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g, ComponentMap comp
-                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
-  {
-    typedef typename graph_traits<Graph>::directed_category DirCat;
-    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    bgl_named_params<int, int> params(0);
-    return strong_components(g, comp, params);
-  }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class Graph, class ComponentMap, 
@@ -383,6 +372,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     return detail::strong_components_impl(
@@ -422,7 +412,24 @@ namespace boost {
         )
       ]
     );
+#else
+    return detail::scc_helper1(g, comp, params, 
+                               get_param(params, vertex_root_t()));
+#endif
   }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <class Graph, class ComponentMap>
+  inline typename property_traits<ComponentMap>::value_type
+  strong_components(const Graph& g, ComponentMap comp
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
+  {
+    typedef typename graph_traits<Graph>::directed_category DirCat;
+    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+    bgl_named_params<int, int> params(0);
+    return strong_components(g, comp, params);
+  }
+#endif
 
   template <typename Graph, typename ComponentMap, typename ComponentLists>
   void build_component_lists

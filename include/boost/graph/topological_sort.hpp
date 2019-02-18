@@ -146,13 +146,6 @@ namespace boost {
     );
     return true;
   }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <typename VertexListGraph, typename OutputIterator>
-  void topological_sort(VertexListGraph& g, OutputIterator result)
-  {
-    topological_sort(g, result, 
-                     bgl_named_params<int, buffer_param_t>(0)); // bogus
-  }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <typename VertexListGraph, typename OutputIterator,
@@ -160,6 +153,7 @@ namespace boost {
   void topological_sort(VertexListGraph& g, OutputIterator result,
                         const bgl_named_params<P, T, R>& params)
   {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     depth_first_search(
@@ -179,7 +173,20 @@ namespace boost {
         )
       ]
     );
+#else
+    typedef topo_sort_visitor<OutputIterator> TopoVisitor;
+    depth_first_search(g, params.visitor(TopoVisitor(result)));
+#endif
   }
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename VertexListGraph, typename OutputIterator>
+  void topological_sort(VertexListGraph& g, OutputIterator result)
+  {
+    topological_sort(g, result, 
+                     bgl_named_params<int, buffer_param_t>(0)); // bogus
+  }
+#endif
 } // namespace boost
 
 #endif /*BOOST_GRAPH_TOPOLOGICAL_SORT_H*/

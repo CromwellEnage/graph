@@ -186,12 +186,18 @@ struct bfs_test
           case 1:
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
             boost::breadth_first_search(g, start, vis, color_pm);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::breadth_first_search(
               g,
               start,
               boost::graph::keywords::_visitor = vis,
               boost::graph::keywords::_color_map = color_pm
+            );
+#else
+            boost::breadth_first_search(
+              g,
+              start,
+              boost::visitor(vis).color_map(color_pm)
             );
 #endif
             break;

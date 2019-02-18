@@ -144,7 +144,15 @@ namespace boost
       cg_vertex&
     > component_number(component_number_vec.begin(), vertex_index_map);
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     size_type num_scc = strong_components(graph, component_number, vertex_index_map);
+#else
+    size_type num_scc = strong_components(
+      graph,
+      component_number,
+      boost::vertex_index_map(vertex_index_map)
+    );
+#endif
 
     std::vector < std::vector < vertex > >components;
     build_component_lists(graph, num_scc, component_number, components);

@@ -275,6 +275,9 @@ namespace boost {
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         vertex_index_map,
 #endif
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::visitor(
+#endif
         make_dfs_visitor(
           std::make_pair(
             detail::colorize_bipartition(partition_map),
@@ -288,6 +291,9 @@ namespace boost {
             )
           )
         )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        )
+#endif
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         ,make_shared_array_property_map(
           num_vertices(graph),
