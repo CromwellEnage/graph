@@ -183,8 +183,17 @@ namespace boost
 
     std::vector<cg_vertex> topo_order;
     std::vector<cg_vertex> topo_number(num_vertices(CG));
-    topological_sort(CG, std::back_inserter(topo_order),
-                     identity_property_map());
+    topological_sort(
+      CG,
+      std::back_inserter(topo_order),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::vertex_index_map(
+#endif
+      typed_identity_property_map<size_type>()
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      )
+#endif
+    );
     std::reverse(topo_order.begin(), topo_order.end());
     size_type n = 0;
     for (typename std::vector<cg_vertex>::iterator iter = topo_order.begin();

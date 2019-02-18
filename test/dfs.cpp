@@ -155,7 +155,11 @@ struct dfs_test
         switch (dfs_rand())
         {
           case 0:
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::depth_first_search(g, visitor(boost::ref(vis)).color_map(color));
+#else
+            boost::depth_first_search(g, visitor(vis).color_map(color));
+#endif
             break;
           case 1:
             boost::depth_first_search(g, vis, color);

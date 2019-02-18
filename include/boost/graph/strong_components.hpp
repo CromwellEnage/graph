@@ -92,7 +92,8 @@ namespace boost {
       time_type dfs_time;
       Stack& s;
     };
-    
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <class Graph, class ComponentMap, class RootMap,
               class DiscoverTime, class ColorMap>
     typename property_traits<ComponentMap>::value_type
@@ -120,8 +121,35 @@ namespace boost {
       depth_first_search(g, vis, color);
       return total;
     }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    template <class Graph, class ComponentMap, class RootMap,
+              class DiscoverTime, class P, class T, class R>
+    typename property_traits<ComponentMap>::value_type
+    strong_components_impl
+      (const Graph& g,    // Input
+       ComponentMap comp, // Output
+       // Internal record keeping
+       RootMap root, 
+       DiscoverTime discover_time,
+       const bgl_named_params<P, T, R>& params)
+    {
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ComponentMap, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<RootMap, Vertex> ));
+      typedef typename property_traits<RootMap>::value_type RootV;
+      BOOST_CONCEPT_ASSERT(( ConvertibleConcept<RootV, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DiscoverTime, Vertex> ));
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      typename property_traits<ComponentMap>::value_type total = 0;
+
+      std::stack<Vertex> s;
+      detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
+        std::stack<Vertex> > 
+        vis(comp, root, discover_time, total, s);
+      depth_first_search(g, params.visitor(vis));
+      return total;
+    }
+
     //-------------------------------------------------------------------------
     // The dispatch functions handle the defaults for the rank and discover
     // time property maps.
