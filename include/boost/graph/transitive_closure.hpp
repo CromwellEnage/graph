@@ -189,7 +189,7 @@ namespace boost
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::vertex_index_map(
 #endif
-      typed_identity_property_map<size_type>()
+      identity_property_map()
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       )
 #endif

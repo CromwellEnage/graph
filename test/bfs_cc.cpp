@@ -44,7 +44,7 @@ int main()
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     breadth_first_search(g, s, v_index);
 #else
-    breadth_first_search(g, s, vertex_index_map(v_index));
+    breadth_first_search(g, s, boost::vertex_index_map(v_index));
 #endif
   }
   {
@@ -60,8 +60,10 @@ int main()
     buffer_archetype<vertex_t> b;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     breadth_first_search(g, s, v, b);
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_search(g, s, b, v);
+#else
+    breadth_first_search(g, s, boost::buffer(b).visitor(v));
 #endif
   }
   return 0;
