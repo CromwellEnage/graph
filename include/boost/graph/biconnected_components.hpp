@@ -352,11 +352,12 @@ namespace boost
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
@@ -443,11 +444,12 @@ namespace boost
               >
             >::type,
             mpl::false_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::eval_if<
@@ -522,11 +524,12 @@ namespace boost
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
@@ -584,11 +587,12 @@ namespace boost
               >
             >::type,
             mpl::true_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::false_,
@@ -671,11 +675,12 @@ namespace boost
     (
       boost::disable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::true_
@@ -779,11 +784,12 @@ namespace boost
               mpl::false_
             >::type,
             mpl::false_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
@@ -843,11 +849,12 @@ namespace boost
     (
       boost::disable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::true_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
@@ -901,11 +908,12 @@ namespace boost
               >
             >::type,
             mpl::true_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::true_,
@@ -954,11 +962,12 @@ namespace boost
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
@@ -1033,11 +1042,12 @@ namespace boost
               boost::graph::keywords::tag::discover_time_map
             >,
             mpl::false_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
@@ -1100,11 +1110,12 @@ namespace boost
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_index_map<
+          detail::has_internal_vertex_property_map<
             typename detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
-            >::type
+            >::type,
+            vertex_index_t
           >,
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
@@ -1148,11 +1159,12 @@ namespace boost
               boost::graph::keywords::tag::vertex_index_map
             >,
             mpl::true_,
-            detail::has_internal_vertex_index_map<
+            detail::has_internal_vertex_property_map<
               typename detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
-              >::type
+              >::type,
+              vertex_index_t
             >
           >::type,
           mpl::false_,

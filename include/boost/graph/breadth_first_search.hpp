@@ -373,6 +373,14 @@ namespace boost { namespace detail {
                 ) == sizeof(graph_yes_tag)
             ) && (
                 sizeof(
+                    is_bfs_visitor_impl<T,G>::_check_back_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
                     is_bfs_visitor_impl<T,G>::_check_n_t_e(
                         static_cast<mpl::vector<_m_T,G>*>(
                             BOOST_GRAPH_DETAIL_NULLPTR
@@ -424,17 +432,6 @@ namespace boost { namespace detail {
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 #endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-
-#include <boost/pending/queue.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename Vertex>
-    inline boost::queue<Vertex> create_empty_buffer(Vertex const&)
-    {
-        return boost::queue<Vertex>();
-    }
-}}
 
 #include <vector>
 #include <boost/functional/value_factory.hpp>

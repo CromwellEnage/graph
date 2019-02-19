@@ -16,15 +16,577 @@
   Like BFS, but traverses in-edges as well as out-edges.
   (for directed graphs only. use normal BFS for undirected graphs)
 */
-#include <boost/config.hpp>
-#include <boost/ref.hpp>
 #include <vector>
 #include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/traits.hpp>
+#include <boost/core/ref.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/add_pointer.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/declval.hpp>
+
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+#include <boost/typeof/typeof.hpp>
+#endif
+
+namespace boost { namespace detail {
+
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
+    template <typename T, typename G>
+    class is_neighbor_bfs_visitor_impl
+    {
+        typedef typename boost::remove_const<T>::type _m_T;
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_init_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().initialize_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().initialize_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_init_v(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_disc_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().discover_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().discover_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_disc_v(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_exam_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().examine_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().examine_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_exam_v(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_exam_o_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().examine_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().examine_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_exam_o_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_exam_i_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().examine_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().examine_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_exam_i_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_tree_o_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().tree_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().tree_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_tree_o_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_tree_i_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().tree_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().tree_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_tree_i_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_n_t_o_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().non_tree_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().non_tree_out_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_n_t_o_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_n_t_i_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().non_tree_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().non_tree_in_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_n_t_i_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_g_t_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().gray_target(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().gray_target(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_g_t_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_b_t_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().black_target(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().black_target(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_b_t_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_g_s_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().gray_source(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().gray_source(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_g_s_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_b_s_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().black_source(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().black_source(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_b_s_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_end_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().finish_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().finish_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_end_v(...);
+
+    public:
+        typedef mpl::bool_<
+            (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_init_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_disc_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_exam_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_exam_o_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_exam_i_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_tree_o_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_tree_i_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_n_t_o_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_n_t_i_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_g_t_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_b_t_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_g_s_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_b_s_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_neighbor_bfs_visitor_impl<T,G>::_check_end_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            )
+        > type;
+    };
+
+    template <typename T, typename G>
+    struct is_neighbor_bfs_visitor
+      : mpl::eval_if<
+        is_bgl_graph<G>,
+        is_neighbor_bfs_visitor_impl<T,G>,
+        mpl::false_
+      >::type
+    { };
+
+    typedef argument_with_graph_predicate<
+      is_neighbor_bfs_visitor
+    > neighbor_bfs_visitor_predicate;
+#else   // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
+    typedef visitor_predicate neighbor_bfs_visitor_predicate;
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
+}}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost {
 
@@ -123,8 +685,9 @@ namespace boost {
   make_neighbor_bfs_visitor(Visitors vis) {
     return neighbor_bfs_visitor<Visitors>(vis);
   }
+}
 
-  namespace detail {
+namespace boost { namespace detail {
 
     template <class BidirectionalGraph, class Buffer, class BFSVisitor, 
               class ColorMap>
@@ -197,8 +760,217 @@ namespace boost {
         vis.finish_vertex(u, g);
       } // while
     }
+}}
 
-    
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+  // Boost.Parameter-enabled variants
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), neighbor_breadth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_bidirectional_graph>))
+    )
+    (deduced
+      (required
+        (root_vertex
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(detail::neighbor_bfs_visitor_predicate)
+          ,neighbor_bfs_visitor<>()
+        )
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            white_color,
+            vertex_index_map
+          )
+        )
+        (buffer
+          ,*(detail::argument_predicate<detail::is_buffer>)
+          ,detail::create_empty_buffer(root_vertex)
+        )
+      )
+    )
+  )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        detail::is_bgl_named_param_argument<
+          Args,
+          boost::graph::keywords::tag::buffer
+        >,
+        bool
+      >
+    ), neighbor_breadth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (visitor, *, neighbor_bfs_visitor<>())
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+  {
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    detail::neighbor_bfs_impl(graph, root_vertex, buffer, visitor, color_map);
+#else
+    typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type vis = visitor;
+
+    detail::neighbor_bfs_impl(graph, root_vertex, buffer, vis, color_map);
+#endif
+    return true;
+  }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_bidirectional_graph>))
+    )
+    (deduced
+      (required
+        (root_vertex
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (visitor
+          ,*(detail::neighbor_bfs_visitor_predicate)
+          ,neighbor_bfs_visitor<>()
+        )
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            white_color,
+            vertex_index_map
+          )
+        )
+        (buffer
+          ,*(detail::argument_predicate<detail::is_buffer>)
+          ,detail::create_empty_buffer(root_vertex)
+        )
+      )
+    )
+  )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::disable_if<
+        detail::is_bgl_named_param_argument<
+          Args,
+          boost::graph::keywords::tag::buffer
+        >,
+        bool
+      >
+    ), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (visitor, *, neighbor_bfs_visitor<>())
+      (color_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          detail::vertex_index_map_or_dummy_property_map(graph)
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+  {
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<graph_type>::type
+    >::type VertexListGraph;
+    typedef graph_traits<VertexListGraph> Traits;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<color_map_type>::type
+    >::type ColorMap;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+
+    // Initialization
+    typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
+
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    for (boost::tie(i, i_end) = vertices(graph); i != i_end; ++i) {
+      put(color_map, *i, Color::white());
+      visitor.initialize_vertex(*i, graph);
+    }
+    detail::neighbor_bfs_impl(graph, root_vertex, buffer, visitor, color_map);
+#else
+    typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type vis = visitor;
+
+    for (boost::tie(i, i_end) = vertices(graph); i != i_end; ++i) {
+      put(color_map, *i, Color::white());
+      vis.initialize_vertex(*i, graph);
+    }
+    detail::neighbor_bfs_impl(graph, root_vertex, buffer, vis, color_map);
+#endif
+    return true;
+  }
+}
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost { namespace detail {
+
     template <class VertexListGraph, class ColorMap, class BFSVisitor,
       class P, class T, class R>
     void neighbor_bfs_helper
