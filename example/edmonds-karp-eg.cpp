@@ -50,8 +50,8 @@ main()
   typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
   typedef adjacency_list < listS, vecS, directedS,
     property < vertex_name_t, std::string >,
-    property < edge_capacity_t, long,
-    property < edge_residual_capacity_t, long,
+    property < edge_capacity_t, unsigned long,
+    property < edge_residual_capacity_t, unsigned long,
     property < edge_reverse_t, Traits::edge_descriptor > > > > Graph;
 
   Graph g;
@@ -68,10 +68,18 @@ main()
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   std::vector<default_color_type> color(num_vertices(g));
   std::vector<Traits::edge_descriptor> pred(num_vertices(g));
-  long flow = edmonds_karp_max_flow
-    (g, s, t, capacity, residual_capacity, rev, &color[0], &pred[0]);
+  unsigned long flow = edmonds_karp_max_flow(
+    g,
+    s,
+    t,
+    capacity,
+    residual_capacity,
+    rev,
+    make_iterator_property_map(color.begin(), get(vertex_index, g)),
+    make_iterator_property_map(pred.begin(), get(vertex_index, g))
+  );
 #else
-  long flow = edmonds_karp_max_flow(g, s, t);
+  unsigned long flow = edmonds_karp_max_flow(g, s, t);
 #endif
 
   std::cout << "c  The total flow:" << std::endl;

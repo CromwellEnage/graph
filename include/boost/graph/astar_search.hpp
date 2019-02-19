@@ -28,7 +28,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/property_map/function_property_map.hpp>
-#include <boost/core/enable_if.hpp>
+#include <boost/concept/assert.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
@@ -36,7 +36,7 @@
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/concept/assert.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
@@ -262,14 +262,18 @@ namespace boost {
      DistanceMap distance, WeightMap weight,
      ColorMap color, VertexIndexMap index_map,
      CompareFunction compare, CombineFunction combine,
-     CostInf /*inf*/, CostZero zero, typename boost::disable_if<
+     CostInf /*inf*/, CostZero zero
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          AStarVisitor, PredecessorMap, CostMap, DistanceMap, WeightMap,
          ColorMap, VertexIndexMap, CompareFunction, CombineFunction, CostInf,
          CostZero
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
@@ -311,13 +315,17 @@ namespace boost {
      PredecessorMap predecessor, CostMap cost,
      DistanceMap distance, WeightMap weight,
      CompareFunction compare, CombineFunction combine,
-     CostInf /*inf*/, CostZero zero, typename boost::disable_if<
+     CostInf /*inf*/, CostZero zero
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          AStarVisitor, PredecessorMap, CostMap, DistanceMap, WeightMap,
          CompareFunction, CombineFunction, CostInf, CostZero
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
@@ -383,14 +391,18 @@ namespace boost {
      DistanceMap distance, WeightMap weight,
      VertexIndexMap index_map, ColorMap color,
      CompareFunction compare, CombineFunction combine,
-     CostInf inf, CostZero zero, typename boost::disable_if<
+     CostInf inf, CostZero zero
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          AStarVisitor, PredecessorMap, CostMap, DistanceMap, WeightMap,
          VertexIndexMap, ColorMap, CompareFunction, CombineFunction, CostInf,
          CostZero
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
 
     typedef typename property_traits<ColorMap>::value_type ColorValue;
@@ -427,13 +439,17 @@ namespace boost {
      PredecessorMap predecessor, CostMap cost,
      DistanceMap distance, WeightMap weight,
      CompareFunction compare, CombineFunction combine,
-     CostInf inf, CostZero zero, typename boost::disable_if<
+     CostInf inf, CostZero zero
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
        parameter::are_tagged_arguments<
          AStarVisitor, PredecessorMap, CostMap, DistanceMap, WeightMap,
          CompareFunction, CombineFunction, CostInf, CostZero
        >,
        mpl::true_
-     >::type = mpl::true_())
+     >::type = mpl::true_()
+#endif
+     )
   {
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
@@ -1187,10 +1203,10 @@ namespace boost {
     name(g, s, h, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search)
-BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_tree)
-BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init)
-BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init_tree)
+BOOST_PP_REPEAT_FROM_TO(1, 12, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search)
+BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_tree)
+BOOST_PP_REPEAT_FROM_TO(1, 12, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init)
+BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, astar_search_no_init_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS

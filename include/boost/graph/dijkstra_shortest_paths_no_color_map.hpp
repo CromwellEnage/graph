@@ -351,7 +351,7 @@ namespace boost {
     name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths_no_color_map)
+BOOST_PP_REPEAT_FROM_TO(1, 10, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths_no_color_map)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS

@@ -123,7 +123,6 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(vertex_index1_map, vertex_index1) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_index2_map, vertex_index2) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_assignment_map, vertex_assignment_map) \
-    BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor) \
     BOOST_BGL_ONE_PARAM_CREF(distance_compare, distance_compare) \
     BOOST_BGL_ONE_PARAM_CREF(distance_combine, distance_combine) \
     BOOST_BGL_ONE_PARAM_CREF(distance_inf, distance_inf) \
@@ -152,6 +151,14 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(edges_equivalent, edges_equivalent) \
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
+    BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
+#else
+#define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
+    BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     namespace detail {
@@ -191,6 +198,7 @@ namespace boost {
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
+BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -218,6 +226,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
+BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -398,6 +407,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
+      BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
     }
@@ -412,6 +422,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_BGL_ONE_PARAM_REF(name, key)
     BOOST_BGL_DECLARE_NAMED_PARAMS
+    BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
 
@@ -496,13 +507,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-      result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+      result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
     };
 
     template <typename ArgType, typename Prop, typename Graph>
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
-      result_type operator()(const Graph& g, const ArgType&) const {return get(Prop(), g);}
+      result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
@@ -520,7 +531,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
-    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, Graph& g, Prop) {
     typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,

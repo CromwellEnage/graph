@@ -165,11 +165,7 @@ struct dfs_test
           case 0:
             boost::undirected_dfs(
               g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-              visitor(boost::ref(vis)).color_map(color).edge_color_map(e_color)
-#else
               visitor(vis).color_map(color).edge_color_map(e_color)
-#endif
             );
             break;
           case 1:

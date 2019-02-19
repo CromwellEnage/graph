@@ -113,14 +113,7 @@ long test_adjacency_list_vecS(int n_verts, int n_edges, std::size_t seed){
   graph_traits<tVectorGraph>::vertex_descriptor src,sink;
   boost::tie(src,sink) = fill_random_max_flow_graph(g, get(edge_capacity,g), get(edge_reverse, g), n_verts, n_edges, seed);
 
-  return boykov_kolmogorov_max_flow(g, get(edge_capacity, g),
-                                    get(edge_residual_capacity, g),
-                                    get(edge_reverse, g),
-                                    get(vertex_predecessor, g),
-                                    get(vertex_color, g),
-                                    get(vertex_distance, g),
-                                    get(vertex_index, g),
-                                    src, sink);
+  return boykov_kolmogorov_max_flow(g, src, sink);
 }
 
 long test_adjacency_list_listS(int n_verts, int n_edges, std::size_t seed){
@@ -145,14 +138,7 @@ long test_adjacency_list_listS(int n_verts, int n_edges, std::size_t seed){
   for(boost::tie(vi, v_end) = vertices(g); vi != v_end; ++vi){
     put(vertex_index, g, *vi, index++);
   }
-  return boykov_kolmogorov_max_flow(g, get(edge_capacity, g),
-                                    get(edge_residual_capacity, g),
-                                    get(edge_reverse, g),
-                                    get(vertex_predecessor, g),
-                                    get(vertex_color, g),
-                                    get(vertex_distance, g),
-                                    get(vertex_index, g),
-                                    src, sink);
+  return boykov_kolmogorov_max_flow(g, src, sink);
 }
 
 template<typename EdgeDescriptor>

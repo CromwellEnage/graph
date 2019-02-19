@@ -180,11 +180,7 @@ struct bfs_test
             boost::breadth_first_search(
               g,
               start,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-              visitor(boost::ref(vis)).color_map(boost::ref(color_pm))
-#else
               visitor(vis).color_map(color_pm)
-#endif
             );
             break;
           case 1:
