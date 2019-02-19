@@ -31,6 +31,7 @@ namespace boost { namespace detail {
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
+#include <boost/parameter/compose.hpp>
 #include <boost/parameter/config.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
@@ -162,7 +163,7 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
     BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #else
@@ -551,6 +552,70 @@ BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
            >()(g, ap[t | 0]);
     }
 
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    struct arg_packed_property_map_value
+    {
+      typedef typename property_traits<
+        typename detail::override_const_property_result<
+          ArgPack,
+          Tag,
+          Prop,
+          Graph
+        >::type
+      >::value_type type;
+    };
+
+#if 0
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <typename Tag, typename Prop, typename Graph, typename ...TaggedArgs>
+    struct tagged_property_map_value
+        : arg_packed_property_map_value<
+            typename parameter::result_of::compose<TaggedArgs...>::type,
+            Tag,
+            Prop,
+            Graph
+        >
+    {
+    };
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <
+        typename Tag, typename Prop, typename Graph
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(
+            BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY)
+          , typename TaggedArg
+          , = void BOOST_PP_INTERCEPT
+        )
+    >
+    struct tagged_property_map_value;
+
+#define BOOST_GRAPH_METAFUNCTION_SPECIALIZATION(z, n, _) \
+    template < \
+        typename Tag, typename Prop, typename Graph \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TaggedArg) \
+    > \
+    struct tagged_property_map_value< \
+        Tag, Prop, Graph BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TaggedArg) \
+    > : arg_packed_property_map_value< \
+            typename parameter::result_of::compose< \
+                BOOST_PP_ENUM_PARAMS_Z(z, n, TaggedArg) \
+            >::type, \
+            Tag, \
+            Prop, \
+            Graph \
+        > \
+    { \
+    };
+/**/
+
+BOOST_PP_REPEAT(
+    BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY),
+    BOOST_GRAPH_METAFUNCTION_SPECIALIZATION,
+    _
+)
+#undef BOOST_GRAPH_METAFUNCTION_SPECIALIZATION
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#endif
+
     template <typename F> struct make_arg_pack_type;
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
     template <typename K, typename A>
@@ -823,8 +888,9 @@ BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 
   } // namespace detail
 
-} // namespace boost
-
+#undef BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_DECLARE_NAMED_PARAMS
+
+} // namespace boost
 
 #endif // BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

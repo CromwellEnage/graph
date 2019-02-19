@@ -241,13 +241,11 @@ namespace boost {
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 // Boost.Parameter-enabled argument-pack overload
 template <typename Graph, typename Args>
-inline typename boost::enable_if<
+inline typename boost::lazy_enable_if<
   parameter::is_argument_pack<Args>,
-  typename property_traits<
-    typename detail::override_const_property_result<
-      Args, boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph
-    >::type
-  >::value_type
+  detail::arg_packed_property_map_value<
+    Args, boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph
+  >
 >::type
 edmonds_karp_max_flow(Graph& g,
                       typename graph_traits<Graph>::vertex_descriptor src,
@@ -329,18 +327,14 @@ edmonds_karp_max_flow(Graph& g,
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
 template <typename Graph, typename TA \
           BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-inline typename boost::enable_if< \
+inline typename boost::lazy_enable_if< \
   parameter::are_tagged_arguments< \
     TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   >, \
-  typename property_traits< \
-    typename detail::override_const_property_result< \
-      typename boost::parameter::result_of::compose< \
-        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-      >::type, \
-      boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
-    >::type \
-  >::value_type \
+  detail::tagged_property_map_value< \
+    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+  > \
 >::type \
 name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
      typename graph_traits<Graph>::vertex_descriptor sink, \
@@ -357,3 +351,4 @@ BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, edmonds_karp_max
 } // namespace boost
 
 #endif // EDMONDS_KARP_MAX_FLOW_HPP
+
