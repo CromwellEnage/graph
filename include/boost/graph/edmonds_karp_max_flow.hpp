@@ -266,7 +266,7 @@ edmonds_karp_max_flow(Graph& g,
         white_color,
         arg_pack[
           _vertex_index_map |
-          detail::vertex_index_map_or_dummy_property_map(g)
+          detail::vertex_or_dummy_property_map(g, vertex_index)
         ]
       )
     ],
@@ -276,7 +276,7 @@ edmonds_karp_max_flow(Graph& g,
         typename graph_traits<Graph>::edge_descriptor(),
         arg_pack[
           _vertex_index_map |
-          detail::vertex_index_map_or_dummy_property_map(g)
+          detail::vertex_or_dummy_property_map(g, vertex_index)
         ]
       )
     ]

@@ -1260,7 +1260,7 @@ namespace boost
       out,
       arg_pack[
         boost::graph::keywords::_vertex_index_map |
-        detail::vertex_index_map_or_dummy_property_map(g)
+        detail::vertex_or_dummy_property_map(g, vertex_index)
       ],
       arg_pack[
         boost::graph::keywords::_discover_time_map |
@@ -1269,7 +1269,7 @@ namespace boost
           num_vertices(g) - num_vertices(g),
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
+            detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ],
@@ -1280,7 +1280,7 @@ namespace boost
           num_vertices(g) - num_vertices(g),
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
+            detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ],
@@ -1291,7 +1291,7 @@ namespace boost
           detail::get_null_vertex(g),
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
+            detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ],

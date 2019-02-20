@@ -744,7 +744,7 @@ push_relabel_max_flow(Graph& g,
     detail::override_const_property(arg_pack, _reverse_edge_map, g, edge_reverse),
     arg_pack[
       _vertex_index_map |
-      detail::vertex_index_map_or_dummy_property_map(g)
+      detail::vertex_or_dummy_property_map(g, vertex_index)
     ]
   );
 }

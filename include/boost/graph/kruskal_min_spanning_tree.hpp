@@ -117,7 +117,7 @@ namespace boost {
               detail::is_edge_property_map_of_graph
             >
           )
-          ,detail::edge_weight_map_or_dummy_property_map(graph)
+          ,detail::edge_or_dummy_property_map(graph, edge_weight)
         )
         (vertex_index_map
           ,*(
@@ -125,7 +125,7 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_index_map_or_dummy_property_map(graph)
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (predecessor_map
           ,*(
@@ -166,11 +166,11 @@ namespace boost {
     (optional
       (weight_map
         ,*
-        ,detail::edge_weight_map_or_dummy_property_map(graph)
+        ,detail::edge_or_dummy_property_map(graph, edge_weight)
       )
       (vertex_index_map
         ,*
-        ,detail::vertex_index_map_or_dummy_property_map(graph)
+        ,detail::vertex_or_dummy_property_map(graph, vertex_index)
       )
       (predecessor_map
         ,*

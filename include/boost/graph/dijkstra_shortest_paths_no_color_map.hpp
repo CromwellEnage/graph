@@ -326,7 +326,7 @@ namespace boost {
       w_map,
       arg_pack[
         _vertex_index_map |
-        detail::vertex_index_map_or_dummy_property_map(g)
+        detail::vertex_or_dummy_property_map(g, vertex_index)
       ],
       dist_comp,
       dist_comb,

@@ -748,7 +748,7 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_index_map_or_dummy_property_map(graph)
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (color_map
           ,*(
@@ -798,7 +798,7 @@ namespace boost {
         ,make_shared_array_property_map(
           num_vertices(graph),
           white_color,
-          detail::vertex_index_map_or_dummy_property_map(graph)
+          detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
       )
       (root_vertex, *, detail::get_default_starting_vertex(graph))
@@ -890,7 +890,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
+            detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ],
