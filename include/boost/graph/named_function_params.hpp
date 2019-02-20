@@ -203,22 +203,51 @@ namespace boost {
 BOOST_BGL_DECLARE_NAMED_PARAMS
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <typename PType>
-    bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>
-    visitor(PType& p) const {
-      return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p, *this);
+    bgl_named_params<
+      typename boost::remove_const<PType>::type,
+      graph_visitor_t,
+      self
+    >
+    visitor(PType& p) const
+    {
+      return bgl_named_params<
+        typename boost::remove_const<
+          PType
+        >::type,
+        graph_visitor_t,
+        self
+      >(p, *this);
     }
 #endif
 #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
     template <typename PType>
-    bgl_named_params<PType, graph_visitor_t>
-    visitor(PType p) const {
-      return bgl_named_params<PType, graph_visitor_t>(p, *this);
+    bgl_named_params<
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type,
+      graph_visitor_t,
+      self
+    >
+    visitor(
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type p
+    ) const
+    {
+      return bgl_named_params<
+        typename boost::remove_const<
+          typename boost::remove_reference<PType>::type
+        >::type,
+        graph_visitor_t,
+        self
+      >(p, *this);
     }
 #else
     template <typename PType>
-    bgl_named_params<PType, graph_visitor_t>
-    visitor(PType&& p) const {
-      return bgl_named_params<PType, graph_visitor_t>(p, *this);
+    bgl_named_params<PType, graph_visitor_t, self>
+    visitor(PType&& p) const
+    {
+      return bgl_named_params<PType, graph_visitor_t, self>(p, *this);
     }
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 #endif
@@ -251,21 +280,43 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 BOOST_BGL_DECLARE_NAMED_PARAMS
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <typename PType>
-    bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>
+    bgl_named_params<
+      typename boost::remove_const<PType>::type,
+      graph_visitor_t
+    >
     visitor(PType& p) {
-      return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p);
+      return bgl_named_params<
+        typename boost::remove_const<PType>::type,
+        graph_visitor_t
+      >(p);
     }
 #endif
 #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
     template <typename PType>
-    bgl_named_params<PType, graph_visitor_t>
-    visitor(PType p) {
-      return bgl_named_params<PType, graph_visitor_t>(p);
+    bgl_named_params<
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type,
+      graph_visitor_t
+    >
+    visitor(
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type p
+    )
+    {
+      return bgl_named_params<
+        typename boost::remove_const<
+          typename boost::remove_reference<PType>::type
+        >::type,
+        graph_visitor_t
+      >(p);
     }
 #else
     template <typename PType>
     bgl_named_params<PType, graph_visitor_t>
-    visitor(PType&& p) {
+    visitor(PType&& p)
+    {
       return bgl_named_params<PType, graph_visitor_t>(p);
     }
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
