@@ -208,6 +208,19 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p, *this);
     }
 #endif
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t>
+    visitor(PType&& p) const {
+      return bgl_named_params<PType, graph_visitor_t>(p, *this);
+    }
+#else
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t>
+    visitor(PType p) const {
+      return bgl_named_params<PType, graph_visitor_t>(p, *this);
+    }
+#endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 
 #undef BOOST_BGL_ONE_PARAM_REF
@@ -241,6 +254,19 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>
     visitor(PType& p) {
       return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p);
+    }
+#endif
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t>
+    visitor(PType&& p) {
+      return bgl_named_params<PType, graph_visitor_t>(p);
+    }
+#else
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t>
+    visitor(PType p) {
+      return bgl_named_params<PType, graph_visitor_t>(p);
     }
 #endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
