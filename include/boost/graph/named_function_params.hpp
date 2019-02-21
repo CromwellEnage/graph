@@ -220,11 +220,7 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
       graph_visitor_t,
       self
     >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type&& p
-    ) const
+    visitor(PType&& p) const
     {
       return bgl_named_params<
         typename boost::remove_const<
@@ -236,28 +232,6 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
     }
 #else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-    template <typename PType>
-    bgl_named_params<
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type,
-      graph_visitor_t,
-      self
-    >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type p
-    ) const
-    {
-      return bgl_named_params<
-        typename boost::remove_const<
-          typename boost::remove_reference<PType>::type
-        >::type,
-        graph_visitor_t,
-        self
-      >(p, *this);
-    }
 #endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
 #else
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
@@ -299,11 +273,7 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
       >::type,
       graph_visitor_t
     >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type&& p
-    )
+    visitor(PType&& p)
     {
       return bgl_named_params<
         typename boost::remove_const<
@@ -314,26 +284,6 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
     }
 #else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-    template <typename PType>
-    bgl_named_params<
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type,
-      graph_visitor_t
-    >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type p
-    )
-    {
-      return bgl_named_params<
-        typename boost::remove_const<
-          typename boost::remove_reference<PType>::type
-        >::type,
-        graph_visitor_t
-      >(p);
-    }
 #endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
 #else
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
