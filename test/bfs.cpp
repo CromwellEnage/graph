@@ -37,10 +37,10 @@ public:
   bfs_testing_visitor(Vertex s, DistanceMap d, ParentMap p, ColorMap c)
     : current_distance(0), distance(d), parent(p), color(c), src(s) { }
 
-  void initialize_vertex(const Vertex& u, const Graph& ) const {
+  void initialize_vertex(const Vertex& u, const Graph& ) {
     BOOST_TEST(get(color, u) == Color::white());
   }
-  void examine_vertex(const Vertex& u, const Graph& ) const {
+  void examine_vertex(const Vertex& u, const Graph& ) {
     current_vertex = u;
     // Ensure that the distances monotonically increase.
     BOOST_TEST( distance[u] == current_distance
@@ -48,7 +48,7 @@ public:
     if (distance[u] == current_distance + 1) // new level
       ++current_distance;
   }
-  void discover_vertex(const Vertex& u, const Graph& ) const {
+  void discover_vertex(const Vertex& u, const Graph& ) {
     BOOST_TEST( get(color, u) == Color::gray() );
     if (u == src) {
       current_vertex = src;
@@ -58,17 +58,17 @@ public:
       BOOST_TEST( distance[u] == distance[parent[u]] + 1 );
     }
   }
-  void examine_edge(const Edge& e, const Graph& g) const {
+  void examine_edge(const Edge& e, const Graph& g) {
     BOOST_TEST( source(e, g) == current_vertex );
   }
-  void tree_edge(const Edge& e, const Graph& g) const {
+  void tree_edge(const Edge& e, const Graph& g) {
     BOOST_TEST( get(color, target(e, g)) == Color::white() );
     Vertex u = source(e, g), v = target(e, g);
     BOOST_TEST( distance[u] == current_distance );
     parent[v] = u;
     distance[v] = distance[u] + 1;
   }
-  void non_tree_edge(const Edge& e, const Graph& g) const {
+  void non_tree_edge(const Edge& e, const Graph& g) {
     BOOST_TEST( color[target(e, g)] != Color::white() );
 
     if (boost::is_directed(g))
@@ -83,11 +83,11 @@ public:
     }
   }
 
-  void gray_target(const Edge& e, const Graph& g) const {
+  void gray_target(const Edge& e, const Graph& g) {
     BOOST_TEST( color[target(e, g)] == Color::gray() );
   }
 
-  void black_target(const Edge& e, const Graph& g) const {
+  void black_target(const Edge& e, const Graph& g) {
     BOOST_TEST( color[target(e, g)] == Color::black() );
 
     // All vertices adjacent to a black vertex must already be discovered
@@ -96,13 +96,13 @@ public:
          ai != ai_end; ++ai)
       BOOST_TEST( color[*ai] != Color::white() );
   }
-  void finish_vertex(const Vertex& u, const Graph& ) const {
+  void finish_vertex(const Vertex& u, const Graph& ) {
     BOOST_TEST( color[u] == Color::black() );
 
   }
 private:
-  mutable Vertex current_vertex;
-  mutable typename boost::property_traits<DistanceMap>::value_type
+  Vertex current_vertex;
+  typename boost::property_traits<DistanceMap>::value_type
     current_distance;
   DistanceMap distance;
   ParentMap parent;
@@ -125,7 +125,9 @@ struct bfs_test
     typename Traits::edges_size_type j;
     typename Traits::vertex_iterator ui, ui_end;
 
-    boost::mt19937 gen, dfs_chooser_gen;
+    boost::mt19937 gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::mt19937 dfs_chooser_gen;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::uniform_int<> dfs_choices(0, 6);
 #else
@@ -134,6 +136,7 @@ struct bfs_test
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
     > dfs_rand(dfs_chooser_gen, dfs_choices);
+#endif
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
@@ -174,6 +177,7 @@ struct bfs_test
           color_pm_type>
           vis(start, distance_pm, parent_pm, color_pm);
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         switch (dfs_rand())
         {
           case 0:
@@ -186,18 +190,12 @@ struct bfs_test
           case 1:
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
             boost::breadth_first_search(g, start, vis, color_pm);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else
             boost::breadth_first_search(
               g,
               start,
               boost::graph::keywords::_visitor = vis,
               boost::graph::keywords::_color_map = color_pm
-            );
-#else
-            boost::breadth_first_search(
-              g,
-              start,
-              boost::visitor(vis).color_map(color_pm)
             );
 #endif
             break;
@@ -217,8 +215,15 @@ struct bfs_test
           case 6:
             boost::breadth_first_search(g, color_pm, vis, start);
             break;
-#endif
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
         }
+#else
+          boost::breadth_first_search(
+            g,
+            start,
+            visitor(vis).color_map(color_pm)
+          );
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
         // All white vertices should be unreachable from the source.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
