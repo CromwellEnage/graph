@@ -637,13 +637,12 @@ namespace boost {
       ]
     );
   }
-} // namespace boost
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
   template <typename Graph, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
   inline void name \
-    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+    (const Graph& g, typename graph_traits<Graph>::vertex_descriptor s, \
      const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
      typename boost::enable_if< \
        parameter::are_tagged_arguments< \
@@ -657,6 +656,7 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+} // namespace boost
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail {
 
