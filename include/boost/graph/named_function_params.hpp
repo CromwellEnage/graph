@@ -10,17 +10,6 @@
 #ifndef BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 #define BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 
-#include <boost/pending/queue.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename Vertex>
-    inline boost::queue<Vertex> create_empty_buffer(Vertex const&)
-    {
-        return boost::queue<Vertex>();
-    }
-}}
-
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>
@@ -877,11 +866,12 @@ BOOST_PP_REPEAT(
                          int_refw
                        >::type
         param_value_type_wrapper;
-      typedef typename param_value_type_wrapper::type
+      typedef typename boost::unwrap_reference<
+        typename boost::remove_const<param_value_type_wrapper>::type
+      >::type
         param_value_type;
-      typedef typename boost::remove_const<param_value_type>::type param_value_type_no_const;
       typedef priority_queue_maker_helper<g_hasQ, Graph, ArgPack, KeyT, ValueT, KeyMapTag, IndexInHeapMapTag, Compare,
-                                          param_value_type_no_const> helper;
+                                          param_value_type> helper;
       typedef typename helper::priority_queue_type priority_queue_type;
 
       static priority_queue_type make_queue(const Graph& g, const ArgPack& ap, KeyT defaultKey) {

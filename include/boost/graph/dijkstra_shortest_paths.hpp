@@ -549,85 +549,11 @@ namespace boost {
                             weight, index_map,
                             compare, combine, inf, zero, vis);
   }
-
-  namespace detail {
-
-    // Handle defaults for PredecessorMap and
-    // Distance Compare, Combine, Inf and Zero
-    template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
-    inline void
-    dijkstra_dispatch2
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params)
-    {
-      // Default for predecessor map
-      dummy_property_map p_map;
-
-      typedef typename property_traits<DistanceMap>::value_type D;
-      D inf = choose_param(get_param(params, distance_inf_t()),
-                           (std::numeric_limits<D>::max)());
-
-      dijkstra_shortest_paths
-        (g, s,
-         choose_param(get_param(params, vertex_predecessor), p_map),
-         distance, weight, index_map,
-         choose_param(get_param(params, distance_compare_t()),
-                      std::less<D>()),
-         choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<D>(inf)),
-         inf,
-         choose_param(get_param(params, distance_zero_t()),
-                      D()),
-         choose_param(get_param(params, graph_visitor),
-                      make_dijkstra_visitor(null_visitor())),
-         params);
-    }
-
-    template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
-    inline void
-    dijkstra_dispatch1
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params)
-    {
-      // Default for distance map
-      typedef typename property_traits<WeightMap>::value_type D;
-      typename std::vector<D>::size_type
-        n = is_default_param(distance) ? num_vertices(g) : 1;
-      std::vector<D> distance_map(n);
-
-      detail::dijkstra_dispatch2
-        (g, s, choose_param(distance, make_iterator_property_map
-                            (distance_map.begin(), index_map,
-                             distance_map[0])),
-         weight, index_map, params);
-    }
-  } // namespace detail
-
-  // Named Parameter Variant
-  template <class VertexListGraph, class Param, class Tag, class Rest>
-  inline void
-  dijkstra_shortest_paths
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     const bgl_named_params<Param,Tag,Rest>& params)
-  {
-    // Default for edge weight and vertex index map is to ask for them
-    // from the graph.  Default for the visitor is null_visitor.
-    detail::dijkstra_dispatch1
-      (g, s,
-       get_param(params, vertex_distance),
-       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
-       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-       params);
-  }
+} // namespace boost
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
   template <typename Graph, typename Args>
   inline void dijkstra_shortest_paths
     (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
@@ -711,6 +637,7 @@ namespace boost {
       ]
     );
   }
+} // namespace boost
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
   template <typename Graph, typename TA \
@@ -730,8 +657,166 @@ namespace boost {
 BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost { namespace detail {
+
+    // Handle defaults for PredecessorMap and
+    // Distance Compare, Combine, Inf and Zero
+    template <class VertexListGraph, class DistanceMap, class WeightMap,
+              class IndexMap, class Params>
+    inline void
+    dijkstra_dispatch2
+      (const VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       DistanceMap distance, WeightMap weight, IndexMap index_map,
+       const Params& params)
+    {
+      // Default for predecessor map
+      dummy_property_map p_map;
+
+      typedef typename property_traits<DistanceMap>::value_type D;
+      D inf = choose_param(get_param(params, distance_inf_t()),
+                           (std::numeric_limits<D>::max)());
+
+      dijkstra_shortest_paths
+        (g, s,
+         choose_param(get_param(params, vertex_predecessor), p_map),
+         distance, weight, index_map,
+         choose_param(get_param(params, distance_compare_t()),
+                      std::less<D>()),
+         choose_param(get_param(params, distance_combine_t()),
+                      closed_plus<D>(inf)),
+         inf,
+         choose_param(get_param(params, distance_zero_t()),
+                      D()),
+         choose_param(get_param(params, graph_visitor),
+                      make_dijkstra_visitor(null_visitor())),
+         params);
+    }
+
+    template <class VertexListGraph, class DistanceMap, class WeightMap,
+              class IndexMap, class Params>
+    inline void
+    dijkstra_dispatch1
+      (const VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       DistanceMap distance, WeightMap weight, IndexMap index_map,
+       const Params& params)
+    {
+      // Default for distance map
+      typedef typename property_traits<WeightMap>::value_type D;
+      typename std::vector<D>::size_type
+        n = is_default_param(distance) ? num_vertices(g) : 1;
+      std::vector<D> distance_map(n);
+
+      detail::dijkstra_dispatch2
+        (g, s, choose_param(distance, make_iterator_property_map
+                            (distance_map.begin(), index_map,
+                             distance_map[0])),
+         weight, index_map, params);
+    }
+}} // namespace boost::detail
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
+namespace boost {
+
+  // Named Parameter Variant
+  template <class VertexListGraph, class Param, class Tag, class Rest>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     const bgl_named_params<Param,Tag,Rest>& params)
+  {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    using namespace boost::graph::keywords;
+    typedef bgl_named_params<Param,Tag,Rest> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    typedef typename boost::detail::override_const_property_result<
+        arg_pack_type,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        VertexListGraph
+    >::type weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
+    null_visitor null_vis;
+    dijkstra_visitor<null_visitor> default_visitor(null_vis);
+    typename boost::parameter::binding<
+        arg_pack_type, 
+        boost::graph::keywords::tag::visitor,
+        dijkstra_visitor<null_visitor>&
+    >::type vis = arg_pack[_visitor | default_visitor];
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        arg_pack_type, 
+        boost::graph::keywords::tag::predecessor_map,
+        dummy_property_map&
+    >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        D
+    > dist_map_gen(zero_actual);
+    typename boost::detail::map_maker<
+        VertexListGraph,
+        arg_pack_type,
+        boost::graph::keywords::tag::distance_map,
+        D
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    std::less<D> default_compare;
+    typename boost::parameter::binding<
+        arg_pack_type, 
+        boost::graph::keywords::tag::distance_compare,
+        std::less<D>&
+    >::type dist_comp = arg_pack[_distance_compare | default_compare];
+    closed_plus<D> default_combine(inf);
+    typename boost::parameter::binding<
+        arg_pack_type, 
+        boost::graph::keywords::tag::distance_combine,
+        closed_plus<D>&
+    >::type dist_comb = arg_pack[_distance_combine | default_combine];
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(
+      g,
+      srcs,
+      srcs + 1,
+      pred_map,
+      dist_map,
+      w_map,
+      arg_pack[
+        _vertex_index_map |
+        detail::vertex_or_dummy_property_map(g, vertex_index)
+      ],
+      dist_comp,
+      dist_comb,
+      inf,
+      zero_d,
+      vis,
+      arg_pack[
+        _color_map |
+        make_two_bit_color_map(
+          num_vertices(g),
+          arg_pack[
+            _vertex_index_map |
+            detail::vertex_or_dummy_property_map(g, vertex_index)
+          ]
+        )
+      ]
+    );
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    // Default for edge weight and vertex index map is to ask for them
+    // from the graph.  Default for the visitor is null_visitor.
+    detail::dijkstra_dispatch1
+      (g, s,
+       get_param(params, vertex_distance),
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
+       params);
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+  }
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/dijkstra_shortest_paths.hpp>)

@@ -115,4 +115,13 @@ swap(queue<_Tp, _Sequence>& __x, queue<_Tp, _Sequence>& __y)
 
 } /* namespace boost */
 
+namespace boost { namespace detail {
+
+    template <typename T>
+    inline boost::queue<T> create_empty_queue(T const&)
+    {
+        return boost::queue<T>();
+    }
+}}
+
 #endif /* BOOST_QUEUE_HPP */

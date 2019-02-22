@@ -44,9 +44,21 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/tuple/tuple.hpp>
-
 #include <set>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 namespace boost {
   template <class Visitor, class Graph>
@@ -320,6 +332,101 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
     graph::detail::mas_dispatch<W>::apply(g, arg_pack, get_param(params, edge_weight));
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Args>
+  inline void maximum_adjacency_search(
+    const Graph& g, const Args& arg_pack, typename boost::enable_if<
+      parameter::is_argument_pack<Args>, mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type vertex_index_map_type;
+    vertex_index_map_type i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D zero_actual = D();
+    boost::maximum_adjacency_search(
+      g,
+      w_map,
+      arg_pack[_visitor | default_mas_visitor()],
+      arg_pack[
+        _root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)
+      ],
+      arg_pack[
+        _vertex_assignment_map |
+        make_shared_array_property_map(
+          num_vertices(g),
+          detail::get_null_vertex(g),
+          i_map
+        )
+      ],
+      arg_pack[
+        _max_priority_queue |
+        detail::create_empty_d_ary_heap_indirect<4>(
+          detail::get_null_vertex(g),
+          arg_pack[
+            _index_in_heap_map |
+            make_shared_array_property_map(
+              num_vertices(g),
+              num_vertices(g) - num_vertices(g),
+              i_map
+            )
+          ],
+          arg_pack[
+            _distance_map |
+            make_shared_array_property_map(
+              num_vertices(g),
+              zero_actual,
+              i_map
+            )
+          ]
+        )
+      ]
+    );
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name( \
+    const Graph &g, const TA& ta \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+    typename boost::enable_if< \
+      parameter::are_tagged_arguments< \
+        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+      >, mpl::true_ \
+    >::type = mpl::true_() \
+  ) \
+  { \
+    name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, maximum_adjacency_search)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   namespace graph {
     namespace detail {
       template <typename Graph>
@@ -337,6 +444,7 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
     } // end namespace detail
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search,1,5)
   } // end namespace graph
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // end namespace boost
 

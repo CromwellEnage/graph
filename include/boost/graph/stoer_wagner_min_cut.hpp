@@ -24,9 +24,8 @@
 #include <boost/utility/result_of.hpp>
 #include <boost/graph/iteration_macros.hpp>
 
-namespace boost {
+namespace boost { namespace detail {
 
-  namespace detail {
     template < typename ParityMap, typename WeightMap, typename IndexMap >
     class mas_min_cut_visitor : public boost::default_mas_visitor {
       typedef one_bit_color_map <IndexMap> InternalParityMap;
@@ -145,12 +144,22 @@ namespace boost {
       for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
         // run the MAS and find the min cut
         vis.clear();
-        boost::maximum_adjacency_search(g,
+        boost::maximum_adjacency_search(
+            g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+            boost::graph::keywords::_weight_map = weights,
+            boost::graph::keywords::_visitor = vis,
+            boost::graph::keywords::_root_vertex = *u_iter,
+            boost::graph::keywords::_vertex_assignment_map = assignments,
+            boost::graph::keywords::_max_priority_queue = pq
+#else
             boost::weight_map(weights).
             visitor(vis).
             root_vertex(*u_iter).
             vertex_assignment_map(assignments).
-            max_priority_queue(pq));
+            max_priority_queue(pq)
+#endif
+        );
         if (bestThisTime < bestW) {
           bestW = bestThisTime;
           bestStart = *u_iter;
@@ -160,20 +169,51 @@ namespace boost {
       // Run one more time, starting from the best start location, to
       // ensure the visitor has the best values.
       vis.clear();
-      boost::maximum_adjacency_search(g,
+      boost::maximum_adjacency_search(
+        g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_vertex_assignment_map = assignments,
+        boost::graph::keywords::_weight_map = weights,
+        boost::graph::keywords::_visitor = vis,
+        boost::graph::keywords::_root_vertex = bestStart,
+        boost::graph::keywords::_max_priority_queue = pq
+#else
         boost::vertex_assignment_map(assignments).
         weight_map(weights).
         visitor(vis).
         root_vertex(bestStart).
-        max_priority_queue(pq));
+        max_priority_queue(pq)
+#endif
+      );
 
       return bestW;
     }
-  } // end `namespace detail` within `namespace boost`
+}} // end namespace boost::detail
 
-    template <class UndirectedGraph, class WeightMap, class ParityMap, class VertexAssignmentMap, class KeyedUpdatablePriorityQueue, class IndexMap>
+namespace boost {
+
+    template <
+      typename UndirectedGraph, typename WeightMap, typename ParityMap,
+      typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue,
+      typename IndexMap
+    >
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    typename boost::disable_if<
+      parameter::are_tagged_arguments<
+        ParityMap, VertexAssignmentMap,
+        KeyedUpdatablePriorityQueue, IndexMap
+      >,
+#endif
     typename boost::property_traits<WeightMap>::value_type
-    stoer_wagner_min_cut(const UndirectedGraph& g, WeightMap weights, ParityMap parities, VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue& pq, IndexMap index_map) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    >::type
+#endif
+    stoer_wagner_min_cut(
+      const UndirectedGraph& g, WeightMap weights, ParityMap parities,
+      VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue& pq,
+      IndexMap index_map
+    )
+    {
       BOOST_CONCEPT_ASSERT((boost::IncidenceGraphConcept<UndirectedGraph>));
       BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<UndirectedGraph>));
       typedef typename boost::graph_traits<UndirectedGraph>::vertex_descriptor vertex_descriptor;
@@ -197,8 +237,92 @@ namespace boost {
       return detail::stoer_wagner_min_cut(g, weights,
                                           parities, assignments, pq, index_map);
     }
+} // end namespace boost
 
-namespace graph {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+    template <typename Graph, typename WeightMap, typename Args>
+    inline typename boost::enable_if<
+        parameter::is_argument_pack<Args>,
+        typename boost::property_traits<WeightMap>::value_type
+    >::type
+    stoer_wagner_min_cut(
+        const Graph& g, WeightMap weights, const Args& arg_pack
+    )
+    {
+      using namespace boost::graph::keywords;
+      typedef typename boost::detail::override_const_property_result<
+          Args,
+          boost::graph::keywords::tag::vertex_index_map,
+          vertex_index_t,
+          Graph
+      >::type vertex_index_map_type;
+      vertex_index_map_type i_map = detail::override_const_property(
+          arg_pack,
+          _vertex_index_map,
+          g,
+          vertex_index
+      );
+      typedef typename boost::property_traits<WeightMap>::value_type D;
+      const D zero_actual = D();
+      typedef detail::make_priority_queue_from_arg_pack_gen<
+          boost::graph::keywords::tag::max_priority_queue,
+          D,
+          typename graph_traits<Graph>::vertex_descriptor,
+          std::greater<D>
+      > gen_type;
+      gen_type gen(choose_param(get_param(arg_pack, distance_zero_t()), zero_actual));
+      typename boost::result_of<
+          gen_type(const Graph&, const Args&)
+      >::type pq = gen(g, arg_pack);
+      return boost::stoer_wagner_min_cut(
+        g,
+        weights,
+        arg_pack[_parity_map | dummy_property_map()],
+        arg_pack[
+          _vertex_assignment_map |
+          make_shared_array_property_map(
+            num_vertices(g),
+            detail::get_null_vertex(g),
+            i_map
+          )
+        ],
+        pq,
+        i_map
+      );
+    }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template <typename Graph, typename WeightMap, typename TA \
+              BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+    inline typename boost::enable_if< \
+      parameter::are_tagged_arguments< \
+        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+      >, \
+      typename boost::property_traits<WeightMap>::value_type \
+    >::type \
+    name( \
+      const Graph &g, WeightMap weights, const TA& ta \
+      BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+    ) \
+    { \
+      return name(g, weights, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+    }
+
+BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, stoer_wagner_min_cut)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
+    template <typename Graph, typename WeightMap>
+    inline typename boost::property_traits<WeightMap>::value_type
+    stoer_wagner_min_cut(const Graph& g, WeightMap weights)
+    {
+      return stoer_wagner_min_cut(g, weights, parameter::compose());
+    }
+} // end namespace boost
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost { namespace graph {
   namespace detail {
     template <class UndirectedGraph, class WeightMap>
     struct stoer_wagner_min_cut_impl {
@@ -227,11 +351,16 @@ namespace graph {
     };
   }
   BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(stoer_wagner_min_cut,2,4)
-}
+}} // end namespace boost::graph
+
+namespace boost {
 
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(stoer_wagner_min_cut, 2)
-namespace graph {
+} // end namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost { namespace graph {
     // version without IndexMap kept for backwards compatibility
     // (but requires vertex_index_t to be defined in the graph)
     // Place after the macro to avoid compilation errors
@@ -243,8 +372,7 @@ namespace graph {
                                   parities, assignments, pq,
                                   get(vertex_index, g));
     }
-} // end `namespace graph`
-} // end `namespace boost`
+}} // end namespace boost::graph
 
 #include <boost/graph/iteration_macros_undef.hpp>
 
