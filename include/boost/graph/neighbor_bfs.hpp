@@ -762,12 +762,7 @@ namespace boost { namespace detail {
     }
 }}
 
-#include <boost/parameter/config.hpp>
-#include <boost/pending/queue.hpp>
-
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/parameter/preprocessor.hpp>
-
 namespace boost {
 
   // Boost.Parameter-enabled variants
@@ -814,7 +809,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
+          ,detail::create_empty_buffer(root_vertex)
         )
       )
     )
@@ -835,7 +830,7 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_queue(root_vertex))
+      (buffer, *, detail::create_empty_buffer(root_vertex))
       (visitor, *, neighbor_bfs_visitor<>())
       (color_map
         ,*
@@ -904,7 +899,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
+          ,detail::create_empty_buffer(root_vertex)
         )
       )
     )
@@ -925,7 +920,7 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_queue(root_vertex))
+      (buffer, *, detail::create_empty_buffer(root_vertex))
       (visitor, *, neighbor_bfs_visitor<>())
       (color_map
         ,*
@@ -974,7 +969,8 @@ namespace boost {
     return true;
   }
 }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
 namespace boost { namespace detail {
 
     template <class VertexListGraph, class ColorMap, class BFSVisitor,
@@ -1050,10 +1046,9 @@ namespace boost { namespace detail {
            params);
       }
     };
-}} // namespace boost::detail
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
-namespace boost {
+  } // namespace detail
+
 
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
@@ -1067,81 +1062,20 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     VertexListGraph& ng = const_cast<VertexListGraph&>(g);
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    neighbor_breadth_first_search(
-      ng,
-      boost::graph::keywords::_root_vertex = s,
-      boost::graph::keywords::_buffer = arg_pack[
-        boost::graph::keywords::_buffer ||
-        boost::value_factory<
-          boost::queue<
-            typename graph_traits<VertexListGraph>::vertex_descriptor
-          >
-        >()
-      ],
-      boost::graph::keywords::_visitor = arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<neighbor_bfs_visitor<> >()
-      ],
-      boost::graph::keywords::_color_map = arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(ng),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(ng, vertex_index)
-          ]
-        )
-      ]
-    );
-#else
     typedef typename get_param_type< vertex_color_t, bgl_named_params<P,T,R> >::type C;
     detail::neighbor_bfs_dispatch<C>::apply(ng, s, params, 
                                             get_param(params, vertex_color));
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   }
 
+
   // This version does not initialize colors, user has to.
+
   template <class IncidenceGraph, class P, class T, class R>
   void neighbor_breadth_first_visit
     (IncidenceGraph& g,
      typename graph_traits<IncidenceGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    neighbor_breadth_first_visit(
-      g,
-      boost::graph::keywords::_root_vertex = s,
-      boost::graph::keywords::_buffer = arg_pack[
-        boost::graph::keywords::_buffer ||
-        boost::value_factory<
-          boost::queue<
-            typename graph_traits<IncidenceGraph>::vertex_descriptor
-          >
-        >()
-      ],
-      boost::graph::keywords::_visitor = arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<neighbor_bfs_visitor<> >()
-      ],
-      boost::graph::keywords::_color_map = arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(g),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(g, vertex_index)
-          ]
-        )
-      ]
-    );
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef graph_traits<IncidenceGraph> Traits;
     // Buffer default
     typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
@@ -1154,8 +1088,8 @@ namespace boost {
                     make_neighbor_bfs_visitor(null_visitor())),
        choose_pmap(get_param(params, vertex_color), g, vertex_color)
        );
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   }
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_NEIGHBOR_BREADTH_FIRST_SEARCH_HPP

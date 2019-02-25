@@ -409,6 +409,10 @@ namespace boost { namespace detail {
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/concepts.hpp>)
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/core/enable_if.hpp>
+#endif
+
 namespace boost {
 
   template <class Visitor, class Graph>
@@ -569,15 +573,6 @@ namespace boost {
       put(color, u, Color::black());          vis.finish_vertex(u, g);
     } // end while
   } // breadth_first_visit
-}
-
-#include <boost/pending/queue.hpp>
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/core/enable_if.hpp>
-#endif
-
-namespace boost {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
@@ -665,7 +660,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
+          ,detail::create_empty_buffer(root_vertex)
         )
       )
     )
@@ -686,7 +681,7 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_queue(root_vertex))
+      (buffer, *, detail::create_empty_buffer(root_vertex))
       (visitor, *, default_bfs_visitor())
       (color_map
         ,*
@@ -807,7 +802,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
+          ,detail::create_empty_buffer(root_vertex)
         )
       )
     )
@@ -828,7 +823,7 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_queue(root_vertex))
+      (buffer, *, detail::create_empty_buffer(root_vertex))
       (visitor, *, default_bfs_visitor())
       (color_map
         ,*
