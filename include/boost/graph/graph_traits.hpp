@@ -22,7 +22,6 @@
 #include <boost/mpl/void.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/pending/property.hpp>
@@ -79,7 +78,7 @@ namespace boost {
 #undef BOOST_GRAPH_MEMBER_OR_VOID
 
         template <typename G>
-        struct graph_traits_yes_impl {
+        struct graph_traits_impl {
 #define BOOST_GRAPH_PULL_OPT_MEMBER(name) \
             typedef typename detail::BOOST_JOIN(get_opt_member_, name)< \
                 G \
@@ -106,20 +105,11 @@ namespace boost {
         };
 
         template <typename G>
-        inline typename graph_traits_yes_impl<G>::vertex_descriptor
-        graph_traits_yes_impl<G>::null_vertex()
+        inline typename graph_traits_impl<G>::vertex_descriptor
+        graph_traits_impl<G>::null_vertex()
         { return G::null_vertex(); }
 
         struct graph_traits_no_impl { };
-
-        template <typename G>
-        struct graph_traits_impl
-            : mpl::if_<
-                has_graph_typedefs<G>,
-                graph_traits_yes_impl<G>,
-                graph_traits_no_impl
-            >::type
-        { };
     }
 
     // The primary template definition is SFINAE-friendly so that is_bgl_graph and
@@ -127,7 +117,11 @@ namespace boost {
     // -- Cromwell D. Enage
     template <typename G>
     struct graph_traits
-        : detail::graph_traits_impl<typename boost::remove_const<G>::type>
+        : mpl::if_<
+            detail::has_graph_typedefs<G>,
+            detail::graph_traits_impl<G>,
+            detail::graph_traits_no_impl
+        >::type
     { };
 
     template <typename T>

@@ -171,7 +171,7 @@ namespace boost {
     name(g, gen, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, random_spanning_tree)
+BOOST_PP_REPEAT_FROM_TO(1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, random_spanning_tree)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
