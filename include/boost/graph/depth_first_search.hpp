@@ -424,6 +424,8 @@ namespace boost { namespace detail {
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
+#include <boost/parameter.hpp>
+#include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/functional/value_factory.hpp>
@@ -431,6 +433,10 @@ namespace boost { namespace detail {
 #include <boost/concept/assert.hpp>
 #include <vector>
 #include <utility>
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/core/enable_if.hpp>
+#endif
 
 namespace boost {
 
@@ -615,12 +621,11 @@ namespace boost {
       put(color, u, Color::black());         vis.finish_vertex(u, g);
     }
 
-#endif  // BOOST_RECURSIVE_DFS
-}} // namespace boost::detail
+#endif
+
+  } // namespace detail
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
-
   template <class VertexListGraph, class DFSVisitor, class ColorMap>
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
@@ -662,10 +667,7 @@ namespace boost {
 
     depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
   }
-}
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-
-namespace boost {
 
   template <class Visitors = null_visitor>
   class dfs_visitor {
@@ -729,19 +731,6 @@ namespace boost {
     return dfs_visitor<Visitors>(vis);
   }
   typedef dfs_visitor<> default_dfs_visitor;
-}
-
-#include <boost/parameter.hpp>
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/core/enable_if.hpp>
-#endif
-
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-#include <boost/core/ref.hpp>
-#endif
-
-namespace boost {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   // Boost.Parameter-enabled variant
@@ -820,15 +809,8 @@ namespace boost {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type VertexListGraph;
-    typedef
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-    typename boost::unwrap_reference<
-#endif
-      typename boost::remove_const<
-        typename boost::remove_reference<visitor_type>::type
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      >::type
-#endif
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
     >::type DFSVisitor;
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, VertexListGraph> ));
     typedef typename boost::remove_const<

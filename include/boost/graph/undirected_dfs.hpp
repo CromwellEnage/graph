@@ -19,8 +19,23 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 
-namespace boost { namespace detail {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
+namespace boost {
+
+  namespace detail {
 
 // Define BOOST_RECURSIVE_DFS to use older, recursive version.
 // It is retained for a while in order to perform performance
@@ -132,28 +147,8 @@ namespace boost { namespace detail {
     }
 
 #endif // ! BOOST_RECURSIVE_DFS
-}} // namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
-
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-#include <boost/core/ref.hpp>
-#endif
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
+  } // namespace detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   // Boost.Parameter-enabled variant
@@ -231,15 +226,8 @@ namespace boost {
     >::type Graph;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 #endif
-    typedef
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-    typename boost::unwrap_reference<
-#endif
-      typename boost::remove_const<
-        typename boost::remove_reference<visitor_type>::type
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      >::type
-#endif
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
     >::type DFSVisitor;
     typedef typename boost::remove_const<
       typename boost::remove_reference<color_map_type>::type

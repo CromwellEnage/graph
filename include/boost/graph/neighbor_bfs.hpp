@@ -937,6 +937,7 @@ namespace boost {
     typedef typename boost::remove_const<
       typename boost::remove_reference<graph_type>::type
     >::type VertexListGraph;
+    typedef graph_traits<VertexListGraph> Traits;
     typedef typename boost::remove_const<
       typename boost::remove_reference<color_map_type>::type
     >::type ColorMap;
