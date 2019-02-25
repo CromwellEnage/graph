@@ -266,7 +266,7 @@ namespace boost {
   template <typename Graph, typename TA \
             BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
   inline void name \
-    (const Graph& g, typename graph_traits<Graph>::vertex_descriptor s, \
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
      const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
      typename boost::enable_if< \
        parameter::are_tagged_arguments< \
@@ -388,8 +388,8 @@ namespace boost {
         arg_pack_type,
         boost::graph::keywords::tag::distance_map,
         D
-    >::map_type dist_map = dist_map_gen(graph, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, graph, edge_weight);
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
     std::less<D> default_compare;
     typename boost::parameter::binding<
         arg_pack_type, 
@@ -404,8 +404,8 @@ namespace boost {
     >::type dist_comb = arg_pack[_distance_combine | default_combine];
 
     // Initialize vertices
-    BGL_FORALL_VERTICES_T(current_vertex, graph, Graph) {
-      vis.initialize_vertex(current_vertex, graph);
+    BGL_FORALL_VERTICES_T(current_vertex, g, Graph) {
+      vis.initialize_vertex(current_vertex, g);
 
       // Default all distances to infinity
       put(dist_map, current_vertex, inf);
@@ -415,18 +415,18 @@ namespace boost {
     }
 
     // Set distance for start_vertex to zero
-    put(dist_map, start_vertex, zero_d);
+    put(dist_map, s, zero_d);
 
     // Pass everything on to the no_init version
     dijkstra_shortest_paths_no_color_map_no_init(
-      graph,
-      start_vertex,
+      g,
+      s,
       pred_map,
       dist_map,
       w_map,
       arg_pack[
         _vertex_index_map |
-        detail::vertex_or_dummy_property_map(graph, vertex_index)
+        detail::vertex_or_dummy_property_map(g, vertex_index)
       ],
       dist_comp,
       dist_comb,
