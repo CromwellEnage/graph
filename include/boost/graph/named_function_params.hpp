@@ -31,7 +31,6 @@ namespace boost { namespace detail {
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
-#include <boost/parameter/config.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/has_key.hpp>
@@ -39,6 +38,8 @@ namespace boost { namespace detail {
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
+#include <boost/config.hpp>
+#include <boost/config/workaround.hpp>
 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && ( \
         BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
@@ -162,7 +163,7 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
     BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #else
