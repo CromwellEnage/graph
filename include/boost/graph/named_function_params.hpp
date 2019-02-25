@@ -201,14 +201,9 @@ namespace boost {
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    template <typename PType>
-    bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>
-    visitor(PType& p) const {
-      return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p, *this);
-    }
-#else
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #endif
 
 #undef BOOST_BGL_ONE_PARAM_REF
@@ -237,14 +232,9 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    template <typename PType>
-    bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>
-    visitor(PType& p) {
-      return bgl_named_params<typename boost::remove_const<PType>::type, graph_visitor_t>(p);
-    }
-#else
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #endif
 
 #undef BOOST_BGL_ONE_PARAM_REF
@@ -423,7 +413,6 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
       BOOST_PARAMETER_NAME(terminator_function)
       BOOST_PARAMETER_NAME(partition_map)
       BOOST_PARAMETER_NAME(component_map)
-      BOOST_PARAMETER_NAME(size)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
