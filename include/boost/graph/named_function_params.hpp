@@ -163,6 +163,14 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
+    BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
+#else
+#define BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR \
+    BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif
+
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     namespace detail {
         struct bgl_named_params_base { };
@@ -201,10 +209,7 @@ namespace boost {
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
-#endif
+BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -232,10 +237,7 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
-#endif
+BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -416,7 +418,7 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
-      BOOST_PARAMETER_NAME(visitor)
+      BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
     }
@@ -431,7 +433,7 @@ BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
     };
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_BGL_ONE_PARAM_REF(name, key)
     BOOST_BGL_DECLARE_NAMED_PARAMS
-    BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
+    BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
 
@@ -886,6 +888,7 @@ BOOST_PP_REPEAT(
 
   } // namespace detail
 
+#undef BOOST_BGL_DECLARE_NAMED_PARAM_VISITOR
 #undef BOOST_BGL_DECLARE_NAMED_PARAMS
 
 } // namespace boost

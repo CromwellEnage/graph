@@ -31,18 +31,6 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/concept/assert.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/parameter/binding.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
-
 namespace boost {
 
   template <class Visitor, class Graph>
@@ -106,18 +94,7 @@ namespace boost {
                          DistanceMap distance, 
                          BinaryFunction combine, 
                          BinaryPredicate compare,
-                         BellmanFordVisitor v
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-                         , typename boost::disable_if<
-                           parameter::are_tagged_arguments<
-                             WeightMap, PredecessorMap, DistanceMap,
-                             BinaryFunction, BinaryPredicate,
-                             BellmanFordVisitor
-                           >,
-                           mpl::true_
-                         >::type = mpl::true_()
-#endif
-                         )
+                         BellmanFordVisitor v)
   {
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<EdgeListGraph> ));
     typedef graph_traits<EdgeListGraph> GTraits;
