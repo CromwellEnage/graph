@@ -20,15 +20,16 @@
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/config.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
-#include <boost/config.hpp>
-#include <boost/config/workaround.hpp>
 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && ( \
         BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
@@ -123,7 +124,6 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(vertex_index1_map, vertex_index1) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_index2_map, vertex_index2) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_assignment_map, vertex_assignment_map) \
-    BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor) \
     BOOST_BGL_ONE_PARAM_CREF(distance_compare, distance_compare) \
     BOOST_BGL_ONE_PARAM_CREF(distance_combine, distance_combine) \
     BOOST_BGL_ONE_PARAM_CREF(distance_inf, distance_inf) \
@@ -153,23 +153,25 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     namespace detail {
         struct bgl_named_params_base { };
     }
-#endif
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     : detail::bgl_named_params_base
-#endif
   {
     typedef bgl_named_params self;
     typedef Base next_type;
     typedef Tag tag_type;
     typedef T value_type;
-    bgl_named_params(T v = T()) : m_value(v) { }
+    bgl_named_params() : m_value() { }
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    bgl_named_params(T const& v) : m_value(v) { }
+    bgl_named_params(T&& v) : m_value(std::move(v)) { }
+#else
+    bgl_named_params(T v) : m_value(v) { }
+#endif
     bgl_named_params(T v, const Base& b) : m_value(v), m_base(b) { }
     T m_value;
     Base m_base;
@@ -191,6 +193,33 @@ namespace boost {
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
+    template <typename PType>
+    bgl_named_params<
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type,
+      graph_visitor_t,
+      self
+    >
+    visitor(PType&& p) const
+    {
+      return bgl_named_params<
+        typename boost::remove_const<
+          typename boost::remove_reference<PType>::type
+        >::type,
+        graph_visitor_t,
+        self
+      >(p, *this);
+    }
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#else
+BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -218,6 +247,31 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
+    template <typename PType>
+    bgl_named_params<
+      typename boost::remove_const<
+        typename boost::remove_reference<PType>::type
+      >::type,
+      graph_visitor_t
+    >
+    visitor(PType&& p)
+    {
+      return bgl_named_params<
+        typename boost::remove_const<
+          typename boost::remove_reference<PType>::type
+        >::type,
+        graph_visitor_t
+      >(p);
+    }
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#else
+BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -393,11 +447,16 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       BOOST_PARAMETER_NAME(graph)
       BOOST_PARAMETER_NAME(result)
       BOOST_PARAMETER_NAME(terminator_function)
+      BOOST_PARAMETER_NAME(incoming_map)
+      BOOST_PARAMETER_NAME(dependency_map)
+      BOOST_PARAMETER_NAME(path_count_map)
       BOOST_PARAMETER_NAME(partition_map)
       BOOST_PARAMETER_NAME(component_map)
+      BOOST_PARAMETER_NAME(size)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
+      BOOST_PARAMETER_NAME(visitor)
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
     }
@@ -412,6 +471,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_BGL_ONE_PARAM_REF(name, key)
     BOOST_BGL_DECLARE_NAMED_PARAMS
+    BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
 
@@ -496,13 +556,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-      result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+      result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
     };
 
     template <typename ArgType, typename Prop, typename Graph>
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
-      result_type operator()(const Graph& g, const ArgType&) const {return get(Prop(), g);}
+      result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
@@ -520,7 +580,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
-    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, Graph& g, Prop) {
     typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
@@ -529,6 +589,70 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
              _parameter_exists::value
            >()(g, ap[t | 0]);
     }
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    struct arg_packed_property_map_value
+    {
+      typedef typename property_traits<
+        typename detail::override_const_property_result<
+          ArgPack,
+          Tag,
+          Prop,
+          Graph
+        >::type
+      >::value_type type;
+    };
+
+#if 0
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <typename Tag, typename Prop, typename Graph, typename ...TaggedArgs>
+    struct tagged_property_map_value
+        : arg_packed_property_map_value<
+            typename parameter::result_of::compose<TaggedArgs...>::type,
+            Tag,
+            Prop,
+            Graph
+        >
+    {
+    };
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <
+        typename Tag, typename Prop, typename Graph
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(
+            BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY)
+          , typename TaggedArg
+          , = void BOOST_PP_INTERCEPT
+        )
+    >
+    struct tagged_property_map_value;
+
+#define BOOST_GRAPH_METAFUNCTION_SPECIALIZATION(z, n, _) \
+    template < \
+        typename Tag, typename Prop, typename Graph \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TaggedArg) \
+    > \
+    struct tagged_property_map_value< \
+        Tag, Prop, Graph BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TaggedArg) \
+    > : arg_packed_property_map_value< \
+            typename parameter::result_of::compose< \
+                BOOST_PP_ENUM_PARAMS_Z(z, n, TaggedArg) \
+            >::type, \
+            Tag, \
+            Prop, \
+            Graph \
+        > \
+    { \
+    };
+/**/
+
+BOOST_PP_REPEAT(
+    BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY),
+    BOOST_GRAPH_METAFUNCTION_SPECIALIZATION,
+    _
+)
+#undef BOOST_GRAPH_METAFUNCTION_SPECIALIZATION
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#endif
 
     template <typename F> struct make_arg_pack_type;
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
