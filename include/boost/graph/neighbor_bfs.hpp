@@ -955,9 +955,6 @@ namespace boost {
     detail::neighbor_bfs_impl(graph, root_vertex, buffer, visitor, color_map);
 #else
     typename boost::remove_const<
-      typename boost::remove_reference<buffer_type>::type
-    >::type Q = buffer;
-    typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
     >::type vis = visitor;
 
@@ -965,7 +962,7 @@ namespace boost {
       put(color_map, *i, Color::white());
       vis.initialize_vertex(*i, graph);
     }
-    detail::neighbor_bfs_impl(graph, root_vertex, Q, vis, color_map);
+    detail::neighbor_bfs_impl(graph, root_vertex, buffer, vis, color_map);
 #endif
     return true;
   }
