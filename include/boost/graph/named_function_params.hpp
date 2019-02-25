@@ -10,17 +10,6 @@
 #ifndef BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 #define BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 
-#include <boost/pending/queue.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename Vertex>
-    inline boost::queue<Vertex> create_empty_buffer(Vertex const&)
-    {
-        return boost::queue<Vertex>();
-    }
-}}
-
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>

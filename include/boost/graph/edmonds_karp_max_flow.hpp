@@ -25,6 +25,7 @@
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
@@ -334,12 +335,7 @@ inline typename boost::enable_if< \
     TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   >, \
   typename property_traits< \
-    typename detail::override_const_property_result< \
-      typename boost::parameter::result_of::compose< \
-        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-      >::type, \
-      boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
-    >::type \
+    typename property_map<Graph, edge_capacity_t>::const_type \
   >::value_type \
 >::type \
 name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
