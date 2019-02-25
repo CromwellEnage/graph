@@ -48,19 +48,7 @@ main()
 
   std::vector < int >d(V, (std::numeric_limits < int >::max)());
   int D[V][V];
-  johnson_all_pairs_shortest_paths(
-    g,
-    D,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::graph::keywords::_distance_map =
-#else
-    boost::visitor(
-#endif
-    boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
-  );
+  johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
   std::cout << "       ";
   for (int k = 0; k < V; ++k)
