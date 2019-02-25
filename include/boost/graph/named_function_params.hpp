@@ -242,6 +242,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
         self
       >(p, *this);
     }
+#else
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t, self>
+    visitor(PType&& p) const
+    {
+      return bgl_named_params<PType, graph_visitor_t, self>(p, *this);
+    }
 #endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 
@@ -305,6 +312,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
         >::type,
         graph_visitor_t
       >(p);
+    }
+#else
+    template <typename PType>
+    bgl_named_params<PType, graph_visitor_t>
+    visitor(PType&& p)
+    {
+      return bgl_named_params<PType, graph_visitor_t>(p);
     }
 #endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
