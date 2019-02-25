@@ -134,7 +134,7 @@ namespace boost {
       _weight_map = w_map,
       _vertex_index_map = arg_pack[
         _vertex_index_map |
-        detail::vertex_or_dummy_property_map(g, vertex_index)
+        detail::vertex_index_map_or_dummy_property_map(g)
       ],
       _distance_compare = compare,
       _distance_combine = combine,
@@ -146,7 +146,7 @@ namespace boost {
           num_vertices(g),
           arg_pack[
             _vertex_index_map |
-            detail::vertex_or_dummy_property_map(g, vertex_index)
+            detail::vertex_index_map_or_dummy_property_map(g)
           ]
         )
       ]

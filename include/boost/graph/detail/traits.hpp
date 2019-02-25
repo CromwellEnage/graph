@@ -684,30 +684,6 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    template <typename G>
-    class vertex_count_nullary_function
-    {
-        const G& _g;
-
-    public:
-        inline explicit vertex_count_nullary_function(const G& g) : _g(g)
-        {
-        }
-
-        inline typename graph_traits<G>::vertices_size_type
-        operator()() const
-        {
-            return num_vertices(this->_g);
-        }
-    };
-
-    template <typename G>
-    inline vertex_count_nullary_function<G>
-    make_vertex_count_nullary_function(const G& g)
-    {
-        return vertex_count_nullary_function<G>(g);
-    }
-
     template <typename T, typename G>
     struct is_vertex_property_map_of_graph_impl
         : mpl::if_<
@@ -1187,17 +1163,17 @@ namespace boost { namespace detail {
     // function allows those algorithms to not require the input graph to hold
     // an internal vertex index map when an input color map is provided.
     // -- Cromwell D. Enage
-    template <typename G, typename PropertyTag>
+    template <typename G>
     inline typename mpl::eval_if<
-        has_internal_vertex_property_map<G,PropertyTag>,
-        choose_internal_property_map<G,PropertyTag>,
+        has_internal_vertex_property_map<G,vertex_index_t>,
+        choose_internal_property_map<G,vertex_index_t>,
         choose_dummy_property_map<G>
     >::type
-        vertex_or_dummy_property_map(const G& g, PropertyTag)
+        vertex_index_map_or_dummy_property_map(const G& g)
     {
         typedef typename mpl::if_<
-            has_internal_vertex_property_map<G,PropertyTag>,
-            choose_internal_property_map<G,PropertyTag>,
+            has_internal_vertex_property_map<G,vertex_index_t>,
+            choose_internal_property_map<G,vertex_index_t>,
             choose_dummy_property_map<G>
         >::type impl;
         return impl::call(g);
@@ -1207,17 +1183,17 @@ namespace boost { namespace detail {
     // allows those algorithms to not require the input graph to hold an
     // internal edge weight map when an input weight map is provided.
     // -- Cromwell D. Enage
-    template <typename G, typename PropertyTag>
+    template <typename G>
     inline typename mpl::eval_if<
-        has_internal_edge_property_map<G,PropertyTag>,
-        choose_internal_property_map<G,PropertyTag>,
+        has_internal_edge_property_map<G,edge_weight_t>,
+        choose_internal_property_map<G,edge_weight_t>,
         choose_dummy_property_map<G>
     >::type
-        edge_or_dummy_property_map(const G& g, PropertyTag)
+        edge_weight_map_or_dummy_property_map(const G& g)
     {
         typedef typename mpl::if_<
-            has_internal_edge_property_map<G,PropertyTag>,
-            choose_internal_property_map<G,PropertyTag>,
+            has_internal_edge_property_map<G,edge_weight_t>,
+            choose_internal_property_map<G,edge_weight_t>,
             choose_dummy_property_map<G>
         >::type impl;
         return impl::call(g);
