@@ -228,11 +228,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       graph_visitor_t,
       self
     >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type p
-    ) const
+    visitor(PType p) const
     {
       return bgl_named_params<
         typename boost::remove_const<
@@ -249,8 +245,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     {
       return bgl_named_params<PType, graph_visitor_t, self>(p, *this);
     }
-#endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -300,11 +296,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       >::type,
       graph_visitor_t
     >
-    visitor(
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type p
-    )
+    visitor(PType p)
     {
       return bgl_named_params<
         typename boost::remove_const<
@@ -320,8 +312,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     {
       return bgl_named_params<PType, graph_visitor_t>(p);
     }
-#endif
 BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
+#endif
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
