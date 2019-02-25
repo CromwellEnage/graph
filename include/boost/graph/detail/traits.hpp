@@ -690,13 +690,12 @@ namespace boost { namespace detail {
         const G& _g;
 
     public:
-        typedef typename graph_traits<G>::vertices_size_type result_type;
-
         inline explicit vertex_count_nullary_function(const G& g) : _g(g)
         {
         }
 
-        inline result_type operator()() const
+        inline typename graph_traits<G>::vertices_size_type
+        operator()() const
         {
             return num_vertices(this->_g);
         }
