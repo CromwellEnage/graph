@@ -186,6 +186,35 @@ namespace boost { namespace detail {
 
         template <typename B, typename P>
         static graph_yes_tag
+            _check_back_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().back_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().back_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_back_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
             _check_n_t_e(
                 mpl::vector<B,P>*,
                 typename boost::add_pointer<
@@ -337,6 +366,14 @@ namespace boost { namespace detail {
             ) && (
                 sizeof(
                     is_bfs_visitor_impl<T,G>::_check_tree_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_bfs_visitor_impl<T,G>::_check_back_e(
                         static_cast<mpl::vector<_m_T,G>*>(
                             BOOST_GRAPH_DETAIL_NULLPTR
                         )
