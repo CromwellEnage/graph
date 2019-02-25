@@ -79,8 +79,8 @@ void cycle_canceling(const Graph &g, Weight weight, Reversed rev, ResidualCapaci
     while(
         !bellman_ford_shortest_paths(
             gres,
+            N,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-            boost::graph::keywords::_size = N,
             boost::graph::keywords::_weight_map = weight,
             boost::graph::keywords::_distance_map = distance,
             boost::graph::keywords::_visitor =
@@ -89,7 +89,6 @@ void cycle_canceling(const Graph &g, Weight weight, Reversed rev, ResidualCapaci
                     cycleStart
                 )
 #else
-            N,
             weight_map(weight).distance_map(distance).visitor(
                 detail::RecordEdgeMapAndCycleVertex<Pred, vertex_descriptor>(
                     pred,
