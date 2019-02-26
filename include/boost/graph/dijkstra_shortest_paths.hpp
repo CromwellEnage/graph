@@ -636,6 +636,17 @@ namespace boost {
      >::type = mpl::true_())
   {
     using namespace boost::graph::keywords;
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     typedef typename boost::detail::override_const_property_result<
         Args,
         boost::graph::keywords::tag::weight_map,
@@ -669,7 +680,12 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         Args, 
@@ -690,25 +706,13 @@ namespace boost {
       pred_map,
       dist_map,
       w_map,
-      arg_pack[
-        _vertex_index_map |
-        detail::vertex_index_map_or_dummy_property_map(g)
-      ],
+      v_i_map,
       dist_comp,
       dist_comb,
       inf,
       zero_d,
       vis,
-      arg_pack[
-        _color_map |
-        make_two_bit_color_map(
-          num_vertices(g),
-          arg_pack[
-            _vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
-          ]
-        )
-      ]
+      arg_pack[_color_map | make_two_bit_color_map(num_vertices(g), v_i_map)]
     );
   }
 
@@ -727,7 +731,7 @@ namespace boost {
     name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
   }
 
-BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
+BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS

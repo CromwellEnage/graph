@@ -186,35 +186,6 @@ namespace boost { namespace detail {
 
         template <typename B, typename P>
         static graph_yes_tag
-            _check_back_e(
-                mpl::vector<B,P>*,
-                typename boost::add_pointer<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_KEYWORD((
-                        boost::detail::declref<B>().back_edge(
-                            boost::declval<
-                                typename graph_traits<P>::edge_descriptor
-                            >(),
-                            boost::detail::declcref<P>()
-                        )
-                    ))
-#else
-                    decltype(
-                        boost::detail::declref<B>().back_edge(
-                            boost::declval<
-                                typename graph_traits<P>::edge_descriptor
-                            >(),
-                            boost::detail::declcref<P>()
-                        )
-                    )
-#endif
-                >::type = BOOST_GRAPH_DETAIL_NULLPTR
-            );
-
-        static graph_no_tag _check_back_e(...);
-
-        template <typename B, typename P>
-        static graph_yes_tag
             _check_n_t_e(
                 mpl::vector<B,P>*,
                 typename boost::add_pointer<
@@ -424,17 +395,6 @@ namespace boost { namespace detail {
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
 #endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-
-#include <boost/pending/queue.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename Vertex>
-    inline boost::queue<Vertex> create_empty_buffer(Vertex const&)
-    {
-        return boost::queue<Vertex>();
-    }
-}}
 
 #include <vector>
 #include <boost/functional/value_factory.hpp>
@@ -684,7 +644,7 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_index_map_or_dummy_property_map(graph)
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (color_map
           ,*(
@@ -700,7 +660,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_buffer(root_vertex)
+          ,detail::create_empty_queue(root_vertex)
         )
       )
     )
@@ -721,14 +681,14 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (buffer, *, detail::create_empty_queue(root_vertex))
       (visitor, *, default_bfs_visitor())
       (color_map
         ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
           white_color,
-          detail::vertex_index_map_or_dummy_property_map(graph)
+          detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
       )
     )
@@ -826,7 +786,7 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_index_map_or_dummy_property_map(graph)
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (color_map
           ,*(
@@ -842,7 +802,7 @@ namespace boost {
         )
         (buffer
           ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_buffer(root_vertex)
+          ,detail::create_empty_queue(root_vertex)
         )
       )
     )
@@ -863,14 +823,14 @@ namespace boost {
       (root_vertex, *)
     )
     (optional
-      (buffer, *, detail::create_empty_buffer(root_vertex))
+      (buffer, *, detail::create_empty_queue(root_vertex))
       (visitor, *, default_bfs_visitor())
       (color_map
         ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
           white_color,
-          detail::vertex_index_map_or_dummy_property_map(graph)
+          detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
       )
     )
@@ -1018,7 +978,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(ng)
+            detail::vertex_or_dummy_property_map(ng, vertex_index)
           ]
         )
       ],
@@ -1076,7 +1036,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(ng)
+            detail::vertex_or_dummy_property_map(ng, vertex_index)
           ]
         )
       ]

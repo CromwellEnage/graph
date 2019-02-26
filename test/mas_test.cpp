@@ -84,7 +84,6 @@ class mas_edge_connectivity_visitor : public boost::default_mas_visitor {
     boost::shared_ptr<weight_type> m_reach_weight;
 };
 
-
 // the example from Stoer & Wagner (1997)
 // Check various implementations of the ArgPack where
 // the weights are provided in it, and one case where
@@ -113,57 +112,112 @@ void test0()
 
   mas_edge_connectivity_visitor<undirected_graph,boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > >  test_vis(pq);
 
-  boost::maximum_adjacency_search(g,
-        boost::weight_map(weights).
-        visitor(test_vis).
-        root_vertex(*vertices(g).first).
-        vertex_assignment_map(assignments).
-        max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = weights,
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_root_vertex = *vertices(g).first,
+    boost::graph::keywords::_vertex_assignment_map = assignments,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(weights).
+    visitor(test_vis).
+    root_vertex(*vertices(g).first).
+    vertex_assignment_map(assignments).
+    max_priority_queue(pq)
+#endif
+  );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
   test_vis.clear();
-  boost::maximum_adjacency_search(g,
-        boost::weight_map(weights).
-        visitor(test_vis).
-        root_vertex(*vertices(g).first).
-        max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = weights,
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_root_vertex = *vertices(g).first,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(weights).
+    visitor(test_vis).
+    root_vertex(*vertices(g).first).
+    max_priority_queue(pq)
+#endif
+  );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
   test_vis.clear();
-  boost::maximum_adjacency_search(g,
-        boost::weight_map(weights).
-        visitor(test_vis).
-        max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = weights,
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(weights).
+    visitor(test_vis).
+    max_priority_queue(pq)
+#endif
+  );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
-  boost::maximum_adjacency_search(g,
-        boost::weight_map(weights).
-        visitor(boost::make_mas_visitor(boost::null_visitor())));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = weights,
+    boost::graph::keywords::_visitor =
+    boost::make_mas_visitor(boost::null_visitor())
+#else
+    boost::weight_map(weights).
+    visitor(boost::make_mas_visitor(boost::null_visitor()))
+#endif
+  );
 
-  boost::maximum_adjacency_search(g,
-        boost::weight_map(weights));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = weights
+#else
+    boost::weight_map(weights)
+#endif
+  );
 
-  boost::maximum_adjacency_search(g,
-        boost::root_vertex(*vertices(g).first));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_root_vertex = *vertices(g).first
+#else
+    boost::root_vertex(*vertices(g).first)
+#endif
+  );
 
   test_vis.clear();
-  boost::maximum_adjacency_search(g,
-      boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).
-      visitor(test_vis).
-      max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map =
+    boost::make_constant_property<edge_descriptor>(weight_type(1)),
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).
+    visitor(test_vis).
+    max_priority_queue(pq)
+#endif
+  );
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
   BOOST_TEST_EQ(test_vis.reach_weight(), 2);
-
 }
 
 // Check the unweighted case
@@ -190,8 +244,18 @@ void test1()
 
   mas_edge_connectivity_visitor<undirected_unweighted_graph,boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > >  test_vis(pq);
 
-  boost::maximum_adjacency_search(g, 
-         boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).visitor(test_vis).max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map =
+    boost::make_constant_property<edge_descriptor>(weight_type(1)),
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).
+    visitor(test_vis).max_priority_queue(pq)
+#endif
+  );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
@@ -207,11 +271,19 @@ void test1()
   }
   boost::associative_property_map<std::map<edge_descriptor, weight_type> > ws_map(wm);
 
-  boost::maximum_adjacency_search(g, boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq));
+  boost::maximum_adjacency_search(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = ws_map,
+    boost::graph::keywords::_visitor = test_vis,
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq)
+#endif
+  );
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
   BOOST_TEST_EQ(test_vis.reach_weight(), weight_type(5));
-
 }
 
 int main( int argc, char* argv[] ) {

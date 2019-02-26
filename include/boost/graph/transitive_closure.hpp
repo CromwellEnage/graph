@@ -87,7 +87,7 @@ namespace boost
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_index_map_or_dummy_property_map(graph)
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (orig_to_copy
           ,*(detail::orig_to_copy_vertex_map_predicate)

@@ -155,6 +155,37 @@ namespace boost { namespace detail {
 #endif
         >::type type;
     };
+
+    template <
+        typename T,
+        typename FirstArgument,
+        typename SecondArgument,
+        typename ThirdArgument,
+        typename ResultPlaceholderExpr
+    >
+    struct is_trinary_function_impl
+    {
+        typedef typename mpl::apply1<
+            ResultPlaceholderExpr,
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+            BOOST_TYPEOF_TPL((
+                boost::declval<T>()(
+                    boost::declval<FirstArgument>(),
+                    boost::declval<SecondArgument>(),
+                    boost::declval<ThirdArgument>()
+                )
+            ))
+#else
+            decltype(
+                boost::declval<T>()(
+                    boost::declval<FirstArgument>(),
+                    boost::declval<SecondArgument>(),
+                    boost::declval<ThirdArgument>()
+                )
+            )
+#endif
+        >::type type;
+    };
 }}
 #endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
@@ -197,6 +228,48 @@ namespace boost { namespace detail {
             sizeof(
                 is_binary_func<T,FirstArg,SecondArg>::_check(
                     static_cast<mpl::vector<T,FirstArg,SecondArg>*>(
+                        BOOST_GRAPH_DETAIL_NULLPTR
+                    )
+                )
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
+
+    template <typename T, typename Arg1, typename Arg2, typename Arg3>
+    class is_trinary_func
+    {
+        template <typename B, typename A1, typename A2, typename A3>
+        static graph_yes_tag
+            _check(
+                mpl::vector<B,A1,A2,A3>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL((
+                        boost::declval<B>()(
+                            boost::declval<A1>(),
+                            boost::declval<A2>(),
+                            boost::declval<A3>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::declval<B>()(
+                            boost::declval<A1>(),
+                            boost::declval<A2>(),
+                            boost::declval<A3>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                is_trinary_func<T,Arg1,Arg2,Arg3>::_check(
+                    static_cast<mpl::vector<T,Arg1,Arg2,Arg3>*>(
                         BOOST_GRAPH_DETAIL_NULLPTR
                     )
                 )
@@ -309,6 +382,28 @@ namespace boost { namespace detail {
                 T,
                 FirstArgument,
                 SecondArgument,
+                ResultPlaceholderExpr
+            >,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <
+        typename T,
+        typename Arg1,
+        typename Arg2,
+        typename Arg3,
+        typename ResultPlaceholderExpr
+    >
+    struct is_trinary_function
+        : mpl::eval_if<
+            typename is_trinary_func<T,Arg1,Arg2,Arg3>::type,
+            is_trinary_function_impl<
+                T,
+                Arg1,
+                Arg2,
+                Arg3,
                 ResultPlaceholderExpr
             >,
             mpl::false_
@@ -780,6 +875,29 @@ namespace boost { namespace detail {
         >::type
     {
     };
+
+    template <typename G>
+    class vertex_count_nullary_function
+    {
+        const G& _g;
+
+    public:
+        inline explicit vertex_count_nullary_function(const G& g) : _g(g)
+        {
+        }
+
+        inline typename graph_traits<G>::vertices_size_type operator()() const
+        {
+            return num_vertices(this->_g);
+        }
+    };
+
+    template <typename G>
+    inline vertex_count_nullary_function<G>
+        make_vertex_count_nullary_function(const G& g)
+    {
+        return vertex_count_nullary_function<G>(g);
+    }
 }}
 
 #include <boost/graph/properties.hpp>
@@ -839,25 +957,14 @@ namespace boost { namespace detail {
     {
     };
 
-    template <typename G>
-    struct choose_vertex_index_map
+    template <typename G, typename Tag>
+    struct choose_internal_property_map
     {
-        typedef typename property_map<G,vertex_index_t>::const_type type;
+        typedef typename property_map<G,Tag>::const_type type;
 
         inline static type call(const G& g)
         {
-            return get(vertex_index, g);
-        }
-    };
-
-    template <typename G>
-    struct choose_edge_weight_map
-    {
-        typedef typename property_map<G,edge_weight_t>::const_type type;
-
-        inline static type call(const G& g)
-        {
-            return get(edge_weight, g);
+            return get(Tag(), g);
         }
     };
 }}
@@ -990,8 +1097,8 @@ namespace boost { namespace detail {
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
-    template <typename G>
-    class has_internal_vertex_index_map_impl
+    template <typename G, typename Tag>
+    class has_internal_property_map_impl
     {
         template <typename B>
         static graph_yes_tag
@@ -1001,14 +1108,14 @@ namespace boost { namespace detail {
 #if defined(BOOST_NO_CXX11_DECLTYPE)
                     BOOST_TYPEOF_TPL((
                         get(
-                            boost::declval<vertex_index_t>(),
+                            boost::declval<Tag>(),
                             boost::detail::declcref<B>()
                         )
                     ))
 #else
                     decltype(
                         get(
-                            boost::declval<vertex_index_t>(),
+                            boost::declval<Tag>(),
                             boost::detail::declcref<B>()
                         )
                     )
@@ -1021,45 +1128,7 @@ namespace boost { namespace detail {
      public:
         typedef mpl::bool_<
             sizeof(
-                has_internal_vertex_index_map_impl<G>::_check(
-                    static_cast<mpl::vector<G>*>(BOOST_GRAPH_DETAIL_NULLPTR)
-                )
-            ) == sizeof(graph_yes_tag)
-        > type;
-    };
-
-    template <typename G>
-    class has_internal_edge_weight_map_impl
-    {
-        template <typename B>
-        static graph_yes_tag
-            _check(
-                mpl::vector<B>*,
-                typename boost::add_pointer<
-#if defined(BOOST_NO_CXX11_DECLTYPE)
-                    BOOST_TYPEOF_TPL((
-                        get(
-                            boost::declval<edge_weight_t>(),
-                            boost::detail::declcref<B>()
-                        )
-                    ))
-#else
-                    decltype(
-                        get(
-                            boost::declval<edge_weight_t>(),
-                            boost::detail::declcref<B>()
-                        )
-                    )
-#endif
-                >::type = BOOST_GRAPH_DETAIL_NULLPTR
-            );
-
-        static graph_no_tag _check(...);
-
-     public:
-        typedef mpl::bool_<
-            sizeof(
-                has_internal_edge_weight_map_impl<G>::_check(
+                has_internal_property_map_impl<G,Tag>::_check(
                     static_cast<mpl::vector<G>*>(BOOST_GRAPH_DETAIL_NULLPTR)
                 )
             ) == sizeof(graph_yes_tag)
@@ -1072,34 +1141,72 @@ namespace boost { namespace detail {
 
     // TODO:
     // Implement more robust checks. -- Cromwell D. Enage
-    template <typename G>
-    struct has_internal_vertex_index_map_dispatch;
+    template <typename G, typename Tag>
+    struct has_internal_vertex_property_map_dispatch;
+
+    template <typename G, typename Tag>
+    struct has_internal_edge_property_map_dispatch;
 
     template <typename G>
-    struct has_internal_edge_weight_map_dispatch;
+    struct is_graph_with_integral_vertex_property_map
+    {
+        typedef typename mpl::eval_if<
+            boost::is_integral<typename G::vertex_property_type>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+            has_internal_property_map_impl<G,vertex_index_t>,
+#else
+            mpl::true_,
+#endif
+            mpl::false_
+        >::type type;
+    };
 
-    template <typename G>
-    struct has_graph_type_with_internal_vertex_index_map
+    template <typename G, typename Tag>
+    struct has_graph_type_with_internal_vertex_property_map
     {
         typedef typename mpl::if_<
             boost::is_same<typename G::graph_type,G>,
             mpl::false_,
-            has_internal_vertex_index_map_dispatch<typename G::graph_type>
+            has_internal_vertex_property_map_dispatch<
+                typename G::graph_type,
+                Tag
+            >
         >::type type;
     };
 
-    template <typename G>
-    struct has_graph_type_with_internal_edge_weight_map
+    template <typename G, typename Tag>
+    struct has_graph_type_with_internal_edge_property_map
     {
         typedef typename mpl::if_<
             boost::is_same<typename G::graph_type,G>,
             mpl::false_,
-            has_internal_edge_weight_map_dispatch<typename G::graph_type>
+            has_internal_edge_property_map_dispatch<
+                typename G::graph_type,
+                Tag
+            >
         >::type type;
     };
 
+    template <typename G, typename Tag>
+    struct has_internal_vertex_property_map_dispatch
+        : mpl::eval_if<
+            is_graph_with_vertex_property_type<G,Tag>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+            has_internal_property_map_impl<G,Tag>,
+#else
+            mpl::true_,
+#endif
+            mpl::eval_if<
+                graph_detail::has_graph_type<G>,  // for adaptors
+                has_graph_type_with_internal_vertex_property_map<G,Tag>,
+                mpl::false_
+            >
+        >::type
+    {
+    };
+
     template <typename G>
-    struct has_internal_vertex_index_map_dispatch
+    struct has_internal_vertex_property_map_dispatch<G,vertex_index_t>
         : mpl::eval_if<
             typename mpl::eval_if<  // for adjacency_list
                 graph_detail::has_graph_tag<G>,
@@ -1110,27 +1217,26 @@ namespace boost { namespace detail {
             mpl::eval_if<
                 is_adjacency_matrix<G>,  // for adjacency_matrix
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-                has_internal_vertex_index_map_impl<G>,
+                has_internal_property_map_impl<G,vertex_index_t>,
 #else
                 mpl::true_,
 #endif
                 mpl::eval_if<
                     has_container_typedefs<G>,  // for vector_as_graph
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-                    has_internal_vertex_index_map_impl<G>,
+                    has_internal_property_map_impl<G,vertex_index_t>,
 #else
                     mpl::true_,
 #endif
                     mpl::eval_if<
                         is_graph_with_vertex_property_type<G,vertex_index_t>,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-                        has_internal_vertex_index_map_impl<G>,
-#else
-                        mpl::true_,
-#endif
+                        is_graph_with_integral_vertex_property_map<G>,
                         mpl::eval_if<
                             graph_detail::has_graph_type<G>,  // for adaptors
-                            has_graph_type_with_internal_vertex_index_map<G>,
+                            has_graph_type_with_internal_vertex_property_map<
+                                G,
+                                vertex_index_t
+                            >,
                             mpl::false_
                         >
                     >
@@ -1140,40 +1246,42 @@ namespace boost { namespace detail {
     {
     };
 
-    template <typename G>
-    struct has_internal_edge_weight_map_dispatch
+    template <typename G, typename Tag>
+    struct has_internal_edge_property_map_dispatch
         : mpl::eval_if<
-            is_graph_with_edge_property_type<G,edge_weight_t>,
+            is_graph_with_edge_property_type<G,Tag>,
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-            has_internal_edge_weight_map_impl<G>,
+            has_internal_property_map_impl<G,Tag>,
 #else
             mpl::true_,
 #endif
             mpl::eval_if<
                 graph_detail::has_graph_type<G>,  // for adaptors
-                has_graph_type_with_internal_edge_weight_map<G>,
+                has_graph_type_with_internal_edge_property_map<G,Tag>,
                 mpl::false_
             >
         >::type
     {
     };
 
-    template <typename G>
-    struct has_internal_vertex_index_map
-        : has_internal_vertex_index_map_dispatch<
+    template <typename G, typename Tag>
+    struct has_internal_vertex_property_map
+        : has_internal_vertex_property_map_dispatch<
             typename boost::remove_const<
                 typename boost::remove_reference<G>::type
-            >::type
+            >::type,
+            Tag
         >
     {
     };
 
-    template <typename G>
-    struct has_internal_edge_weight_map
-        : has_internal_edge_weight_map_dispatch<
+    template <typename G, typename Tag>
+    struct has_internal_edge_property_map
+        : has_internal_edge_property_map_dispatch<
             typename boost::remove_const<
                 typename boost::remove_reference<G>::type
-            >::type
+            >::type,
+            Tag
         >
     {
     };
@@ -1183,33 +1291,33 @@ namespace boost { namespace detail {
     // function allows those algorithms to not require the input graph to hold
     // an internal vertex index map when an input color map is provided.
     // -- Cromwell D. Enage
-    template <typename G>
+    template <typename G, typename Tag>
     inline typename mpl::eval_if<
-        has_internal_vertex_index_map<G>,
-        choose_vertex_index_map<G>,
+        has_internal_vertex_property_map<G,Tag>,
+        choose_internal_property_map<G,Tag>,
         choose_dummy_property_map<G>
     >::type
-        vertex_index_map_or_dummy_property_map(const G& g)
+        vertex_or_dummy_property_map(const G& g, Tag)
     {
         typedef typename mpl::if_<
-            has_internal_vertex_index_map<G>,
-            choose_vertex_index_map<G>,
+            has_internal_vertex_property_map<G,Tag>,
+            choose_internal_property_map<G,Tag>,
             choose_dummy_property_map<G>
         >::type impl;
         return impl::call(g);
     }
 
-    template <typename G>
+    template <typename G, typename Tag>
     inline typename mpl::eval_if<
-        has_internal_edge_weight_map<G>,
-        choose_edge_weight_map<G>,
+        has_internal_edge_property_map<G,Tag>,
+        choose_internal_property_map<G,Tag>,
         choose_dummy_property_map<G>
     >::type
-        edge_weight_map_or_dummy_property_map(const G& g)
+        edge_or_dummy_property_map(const G& g, Tag)
     {
         typedef typename mpl::if_<
-            has_internal_edge_weight_map<G>,
-            choose_edge_weight_map<G>,
+            has_internal_edge_property_map<G,Tag>,
+            choose_internal_property_map<G,Tag>,
             choose_dummy_property_map<G>
         >::type impl;
         return impl::call(g);
@@ -1433,6 +1541,73 @@ namespace boost { namespace detail {
         > type;
     };
 }}
+
+#include <boost/pending/queue.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename Vertex>
+    inline boost::queue<Vertex> create_empty_queue(Vertex const&)
+    {
+        return boost::queue<Vertex>();
+    }
+}}
+
+#include <boost/graph/detail/d_ary_heap.hpp>
+
+namespace boost { namespace detail {
+
+    template <
+        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
+        typename DistanceMap, typename Compare, typename Container
+    >
+    inline boost::d_ary_heap_indirect<
+        Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare, Container
+    > create_empty_d_ary_heap_indirect(
+        const Value&, DistanceMap distance,
+        IndexInHeapPropertyMap index_in_heap,
+        const Compare& compare, const Container& data
+    )
+    {
+        return boost::d_ary_heap_indirect<
+            Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare,
+            Container
+        >(distance, index_in_heap, compare, data);
+    }
+
+    template <
+        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
+        typename DistanceMap, typename Compare
+    >
+    inline boost::d_ary_heap_indirect<
+        Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare
+    > create_empty_d_ary_heap_indirect(
+        const Value&, DistanceMap distance,
+        IndexInHeapPropertyMap index_in_heap,
+        const Compare& compare
+    )
+    {
+        return boost::d_ary_heap_indirect<
+            Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare
+        >(distance, index_in_heap, compare);
+    }
+
+    template <
+        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
+        typename DistanceMap
+    >
+    inline boost::d_ary_heap_indirect<
+        Value, Arity, IndexInHeapPropertyMap, DistanceMap
+    > create_empty_d_ary_heap_indirect(
+        const Value&, DistanceMap distance,
+        IndexInHeapPropertyMap index_in_heap
+    )
+    {
+        return boost::d_ary_heap_indirect<
+            Value, Arity, IndexInHeapPropertyMap, DistanceMap
+        >(distance, index_in_heap);
+    }
+}} // namespace boost::detail
 
 #endif  // include guard
 

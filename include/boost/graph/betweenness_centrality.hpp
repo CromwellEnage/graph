@@ -17,12 +17,26 @@
 #include <boost/graph/relax.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 namespace boost {
 
@@ -126,11 +140,21 @@ namespace detail { namespace graph {
                                        DistanceMap, PathCountMap> visitor_type;
       visitor_type visitor(ov, weight_map, incoming, distance, path_count);
 
-      dijkstra_shortest_paths(g, s, 
-                              boost::weight_map(weight_map)
-                              .vertex_index_map(vertex_index)
-                              .distance_map(distance)
-                              .visitor(visitor));
+      dijkstra_shortest_paths(
+        g,
+        s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_weight_map = weight_map,
+        boost::graph::keywords::_vertex_index_map = vertex_index,
+        boost::graph::keywords::_distance_map = distance,
+        boost::graph::keywords::_visitor = visitor
+#else
+        boost::weight_map(weight_map)
+        .vertex_index_map(vertex_index)
+        .distance_map(distance)
+        .visitor(visitor)
+#endif
+      );
     }
 
   private:
@@ -370,6 +394,17 @@ brandes_betweenness_centrality(const Graph& g,
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                               , typename boost::disable_if<
+                                 parameter::are_tagged_arguments<
+                                   CentralityMap, EdgeCentralityMap,
+                                   IncomingMap, DistanceMap,
+                                   DependencyMap, PathCountMap,
+                                   VertexIndexMap
+                                 >,
+                                 mpl::true_
+                               >::type = mpl::true_()
+#endif
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_unweighted_shortest_paths shortest_paths;
@@ -396,6 +431,17 @@ brandes_betweenness_centrality(const Graph& g,
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index,
                                WeightMap weight_map
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                               , typename boost::disable_if<
+                                 parameter::are_tagged_arguments<
+                                   CentralityMap, EdgeCentralityMap,
+                                   IncomingMap, DistanceMap,
+                                   DependencyMap, PathCountMap,
+                                   VertexIndexMap, WeightMap
+                                 >,
+                                 mpl::true_
+                               >::type = mpl::true_()
+#endif
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_dijkstra_shortest_paths<WeightMap>
@@ -408,8 +454,140 @@ brandes_betweenness_centrality(const Graph& g,
                                                      vertex_index, 
                                                      shortest_paths);
 }
+}  // end namespace boost
 
-namespace detail { namespace graph {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+template<typename Graph, typename Args>
+void 
+brandes_betweenness_centrality(const Graph& g, 
+                               const Args& arg_pack,
+                               typename boost::enable_if<
+                                 parameter::is_argument_pack<Args>, mpl::true_
+                               >::type = mpl::true_()
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+{
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits<Graph>::degree_size_type D;
+    typedef typename property_traits<
+        typename mpl::eval_if<
+            typename mpl::has_key<
+                Args,
+                boost::graph::keywords::tag::edge_centrality_map
+            >::type,
+            boost::detail::override_const_property_result<
+                Args,
+                boost::graph::keywords::tag::edge_centrality_map,
+                edge_centrality_t,
+                Graph
+            >,
+            mpl::eval_if<
+                typename mpl::has_key<
+                    Args,
+                    boost::graph::keywords::tag::centrality_map
+                >::type,
+                boost::detail::override_const_property_result<
+                    Args,
+                    boost::graph::keywords::tag::centrality_map,
+                    vertex_centrality_t,
+                    Graph
+                >,
+                boost::detail::override_const_property_result<
+                    Args,
+                    boost::graph::keywords::tag::weight_map,
+                    edge_weight_t,
+                    Graph
+                >
+            >
+        >::type
+    >::value_type centrality_type;
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::centrality_map,
+        dummy_property_map&
+    >::type v_c_map = arg_pack[_centrality_map | dummy_prop];
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::edge_centrality_map,
+        dummy_property_map&
+    >::type e_c_map = arg_pack[_edge_centrality_map | dummy_prop];
+    std::vector<Edge> no_edges;
+    const D zero_degree = D();
+    const centrality_type zero_centrality = centrality_type();
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::incoming_map,
+        std::vector<Edge>
+    > incoming_map_gen(no_edges);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        centrality_type
+    > dist_map_gen(zero_centrality);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::dependency_map,
+        centrality_type
+    > dependency_map_gen(zero_centrality);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::path_count_map,
+        D
+    > path_count_map_gen(zero_degree);
+    detail::graph::brandes_betweenness_centrality_impl(
+      g,
+      v_c_map,
+      e_c_map,
+      incoming_map_gen(g, arg_pack),
+      dist_map_gen(g, arg_pack),
+      dependency_map_gen(g, arg_pack),
+      path_count_map_gen(g, arg_pack),
+      detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+      ),
+      detail::graph::brandes_dijkstra_shortest_paths<
+          weight_map_type
+      >(w_map)
+    );
+}
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+template <typename Graph, typename TA \
+          BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+inline void name( \
+  const Graph& g, const TA& ta \
+  BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+  typename boost::enable_if< \
+    parameter::are_tagged_arguments< \
+      TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+    >, mpl::true_ \
+  >::type = mpl::true_() \
+) \
+{ \
+    boost::name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+}
+
+BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, brandes_betweenness_centrality)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+}  // end namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost { namespace detail { namespace graph {
   template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
            typename WeightMap, typename VertexIndexMap>
   void 
@@ -508,18 +686,9 @@ namespace detail { namespace graph {
                                                vertex_index);
     }
   };
+}}} // end namespace boost::detail::graph
 
-  template <typename T>
-  struct is_bgl_named_params {
-    BOOST_STATIC_CONSTANT(bool, value = false);
-  };
-
-  template <typename Param, typename Tag, typename Rest>
-  struct is_bgl_named_params<bgl_named_params<Param, Tag, Rest> > {
-    BOOST_STATIC_CONSTANT(bool, value = true);
-  };
-
-} } // end namespace detail::graph
+namespace boost {
 
 template<typename Graph, typename Param, typename Tag, typename Rest>
 void 
@@ -527,39 +696,158 @@ brandes_betweenness_centrality(const Graph& g,
                                const bgl_named_params<Param,Tag,Rest>& params
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
-  typedef bgl_named_params<Param,Tag,Rest> named_params;
-
-  typedef typename get_param_type<edge_weight_t, named_params>::type ew;
-  detail::graph::brandes_betweenness_centrality_dispatch1<ew>::run(
-    g, 
-    choose_param(get_param(params, vertex_centrality), 
-                 dummy_property_map()),
-    choose_param(get_param(params, edge_centrality), 
-                 dummy_property_map()),
-    choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-    get_param(params, edge_weight));
+    typedef bgl_named_params<Param,Tag,Rest> named_params;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    using namespace boost::graph::keywords;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
+    typedef typename boost::detail::override_const_property_result<
+        arg_pack_type,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits<Graph>::degree_size_type D;
+    typedef typename property_traits<
+        typename mpl::eval_if<
+            typename mpl::has_key<
+                arg_pack_type,
+                boost::graph::keywords::tag::edge_centrality_map
+            >::type,
+            boost::detail::override_const_property_result<
+                arg_pack_type,
+                boost::graph::keywords::tag::edge_centrality_map,
+                edge_centrality_t,
+                Graph
+            >,
+            mpl::eval_if<
+                typename mpl::has_key<
+                    arg_pack_type,
+                    boost::graph::keywords::tag::centrality_map
+                >::type,
+                boost::detail::override_const_property_result<
+                    arg_pack_type,
+                    boost::graph::keywords::tag::centrality_map,
+                    vertex_centrality_t,
+                    Graph
+                >,
+                boost::detail::override_const_property_result<
+                    arg_pack_type,
+                    boost::graph::keywords::tag::weight_map,
+                    edge_weight_t,
+                    Graph
+                >
+            >
+        >::type
+    >::value_type W;
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        arg_pack_type,
+        boost::graph::keywords::tag::centrality_map,
+        dummy_property_map&
+    >::type v_c_map = arg_pack[_centrality_map | dummy_prop];
+    typename boost::parameter::binding<
+        arg_pack_type,
+        boost::graph::keywords::tag::edge_centrality_map,
+        dummy_property_map&
+    >::type e_c_map = arg_pack[_edge_centrality_map | dummy_prop];
+    std::vector<Edge> no_edges;
+    const D zero_degree = D();
+    const W zero_weight = W();
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::incoming_map,
+        std::vector<Edge>
+    > incoming_map_gen(no_edges);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        W
+    > dist_map_gen(zero_weight);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::dependency_map,
+        W
+    > dependency_map_gen(zero_weight);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::path_count_map,
+        D
+    > path_count_map_gen(zero_degree);
+    detail::graph::brandes_betweenness_centrality_impl(
+      g,
+      v_c_map,
+      e_c_map,
+      incoming_map_gen(g, arg_pack),
+      dist_map_gen(g, arg_pack),
+      dependency_map_gen(g, arg_pack),
+      path_count_map_gen(g, arg_pack),
+      detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+      ),
+      detail::graph::brandes_dijkstra_shortest_paths<
+          weight_map_type
+      >(w_map)
+    );
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    typedef typename get_param_type<edge_weight_t, named_params>::type ew;
+    detail::graph::brandes_betweenness_centrality_dispatch1<ew>::run(
+      g, 
+      choose_param(get_param(params, vertex_centrality), dummy_property_map()),
+      choose_param(get_param(params, edge_centrality), dummy_property_map()),
+      choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
+      get_param(params, edge_weight)
+    );
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 }
 
 // disable_if is required to work around problem with MSVC 7.1 (it seems to not
 // get partial ordering getween this overload and the previous one correct)
 template<typename Graph, typename CentralityMap>
-typename disable_if<detail::graph::is_bgl_named_params<CentralityMap>,
-                    void>::type
+typename boost::disable_if<
+    typename mpl::if_<
+        boost::is_base_of<detail::bgl_named_params_base, CentralityMap>,
+        mpl::true_,
+        parameter::is_argument_pack<CentralityMap>
+    >::type,
+    void
+>::type
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                               , typename boost::disable_if<
+                                 parameter::are_tagged_arguments<CentralityMap>,
+                                 mpl::true_
+                               >::type = mpl::true_()
+#endif
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
-  detail::graph::brandes_betweenness_centrality_dispatch2(
-    g, centrality, dummy_property_map(), get(vertex_index, g));
+    detail::graph::brandes_betweenness_centrality_dispatch2(
+      g, centrality, dummy_property_map(), get(vertex_index, g)
+    );
 }
 
 template<typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 void 
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality,
                                EdgeCentralityMap edge_centrality_map
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                               , typename boost::disable_if<
+                                 parameter::are_tagged_arguments<
+                                   CentralityMap, EdgeCentralityMap
+                                 >,
+                                 mpl::true_
+                               >::type = mpl::true_()
+#endif
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
-  detail::graph::brandes_betweenness_centrality_dispatch2(
-    g, centrality, edge_centrality_map, get(vertex_index, g));
+    detail::graph::brandes_betweenness_centrality_dispatch2(
+      g, centrality, edge_centrality_map, get(vertex_index, g)
+    );
 }
 
 /**

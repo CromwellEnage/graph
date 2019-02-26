@@ -89,31 +89,41 @@ namespace boost {
      >::type = mpl::true_())
   {
     using namespace boost::graph::keywords;
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     typedef typename boost::detail::override_const_property_result<
-      Args,
-      boost::graph::keywords::tag::weight_map,
-      edge_weight_t,
-      VertexListGraph
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        VertexListGraph
     >::type weight_map_type;
-    typedef typename boost::property_traits<weight_map_type>::value_type D;
-    const D zero_actual = D();
+    typedef typename boost::property_traits<weight_map_type>::value_type W;
+    const W zero_actual = W();
     boost::detail::make_property_map_from_arg_pack_gen<
-      boost::graph::keywords::tag::distance_map,
-      D
+        boost::graph::keywords::tag::distance_map,
+        W
     > dist_map_gen(zero_actual);
     typename boost::detail::map_maker<
-      VertexListGraph,
-      Args,
-      boost::graph::keywords::tag::distance_map,
-      D
+        VertexListGraph,
+        Args,
+        boost::graph::keywords::tag::distance_map,
+        W
     >::map_type dist_map = dist_map_gen(g, arg_pack);
     weight_map_type w_map = detail::override_const_property(
-      arg_pack,
-      _weight_map,
-      g,
-      edge_weight
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
     );
-    typedef typename boost::property_traits<weight_map_type>::value_type W;
     std::less<W> compare;
     detail::_project2nd<W,W> combine;
     null_visitor null_vis;
@@ -126,29 +136,19 @@ namespace boost {
     dijkstra_shortest_paths(
       g,
       arg_pack[
-        boost::graph::keywords::_root_vertex ||
-        boost::detail::get_default_starting_vertex_t<VertexListGraph>(g)
+        _root_vertex ||
+        detail::get_default_starting_vertex_t<VertexListGraph>(g)
       ],
       _predecessor_map = p_map,
       _distance_map = dist_map,
       _weight_map = w_map,
-      _vertex_index_map = arg_pack[
-        _vertex_index_map |
-        detail::vertex_index_map_or_dummy_property_map(g)
-      ],
+      _vertex_index_map = v_i_map,
       _distance_compare = compare,
       _distance_combine = combine,
       _distance_inf = (std::numeric_limits<W>::max)(),
       _visitor = vis,
       _color_map = arg_pack[
-        _color_map |
-        make_two_bit_color_map(
-          num_vertices(g),
-          arg_pack[
-            _vertex_index_map |
-            detail::vertex_index_map_or_dummy_property_map(g)
-          ]
-        )
+        _color_map | make_two_bit_color_map(num_vertices(g), v_i_map)
       ]
     );
   }

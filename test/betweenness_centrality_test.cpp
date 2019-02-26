@@ -13,7 +13,7 @@
 #include <stack>
 #include <queue>
 #include <boost/property_map/property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
@@ -62,14 +62,22 @@ run_weighted_test(Graph*, int V, weighted_edge edge_init[], int E,
   std::vector<double> centrality(V);
   brandes_betweenness_centrality(
     g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_centrality_map =
+      make_iterator_property_map(centrality.begin(), get(vertex_index, g),
+                                 double()),
+    boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
+    boost::graph::keywords::_weight_map = get(edge_weight, g)
+#else
     centrality_map(
       make_iterator_property_map(centrality.begin(), get(vertex_index, g),
                                  double()))
-    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
-
+    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
+#endif
+  );
 
   for (int v = 0; v < V; ++v) {
-    BOOST_CHECK(centrality[v] == correct_centrality[v]);
+    BOOST_TEST(centrality[v] == correct_centrality[v]);
   }
 }
 
@@ -113,46 +121,76 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
 
   brandes_betweenness_centrality(
     g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_centrality_map =
+      make_iterator_property_map(centrality.begin(), get(vertex_index, g),
+                                 double()),
+    boost::graph::keywords::_edge_centrality_map =
+      make_iterator_property_map(edge_centrality1.begin(),
+                                 get(edge_index, g), double()),
+    boost::graph::keywords::_vertex_index_map = get(vertex_index, g)
+#else
     centrality_map(
       make_iterator_property_map(centrality.begin(), get(vertex_index, g),
                                  double()))
     .edge_centrality_map(
        make_iterator_property_map(edge_centrality1.begin(), 
                                   get(edge_index, g), double()))
-    .vertex_index_map(get(vertex_index, g)));
+    .vertex_index_map(get(vertex_index, g))
+#endif
+  );
 
   std::vector<double> centrality2(V);
   std::vector<double> edge_centrality2(E);
   brandes_betweenness_centrality(
     g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
+    boost::graph::keywords::_weight_map = get(edge_weight, g),
+    boost::graph::keywords::_centrality_map =
+      make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
+                                 double()),
+    boost::graph::keywords::_edge_centrality_map =
+      make_iterator_property_map(edge_centrality2.begin(),
+                                 get(edge_index, g), double())
+#else
     vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
     .centrality_map(
        make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
                                   double()))
     .edge_centrality_map(
        make_iterator_property_map(edge_centrality2.begin(), 
-                                  get(edge_index, g), double())));
+                                  get(edge_index, g), double()))
+#endif
+  );
 
   std::vector<double> edge_centrality3(E);
   brandes_betweenness_centrality(
     g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_edge_centrality_map =
+      make_iterator_property_map(edge_centrality3.begin(),
+                                 get(edge_index, g), double())
+#else
     edge_centrality_map(
       make_iterator_property_map(edge_centrality3.begin(), 
-                                 get(edge_index, g), double())));
+                                 get(edge_index, g), double()))
+#endif
+  );
 
   for (int v = 0; v < V; ++v) {
-    BOOST_CHECK(centrality[v] == centrality2[v]);
+    BOOST_TEST(centrality[v] == centrality2[v]);
 
     double relative_error = 
       correct_centrality[v] == 0.0? centrality[v]
       : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
     if (relative_error < 0) relative_error = -relative_error;
-    BOOST_CHECK(relative_error < error_tolerance);
+    BOOST_TEST(relative_error < error_tolerance);
   }  
 
   for (int e = 0; e < E; ++e) {
-    BOOST_CHECK(edge_centrality1[e] == edge_centrality2[e]);
-    BOOST_CHECK(edge_centrality1[e] == edge_centrality3[e]);
+    BOOST_TEST(edge_centrality1[e] == edge_centrality2[e]);
+    BOOST_TEST(edge_centrality1[e] == edge_centrality3[e]);
 
     if (correct_edge_centrality) {
       double relative_error = 
@@ -160,7 +198,7 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
         : (edge_centrality1[e] - correct_edge_centrality[e]) 
         / correct_edge_centrality[e];
       if (relative_error < 0) relative_error = -relative_error;
-      BOOST_CHECK(relative_error < error_tolerance);
+      BOOST_TEST(relative_error < error_tolerance);
 
       if (relative_error >= error_tolerance) {
         std::cerr << "Edge " << e << " has edge centrality " 
@@ -205,10 +243,19 @@ run_wheel_test(Graph*, int V)
   std::vector<double> centrality2(V);
   brandes_betweenness_centrality(
     g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    (boost::graph::keywords::_centrality_map =
+      make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
+                                 double()),
+    boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
+    boost::graph::keywords::_weight_map = get(edge_weight, g))
+#else
     centrality_map(
       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
                                  double()))
-    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
+    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
+#endif
+  );
 
   relative_betweenness_centrality(
     g,
@@ -221,9 +268,9 @@ run_wheel_test(Graph*, int V)
                                double()));
 
   for (int v = 0; v < V; ++v) {
-    BOOST_CHECK(centrality[v] == centrality2[v]);
-    BOOST_CHECK((v == 0 && centrality[v] == 1)
-               || (v != 0 && centrality[v] == 0));
+    BOOST_TEST(centrality[v] == centrality2[v]);
+    BOOST_TEST((v == 0 && centrality[v] == 1)
+              || (v != 0 && centrality[v] == 0));
   } 
 
   double dominance = 
@@ -231,7 +278,7 @@ run_wheel_test(Graph*, int V)
       g, 
       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
                                  double()));
-  BOOST_CHECK(dominance == 1.0);
+  BOOST_TEST(dominance == 1.0);
 }
 
 template<typename MutableGraph>
@@ -409,7 +456,7 @@ void random_unweighted_test(Graph*, int n)
         centrality[v] == 0.0? centrality2[v]
         : (centrality2[v] - centrality[v]) / centrality[v];
       if (relative_error < 0) relative_error = -relative_error;
-      BOOST_CHECK(relative_error < error_tolerance);
+      BOOST_TEST(relative_error < error_tolerance);
     }
   }
 
@@ -421,10 +468,18 @@ void random_unweighted_test(Graph*, int n)
     put(edge_weight, g, *ei, 1);
 
   brandes_betweenness_centrality(g, 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+//    boost::graph::keywords::_weight_map = get(edge_weight, g),
+//    boost::graph::keywords::_centrality_map =
+      make_iterator_property_map(centrality3.begin(), get(vertex_index, g),
+                                 double())
+#else
     weight_map(get(edge_weight, g))
     .centrality_map(
        make_iterator_property_map(centrality3.begin(), get(vertex_index, g),
-                                  double())));
+                                  double()))
+#endif
+  );
   std::cout << "DONE.\n";
 
   if (!std::equal(centrality.begin(), centrality.end(),
@@ -434,12 +489,12 @@ void random_unweighted_test(Graph*, int n)
         centrality[v] == 0.0? centrality3[v]
         : (centrality3[v] - centrality[v]) / centrality[v];
       if (relative_error < 0) relative_error = -relative_error;
-      BOOST_CHECK(relative_error < error_tolerance);
+      BOOST_TEST(relative_error < error_tolerance);
     }
   }
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   int random_test_num_vertices = 300;
   if (argc >= 2) random_test_num_vertices = boost::lexical_cast<int>(argv[1]);
@@ -515,6 +570,6 @@ int test_main(int argc, char* argv[])
 
   random_unweighted_test((Graph*)0, random_test_num_vertices);
 
-  return 0;
+  return boost::report_errors();
 }
 

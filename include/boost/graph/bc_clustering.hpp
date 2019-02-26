@@ -123,9 +123,16 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
 
   bool is_done;
   do {
-    brandes_betweenness_centrality(g, 
-                                   edge_centrality_map(edge_centrality)
-                                   .vertex_index_map(vertex_index));
+    brandes_betweenness_centrality(
+      g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_edge_centrality_map = edge_centrality,
+      boost::graph::keywords::_vertex_index_map = vertex_index
+#else
+      edge_centrality_map(edge_centrality)
+      .vertex_index_map(vertex_index)
+#endif
+    );
     std::pair<edge_iterator, edge_iterator> edges_iters = edges(g);
     edge_descriptor e = *max_element(edges_iters.first, edges_iters.second, cmp);
     is_done = done(get(edge_centrality, e), e, g);

@@ -25,8 +25,6 @@ typedef boost::property_traits<weight_map_type>::value_type weight_type;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> undirected_unweighted_graph;
 
-std::string test_dir;
-
 struct edge_t
 {
   unsigned long first;
@@ -40,11 +38,19 @@ void test0()
     {0, 4}, {1, 4}, {1, 5}, {2, 6}, {3, 6}, {3, 7}, {4, 5}, {5, 6}, {6, 7}};
   weight_type ws[] = {2, 3, 4, 3, 2, 2, 2, 2, 2, 3, 1, 3};
   undirected_graph g(edges, edges + 12, ws, 8, 12);
-  
+
   weight_map_type weights = get(boost::edge_weight, g);
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities));
+  int w = boost::stoer_wagner_min_cut(
+    g,
+    weights,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_parity_map = parities
+#else
+    boost::parity_map(parities)
+#endif
+  );
   BOOST_TEST_EQ(w, 4);
   const bool parity0 = get(parities, 0);
   BOOST_TEST_EQ(parity0, get(parities, 1));
@@ -62,21 +68,30 @@ void test1()
   { // if only one vertex, can't run `boost::stoer_wagner_min_cut`
     undirected_graph g;
     add_vertex(g);
-    
+
     BOOST_TEST_THROWS(boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g)), boost::bad_graph);
   }{ // three vertices with one multi-edge
     typedef boost::graph_traits<undirected_graph>::vertex_descriptor vertex_descriptor;
-    
+
     edge_t edges[] = {{0, 1}, {1, 2}, {1, 2}, {2, 0}};
     weight_type ws[] = {3, 1, 1, 1};
     undirected_graph g(edges, edges + 4, ws, 3, 4);
-    
+
     weight_map_type weights = get(boost::edge_weight, g);
     std::map<int, bool> parity;
     boost::associative_property_map<std::map<int, bool> > parities(parity);
     std::map<vertex_descriptor, vertex_descriptor> assignment;
     boost::associative_property_map<std::map<vertex_descriptor, vertex_descriptor> > assignments(assignment);
-    int w = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities).vertex_assignment_map(assignments));
+    int w = boost::stoer_wagner_min_cut(
+      g,
+      weights,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_parity_map = parities,
+      boost::graph::keywords::_vertex_assignment_map = assignments
+#else
+      boost::parity_map(parities).vertex_assignment_map(assignments)
+#endif
+    );
     BOOST_TEST_EQ(w, 3);
     const bool parity2 = get(parities, 2),
       parity0 = get(parities, 0);
@@ -92,10 +107,18 @@ void test2()
     {3, 1}, {0, 1}, {6, 3}, {4, 6}, {2, 4}, {5, 3}};
   weight_type ws[] = {1, 3, 4, 6, 4, 1, 2, 5, 2};
   undirected_graph g(edges, edges + 9, ws, 7, 9);
-  
+
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g), boost::parity_map(parities));
+  int w = boost::stoer_wagner_min_cut(
+    g,
+    get(boost::edge_weight, g),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_parity_map = parities
+#else
+    boost::parity_map(parities)
+#endif
+  );
   BOOST_TEST_EQ(w, 3);
   const bool parity2 = get(parities, 2);
   BOOST_TEST_EQ(parity2, get(parities, 4));
@@ -114,11 +137,19 @@ void test3()
     {0, 5}, {0, 2}, {4, 1}, {1, 6}, {1, 5}, {6, 7}, {7, 5}, {5, 2}, {3, 4}};
   weight_type ws[] = {0, 3, 1, 3, 1, 2, 6, 1, 8, 1, 1, 80, 2, 1, 1, 4};
   undirected_graph g(edges, edges + 16, ws, 8, 16);
-  
+
   weight_map_type weights = get(boost::edge_weight, g);
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(g, weights, boost::parity_map(parities));
+  int w = boost::stoer_wagner_min_cut(
+    g,
+    weights,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_parity_map = parities
+#else
+    boost::parity_map(parities)
+#endif
+  );
   BOOST_TEST_EQ(w, 7);
   const bool parity1 = get(parities, 1);
   BOOST_TEST_EQ(parity1, get(parities, 5));
@@ -135,17 +166,26 @@ void test4()
 {
   typedef boost::graph_traits<undirected_unweighted_graph>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<undirected_unweighted_graph>::edge_descriptor edge_descriptor;
-  
+
   edge_t edges[] = {{0, 1}, {1, 2}, {2, 3},
     {0, 4}, {1, 4}, {1, 5}, {2, 6}, {3, 6}, {3, 7}, {4, 5}, {5, 6}, {6, 7},
     {0, 4}, {6, 7}};
   undirected_unweighted_graph g(edges, edges + 14, 8);
-  
+
   std::map<vertex_descriptor, bool> parity;
   boost::associative_property_map<std::map<vertex_descriptor, bool> > parities(parity);
   std::map<vertex_descriptor, vertex_descriptor> assignment;
   boost::associative_property_map<std::map<vertex_descriptor, vertex_descriptor> > assignments(assignment);
-  int w = boost::stoer_wagner_min_cut(g, boost::make_constant_property<edge_descriptor>(weight_type(1)), boost::vertex_assignment_map(assignments).parity_map(parities));
+  int w = boost::stoer_wagner_min_cut(
+    g,
+    boost::make_constant_property<edge_descriptor>(weight_type(1)),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_vertex_assignment_map = assignments,
+    boost::graph::keywords::_parity_map = parities
+#else
+    boost::vertex_assignment_map(assignments).parity_map(parities)
+#endif
+  );
   BOOST_TEST_EQ(w, 2);
   const bool parity0 = get(parities, 0);
   BOOST_TEST_EQ(parity0, get(parities, 1));
@@ -171,59 +211,67 @@ void test4()
 // weight of the min-cut is verified.
 
 // 3 min-cuts
-void test_prgen_20_70_2()
+void test_prgen_20_70_2(std::string test_dir)
 {
   typedef boost::graph_traits<undirected_graph>::vertex_descriptor vertex_descriptor;
-  
+
   std::ifstream ifs((test_dir + "/prgen_input_graphs/prgen_20_70_2.net").c_str());
   undirected_graph g;
   boost::read_dimacs_min_cut(g, get(boost::edge_weight, g), boost::dummy_property_map(), ifs);
-  
+
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
-  
+
   typedef boost::shared_array_property_map<weight_type, boost::property_map<undirected_graph, boost::vertex_index_t>::const_type> distances_type;
   distances_type distances = boost::make_shared_array_property_map(num_vertices(g), weight_type(0), get(boost::vertex_index, g));
   typedef std::vector<vertex_descriptor>::size_type index_in_heap_type;
   typedef boost::shared_array_property_map<index_in_heap_type, boost::property_map<undirected_graph, boost::vertex_index_t>::const_type> indicesInHeap_type;
   indicesInHeap_type indicesInHeap = boost::make_shared_array_property_map(num_vertices(g), index_in_heap_type(-1), get(boost::vertex_index, g));
   boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > pq(distances, indicesInHeap);
-  
-  int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g), boost::max_priority_queue(pq));
+
+  int w = boost::stoer_wagner_min_cut(
+    g,
+    get(boost::edge_weight, g),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_max_priority_queue = pq
+#else
+    boost::max_priority_queue(pq)
+#endif
+  );
   BOOST_TEST_EQ(w, 3407);
 }
 
 // 7 min-cuts
-void test_prgen_50_40_2()
+void test_prgen_50_40_2(std::string test_dir)
 {
   typedef boost::graph_traits<undirected_graph>::vertex_descriptor vertex_descriptor;
-  
+
   std::ifstream ifs((test_dir + "/prgen_input_graphs/prgen_50_40_2.net").c_str());
   undirected_graph g;
   boost::read_dimacs_min_cut(g, get(boost::edge_weight, g), boost::dummy_property_map(), ifs);
-  
+
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
-  
+
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 10056);
 }
 
 // 6 min-cuts
-void test_prgen_50_70_2()
+void test_prgen_50_70_2(std::string test_dir)
 {
   typedef boost::graph_traits<undirected_graph>::vertex_descriptor vertex_descriptor;
-  
+
   std::ifstream ifs((test_dir + "/prgen_input_graphs/prgen_50_70_2.net").c_str());
   undirected_graph g;
   boost::read_dimacs_min_cut(g, get(boost::edge_weight, g), boost::dummy_property_map(), ifs);
-  
+
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
-  
+
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 21755);
 }
@@ -233,15 +281,14 @@ int main( int argc, char* argv[] ) {
     std::cerr << "Usage: " << argv[0] << " path-to-libs-graph-test" << std::endl;
     BOOST_ERROR("Invalid command line arguments");
   } else {
-    test_dir = argv[1];
     test0();
     test1();
     test2();
     test3();
     test4();
-    test_prgen_20_70_2();
-    test_prgen_50_40_2();
-    test_prgen_50_70_2();
+    test_prgen_20_70_2(argv[1]);
+    test_prgen_50_40_2(argv[1]);
+    test_prgen_50_70_2(argv[1]);
   }
   return boost::report_errors();
 }
