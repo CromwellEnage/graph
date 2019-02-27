@@ -732,6 +732,7 @@ namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_tag)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(centrality_type)
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -930,6 +931,24 @@ namespace boost { namespace detail {
         : property_type_contains<typename G::vertex_property_type,Tag>
     {
     };
+}}
+
+#include <boost/type_traits/is_integral.hpp>
+
+namespace boost { namespace detail {
+
+    template <typename G>
+    struct is_graph_with_vertex_property_type_impl<G,vertex_index_t>
+        : mpl::if_<
+            boost::is_integral<typename G::vertex_property_type>,
+            mpl::true_,
+            property_type_contains<
+                typename G::vertex_property_type,
+                vertex_index_t
+            >
+        >::type
+    {
+    };
 
     template <typename G, typename Tag>
     struct is_graph_with_vertex_property_type
@@ -1017,13 +1036,6 @@ namespace boost { namespace detail {
         >::type
     {
     };
-}}
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-
-#include <boost/type_traits/is_integral.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-namespace boost { namespace detail {
 
     template <typename T>
     struct is_integral_value_map_impl
@@ -1147,20 +1159,6 @@ namespace boost { namespace detail {
     template <typename G, typename Tag>
     struct has_internal_edge_property_map_dispatch;
 
-    template <typename G>
-    struct is_graph_with_integral_vertex_property_map
-    {
-        typedef typename mpl::eval_if<
-            boost::is_integral<typename G::vertex_property_type>,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-            has_internal_property_map_impl<G,vertex_index_t>,
-#else
-            mpl::true_,
-#endif
-            mpl::false_
-        >::type type;
-    };
-
     template <typename G, typename Tag>
     struct has_graph_type_with_internal_vertex_property_map
     {
@@ -1230,7 +1228,11 @@ namespace boost { namespace detail {
 #endif
                     mpl::eval_if<
                         is_graph_with_vertex_property_type<G,vertex_index_t>,
-                        is_graph_with_integral_vertex_property_map<G>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                        has_internal_property_map_impl<G,vertex_index_t>,
+#else
+                        mpl::true_,
+#endif
                         mpl::eval_if<
                             graph_detail::has_graph_type<G>,  // for adaptors
                             has_graph_type_with_internal_vertex_property_map<
@@ -1413,6 +1415,42 @@ namespace boost { namespace detail {
         };
     };
 
+    template <typename T, typename G>
+    struct is_clustering_terminator_function
+        : is_trinary_function<
+            T,
+            typename T::centrality_type,
+            typename graph_traits<G>::edge_descriptor,
+            G,
+            mpl::quote1<is_boolean_expression>
+        >
+    {
+    };
+
+    struct clustering_terminator_function_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef typename boost::remove_const<
+                typename boost::remove_reference<Arg>::type
+            >::type mut_arg;
+            typedef typename mpl::if_<
+                graph_detail::has_centrality_type<mut_arg>,
+                is_clustering_terminator_function<
+                    mut_arg,
+                    typename boost::remove_const<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            boost::graph::keywords::tag::graph
+                        >::type
+                    >::type
+                >,
+                mpl::false_
+            >::type type;
+        };
+    };
+
 #if defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
     // Without decltype() or BOOST_TYPEOF_KEYWORD(), we can detect a
     // Visitor model only by what it isn't rather than by what it is.
@@ -1473,6 +1511,19 @@ namespace boost { namespace detail {
         >
     {
     };
+
+    struct clustering_terminator_function_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef typename graph_detail::has_centrality_type<
+                typename boost::remove_const<
+                    typename boost::remove_reference<Arg>::type
+                >::type
+            >::type type;
+        };
+    };
 }}
 
 #include <boost/type_traits/is_base_of.hpp>
@@ -1526,6 +1577,16 @@ namespace boost { namespace detail {
     };
 }}
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+
+namespace boost { namespace detail {
+
+    template <typename T>
+    inline typename T::centrality_type
+        make_default_centrality_value(const T&)
+    {
+        return typename T::centrality_type();
+    }
+}}
 
 #include <cstddef>
 #include <utility>

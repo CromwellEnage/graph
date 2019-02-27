@@ -18,7 +18,7 @@
 #include <boost/graph/maximum_adjacency_search.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
-#include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/remove_const.hpp>

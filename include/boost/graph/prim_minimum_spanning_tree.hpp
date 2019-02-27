@@ -93,7 +93,7 @@ namespace boost {
         Args,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
-        Graph
+        VertexListGraph
     >::type v_i_map = detail::override_const_property(
         arg_pack,
         _vertex_index_map,
