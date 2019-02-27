@@ -44,13 +44,13 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <set>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>

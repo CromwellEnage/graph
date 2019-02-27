@@ -160,6 +160,9 @@ void betweenness_centrality_clustering(
     typename boost::remove_reference<graph_type>::type
   >::type MutableGraph;
   typedef typename boost::remove_const<
+    typename boost::remove_reference<terminator_function_type>::type
+  >::type Done;
+  typedef typename boost::remove_const<
     typename boost::remove_reference<edge_centrality_map_type>::type
   >::type EdgeCentralityMap;
 #endif
@@ -170,6 +173,10 @@ void betweenness_centrality_clustering(
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   if (has_no_edges(graph)) return true;
+
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  Done tf = terminator_function;
+#endif
 #else
   if (has_no_edges(graph)) return;
 #endif
@@ -192,7 +199,12 @@ void betweenness_centrality_clustering(
     );
     std::pair<edge_iterator, edge_iterator> edges_iters = edges(graph);
     edge_descriptor e = *max_element(edges_iters.first, edges_iters.second, cmp);
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    is_done = tf(get(edge_centrality_map, e), e, graph);
+#else
     is_done = terminator_function(get(edge_centrality_map, e), e, graph);
+#endif
     if (!is_done) remove_edge(e, graph);
   } while (!is_done && !has_no_edges(graph));
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
