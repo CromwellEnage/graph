@@ -6,8 +6,8 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
+#include <boost/graph/detail/traits.hpp>
 #include <boost/graph/betweenness_centrality.hpp>
-
 #include <boost/graph/adjacency_list.hpp>
 #include <vector>
 #include <stack>
@@ -90,7 +90,7 @@ template<typename Graph>
 void 
 run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
                     std::size_t E, double correct_centrality[],
-                    double* correct_edge_centrality = 0)
+                    double* correct_edge_centrality = BOOST_GRAPH_DETAIL_NULLPTR)
 {
   Graph g(V);
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -182,8 +182,8 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
     BOOST_TEST(centrality[v] == centrality2[v]);
 
     double relative_error = 
-      correct_centrality[v] == 0.0? centrality[v]
-      : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
+      (correct_centrality[v] == 0.0) ? centrality[v]
+      : ((centrality[v] - correct_centrality[v]) / correct_centrality[v]);
     if (relative_error < 0) relative_error = -relative_error;
     BOOST_TEST(relative_error < error_tolerance);
   }  
@@ -194,9 +194,9 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 
     if (correct_edge_centrality) {
       double relative_error = 
-        correct_edge_centrality[e] == 0.0? edge_centrality1[e]
-        : (edge_centrality1[e] - correct_edge_centrality[e]) 
-        / correct_edge_centrality[e];
+        (correct_edge_centrality[e] == 0.0) ? edge_centrality1[e]
+        : ((edge_centrality1[e] - correct_edge_centrality[e]) 
+        / correct_edge_centrality[e]);
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
 
@@ -457,8 +457,8 @@ void random_unweighted_test(Graph*, std::size_t n)
                   centrality2.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
       double relative_error = 
-        centrality[v] == 0.0? centrality2[v]
-        : (centrality2[v] - centrality[v]) / centrality[v];
+        (centrality[v] == 0.0) ? centrality2[v]
+        : ((centrality2[v] - centrality[v]) / centrality[v]);
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
     }
@@ -491,8 +491,8 @@ void random_unweighted_test(Graph*, std::size_t n)
                   centrality3.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
       double relative_error = 
-        centrality[v] == 0.0? centrality3[v]
-        : (centrality3[v] - centrality[v]) / centrality[v];
+        (centrality[v] == 0.0) ? centrality3[v]
+        : ((centrality3[v] - centrality[v]) / centrality[v]);
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
     }
@@ -521,7 +521,13 @@ int main(int argc, char* argv[])
     { 2, 4 }
   };
   double ud_centrality1[5] = { 0.5, 1.0, 3.5, 1.0, 0.0 };
-  run_unweighted_test((Graph*)0, 5, ud_edge_init1, 5, ud_centrality1);
+  run_unweighted_test(
+    static_cast<Graph*>(BOOST_GRAPH_DETAIL_NULLPTR),
+    5,
+    ud_edge_init1,
+    5,
+    ud_centrality1
+  );
 
   // Example borrowed from the JUNG test suite
   struct unweighted_edge ud_edge_init2[10] = { 
@@ -560,8 +566,14 @@ int main(int argc, char* argv[])
     8.0
   };
 
-  run_unweighted_test((Graph*)0, 9, ud_edge_init2, 10, ud_centrality2,
-                      ud_edge_centrality2);
+  run_unweighted_test(
+    static_cast<Graph*>(BOOST_GRAPH_DETAIL_NULLPTR),
+    9,
+    ud_edge_init2,
+    10,
+    ud_centrality2,
+    ud_edge_centrality2
+  );
 
   weighted_edge dw_edge_init1[6] = {
     { 0, 1, 1.0 },
@@ -572,11 +584,19 @@ int main(int argc, char* argv[])
     { 4, 2, 0.5 }
   };
   double dw_centrality1[5] = { 0.0, 1.5, 0.0, 1.0, 0.5 };
-  run_weighted_test((Digraph*)0, 5, dw_edge_init1, 6, dw_centrality1);
 
-  run_wheel_test((Graph*)0, 15);
-
-  random_unweighted_test((Graph*)0, random_test_num_vertices);
+  run_weighted_test(
+    static_cast<Digraph*>(BOOST_GRAPH_DETAIL_NULLPTR),
+    5,
+    dw_edge_init1,
+    6,
+    dw_centrality1
+  );
+  run_wheel_test(static_cast<Graph*>(BOOST_GRAPH_DETAIL_NULLPTR), 15);
+  random_unweighted_test(
+    static_cast<Graph*>(BOOST_GRAPH_DETAIL_NULLPTR),
+    random_test_num_vertices
+  );
 
   return boost::report_errors();
 }
