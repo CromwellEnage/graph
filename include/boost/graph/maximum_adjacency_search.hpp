@@ -135,14 +135,16 @@ namespace boost {
     void
     maximum_adjacency_search(
       const Graph& g, WeightMap weights,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       MASVisitor&& vis,
 #else
       MASVisitor vis,
 #endif
       const typename boost::graph_traits<Graph>::vertex_descriptor start,
       VertexAssignmentMap assignments,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       KeyedUpdatablePriorityQueue&& pq
 #else
       KeyedUpdatablePriorityQueue pq
@@ -226,14 +228,16 @@ namespace boost {
   void
   maximum_adjacency_search(
     const Graph& g, WeightMap weights,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     MASVisitor&& vis,
 #else
     MASVisitor vis,
 #endif
     const typename boost::graph_traits<Graph>::vertex_descriptor start,
     VertexAssignmentMap assignments,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     KeyedUpdatablePriorityQueue&& pq
 #else
     KeyedUpdatablePriorityQueue pq
@@ -247,7 +251,8 @@ namespace boost {
     BOOST_CONCEPT_ASSERT((boost::Convertible<typename boost::graph_traits<Graph>::directed_category, boost::undirected_tag>));
     BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept<WeightMap, edge_descriptor>));
     // typedef typename boost::property_traits<WeightMap>::value_type weight_type;
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     BOOST_CONCEPT_ASSERT((
       MASVisitorConcept<
         typename boost::remove_const<
@@ -261,7 +266,8 @@ namespace boost {
 #endif
     BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
     BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     BOOST_CONCEPT_ASSERT((
       boost::KeyedUpdatableQueueConcept<
         typename boost::remove_const<
@@ -279,7 +285,8 @@ namespace boost {
     else if (!pq.empty())
       throw std::invalid_argument("the max-priority queue must be empty initially.");
 
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     detail::maximum_adjacency_search(
       g, weights, std::forward<MASVisitor>(vis), start, assignments,
       std::forward<KeyedUpdatablePriorityQueue>(pq)

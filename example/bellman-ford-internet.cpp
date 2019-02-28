@@ -52,16 +52,24 @@ main()
     make_iterator_property_map(&delay[0], get(edge_index, g), delay[0]),
     boost::graph::keywords::_distance_map = &distance[0],
     boost::graph::keywords::_predecessor_map = &parent[0]
-#else
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     int (n_vertices),
     weight_map(
       make_iterator_property_map(&delay[0], get(edge_index, g), delay[0])
     ).distance_map(
+#if defined(BOOST_MSVC)
+      &distance[0]
+#else
       make_iterator_property_map(&distance[0], get(vertex_index, g), distance[0])
-    ).predecessor_map(
-      make_iterator_property_map(&parent[0], get(vertex_index, g), parent[0])
-    )
 #endif
+    ).predecessor_map(
+#if defined(BOOST_MSVC)
+      &parent[0]
+#else
+      make_iterator_property_map(&parent[0], get(vertex_index, g), parent[0])
+#endif
+    )
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   );
 
   if (r)

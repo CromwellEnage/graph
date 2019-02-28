@@ -17,6 +17,7 @@
 #include <boost/graph/relax.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -28,7 +29,6 @@
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
@@ -179,12 +179,16 @@ namespace detail { namespace graph {
       typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
       typedef typename graph_traits<Graph>::vertex_descriptor 
         vertex_descriptor;
-      
+
       visitor_type(IncomingMap incoming, DistanceMap distance, 
                    PathCountMap path_count, 
                    std::stack<vertex_descriptor>& ordered_vertices)
         : incoming(incoming), distance(distance), 
           path_count(path_count), ordered_vertices(ordered_vertices) { }
+
+      visitor_type(const visitor_type& copy)
+        : incoming(copy.incoming), distance(copy.distance), 
+          path_count(copy.path_count), ordered_vertices(copy.ordered_vertices) { }
 
       /// Keep track of vertices as they are reached
       void examine_vertex(vertex_descriptor v, Graph&)
@@ -246,7 +250,7 @@ namespace detail { namespace graph {
 
       visitor_type<Graph, IncomingMap, DistanceMap, PathCountMap>
         visitor(incoming, distance, path_count, ov);
-      
+
       std::vector<default_color_type> 
         colors(num_vertices(g), color_traits<default_color_type>::white());
       boost::queue<vertex_descriptor> Q;
@@ -541,6 +545,9 @@ void brandes_betweenness_centrality_dispatch(
         boost::graph::keywords::tag::path_count_map,
         D
     > path_count_map_gen(zero_degree);
+    detail::graph::brandes_dijkstra_shortest_paths<
+        weight_map_type
+    > bdsp(w_map);
     detail::graph::brandes_betweenness_centrality_impl(
         g,
         v_c_map,
@@ -555,9 +562,7 @@ void brandes_betweenness_centrality_dispatch(
             g,
             vertex_index
         ),
-        detail::graph::brandes_dijkstra_shortest_paths<
-            weight_map_type
-        >(w_map)
+        bdsp
     );
 }
 
@@ -619,6 +624,7 @@ void brandes_betweenness_centrality_dispatch(
         boost::graph::keywords::tag::path_count_map,
         D
     > path_count_map_gen(zero_degree);
+    detail::graph::brandes_unweighted_shortest_paths usp;
     detail::graph::brandes_betweenness_centrality_impl(
         g,
         v_c_map,
@@ -633,7 +639,7 @@ void brandes_betweenness_centrality_dispatch(
             g,
             vertex_index
         ),
-        detail::graph::brandes_unweighted_shortest_paths()
+        usp
     );
 }
 }}}  // end namespace boost::detail::graph

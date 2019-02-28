@@ -138,8 +138,10 @@ namespace boost { namespace detail {
       VertexAssignmentMap assignments,
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       KeyedUpdatablePriorityQueue&& pq,
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       KeyedUpdatablePriorityQueue pq,
+#else
+      KeyedUpdatablePriorityQueue& pq,
 #endif
       IndexMap index_map
     )
@@ -230,8 +232,10 @@ namespace boost {
       VertexAssignmentMap assignments,
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       KeyedUpdatablePriorityQueue&& pq,
-#else
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       KeyedUpdatablePriorityQueue pq,
+#else
+      KeyedUpdatablePriorityQueue& pq,
 #endif
       IndexMap index_map
     )
@@ -248,7 +252,8 @@ namespace boost {
       // typedef typename boost::property_traits<ParityMap>::value_type parity_type;
       BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
       BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
       BOOST_CONCEPT_ASSERT((
         boost::KeyedUpdatableQueueConcept<
           typename boost::remove_const<
@@ -268,7 +273,8 @@ namespace boost {
 
       return detail::stoer_wagner_min_cut(
         g, weights, parities, assignments,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
         std::forward<KeyedUpdatablePriorityQueue>(pq),
 #else
         pq,

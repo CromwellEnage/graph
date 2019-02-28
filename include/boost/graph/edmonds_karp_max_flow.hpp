@@ -92,7 +92,7 @@ namespace boost {
       PredEdgeMap
     >,
 #endif
-  typename property_traits<CapacityEdgeMap>::value_type
+    typename property_traits<CapacityEdgeMap>::value_type
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   >::type
 #endif
