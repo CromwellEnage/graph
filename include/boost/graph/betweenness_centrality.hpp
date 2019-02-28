@@ -18,10 +18,10 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
@@ -33,6 +33,8 @@
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
@@ -270,10 +272,26 @@ namespace detail { namespace graph {
   // centralities to zero.
   template<typename Iter, typename Centrality>
   void 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  init_centrality_map(std::pair<Iter, Iter> keys, Centrality&& centrality_map)
+#else
   init_centrality_map(std::pair<Iter, Iter> keys, Centrality centrality_map)
+#endif
   {
-    typedef typename property_traits<Centrality>::value_type 
-      centrality_type;
+    typedef typename property_traits<
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+      typename boost::remove_const<
+        typename boost::remove_reference<
+#endif
+          Centrality
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+        >::type
+      >::type
+#endif
+    >::value_type centrality_type;
     while (keys.first != keys.second) {
       put(centrality_map, *keys.first, centrality_type(0));
       ++keys.first;
@@ -289,7 +307,12 @@ namespace detail { namespace graph {
   // When we have a real edge centrality map, add the value to the map
   template<typename CentralityMap, typename Key, typename T>
   inline void 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  update_centrality(CentralityMap&& centrality_map, Key k, const T& x)
+#else
   update_centrality(CentralityMap centrality_map, Key k, const T& x)
+#endif
   { put(centrality_map, k, get(centrality_map, k) + x); }
 
   template<typename Iter>
@@ -299,9 +322,27 @@ namespace detail { namespace graph {
   template<typename Iter, typename CentralityMap>
   inline void
   divide_centrality_by_two(std::pair<Iter, Iter> keys, 
-                           CentralityMap centrality_map)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                           CentralityMap&& centrality_map
+#else
+                           CentralityMap centrality_map
+#endif
+                           )
   {
-    typename property_traits<CentralityMap>::value_type two(2);
+    typename property_traits<
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+      typename boost::remove_const<
+        typename boost::remove_reference<
+#endif
+          CentralityMap
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+        >::type
+      >::type
+#endif
+    >::value_type two(2);
     while (keys.first != keys.second) {
       put(centrality_map, *keys.first, get(centrality_map, *keys.first) / two);
       ++keys.first;
@@ -314,8 +355,14 @@ namespace detail { namespace graph {
            typename VertexIndexMap, typename ShortestPaths>
   void 
   brandes_betweenness_centrality_impl(const Graph& g, 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                                      CentralityMap&& centrality,   // C_B
+                                      EdgeCentralityMap&& edge_centrality_map,
+#else
                                       CentralityMap centrality,     // C_B
                                       EdgeCentralityMap edge_centrality_map,
+#endif
                                       IncomingMap incoming, // P
                                       DistanceMap distance,         // d
                                       DependencyMap dependency,     // delta
@@ -327,8 +374,20 @@ namespace detail { namespace graph {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 
     // Initialize centrality
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    init_centrality_map(
+      vertices(g),
+      std::forward<CentralityMap>(centrality)
+    );
+    init_centrality_map(
+      edges(g),
+      std::forward<EdgeCentralityMap>(edge_centrality_map)
+    );
+#else
     init_centrality_map(vertices(g), centrality);
     init_centrality_map(edges(g), edge_centrality_map);
+#endif
 
     std::stack<vertex_descriptor> ordered_vertices;
     vertex_iterator s, s_end;
@@ -365,11 +424,29 @@ namespace detail { namespace graph {
             / dependency_type(get(path_count, w));
           factor *= (dependency_type(1) + get(dependency, w));
           put(dependency, v, get(dependency, v) + factor);
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+          update_centrality(
+            std::forward<EdgeCentralityMap>(edge_centrality_map),
+            *vw,
+            factor
+          );
+#else
           update_centrality(edge_centrality_map, *vw, factor);
+#endif
         }
         
         if (w != *s) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+          update_centrality(
+            std::forward<CentralityMap>(centrality),
+            w,
+            get(dependency, w)
+          );
+#else
           update_centrality(centrality, w, get(dependency, w));
+#endif
         }
       }
     }
@@ -378,8 +455,20 @@ namespace detail { namespace graph {
     const bool is_undirected = 
       is_convertible<directed_category*, undirected_tag*>::value;
     if (is_undirected) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+      divide_centrality_by_two(
+        vertices(g),
+        std::forward<CentralityMap>(centrality)
+      );
+      divide_centrality_by_two(
+        edges(g),
+        std::forward<EdgeCentralityMap>(edge_centrality_map)
+      );
+#else
       divide_centrality_by_two(vertices(g), centrality);
       divide_centrality_by_two(edges(g), edge_centrality_map);
+#endif
     }
   }
 
@@ -391,8 +480,14 @@ template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
          typename VertexIndexMap>
 void 
 brandes_betweenness_centrality(const Graph& g, 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                               CentralityMap&& centrality,   // C_B
+                               EdgeCentralityMap&& edge_centrality_map,
+#else
                                CentralityMap centrality,     // C_B
                                EdgeCentralityMap edge_centrality_map,
+#endif
                                IncomingMap incoming, // P
                                DistanceMap distance,         // d
                                DependencyMap dependency,     // delta
@@ -413,8 +508,19 @@ brandes_betweenness_centrality(const Graph& g,
 {
   detail::graph::brandes_unweighted_shortest_paths shortest_paths;
 
-  detail::graph::brandes_betweenness_centrality_impl(g, centrality, 
+  detail::graph::brandes_betweenness_centrality_impl(g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                                                     std::forward<
+                                                       CentralityMap
+                                                     >(centrality), 
+                                                     std::forward<
+                                                       EdgeCentralityMap
+                                                     >(edge_centrality_map),
+#else
+                                                     centrality, 
                                                      edge_centrality_map,
+#endif
                                                      incoming, distance,
                                                      dependency, path_count,
                                                      vertex_index, 
@@ -427,8 +533,14 @@ template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
          typename VertexIndexMap, typename WeightMap>    
 void 
 brandes_betweenness_centrality(const Graph& g, 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                               CentralityMap&& centrality,   // C_B
+                               EdgeCentralityMap&& edge_centrality_map,
+#else
                                CentralityMap centrality,     // C_B
                                EdgeCentralityMap edge_centrality_map,
+#endif
                                IncomingMap incoming, // P
                                DistanceMap distance,         // d
                                DependencyMap dependency,     // delta
@@ -451,8 +563,19 @@ brandes_betweenness_centrality(const Graph& g,
   detail::graph::brandes_dijkstra_shortest_paths<WeightMap>
     shortest_paths(weight_map);
 
-  detail::graph::brandes_betweenness_centrality_impl(g, centrality, 
+  detail::graph::brandes_betweenness_centrality_impl(g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+                                                     std::forward<
+                                                       CentralityMap
+                                                     >(centrality), 
+                                                     std::forward<
+                                                       EdgeCentralityMap
+                                                     >(edge_centrality_map),
+#else
+                                                     centrality, 
                                                      edge_centrality_map,
+#endif
                                                      incoming, distance,
                                                      dependency, path_count,
                                                      vertex_index, 
@@ -836,14 +959,21 @@ inline typename boost::disable_if<
     >::type,
     void
 >::type
-brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
+brandes_betweenness_centrality(
+    const Graph& g,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-                               , typename boost::disable_if<
-                                 parameter::are_tagged_arguments<CentralityMap>,
-                                 mpl::true_
-                               >::type = mpl::true_()
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    CentralityMap&& centrality,
+#else
+    CentralityMap centrality,
 #endif
-                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+    typename boost::disable_if<
+        parameter::are_tagged_arguments<CentralityMap>,
+        mpl::true_
+    >::type = mpl::true_()
+#endif
+    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
+)
 {
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::brandes_betweenness_centrality(
@@ -860,10 +990,15 @@ brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
 template <typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 inline void brandes_betweenness_centrality(
     const Graph& g,
-    CentralityMap centrality,
-    EdgeCentralityMap edge_centrality_map
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    , typename boost::disable_if<
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    CentralityMap&& centrality,
+    EdgeCentralityMap&& edge_centrality_map,
+#else
+    CentralityMap centrality,
+    EdgeCentralityMap edge_centrality_map,
+#endif
+    typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap,EdgeCentralityMap>,
         mpl::true_
     >::type = mpl::true_()
