@@ -181,9 +181,16 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
     BOOST_TEST(centrality[v] == centrality2[v]);
 
-    double relative_error = 
+    double relative_error =
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && \
+    defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+    (7 == __clang_major__)
+      correct_centrality[v] == 0.0? centrality[v]
+      : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
+#else
       (correct_centrality[v] == 0.0) ? centrality[v]
       : ((centrality[v] - correct_centrality[v]) / correct_centrality[v]);
+#endif
     if (relative_error < 0) relative_error = -relative_error;
     BOOST_TEST(relative_error < error_tolerance);
   }  
@@ -193,10 +200,18 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
     BOOST_TEST(edge_centrality1[e] == edge_centrality3[e]);
 
     if (correct_edge_centrality) {
-      double relative_error = 
+      double relative_error =
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && \
+    defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+    (7 == __clang_major__)
+        correct_edge_centrality[e] == 0.0? edge_centrality1[e]
+        : (edge_centrality1[e] - correct_edge_centrality[e]) 
+        / correct_edge_centrality[e];
+#else
         (correct_edge_centrality[e] == 0.0) ? edge_centrality1[e]
         : ((edge_centrality1[e] - correct_edge_centrality[e]) 
         / correct_edge_centrality[e]);
+#endif
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
 
@@ -461,9 +476,16 @@ void random_unweighted_test(Graph*, std::size_t n)
   if (!std::equal(centrality.begin(), centrality.end(),
                   centrality2.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
-      double relative_error = 
+      double relative_error =
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && \
+    defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+    (7 == __clang_major__)
+        centrality[v] == 0.0? centrality2[v]
+        : (centrality2[v] - centrality[v]) / centrality[v];
+#else
         (centrality[v] == 0.0) ? centrality2[v]
         : ((centrality2[v] - centrality[v]) / centrality[v]);
+#endif
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
     }
@@ -495,9 +517,16 @@ void random_unweighted_test(Graph*, std::size_t n)
   if (!std::equal(centrality.begin(), centrality.end(),
                   centrality3.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
-      double relative_error = 
+      double relative_error =
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && \
+    defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+    (7 == __clang_major__)
+        centrality[v] == 0.0? centrality3[v]
+        : (centrality3[v] - centrality[v]) / centrality[v];
+#else
         (centrality[v] == 0.0) ? centrality3[v]
         : ((centrality3[v] - centrality[v]) / centrality[v]);
+#endif
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
     }
