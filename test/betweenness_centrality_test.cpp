@@ -182,9 +182,18 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
     BOOST_TEST(centrality[v] == centrality2[v]);
 
     double relative_error =
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
       (correct_centrality[v] == 0.0) ? centrality[v]
       : ((centrality[v] - correct_centrality[v]) / correct_centrality[v]);
@@ -202,9 +211,18 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 
     if (correct_edge_centrality) {
       double relative_error =
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
         (correct_edge_centrality[e] == 0.0) ? edge_centrality1[e]
         : ((edge_centrality1[e] - correct_edge_centrality[e]) 
@@ -326,10 +344,7 @@ template<typename Graph, typename VertexIndexMap, typename CentralityMap>
 void 
 simple_unweighted_betweenness_centrality(const Graph& g, VertexIndexMap index,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
-    )
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
                                          CentralityMap&& centrality
 #else
                                          CentralityMap centrality
@@ -482,9 +497,18 @@ void random_unweighted_test(Graph*, std::size_t n)
                   centrality2.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
       double relative_error =
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
         (centrality[v] == 0.0) ? centrality2[v]
         : ((centrality2[v] - centrality[v]) / centrality[v]);
@@ -524,9 +548,18 @@ void random_unweighted_test(Graph*, std::size_t n)
                   centrality3.begin())) {
     for (std::size_t v = 0; v < centrality.size(); ++v) {
       double relative_error =
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
         (centrality[v] == 0.0) ? centrality3[v]
         : ((centrality3[v] - centrality[v]) / centrality[v]);

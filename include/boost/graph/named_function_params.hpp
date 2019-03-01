@@ -556,9 +556,18 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
       result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
 #else
@@ -569,9 +578,18 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     template <typename ArgType, typename Prop, typename Graph>
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
     )
       result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
 #else
@@ -594,7 +612,23 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) \
+    )
     override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, Graph& g, Prop)
+#else
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop)
+#endif
     {
     typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<
