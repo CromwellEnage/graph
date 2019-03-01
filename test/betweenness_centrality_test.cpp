@@ -324,10 +324,7 @@ template<typename Graph, typename VertexIndexMap, typename CentralityMap>
 void 
 simple_unweighted_betweenness_centrality(const Graph& g, VertexIndexMap index,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
-        defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-        (7 == __clang_major__) \
-    )
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
                                          CentralityMap&& centrality
 #else
                                          CentralityMap centrality
