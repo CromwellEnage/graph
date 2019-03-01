@@ -560,12 +560,12 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
         ( \
             !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) || ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) \
     )
@@ -582,12 +582,12 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
         ( \
             !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) || ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) \
     )
@@ -616,12 +616,12 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
         ( \
             !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) || ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
                 defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-                (7 == __clang_major__) \
+                (__clang_major__ < 9) \
             ) \
         ) \
     )
