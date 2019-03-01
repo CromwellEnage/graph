@@ -557,9 +557,16 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     struct override_property_t {
       typedef ArgType result_type;
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
-        defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) || ( \
-            defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-            (7 == __clang_major__) \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
         ) \
     )
       result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
@@ -572,9 +579,16 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
-        defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) || ( \
-            defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
-            (7 == __clang_major__) \
+        ( \
+            !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && ( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
+        ) || ( \
+            defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && !( \
+                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                (7 == __clang_major__) \
+            ) \
         ) \
     )
       result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
