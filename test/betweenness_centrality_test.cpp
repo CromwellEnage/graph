@@ -185,7 +185,7 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
         ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) == ( \
-                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                defined(__APPLE_CC__) && defined(__clang_major__) && \
                 (__clang_major__ < 9) \
             ) \
         ) \
@@ -209,7 +209,7 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
         ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) == ( \
-                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                defined(__APPLE_CC__) && defined(__clang_major__) && \
                 (__clang_major__ < 9) \
             ) \
         ) \
@@ -484,7 +484,7 @@ void random_unweighted_test(Graph*, std::size_t n)
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
         ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) == ( \
-                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                defined(__APPLE_CC__) && defined(__clang_major__) && \
                 (__clang_major__ < 9) \
             ) \
         ) \
@@ -530,7 +530,7 @@ void random_unweighted_test(Graph*, std::size_t n)
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
         ( \
             defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) == ( \
-                defined(BOOST_CLANG) && defined(__APPLE_CC__) && \
+                defined(__APPLE_CC__) && defined(__clang_major__) && \
                 (__clang_major__ < 9) \
             ) \
         ) \
