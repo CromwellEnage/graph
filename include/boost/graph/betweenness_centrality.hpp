@@ -208,9 +208,11 @@ namespace detail { namespace graph {
         vertex_descriptor v = source(e, g);
         vertex_descriptor w = target(e, g);
         put(distance, w, get(distance, v) + 1);
-        
         put(path_count, w, get(path_count, v));
-        incoming[w].push_back(e);
+        typename property_traits<
+          IncomingMap
+        >::reference in_seq = get(incoming, w);
+        in_seq.push_back(e);
       }
 
       /**
@@ -225,7 +227,10 @@ namespace detail { namespace graph {
         vertex_descriptor w = target(e, g);
         if (get(distance, w) == get(distance, v) + 1) {
           put(path_count, w, get(path_count, w) + get(path_count, v));
-          incoming[w].push_back(e);
+          typename property_traits<
+            IncomingMap
+          >::reference in_seq = get(incoming, w);
+          in_seq.push_back(e);
         }
       }
 

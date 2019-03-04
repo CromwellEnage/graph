@@ -181,6 +181,11 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
     BOOST_TEST(centrality[v] == centrality2[v]);
 
+    if (centrality[v] != centrality2[v]) {
+      std::cerr << "v = " << v << ", centrality = " << centrality[v];
+      std::cerr << ", centrality2 = " << centrality[v] << std::endl;
+    }
+
     double relative_error =
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && ( \
         ( \
@@ -198,11 +203,27 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 #endif
     if (relative_error < 0) relative_error = -relative_error;
     BOOST_TEST(relative_error < error_tolerance);
+
+    if (relative_error >= error_tolerance) {
+      std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+      std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
+    }
   }  
 
   for (std::vector<double>::size_type e = 0; e < E; ++e) {
     BOOST_TEST(edge_centrality1[e] == edge_centrality2[e]);
     BOOST_TEST(edge_centrality1[e] == edge_centrality3[e]);
+
+    if (edge_centrality1[e] != edge_centrality2[e]) {
+      std::cerr << "e = " << e << ", edge_centrality1 = ";
+      std::cerr << edge_centrality1[e] << ", edge_centrality2 = ";
+      std::cerr << edge_centrality2[e] << std::endl;
+    }
+    if (edge_centrality1[e] != edge_centrality3[e]) {
+      std::cerr << "e = " << e << ", edge_centrality1 = ";
+      std::cerr << edge_centrality1[e] << ", edge_centrality3 = ";
+      std::cerr << edge_centrality3[e] << std::endl;
+    }
 
     if (correct_edge_centrality) {
       double relative_error =
@@ -497,6 +518,11 @@ void random_unweighted_test(Graph*, std::size_t n)
 #endif
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
+
+      if (relative_error >= error_tolerance) {
+        std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+        std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
+      }
     }
   }
 
@@ -543,6 +569,11 @@ void random_unweighted_test(Graph*, std::size_t n)
 #endif
       if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
+
+      if (relative_error >= error_tolerance) {
+        std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+        std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
+      }
     }
   }
 }
