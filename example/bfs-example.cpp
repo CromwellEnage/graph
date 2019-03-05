@@ -66,7 +66,8 @@ main()
 
   Size time = 0;
   bfs_time_visitor < dtime_pm_type >vis(dtime_pm, time);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
   breadth_first_search(g, vertex(s, g), vis);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   breadth_first_search(

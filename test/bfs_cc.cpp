@@ -25,7 +25,8 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_search(g, s, color);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_search(g, s, boost::graph::keywords::_color_map = color);
@@ -41,8 +42,15 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_search(g, s, v_index);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(
+      g,
+      s,
+      boost::graph::keywords::_vertex_index_map = v_index
+    );
 #else
     breadth_first_search(g, s, boost::vertex_index_map(v_index));
 #endif
@@ -58,10 +66,16 @@ int main()
     vertex_t s;
     bfs_visitor<> v;
     buffer_archetype<vertex_t> b;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_search(g, s, v, b);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    breadth_first_search(g, s, b, v);
+    breadth_first_search(
+      g,
+      s,
+      boost::graph::keywords::_buffer = b,
+      boost::graph::keywords::_visitor = v
+    );
 #else
     breadth_first_search(g, s, boost::buffer(b).visitor(v));
 #endif

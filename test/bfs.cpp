@@ -128,7 +128,8 @@ struct bfs_test
     boost::mt19937 gen;
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::mt19937 dfs_chooser_gen;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     boost::uniform_int<> dfs_choices(0, 6);
 #else
     boost::uniform_int<> dfs_choices(0, 1);
@@ -188,7 +189,8 @@ struct bfs_test
             );
             break;
           case 1:
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
             boost::breadth_first_search(g, start, vis, color_pm);
 #else
             boost::breadth_first_search(
@@ -199,7 +201,8 @@ struct bfs_test
             );
 #endif
             break;
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
           case 2:
             boost::breadth_first_search(g, start, color_pm, vis);
             break;
