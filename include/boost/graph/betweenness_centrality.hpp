@@ -400,30 +400,37 @@ namespace detail { namespace graph {
       // Initialize for this iteration
       vertex_iterator w, w_end;
       for (boost::tie(w, w_end) = vertices(g); w != w_end; ++w) {
-        incoming[*w].clear();
+        typename property_traits<
+          IncomingMap
+        >::reference in_seq = get(incoming, *w);
+        in_seq.clear();
         put(path_count, *w, 0);
         put(dependency, *w, 0);
       }
       put(path_count, *s, 1);
-      
+
       // Execute the shortest paths algorithm. This will be either
       // Dijkstra's algorithm or a customized breadth-first search,
       // depending on whether the graph is weighted or unweighted.
       shortest_paths(g, *s, ordered_vertices, incoming, distance,
                      path_count, vertex_index);
-      
+
       while (!ordered_vertices.empty()) {
         vertex_descriptor w = ordered_vertices.top();
         ordered_vertices.pop();
-        
+
         typedef typename property_traits<IncomingMap>::value_type
           incoming_type;
         typedef typename incoming_type::iterator incoming_iterator;
         typedef typename property_traits<DependencyMap>::value_type 
           dependency_type;
-        
-        for (incoming_iterator vw = incoming[w].begin();
-             vw != incoming[w].end(); ++vw) {
+
+        typename property_traits<
+          IncomingMap
+        >::reference in_seq = get(incoming, w);
+
+        for (incoming_iterator vw = in_seq.begin();
+             vw != in_seq.end(); ++vw) {
           vertex_descriptor v = source(*vw, g);
           dependency_type factor = dependency_type(get(path_count, v))
             / dependency_type(get(path_count, w));
@@ -493,7 +500,7 @@ brandes_betweenness_centrality(const Graph& g,
                                CentralityMap centrality,     // C_B
                                EdgeCentralityMap edge_centrality_map,
 #endif
-                               IncomingMap incoming, // P
+                               IncomingMap incoming,         // P
                                DistanceMap distance,         // d
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
@@ -546,7 +553,7 @@ brandes_betweenness_centrality(const Graph& g,
                                CentralityMap centrality,     // C_B
                                EdgeCentralityMap edge_centrality_map,
 #endif
-                               IncomingMap incoming, // P
+                               IncomingMap incoming,         // P
                                DistanceMap distance,         // d
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma

@@ -78,6 +78,12 @@ run_weighted_test(Graph*, std::size_t V, weighted_edge edge_init[],
 
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
     BOOST_TEST(centrality[v] == correct_centrality[v]);
+
+    if (centrality[v] != correct_centrality[v]) {
+      std::cerr << "v = " << v << ", centrality = " << centrality[v];
+      std::cerr << ", correct_centrality = " << correct_centrality[v];
+      std::cerr << std::endl;
+    }
   }
 }
 
@@ -183,7 +189,7 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 
     if (centrality[v] != centrality2[v]) {
       std::cerr << "v = " << v << ", centrality = " << centrality[v];
-      std::cerr << ", centrality2 = " << centrality[v] << std::endl;
+      std::cerr << ", centrality2 = " << centrality2[v] << std::endl;
     }
 
     double relative_error =
@@ -205,7 +211,9 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
     BOOST_TEST(relative_error < error_tolerance);
 
     if (relative_error >= error_tolerance) {
-      std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+      std::cerr << "  v = " << v << ", centrality = " << centrality[v];
+      std::cerr << ", correct_centrality = " << correct_centrality[v];
+      std::cerr << ", relative_error = " << relative_error;
       std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
     }
   }  
@@ -290,11 +298,11 @@ run_wheel_test(Graph*, std::size_t V)
   brandes_betweenness_centrality(
     g,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    (boost::graph::keywords::_centrality_map =
+    boost::graph::keywords::_centrality_map =
       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
                                  0.0),
     boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
-    boost::graph::keywords::_weight_map = get(edge_weight, g))
+    boost::graph::keywords::_weight_map = get(edge_weight, g)
 #else
     centrality_map(
       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
@@ -315,9 +323,28 @@ run_wheel_test(Graph*, std::size_t V)
 
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
     BOOST_TEST(centrality[v] == centrality2[v]);
-    BOOST_TEST((v == 0 && centrality[v] == 1)
-              || (v != 0 && centrality[v] == 0));
-  } 
+
+    if (centrality[v] != centrality2[v]) {
+      std::cerr << "v = " << v << ", centrality = " << centrality[v];
+      std::cerr << ", centrality2 = " << centrality2[v] << std::endl;
+    }
+
+    if (v != 0) {
+      BOOST_TEST(centrality[v] == 0);
+
+      if (centrality[v] != 0) {
+        std::cerr << "v = " << v << ", centrality = " << centrality[v];
+        std::cerr << std::endl;
+      }
+    } else {
+      BOOST_TEST(centrality[v] == 1);
+
+      if (centrality[v] != 1) {
+        std::cerr << "  v = " << v << ", centrality = " << centrality[v];
+        std::cerr << std::endl;
+      }
+    }
+  }
 
   double dominance = 
     central_point_dominance(
@@ -520,7 +547,9 @@ void random_unweighted_test(Graph*, std::size_t n)
       BOOST_TEST(relative_error < error_tolerance);
 
       if (relative_error >= error_tolerance) {
-        std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+        std::cerr << "  v = " << v << ", centrality = " << centrality[v];
+        std::cerr << ", centrality2 = " << centrality2[v];
+        std::cerr << ", relative_error = " << relative_error;
         std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
       }
     }
@@ -571,7 +600,9 @@ void random_unweighted_test(Graph*, std::size_t n)
       BOOST_TEST(relative_error < error_tolerance);
 
       if (relative_error >= error_tolerance) {
-        std::cerr << "  v = " << v << ", relative_error = " << relative_error;
+        std::cerr << "  v = " << v << ", centrality = " << centrality[v];
+        std::cerr << ", centrality3 = " << centrality3[v];
+        std::cerr << ", relative_error = " << relative_error;
         std::cerr << ", error_tolerance = " << error_tolerance << std::endl;
       }
     }
