@@ -928,6 +928,7 @@ namespace boost {
         boost::graph::keywords::tag::buffer,
         DefaultBuffer&
     >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    neighbor_bfs_visitor<> default_visitor;
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
@@ -935,7 +936,7 @@ namespace boost {
             neighbor_bfs_visitor<>
         >::type
     >::type vis = args[
-        boost::graph::keywords::_visitor | neighbor_bfs_visitor<>()
+        boost::graph::keywords::_visitor | default_visitor
     ];
     typename boost::detail::map_maker<
         VertexListGraph,
@@ -964,6 +965,7 @@ namespace boost {
         boost::graph::keywords::tag::buffer,
         DefaultBuffer&
     >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    neighbor_bfs_visitor<> default_visitor;
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
@@ -971,7 +973,7 @@ namespace boost {
             neighbor_bfs_visitor<>
         >::type
     >::type vis = args[
-        boost::graph::keywords::_visitor | neighbor_bfs_visitor<>()
+        boost::graph::keywords::_visitor | default_visitor
     ];
     typedef typename boost::detail::map_maker<
         VertexListGraph,

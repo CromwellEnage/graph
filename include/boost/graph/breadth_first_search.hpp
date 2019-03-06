@@ -683,6 +683,7 @@ namespace boost {
         boost::graph::keywords::tag::buffer,
         DefaultBuffer&
     >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    default_bfs_visitor default_visitor;
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
@@ -690,7 +691,7 @@ namespace boost {
             default_bfs_visitor
         >::type
     >::type vis = args[
-        boost::graph::keywords::_visitor | default_bfs_visitor()
+        boost::graph::keywords::_visitor | default_visitor
     ];
     typename boost::detail::map_maker<
         IncidenceGraph,
@@ -817,6 +818,7 @@ namespace boost {
         boost::graph::keywords::tag::buffer,
         DefaultBuffer&
     >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    default_bfs_visitor default_visitor;
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
@@ -824,7 +826,7 @@ namespace boost {
             default_bfs_visitor
         >::type
     >::type vis = args[
-        boost::graph::keywords::_visitor | default_bfs_visitor()
+        boost::graph::keywords::_visitor | default_visitor
     ];
     typename boost::detail::map_maker<
         IncidenceGraph,

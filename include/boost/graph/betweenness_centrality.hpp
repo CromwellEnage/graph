@@ -260,10 +260,23 @@ namespace detail { namespace graph {
 
       std::vector<default_color_type> 
         colors(num_vertices(g), color_traits<default_color_type>::white());
-      boost::queue<vertex_descriptor> Q;
-      breadth_first_visit(g, s, Q, visitor, 
-                          make_iterator_property_map(colors.begin(), 
-                                                     vertex_index));
+      breadth_first_visit(
+        g,
+        s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+        visitor,
+        make_iterator_property_map(colors.begin(), vertex_index)
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_visitor = visitor,
+        boost::graph::keywords::_color_map =
+        make_iterator_property_map(colors.begin(), vertex_index)
+#else
+        boost::visitor(visitor).color_map(
+          make_iterator_property_map(colors.begin(), vertex_index)
+        )
+#endif
+      );
     }
   };
 
