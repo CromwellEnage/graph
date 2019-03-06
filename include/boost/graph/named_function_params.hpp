@@ -41,9 +41,9 @@
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && ( \
         defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || ( \
             defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000) \
-        ) || BOOST_WORKAROUND(BOOST_MSVC, < 1900) || ( \
+        ) || defined(BOOST_MSVC) || ( \
             defined(__APPLE_CC__) && defined(__clang_major__) && \
-            (__clang_major__ < 9) \
+            ((__clang_major__ < 9) || !defined(BOOST_NO_CXX14_CONSTEXPR)) \
         ) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
