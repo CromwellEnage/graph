@@ -156,7 +156,8 @@ main()
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     breadth_first_search(g, src, vis);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
@@ -195,7 +196,8 @@ main()
     g, src,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || \
+      !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     boost::graph::keywords::_visitor =
 #endif
     make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))

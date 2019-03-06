@@ -775,6 +775,7 @@ namespace boost { namespace detail {
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
+#include <boost/parameter/value_type.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
@@ -918,21 +919,31 @@ namespace boost {
        parameter::is_argument_pack<Args>, mpl::true_
      >::type = mpl::true_())
   {
-    boost::queue<typename graph_traits<VertexListGraph>::vertex_descriptor> Q;
-    neighbor_bfs_visitor<> default_visitor;
+    typedef boost::queue<
+        typename graph_traits<VertexListGraph>::vertex_descriptor
+    > DefaultBuffer;
+    DefaultBuffer d_buf;
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::buffer,
+        DefaultBuffer&
+    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::visitor,
+            neighbor_bfs_visitor<>
+        >::type
+    >::type vis = args[
+        boost::graph::keywords::_visitor | neighbor_bfs_visitor<>()
+    ];
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type c_map = detail::make_color_map_from_arg_pack(g, args);
-    detail::neighbor_bfs_impl(
-        g,
-        s,
-        args[boost::graph::keywords::_buffer | Q],
-        args[boost::graph::keywords::_visitor | default_visitor],
-        c_map
-    );
+    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
   }
 
   template <typename VertexListGraph, typename Args>
@@ -944,13 +955,24 @@ namespace boost {
        parameter::is_argument_pack<Args>, mpl::true_
      >::type = mpl::true_())
   {
-    boost::queue<typename graph_traits<VertexListGraph>::vertex_descriptor> Q;
-    neighbor_bfs_visitor<> default_visitor;
+    typedef boost::queue<
+        typename graph_traits<VertexListGraph>::vertex_descriptor
+    > DefaultBuffer;
+    DefaultBuffer d_buf;
     typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::visitor,
-        neighbor_bfs_visitor<>&
-    >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
+        Args,
+        boost::graph::keywords::tag::buffer,
+        DefaultBuffer&
+    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::visitor,
+            neighbor_bfs_visitor<>
+        >::type
+    >::type vis = args[
+        boost::graph::keywords::_visitor | neighbor_bfs_visitor<>()
+    ];
     typedef typename boost::detail::map_maker<
         VertexListGraph,
         Args,
@@ -968,13 +990,8 @@ namespace boost {
         put(c_map, *i, Color::white());
         vis.initialize_vertex(*i, g);
     }
-    detail::neighbor_bfs_impl(
-        g,
-        s,
-        args[boost::graph::keywords::_buffer | Q],
-        vis,
-        c_map
-    );
+
+    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
   }
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \

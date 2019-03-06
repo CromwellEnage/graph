@@ -123,10 +123,11 @@ int main(int , char* [])
   boost::neighbor_breadth_first_search(
     G,
     s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::graph::keywords::_visitor =
-#else
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
+      !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    boost::graph::keywords::_visitor =
 #endif
     boost::make_neighbor_bfs_visitor(
       std::make_pair(
