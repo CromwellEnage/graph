@@ -209,10 +209,14 @@ namespace detail { namespace graph {
         vertex_descriptor w = target(e, g);
         put(distance, w, get(distance, v) + 1);
         put(path_count, w, get(path_count, v));
+#if 0
         typename property_traits<
           IncomingMap
         >::reference in_seq = get(incoming, w);
         in_seq.push_back(e);
+#else
+        incoming[w].push_back(e);
+#endif
       }
 
       /**
@@ -227,10 +231,14 @@ namespace detail { namespace graph {
         vertex_descriptor w = target(e, g);
         if (get(distance, w) == get(distance, v) + 1) {
           put(path_count, w, get(path_count, w) + get(path_count, v));
+#if 0
           typename property_traits<
             IncomingMap
           >::reference in_seq = get(incoming, w);
           in_seq.push_back(e);
+#else
+          incoming[w].push_back(e);
+#endif
         }
       }
 
@@ -355,10 +363,14 @@ namespace detail { namespace graph {
       // Initialize for this iteration
       vertex_iterator w, w_end;
       for (boost::tie(w, w_end) = vertices(g); w != w_end; ++w) {
+#if 0
         typename property_traits<
           IncomingMap
         >::reference in_seq = get(incoming, *w);
         in_seq.clear();
+#else
+        incoming[*w].clear();
+#endif
         put(path_count, *w, 0);
         put(dependency, *w, 0);
       }
@@ -380,12 +392,18 @@ namespace detail { namespace graph {
         typedef typename property_traits<DependencyMap>::value_type 
           dependency_type;
 
+#if 0
         typename property_traits<
           IncomingMap
         >::reference in_seq = get(incoming, w);
 
         for (incoming_iterator vw = in_seq.begin();
-             vw != in_seq.end(); ++vw) {
+             vw != in_seq.end(); ++vw)
+#else
+        for (incoming_iterator vw = incoming[w].begin();
+             vw != incoming[w].end(); ++vw)
+#endif
+        {
           vertex_descriptor v = source(*vw, g);
           dependency_type factor = dependency_type(get(path_count, v))
             / dependency_type(get(path_count, w));
