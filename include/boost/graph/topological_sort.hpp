@@ -168,7 +168,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            get(vertex_index, g)
+            detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ]

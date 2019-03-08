@@ -88,8 +88,7 @@ main()
   graph_traits<graph_t>::vertex_descriptor a = *vertices(g).first;
   bfs_name_printer<VertexNameMap> vis(name_map);
   std::cout << "BFS vertex discover order: ";
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   breadth_first_search(g, a, vis);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   breadth_first_search(g, a, boost::graph::keywords::_visitor = vis);

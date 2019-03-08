@@ -19,6 +19,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -136,13 +137,7 @@ namespace boost { namespace detail {
     stoer_wagner_min_cut(
       const UndirectedGraph& g, WeightMap weights, ParityMap parities,
       VertexAssignmentMap assignments,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      KeyedUpdatablePriorityQueue&& pq,
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      KeyedUpdatablePriorityQueue pq,
-#else
       KeyedUpdatablePriorityQueue& pq,
-#endif
       IndexMap index_map
     )
     {
@@ -223,20 +218,14 @@ namespace boost {
         KeyedUpdatablePriorityQueue, IndexMap
       >,
 #endif
-    typename boost::property_traits<WeightMap>::value_type
+      typename boost::property_traits<WeightMap>::value_type
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     >::type
 #endif
     stoer_wagner_min_cut(
       const UndirectedGraph& g, WeightMap weights, ParityMap parities,
       VertexAssignmentMap assignments,
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      KeyedUpdatablePriorityQueue&& pq,
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      KeyedUpdatablePriorityQueue pq,
-#else
       KeyedUpdatablePriorityQueue& pq,
-#endif
       IndexMap index_map
     )
     {
@@ -252,18 +241,7 @@ namespace boost {
       // typedef typename boost::property_traits<ParityMap>::value_type parity_type;
       BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
       BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      BOOST_CONCEPT_ASSERT((
-        boost::KeyedUpdatableQueueConcept<
-          typename boost::remove_const<
-            typename boost::remove_reference<KeyedUpdatablePriorityQueue>::type
-          >::type
-        >
-      ));
-#else
       BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept<KeyedUpdatablePriorityQueue>));
-#endif
 
       vertices_size_type n = num_vertices(g);
       if (n < 2)
@@ -272,14 +250,7 @@ namespace boost {
         throw std::invalid_argument("the max-priority queue must be empty initially.");
 
       return detail::stoer_wagner_min_cut(
-        g, weights, parities, assignments,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-        std::forward<KeyedUpdatablePriorityQueue>(pq),
-#else
-        pq,
-#endif
-        index_map
+        g, weights, parities, assignments, pq, index_map
       );
     }
 } // end namespace boost
@@ -296,7 +267,6 @@ namespace boost {
         const Graph& g, WeightMap weights, const Args& arg_pack
     )
     {
-      using namespace boost::graph::keywords;
       typename boost::detail::override_const_property_result<
           Args,
           boost::graph::keywords::tag::vertex_index_map,
@@ -304,53 +274,71 @@ namespace boost {
           Graph
       >::type v_i_map = detail::override_const_property(
           arg_pack,
-          _vertex_index_map,
+          boost::graph::keywords::_vertex_index_map,
           g,
           vertex_index
       );
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename graph_traits<Graph>::vertices_size_type VIndex;
+      const VIndex zero_index = VIndex();
       dummy_property_map dummy_prop;
       typename boost::parameter::binding<
           Args, 
           boost::graph::keywords::tag::parity_map,
           dummy_property_map&
-      >::type p_map = arg_pack[_parity_map | dummy_prop];
+      >::type p_map = arg_pack[
+          boost::graph::keywords::_parity_map | dummy_prop
+      ];
+      boost::detail::make_property_map_from_arg_pack_gen<
+          boost::graph::keywords::tag::index_in_heap_map,
+          VIndex
+      > i_in_h_map_gen(zero_index);
+      typedef typename boost::detail::map_maker<
+          Graph,
+          Args,
+          boost::graph::keywords::tag::index_in_heap_map,
+          VIndex
+      >::map_type IndexInHeapPMap;
+      IndexInHeapPMap i_in_h_map = i_in_h_map_gen(g, arg_pack);
       typedef typename boost::property_traits<WeightMap>::value_type D;
-      const D zero_actual = D();
+      const D zero_distance = D();
+      boost::detail::make_property_map_from_arg_pack_gen<
+          boost::graph::keywords::tag::distance_map,
+          D
+      > dist_map_gen(zero_distance);
+      typedef typename boost::detail::map_maker<
+          Graph,
+          Args,
+          boost::graph::keywords::tag::distance_map,
+          D
+      >::map_type DistanceMap;
+      DistanceMap dist_map = dist_map_gen(g, arg_pack);
+      typedef d_ary_heap_indirect<
+          Vertex,
+          4,
+          IndexInHeapPMap,
+          DistanceMap,
+          std::greater<Vertex>
+      > DefaultBuffer;
+      DefaultBuffer d_buf(dist_map, i_in_h_map, std::greater<Vertex>());
+      typename parameter::binding<
+          Args,
+          boost::graph::keywords::tag::buffer,
+          DefaultBuffer&
+      >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
       return boost::stoer_wagner_min_cut(
         g,
         weights,
         p_map,
         arg_pack[
-          _vertex_assignment_map |
+          boost::graph::keywords::_vertex_assignment_map |
           make_shared_array_property_map(
             num_vertices(g),
             detail::get_null_vertex(g),
             v_i_map
           )
         ],
-        arg_pack[
-          _max_priority_queue |
-          detail::create_empty_d_ary_heap_indirect<4>(
-            detail::get_null_vertex(g),
-            arg_pack[
-              _index_in_heap_map |
-              make_shared_array_property_map(
-                num_vertices(g),
-                num_vertices(g) - num_vertices(g),
-                v_i_map
-              )
-            ],
-            arg_pack[
-              _distance_map |
-              make_shared_array_property_map(
-                num_vertices(g),
-                zero_actual,
-                v_i_map
-              )
-            ],
-            std::greater<typename graph_traits<Graph>::vertex_descriptor>()
-          )
-        ],
+        Q,
         v_i_map
       );
     }

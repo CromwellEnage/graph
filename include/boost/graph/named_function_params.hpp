@@ -127,6 +127,7 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(vertex_index1_map, vertex_index1) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_index2_map, vertex_index2) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_assignment_map, vertex_assignment_map) \
+    BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor) \
     BOOST_BGL_ONE_PARAM_CREF(distance_compare, distance_compare) \
     BOOST_BGL_ONE_PARAM_CREF(distance_combine, distance_combine) \
     BOOST_BGL_ONE_PARAM_CREF(distance_inf, distance_inf) \
@@ -169,12 +170,7 @@ namespace boost {
     typedef Tag tag_type;
     typedef T value_type;
     bgl_named_params() : m_value() { }
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-    bgl_named_params(T const& v) : m_value(v) { }
-    bgl_named_params(T&& v) : m_value(std::move(v)) { }
-#else
     bgl_named_params(T v) : m_value(v) { }
-#endif
     bgl_named_params(T v, const Base& b) : m_value(v), m_base(b) { }
     T m_value;
     Base m_base;
@@ -196,33 +192,6 @@ namespace boost {
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
-    template <typename PType>
-    bgl_named_params<
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type,
-      graph_visitor_t,
-      self
-    >
-    visitor(PType&& p) const
-    {
-      return bgl_named_params<
-        typename boost::remove_const<
-          typename boost::remove_reference<PType>::type
-        >::type,
-        graph_visitor_t,
-        self
-      >(p, *this);
-    }
-#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
-#else
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -250,31 +219,6 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     } \
 
 BOOST_BGL_DECLARE_NAMED_PARAMS
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
-    template <typename PType>
-    bgl_named_params<
-      typename boost::remove_const<
-        typename boost::remove_reference<PType>::type
-      >::type,
-      graph_visitor_t
-    >
-    visitor(PType&& p)
-    {
-      return bgl_named_params<
-        typename boost::remove_const<
-          typename boost::remove_reference<PType>::type
-        >::type,
-        graph_visitor_t
-      >(p);
-    }
-#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
-#else
-BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
@@ -459,7 +403,6 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
-      BOOST_PARAMETER_NAME(visitor)
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
     }
@@ -474,7 +417,6 @@ BOOST_BGL_ONE_PARAM_CREF(visitor, graph_visitor)
     };
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_BGL_ONE_PARAM_REF(name, key)
     BOOST_BGL_DECLARE_NAMED_PARAMS
-    BOOST_BGL_ONE_PARAM_REF(visitor, graph_visitor)
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
 
@@ -942,8 +884,8 @@ BOOST_PP_REPEAT(
 
   } // namespace detail
 
-} // namespace boost
-
 #undef BOOST_BGL_DECLARE_NAMED_PARAMS
+
+} // namespace boost
 
 #endif // BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

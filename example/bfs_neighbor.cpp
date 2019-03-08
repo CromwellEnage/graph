@@ -125,8 +125,7 @@ int main(int , char* [])
     s,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || \
-      !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
     boost::make_neighbor_bfs_visitor(

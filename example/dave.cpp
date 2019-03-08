@@ -243,8 +243,7 @@ main(int , char* [])
     (G, vertex(a, G),
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
      visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || \
-      !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
      boost::graph::keywords::_visitor =
 #endif
      make_bfs_visitor(

@@ -71,8 +71,7 @@ main()
   typedef property_map<graph_t, std::size_t VertexProps::*>::type dtime_map_t;
   dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   breadth_first_search(g, vertex(s, g), get(&VertexProps::color, g), vis);
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   breadth_first_search(

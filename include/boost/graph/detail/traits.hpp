@@ -492,12 +492,22 @@ namespace boost { namespace detail {
     };
 
     template <typename T>
+    struct is_iterator_impl0
+        : mpl::eval_if<
+            boost::is_same<T,void*>,
+            mpl::false_,
+            is_iterator_impl<T>
+        >::type
+    {
+    };
+
+    template <typename T>
     struct is_iterator
-        : is_iterator_impl<
+        : is_iterator_impl0<
             typename boost::remove_const<
                 typename boost::remove_reference<T>::type
             >::type
-        >::type
+        >
     {
     };
 
@@ -1453,6 +1463,24 @@ namespace boost { namespace detail {
         };
     };
 
+    template <typename Args, typename Tag>
+    struct is_iterator_argument_impl
+        : is_iterator<
+            typename detail::mutable_value_type<Args,Tag>::type
+        >
+    {
+    };
+
+    template <typename Args, typename Tag>
+    struct is_iterator_argument
+        : mpl::if_<
+            typename mpl::has_key<Args,Tag>::type,
+            is_iterator_argument_impl<Args,Tag>,
+            mpl::false_
+        >::type
+    {
+    };
+
 #if defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
     // Without decltype() or BOOST_TYPEOF_KEYWORD(), we can detect a
     // Visitor model only by what it isn't rather than by what it is.
@@ -1604,73 +1632,6 @@ namespace boost { namespace detail {
         > type;
     };
 }}
-
-#include <boost/pending/queue.hpp>
-
-namespace boost { namespace detail {
-
-    template <typename Vertex>
-    inline boost::queue<Vertex> create_empty_queue(Vertex const&)
-    {
-        return boost::queue<Vertex>();
-    }
-}}
-
-#include <boost/graph/detail/d_ary_heap.hpp>
-
-namespace boost { namespace detail {
-
-    template <
-        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
-        typename DistanceMap, typename Compare, typename Container
-    >
-    inline boost::d_ary_heap_indirect<
-        Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare, Container
-    > create_empty_d_ary_heap_indirect(
-        const Value&, DistanceMap distance,
-        IndexInHeapPropertyMap index_in_heap,
-        const Compare& compare, const Container& data
-    )
-    {
-        return boost::d_ary_heap_indirect<
-            Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare,
-            Container
-        >(distance, index_in_heap, compare, data);
-    }
-
-    template <
-        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
-        typename DistanceMap, typename Compare
-    >
-    inline boost::d_ary_heap_indirect<
-        Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare
-    > create_empty_d_ary_heap_indirect(
-        const Value&, DistanceMap distance,
-        IndexInHeapPropertyMap index_in_heap,
-        const Compare& compare
-    )
-    {
-        return boost::d_ary_heap_indirect<
-            Value, Arity, IndexInHeapPropertyMap, DistanceMap, Compare
-        >(distance, index_in_heap, compare);
-    }
-
-    template <
-        std::size_t Arity, typename Value, typename IndexInHeapPropertyMap,
-        typename DistanceMap
-    >
-    inline boost::d_ary_heap_indirect<
-        Value, Arity, IndexInHeapPropertyMap, DistanceMap
-    > create_empty_d_ary_heap_indirect(
-        const Value&, DistanceMap distance,
-        IndexInHeapPropertyMap index_in_heap
-    )
-    {
-        return boost::d_ary_heap_indirect<
-            Value, Arity, IndexInHeapPropertyMap, DistanceMap
-        >(distance, index_in_heap);
-    }
-}} // namespace boost::detail
 
 #endif  // include guard
 

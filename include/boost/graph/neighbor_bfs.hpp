@@ -16,12 +16,18 @@
   Like BFS, but traverses in-edges as well as out-edges.
   (for directed graphs only. use normal BFS for undirected graphs)
 */
+#include <vector>
+#include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
-#include <boost/parameter/config.hpp>
+#include <boost/core/ref.hpp>
+#include <boost/concept/assert.hpp>
+#include <boost/config.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/add_pointer.hpp>
@@ -580,14 +586,7 @@ namespace boost { namespace detail {
     typedef visitor_predicate neighbor_bfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // unnamed argument deduction and perfect forwarding enabled
-
-#include <vector>
-#include <boost/graph/named_function_params.hpp>
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/visitors.hpp>
-#include <boost/core/ref.hpp>
-#include <boost/concept/assert.hpp>
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost {
 
@@ -767,29 +766,19 @@ namespace boost { namespace detail {
 #include <boost/pending/queue.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 #include <boost/parameter/preprocessor.hpp>
-#else
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/parameter/value_type.hpp>
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #endif
 
 namespace boost {
 
   // Boost.Parameter-enabled variants
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-  // Boost.Parameter-enabled single-source variants capable of
-  // unnamed argument deduction and perfect forwarding
-  BOOST_PARAMETER_FUNCTION(
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_BASIC_FUNCTION(
     (bool), neighbor_breadth_first_visit, ::boost::graph::keywords::tag,
     (required
       (graph, *(detail::argument_predicate<is_bidirectional_graph>))
@@ -805,13 +794,14 @@ namespace boost {
         )
       )
       (optional
-        (buffer
-          ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
-        )
-        (visitor
-          ,*(detail::neighbor_bfs_visitor_predicate)
-          ,neighbor_bfs_visitor<>()
+        (buffer, *(detail::argument_predicate<detail::is_buffer>))
+        (visitor, *(detail::neighbor_bfs_visitor_predicate))
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
         )
         (vertex_index_map
           ,*(
@@ -819,29 +809,74 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
-        )
-        (color_map
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
-            >
-          )
-          ,make_shared_array_property_map(
-            num_vertices(graph),
-            white_color,
-            vertex_index_map
-          )
         )
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_BASIC_FUNCTION(
+    (
+      boost::disable_if<
+        detail::is_bgl_named_param_argument<
+          Args,
+          boost::graph::keywords::tag::buffer
+        >,
+        bool
+      >
+    ), neighbor_breadth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *)
+      (visitor, *)
+      (color_map, *)
+      (vertex_index_map, *)
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    detail::neighbor_bfs_impl(graph, root_vertex, buffer, visitor, color_map);
+    typedef typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::graph
+        >::type
+    >::type VertexListGraph;
+    typename parameter::binding<
+        Args,
+        boost::graph::keywords::tag::graph
+    >::type g = args[boost::graph::keywords::_graph];
+    typedef typename graph_traits<
+        VertexListGraph
+    >::vertex_descriptor Vertex;
+    Vertex s = args[boost::graph::keywords::_root_vertex];
+    boost::queue<Vertex> d_buf;
+    typename parameter::binding<
+        Args,
+        boost::graph::keywords::tag::buffer,
+        boost::queue<Vertex>&
+    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
+    neighbor_bfs_visitor<> default_visitor;
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::visitor,
+            neighbor_bfs_visitor<>
+        >::type
+    >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
+    typename boost::detail::map_maker<
+        VertexListGraph,
+        Args,
+        boost::graph::keywords::tag::color_map,
+        boost::default_color_type
+    >::map_type c_map = detail::make_color_map_from_arg_pack(g, args);
+    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
     return true;
   }
 
-  BOOST_PARAMETER_FUNCTION(
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_BASIC_FUNCTION(
     (bool), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
     (required
       (graph, *(detail::argument_predicate<is_bidirectional_graph>))
@@ -857,9 +892,14 @@ namespace boost {
         )
       )
       (optional
-        (visitor
-          ,*(detail::neighbor_bfs_visitor_predicate)
-          ,neighbor_bfs_visitor<>()
+        (buffer, *(detail::argument_predicate<detail::is_buffer>))
+        (visitor, *(detail::neighbor_bfs_visitor_predicate))
+        (color_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
         )
         (vertex_index_map
           ,*(
@@ -867,66 +907,58 @@ namespace boost {
               detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
-        )
-        (color_map
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
-            >
-          )
-          ,make_shared_array_property_map(
-            num_vertices(graph),
-            white_color,
-            vertex_index_map
-          )
-        )
-        (buffer
-          ,*(detail::argument_predicate<detail::is_buffer>)
-          ,detail::create_empty_queue(root_vertex)
         )
       )
     )
   )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_BASIC_FUNCTION(
+    (
+      boost::disable_if<
+        detail::is_bgl_named_param_argument<
+          Args,
+          boost::graph::keywords::tag::buffer
+        >,
+        bool
+      >
+    ), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+    )
+    (optional
+      (buffer, *)
+      (visitor, *)
+      (color_map, *)
+      (vertex_index_map, *)
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
     typedef typename boost::remove_const<
-      typename boost::remove_reference<graph_type>::type
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::graph
+        >::type
     >::type VertexListGraph;
-    typedef typename boost::remove_const<
-      typename boost::remove_reference<color_map_type>::type
-    >::type ColorMap;
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    // Initialization
-    typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
-
-    for (boost::tie(i, i_end) = vertices(graph); i != i_end; ++i) {
-      put(color_map, *i, Color::white());
-      visitor.initialize_vertex(*i, graph);
-    }
-    detail::neighbor_bfs_impl(graph, root_vertex, buffer, visitor, color_map);
-    return true;
-  }
-#else   // no unnamed argument deduction or perfect forwarding
-  // Boost.Parameter-enabled single-source variants
-  template <typename VertexListGraph, typename Args>
-  inline void neighbor_breadth_first_visit
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     const Args& args,
-     typename boost::enable_if<
-       parameter::is_argument_pack<Args>, mpl::true_
-     >::type = mpl::true_())
-  {
-    typedef boost::queue<
-        typename graph_traits<VertexListGraph>::vertex_descriptor
-    > DefaultBuffer;
-    DefaultBuffer d_buf;
-    typename boost::parameter::binding<
+    typename parameter::binding<
+        Args,
+        boost::graph::keywords::tag::graph
+    >::type g = args[boost::graph::keywords::_graph];
+    typedef typename graph_traits<
+        typename boost::remove_const<
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::graph
+            >::type
+        >::type
+    >::vertex_descriptor Vertex;
+    Vertex s = args[boost::graph::keywords::_root_vertex];
+    boost::queue<Vertex> d_buf;
+    typename parameter::binding<
         Args,
         boost::graph::keywords::tag::buffer,
-        DefaultBuffer&
+        boost::queue<Vertex>&
     >::type Q = args[boost::graph::keywords::_buffer | d_buf];
     neighbor_bfs_visitor<> default_visitor;
     typename boost::remove_const<
@@ -935,87 +967,27 @@ namespace boost {
             boost::graph::keywords::tag::visitor,
             neighbor_bfs_visitor<>
         >::type
-    >::type vis = args[
-        boost::graph::keywords::_visitor | default_visitor
-    ];
-    typename boost::detail::map_maker<
-        VertexListGraph,
-        Args,
-        boost::graph::keywords::tag::color_map,
-        boost::default_color_type
-    >::map_type c_map = detail::make_color_map_from_arg_pack(g, args);
-    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
-  }
-
-  template <typename VertexListGraph, typename Args>
-  inline void neighbor_breadth_first_search
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     const Args& args,
-     typename boost::enable_if<
-       parameter::is_argument_pack<Args>, mpl::true_
-     >::type = mpl::true_())
-  {
-    typedef boost::queue<
-        typename graph_traits<VertexListGraph>::vertex_descriptor
-    > DefaultBuffer;
-    DefaultBuffer d_buf;
-    typename boost::parameter::binding<
-        Args,
-        boost::graph::keywords::tag::buffer,
-        DefaultBuffer&
-    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
-    neighbor_bfs_visitor<> default_visitor;
-    typename boost::remove_const<
-        typename parameter::value_type<
-            Args,
-            boost::graph::keywords::tag::visitor,
-            neighbor_bfs_visitor<>
-        >::type
-    >::type vis = args[
-        boost::graph::keywords::_visitor | default_visitor
-    ];
+    >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
     typedef typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type ColorMap;
+    ColorMap c_map = detail::make_color_map_from_arg_pack(g, args);
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
     // Initialization
-    ColorMap c_map = detail::make_color_map_from_arg_pack(g, args);
     typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
 
     for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i) {
-        put(c_map, *i, Color::white());
-        vis.initialize_vertex(*i, g);
+      put(c_map, *i, Color::white());
+      vis.initialize_vertex(*i, g);
     }
-
     detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
+    return true;
   }
-
-#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph, typename TA \
-            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline void name \
-    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
-     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-     typename boost::enable_if< \
-       parameter::are_tagged_arguments< \
-         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-       >, mpl::true_ \
-     >::type = mpl::true_()) \
-  { \
-    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
-  }
-
-BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, neighbor_breadth_first_visit)
-BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, neighbor_breadth_first_search)
-
-#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // unnamed argument deduction and perfect forwarding enabled
 }
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail {
@@ -1113,29 +1085,32 @@ namespace boost {
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    boost::queue<typename graph_traits<VertexListGraph>::vertex_descriptor> Q;
+    typedef typename graph_traits<
+        VertexListGraph
+    >::vertex_descriptor Vertex;
+    boost::queue<Vertex> d_buf;
+    typename parameter::binding<
+        arg_pack_type,
+        boost::graph::keywords::tag::buffer,
+        boost::queue<Vertex>&
+    >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
     neighbor_bfs_visitor<> default_visitor;
-    neighbor_breadth_first_search(
-      ng,
-      s,
-      boost::graph::keywords::_buffer = arg_pack[
-        boost::graph::keywords::_buffer | Q
-      ],
-      boost::graph::keywords::_visitor = arg_pack[
+    typename boost::remove_const<
+        typename parameter::value_type<
+            arg_pack_type,
+            boost::graph::keywords::tag::visitor,
+            neighbor_bfs_visitor<>
+        >::type
+    >::type vis = arg_pack[
         boost::graph::keywords::_visitor | default_visitor
-      ],
-      boost::graph::keywords::_color_map = arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(ng),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(ng, vertex_index)
-          ]
-        )
-      ]
-    );
+    ];
+    typename boost::detail::map_maker<
+        VertexListGraph,
+        arg_pack_type,
+        boost::graph::keywords::tag::color_map,
+        boost::default_color_type
+    >::map_type c_map = detail::make_color_map_from_arg_pack(g, arg_pack);
+    neighbor_breadth_first_search(ng, s, Q, vis, c_map);
 #else
     typedef typename get_param_type< vertex_color_t, bgl_named_params<P,T,R> >::type C;
     detail::neighbor_bfs_dispatch<C>::apply(ng, s, params, 
@@ -1153,29 +1128,32 @@ namespace boost {
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    boost::queue<typename graph_traits<IncidenceGraph>::vertex_descriptor> Q;
+    typedef typename graph_traits<
+        IncidenceGraph
+    >::vertex_descriptor Vertex;
+    boost::queue<Vertex> d_buf;
+    typename parameter::binding<
+        arg_pack_type,
+        boost::graph::keywords::tag::buffer,
+        boost::queue<Vertex>&
+    >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
     neighbor_bfs_visitor<> default_visitor;
-    neighbor_breadth_first_visit(
-      g,
-      s,
-      boost::graph::keywords::_buffer = arg_pack[
-        boost::graph::keywords::_buffer | Q
-      ],
-      boost::graph::keywords::_visitor = arg_pack[
+    typename boost::remove_const<
+        typename parameter::value_type<
+            arg_pack_type,
+            boost::graph::keywords::tag::visitor,
+            neighbor_bfs_visitor<>
+        >::type
+    >::type vis = arg_pack[
         boost::graph::keywords::_visitor | default_visitor
-      ],
-      boost::graph::keywords::_color_map = arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(g),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(g, vertex_index)
-          ]
-        )
-      ]
-    );
+    ];
+    typename boost::detail::map_maker<
+        IncidenceGraph,
+        arg_pack_type,
+        boost::graph::keywords::tag::color_map,
+        boost::default_color_type
+    >::map_type c_map = detail::make_color_map_from_arg_pack(g, arg_pack);
+    neighbor_breadth_first_visit(g, s, Q, vis, c_map);
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef graph_traits<IncidenceGraph> Traits;
     // Buffer default

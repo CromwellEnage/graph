@@ -820,28 +820,15 @@ namespace boost {
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
-#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     DFSVisitor vis = visitor;
-#endif
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       Vertex u = implicit_cast<Vertex>(*ui);
       put(color_map, u, Color::white());
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-      visitor.initialize_vertex(u, graph);
-#else
       vis.initialize_vertex(u, graph);
-#endif
     }
 
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-    if (root_vertex != detail::get_default_starting_vertex(graph)) {
-      visitor.start_vertex(root_vertex, graph);
-      detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
-                                     detail::nontruth2());
-    }
-#else
     Vertex s = root_vertex;
 
     if (s != detail::get_default_starting_vertex(graph)) {
@@ -849,21 +836,14 @@ namespace boost {
       detail::depth_first_visit_impl(graph, s, vis, color_map,
                                      detail::nontruth2());
     }
-#endif
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       Vertex u = implicit_cast<Vertex>(*ui);
       ColorValue u_color = get(color_map, u);
       if (u_color == Color::white()) {
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-        visitor.start_vertex(u, graph);
-        detail::depth_first_visit_impl(graph, u, visitor, color_map,
-                                       detail::nontruth2());
-#else
         vis.start_vertex(u, graph);
         detail::depth_first_visit_impl(graph, u, vis, color_map,
                                        detail::nontruth2());
-#endif
       }
     }
 
@@ -948,11 +928,6 @@ namespace boost {
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
-    visitor.start_vertex(root_vertex, graph);
-    detail::depth_first_visit_impl(graph, root_vertex, visitor, color_map,
-                                   terminator_function);
-#else
     typename boost::remove_const<
       typename boost::remove_reference<root_vertex_type>::type
     >::type s = root_vertex;
@@ -962,7 +937,6 @@ namespace boost {
     vis.start_vertex(s, graph);
     detail::depth_first_visit_impl(graph, s, vis, color_map,
                                    terminator_function);
-#endif
     return true;
   }
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)

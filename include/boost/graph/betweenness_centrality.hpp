@@ -271,8 +271,7 @@ namespace detail { namespace graph {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
-    defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         visitor,
         make_iterator_property_map(colors.begin(), vertex_index)
 #elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
