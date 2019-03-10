@@ -25,7 +25,9 @@
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
+#include <boost/mpl/identity.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -822,8 +824,11 @@ BOOST_PP_REPEAT(
                          int_refw
                        >::type
         param_value_type_wrapper;
-      typedef typename param_value_type_wrapper::type
-        param_value_type;
+      typedef typename mpl::eval_if<
+        boost::is_reference_wrapper<param_value_type_wrapper>,
+        param_value_type_wrapper,
+        mpl::identity<param_value_type_wrapper>
+      >::type param_value_type;
       typedef typename boost::remove_const<param_value_type>::type param_value_type_no_const;
       typedef priority_queue_maker_helper<g_hasQ, Graph, ArgPack, KeyT, ValueT, KeyMapTag, IndexInHeapMapTag, Compare,
                                           param_value_type_no_const> helper;
