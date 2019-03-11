@@ -402,6 +402,7 @@ namespace boost { namespace detail {
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/two_bit_color_map.hpp>
 #include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
 
