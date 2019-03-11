@@ -286,6 +286,7 @@ edmonds_karp_max_flow(Graph& g,
 
 // old-style named-parameter overload
 template <typename Graph, typename P, typename T, typename R>
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 inline typename property_traits<
   typename detail::choose_impl_result<
     boost::is_const<Graph>,
@@ -294,6 +295,9 @@ inline typename property_traits<
     edge_capacity_t
   >::type
 >::value_type
+#else
+inline typename detail::edge_capacity_value<Graph, P, T, R>::type
+#endif
 edmonds_karp_max_flow(Graph& g,
                       typename graph_traits<Graph>::vertex_descriptor src,
                       typename graph_traits<Graph>::vertex_descriptor sink,

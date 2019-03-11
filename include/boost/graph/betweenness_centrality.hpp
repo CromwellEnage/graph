@@ -886,9 +886,9 @@ inline typename boost::disable_if<
 >::type
 brandes_betweenness_centrality(
     const Graph& g,
-    CentralityMap centrality,
+    CentralityMap centrality
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    typename boost::disable_if<
+    , typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap>,
         mpl::true_
     >::type = mpl::true_()
@@ -912,9 +912,9 @@ template <typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 inline void brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality,
-    EdgeCentralityMap edge_centrality_map,
+    EdgeCentralityMap edge_centrality_map
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    typename boost::disable_if<
+    , typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap,EdgeCentralityMap>,
         mpl::true_
     >::type = mpl::true_()
