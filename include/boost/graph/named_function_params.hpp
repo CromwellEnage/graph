@@ -47,7 +47,7 @@
             defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000) \
         ) || BOOST_WORKAROUND(BOOST_MSVC, < 1900) || ( \
             defined(__APPLE_CC__) && \
-            defined(__clang_major__) && (__clang_major__ < 9) \
+            defined(__clang_major__) && (__clang_major__ < 10) \
         ) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
