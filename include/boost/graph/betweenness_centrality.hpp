@@ -26,7 +26,22 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
+/*
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS_FOR_BRANDES_BTWN) && ( \
+        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || \
+        defined(BOOST_MSVC) || ( \
+            defined(__APPLE_CC__) && \
+            defined(__clang_major__) && (__clang_major__ < 9) \
+        ) \
+    )
+#define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS_FOR_BRANDES_BTWN
+#endif
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN) && \
+    defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN
+#endif
+*/
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/compose.hpp>
@@ -145,7 +160,7 @@ namespace detail { namespace graph {
       dijkstra_shortest_paths(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
         boost::graph::keywords::_weight_map = weight_map,
         boost::graph::keywords::_vertex_index_map = vertex_index,
         boost::graph::keywords::_distance_map = distance,
@@ -271,10 +286,7 @@ namespace detail { namespace graph {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-        visitor,
-        make_iterator_property_map(colors.begin(), vertex_index)
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_visitor = visitor,
         boost::graph::keywords::_color_map =
         make_iterator_property_map(colors.begin(), vertex_index)
