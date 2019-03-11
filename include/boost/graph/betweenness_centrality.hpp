@@ -27,22 +27,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
 
-#if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS_FOR_BRANDES_BTWN) && ( \
-        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || \
-        defined(BOOST_MSVC) || ( \
-            defined(__APPLE_CC__) && \
-            defined(__clang_major__) && (__clang_major__ < 9) \
-        ) \
-    )
-#define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS_FOR_BRANDES_BTWN
-#endif
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN) && \
-    defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#define BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN
-#endif
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
@@ -160,7 +145,7 @@ namespace detail { namespace graph {
       dijkstra_shortest_paths(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = weight_map,
         boost::graph::keywords::_vertex_index_map = vertex_index,
         boost::graph::keywords::_distance_map = distance,
@@ -286,7 +271,7 @@ namespace detail { namespace graph {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_visitor = visitor,
         boost::graph::keywords::_color_map =
         make_iterator_property_map(colors.begin(), vertex_index)
@@ -453,7 +438,7 @@ brandes_betweenness_centrality(const Graph& g,
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                                , typename boost::disable_if<
                                  parameter::are_tagged_arguments<
                                    CentralityMap, EdgeCentralityMap,
@@ -491,7 +476,7 @@ brandes_betweenness_centrality(const Graph& g,
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index,
                                WeightMap weight_map
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                                , typename boost::disable_if<
                                  parameter::are_tagged_arguments<
                                    CentralityMap, EdgeCentralityMap,
@@ -517,7 +502,7 @@ brandes_betweenness_centrality(const Graph& g,
 }
 }  // end namespace boost
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail { namespace graph {
 
 template <typename Graph, typename Args>
@@ -752,7 +737,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, brandes_betweenn
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 }  // end namespace boost
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 namespace boost { namespace detail { namespace graph {
   template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
            typename WeightMap, typename VertexIndexMap>
@@ -853,7 +838,7 @@ namespace boost { namespace detail { namespace graph {
     }
   };
 }}} // end namespace boost::detail::graph
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
 
@@ -865,7 +850,7 @@ inline void brandes_betweenness_centrality(
 )
 {
     typedef bgl_named_params<Param,Tag,Rest> named_params;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     using namespace boost::graph::keywords;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
     detail::graph::brandes_betweenness_centrality_dispatch(
@@ -876,7 +861,7 @@ inline void brandes_betweenness_centrality(
             boost::graph::keywords::tag::weight_map
         >::type()
     );
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef typename get_param_type<edge_weight_t, named_params>::type ew;
     detail::graph::brandes_betweenness_centrality_dispatch1<ew>::run(
       g, 
@@ -885,7 +870,7 @@ inline void brandes_betweenness_centrality(
       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
       get_param(params, edge_weight)
     );
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 }
 
 // disable_if is required to work around problem with MSVC 7.1 (it seems to not
@@ -902,7 +887,7 @@ inline typename boost::disable_if<
 brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap>,
         mpl::true_
@@ -911,7 +896,7 @@ brandes_betweenness_centrality(
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality
@@ -928,7 +913,7 @@ inline void brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality,
     EdgeCentralityMap edge_centrality_map,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap,EdgeCentralityMap>,
         mpl::true_
@@ -937,7 +922,7 @@ inline void brandes_betweenness_centrality(
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality,

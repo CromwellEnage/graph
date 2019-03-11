@@ -189,7 +189,7 @@ void betweenness_centrality_clustering(
   do {
     brandes_betweenness_centrality(
       graph,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_edge_centrality_map = edge_centrality_map,
       boost::graph::keywords::_vertex_index_map = vertex_index_map
 #else
