@@ -33,7 +33,6 @@
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/identity.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -551,7 +550,12 @@ void brandes_betweenness_centrality_dispatch(
                     vertex_centrality_t,
                     Graph
                 >,
-                mpl::identity<WeightMap>
+                boost::detail::override_const_property_result<
+                    Args,
+                    boost::graph::keywords::tag::weight_map,
+                    edge_weight_t,
+                    Graph
+                >
             >
         >::type
     >::value_type centrality_type;
