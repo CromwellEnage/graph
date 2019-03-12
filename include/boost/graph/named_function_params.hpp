@@ -34,7 +34,12 @@
 #include <boost/property_map/shared_array_property_map.hpp>
 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && \
-    !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && defined(BOOST_MSVC)
+    !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && ( \
+        defined(BOOST_MSVC) || ( \
+            defined(__APPLE_CC__) && defined(__clang_major__) && \
+            (__clang_major__ >= 8) && (__clang_major__ < 10) \
+        ) \
+    )
 #define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 #endif
 
@@ -43,7 +48,7 @@
             defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000) \
         ) || ( \
             defined(__APPLE_CC__) && \
-            defined(__clang_major__) && (__clang_major__ < 10) \
+            defined(__clang_major__) && (__clang_major__ < 8) \
         ) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
