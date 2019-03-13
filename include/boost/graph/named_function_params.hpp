@@ -35,15 +35,13 @@
 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && ( \
-        defined(BOOST_MSVC) || ( \
-            defined(__APPLE_CC__) && defined(__clang_major__) && \
-            (__clang_major__ >= 8) && (__clang_major__ < 10) \
-        ) \
+        defined(BOOST_MSVC) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 #endif
 
-#if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
         defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || ( \
             defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000) \
         ) || ( \
