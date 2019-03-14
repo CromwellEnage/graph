@@ -43,10 +43,10 @@
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
         defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || ( \
-            defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000) \
+            defined(__MINGW32__) \
         ) || ( \
             defined(__APPLE_CC__) && \
-            defined(__clang_major__) && (__clang_major__ < 8) \
+            defined(__clang_major__) && (__clang_major__ < 10) \
         ) \
     )
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS

@@ -260,6 +260,18 @@ namespace detail { namespace graph {
                PathCountMap path_count,
                VertexIndexMap vertex_index)
     {
+#if defined(__MINGW32__) || ( \
+        defined(__APPLE_CC__) && defined(__clang_major__) && \
+        (__clang_major__ < 10) \
+    )
+      typedef static_property_map<
+        typename property_traits<DistanceMap>::value_type,
+        typename graph_traits<Graph>::edge_descriptor
+      > WeightMap;
+      WeightMap w_map(1);
+      brandes_dijkstra_shortest_paths<WeightMap> bdsp(w_map);
+      bdsp(g, s, ov, incoming, distance, path_count, vertex_index);
+#else   // neither MinGW nor XCode 9-
       typedef typename graph_traits<Graph>::vertex_descriptor
         vertex_descriptor;
 
@@ -271,11 +283,7 @@ namespace detail { namespace graph {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
-        defined(__APPLE_CC__) && defined(__clang_major__) && \
-        (__clang_major__ >= 8) && (__clang_major__ < 9) && \
-        !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) \
-    )
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_visitor = visitor,
         boost::graph::keywords::_color_map =
         make_iterator_property_map(colors.begin(), vertex_index)
@@ -285,6 +293,7 @@ namespace detail { namespace graph {
         )
 #endif
       );
+#endif  // MinGW or XCode 9-
     }
   };
 
