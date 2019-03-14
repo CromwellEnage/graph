@@ -271,7 +271,11 @@ namespace detail { namespace graph {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && !( \
+        defined(__APPLE_CC__) && defined(__clang_major__) && \
+        (__clang_major__ >= 8) && (__clang_major__ < 9) && \
+        !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) \
+    )
         boost::graph::keywords::_visitor = visitor,
         boost::graph::keywords::_color_map =
         make_iterator_property_map(colors.begin(), vertex_index)
