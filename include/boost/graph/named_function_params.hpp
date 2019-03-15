@@ -33,13 +33,21 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
 
+// MSVC-14.0 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && 0
 #define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 #endif
 
+// MSVC-12.0 and below 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
-    !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && 0
+    !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
+        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || ( \
+            defined(__MINGW32__) \
+        ) || ( \
+            BOOST_WORKAROUND(BOOST_MSVC, < 1910) \
+        ) \
+    )
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
 #endif
 
