@@ -260,7 +260,7 @@ namespace detail { namespace graph {
                PathCountMap path_count,
                VertexIndexMap vertex_index)
     {
-#if defined(__MINGW32__) || ( \
+#if defined(BOOST_MSVC) || defined(__MINGW32__) || ( \
         defined(__APPLE_CC__) && defined(__clang_major__) && \
         (__clang_major__ < 10) \
     )
@@ -271,7 +271,7 @@ namespace detail { namespace graph {
       WeightMap w_map(1);
       brandes_dijkstra_shortest_paths<WeightMap> bdsp(w_map);
       bdsp(g, s, ov, incoming, distance, path_count, vertex_index);
-#else   // neither MinGW nor XCode 9-
+#else   // neither MSVC nor MinGW nor XCode 9-
       typedef typename graph_traits<Graph>::vertex_descriptor
         vertex_descriptor;
 
@@ -293,7 +293,7 @@ namespace detail { namespace graph {
         )
 #endif
       );
-#endif  // MinGW or XCode 9-
+#endif  // MSVC or MinGW or XCode 9-
     }
   };
 
