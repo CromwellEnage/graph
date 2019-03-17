@@ -648,25 +648,11 @@ namespace boost
     );
   }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+} // end namespace boost
 
-  namespace graph_detail {
-    struct dummy_output_iterator
-    {
-      typedef std::output_iterator_tag iterator_category;
-      typedef void value_type;
-      typedef void pointer;
-      typedef void difference_type;
+#include <boost/graph/detail/dummy_output_iterator.hpp>
 
-      struct reference {
-        template<typename T>
-        reference& operator=(const T&) { return *this; }
-      };
-
-      reference operator*() const { return reference(); }
-      dummy_output_iterator& operator++() { return *this; }
-      dummy_output_iterator operator++(int) { return *this; }
-    };
-  } // end namespace graph_detail
+namespace boost {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
     !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))

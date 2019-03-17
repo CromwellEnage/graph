@@ -393,7 +393,7 @@ namespace boost { namespace detail {
     typedef visitor_predicate bfs_visitor_predicate;
 #endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
 }}
-#endif  // unnamed argument deduction and perfect forwarding enabled
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 
 #include <vector>
 #include <boost/pending/queue.hpp>
