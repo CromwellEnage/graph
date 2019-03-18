@@ -620,7 +620,7 @@ namespace boost {
     >
     void metric_tsp_approx(
         VertexListGraph& g,
-        Weightmap w,
+        WeightMap w,
         TSPVertexVisitor vis
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         , typename boost::disable_if<

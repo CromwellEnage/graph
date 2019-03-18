@@ -106,6 +106,7 @@ alias graph_test_regular :
     [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.graph ]
+    [ run metric_tsp_approx_tufts2002.cpp ]
     [ compile dimacs.cpp ]
     [ run bron_kerbosch_all_cliques.cpp ]
     [ run tiernan_all_cycles.cpp ]
