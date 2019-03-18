@@ -397,9 +397,7 @@ namespace boost {
         prim_minimum_spanning_tree(
             graph,
             pred_pmap,
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-            args
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::graph::keywords::_root_vertex = root_vertex,
             boost::graph::keywords::_vertex_index_map = vertex_index_map,
             boost::graph::keywords::_weight_map = weight_map
