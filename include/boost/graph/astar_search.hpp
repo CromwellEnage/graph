@@ -511,19 +511,32 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     typename boost::detail::override_const_property_result<
         arg_pack_type,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
         VertexListGraph
-    >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         arg_pack_type, 
@@ -609,19 +622,32 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     typename boost::detail::override_const_property_result<
         Args,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
         VertexListGraph
-    >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         Args, 
@@ -708,7 +734,12 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         arg_pack_type, 
@@ -792,7 +823,12 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         Args, 
@@ -874,19 +910,32 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     typename boost::detail::override_const_property_result<
         arg_pack_type,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
         VertexListGraph
-    >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         arg_pack_type, 
@@ -969,19 +1018,32 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     typename boost::detail::override_const_property_result<
         Args,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
         VertexListGraph
-    >::type v_i_map = detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index);
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         Args, 
@@ -1065,7 +1127,12 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         arg_pack_type, 
@@ -1146,7 +1213,12 @@ namespace boost {
         boost::graph::keywords::tag::distance_map,
         D
     >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(arg_pack, _weight_map, g, edge_weight);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
     std::less<D> default_compare;
     typename boost::parameter::binding<
         Args, 

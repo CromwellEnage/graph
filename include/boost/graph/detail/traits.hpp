@@ -1348,6 +1348,14 @@ namespace boost { namespace detail {
     };
 
     template <typename Args, typename Tag>
+    struct graph_vertex
+    {
+        typedef typename graph_traits<
+            typename mutable_value_type<Args,Tag>::type
+        >::vertex_descriptor type;
+    };
+
+    template <typename Args, typename Tag>
     struct property_map_value
     {
         typedef typename property_traits<
@@ -1394,6 +1402,75 @@ namespace boost { namespace detail {
                     ArgPack,
                     boost::graph::keywords::tag::result
                 >::type
+            > type;
+        };
+    };
+}}
+
+#include <boost/mpl/always.hpp>
+
+namespace boost { namespace detail {
+
+    template <
+        typename GraphTag1 = boost::graph::keywords::tag::graph,
+        typename GraphTag2 = boost::graph::keywords::tag::result
+    >
+    struct binary_function_vertex_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef is_binary_function<
+                typename boost::remove_reference<Arg>::type,
+                typename graph_traits<
+                    typename boost::remove_const<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            GraphTag1
+                        >::type
+                    >::type
+                >::vertex_descriptor,
+                typename graph_traits<
+                    typename boost::remove_const<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            GraphTag2
+                        >::type
+                    >::type
+                >::vertex_descriptor,
+                mpl::always<mpl::true_>
+            > type;
+        };
+    };
+
+    template <
+        typename GraphTag1 = boost::graph::keywords::tag::graph,
+        typename GraphTag2 = boost::graph::keywords::tag::result
+    >
+    struct binary_function_edge_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef is_binary_function<
+                typename boost::remove_reference<Arg>::type,
+                typename graph_traits<
+                    typename boost::remove_const<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            GraphTag1
+                        >::type
+                    >::type
+                >::edge_descriptor,
+                typename graph_traits<
+                    typename boost::remove_const<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            GraphTag2
+                        >::type
+                    >::type
+                >::edge_descriptor,
+                mpl::always<mpl::true_>
             > type;
         };
     };

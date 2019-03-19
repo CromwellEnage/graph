@@ -83,7 +83,7 @@ alias graph_test_regular :
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
-    [ compile copy.cpp ]
+    [ run copy.cpp ]
     [ compile swap.cpp ]
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp ]
