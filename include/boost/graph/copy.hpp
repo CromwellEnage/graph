@@ -418,6 +418,14 @@ namespace boost {
         (result, *(detail::argument_predicate<is_bgl_graph>))
       )
       (optional
+        (vertex_copy
+          ,*(detail::binary_function_vertex_predicate<>)
+          ,detail::make_vertex_copier(graph, result)
+        )
+        (edge_copy
+          ,*(detail::binary_function_edge_predicate<>)
+          ,detail::make_edge_copier(graph, result)
+        )
         (vertex_index_map
           ,*(
             detail::argument_with_graph_predicate<
@@ -433,14 +441,6 @@ namespace boost {
             detail::get_null_vertex(result),
             vertex_index_map
           )
-        )
-        (vertex_copy
-          ,*(detail::binary_function_vertex_predicate<>)
-          ,detail::make_vertex_copier(graph, result)
-        )
-        (edge_copy
-          ,*(detail::binary_function_edge_predicate<>)
-          ,detail::make_edge_copier(graph, result)
         )
       )
     )
@@ -769,6 +769,14 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
         (result, *(detail::argument_predicate<is_bgl_graph>))
       )
       (optional
+        (vertex_copy
+          ,*(detail::binary_function_vertex_predicate<>)
+          ,detail::make_vertex_copier(graph, result)
+        )
+        (edge_copy
+          ,*(detail::binary_function_edge_predicate<>)
+          ,detail::make_edge_copier(graph, result)
+        )
         (vertex_index_map
           ,*(
             detail::argument_with_graph_predicate<
@@ -784,14 +792,6 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
             detail::get_null_vertex(result),
             vertex_index_map
           )
-        )
-        (vertex_copy
-          ,*(detail::binary_function_vertex_predicate<>)
-          ,detail::make_vertex_copier(graph, result)
-        )
-        (edge_copy
-          ,*(detail::binary_function_edge_predicate<>)
-          ,detail::make_edge_copier(graph, result)
         )
       )
     )

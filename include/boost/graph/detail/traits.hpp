@@ -1424,17 +1424,21 @@ namespace boost { namespace detail {
                 typename boost::remove_reference<Arg>::type,
                 typename graph_traits<
                     typename boost::remove_const<
-                        typename boost::parameter::value_type<
-                            ArgPack,
-                            GraphTag1
+                        typename boost::remove_reference<
+                            typename boost::parameter::value_type<
+                                ArgPack,
+                                GraphTag1
+                            >::type
                         >::type
                     >::type
                 >::vertex_descriptor,
                 typename graph_traits<
                     typename boost::remove_const<
-                        typename boost::parameter::value_type<
-                            ArgPack,
-                            GraphTag2
+                        typename boost::remove_reference<
+                            typename boost::parameter::value_type<
+                                ArgPack,
+                                GraphTag2
+                            >::type
                         >::type
                     >::type
                 >::vertex_descriptor,
@@ -1456,17 +1460,21 @@ namespace boost { namespace detail {
                 typename boost::remove_reference<Arg>::type,
                 typename graph_traits<
                     typename boost::remove_const<
-                        typename boost::parameter::value_type<
-                            ArgPack,
-                            GraphTag1
+                        typename boost::remove_reference<
+                            typename boost::parameter::value_type<
+                                ArgPack,
+                                GraphTag1
+                            >::type
                         >::type
                     >::type
                 >::edge_descriptor,
                 typename graph_traits<
                     typename boost::remove_const<
-                        typename boost::parameter::value_type<
-                            ArgPack,
-                            GraphTag2
+                        typename boost::remove_reference<
+                            typename boost::parameter::value_type<
+                                ArgPack,
+                                GraphTag2
+                            >::type
                         >::type
                     >::type
                 >::edge_descriptor,
@@ -1488,15 +1496,19 @@ namespace boost { namespace detail {
             typedef is_binary_function<
                 typename boost::remove_reference<Arg>::type,
                 typename boost::remove_const<
-                    typename boost::parameter::value_type<
-                        ArgPack,
-                        boost::graph::keywords::tag::root_vertex
+                    typename boost::remove_reference<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            boost::graph::keywords::tag::root_vertex
+                        >::type
                     >::type
                 >::type,
                 typename boost::remove_const<
-                    typename boost::parameter::value_type<
-                        ArgPack,
-                        boost::graph::keywords::tag::graph
+                    typename boost::remove_reference<
+                        typename boost::parameter::value_type<
+                            ArgPack,
+                            boost::graph::keywords::tag::graph
+                        >::type
                     >::type
                 >::type,
                 mpl::quote1<is_boolean_expression>
@@ -1529,9 +1541,11 @@ namespace boost { namespace detail {
                 is_clustering_terminator_function<
                     mut_arg,
                     typename boost::remove_const<
-                        typename boost::parameter::value_type<
-                            ArgPack,
-                            boost::graph::keywords::tag::graph
+                        typename boost::remove_reference<
+                            typename boost::parameter::value_type<
+                                ArgPack,
+                                boost::graph::keywords::tag::graph
+                            >::type
                         >::type
                     >::type
                 >,

@@ -12,12 +12,12 @@ typedef boost::adjacency_list<
     boost::property<boost::vertex_rank_t, int>
 > G1;
 typedef boost::graph_traits<G1>::vertex_descriptor V1;
+typedef boost::graph_traits<G1>::vertex_iterator V1Itr;
 typedef boost::adjacency_list<
     boost::vecS, boost::setS, boost::directedS,
     boost::property<boost::vertex_index_t, std::size_t>
 > G2;
 typedef boost::graph_traits<G2>::vertex_descriptor V2;
-typedef boost::graph_traits<G2>::vertex_iterator V2Itr;
 
 #include <boost/graph/properties.hpp>
 
@@ -44,7 +44,9 @@ public:
 
 #include <boost/graph/copy.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <vector>
 
 int main()
 {
@@ -66,53 +68,67 @@ int main()
     add_edge(vertex(5, g1_1), vertex(2, g1_1), g1_1);
     boost::copy_graph(g1_1, g1_2);
     BOOST_TEST_EQ(num_vertices(g1_1), num_vertices(g1_2));
+
     for (std::size_t i = 0; i < num_vertices(g1_2); ++i)
+    {
         BOOST_TEST_EQ(
             get(get(boost::vertex_rank, g1_1), vertex(i, g1_1)),
             get(get(boost::vertex_rank, g1_2), vertex(i, g1_2))
         );
+    }
+
     BOOST_TEST(is_adjacent(g1_2, vertex(0, g1_2), vertex(1, g1_2)));
     BOOST_TEST(is_adjacent(g1_2, vertex(1, g1_2), vertex(4, g1_2)));
     BOOST_TEST(is_adjacent(g1_2, vertex(2, g1_2), vertex(3, g1_2)));
     BOOST_TEST(is_adjacent(g1_2, vertex(3, g1_2), vertex(0, g1_2)));
     BOOST_TEST(is_adjacent(g1_2, vertex(4, g1_2), vertex(5, g1_2)));
     BOOST_TEST(is_adjacent(g1_2, vertex(5, g1_2), vertex(2, g1_2)));
+
+    std::vector<
+        V2
+    > o2c(num_vertices(g1_1), boost::graph_traits<G2>::null_vertex());
     copier c(g1_1, g2);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-    boost::copy_graph(g1_1, g2, c);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::copy_graph(g1_1, g2, boost::graph::keywords::_vertex_copy = c);
+
+    boost::copy_graph(
+        g1_1,
+        g2,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::vertex_copy(c).orig_to_copy(
 #else
-    boost::copy_graph(g1_1, g2, boost::vertex_copy(c));
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        boost::graph::keywords::_vertex_copy =
 #endif
+        c,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        boost::graph::keywords::_orig_to_copy =
+#endif
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+            make_iterator_property_map(
+                o2c.begin(),
+                get(boost::vertex_index, g1_1)
+            )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        )
+#endif
+    );
 
-    V2Itr v2_begin, v2_end;
-    boost::tie(v2_begin, v2_end) = vertices(g2);
-    V2Itr v2_i = v2_begin;
+    V1Itr v1_i, v1_end;
 
-    for (std::size_t i = num_vertices(g2); v2_i != v2_end; ++v2_i)
+    for (boost::tie(v1_i, v1_end) = vertices(g1_1); v1_i != v1_end; ++v1_i)
     {
-        --i;
-        BOOST_TEST_EQ(i, get(get(boost::vertex_index, g2), *v2_i));
+        std::size_t i = get(get(boost::vertex_index, g1_1), *v1_i);
+        BOOST_TEST_EQ(
+            num_vertices(g1_1) - i - 1,
+            get(get(boost::vertex_index, g2), o2c[i])
+        );
     }
 
-    v2_i = v2_end = v2_begin; ++v2_end;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
-
-    ++v2_i; ++v2_i; ++v2_end; ++v2_end;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
-
-    ++v2_i; ++v2_i; ++v2_end; ++v2_end;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
-
-    v2_i = v2_end = v2_begin; ++v2_i; ++v2_end; ++v2_end; ++v2_end; ++v2_end;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
-
-    v2_end = v2_i = v2_begin; ++v2_i; ++v2_i; ++v2_i;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
-
-    ++v2_i; ++v2_i; ++v2_end; ++v2_end;
-    BOOST_TEST(is_adjacent(g2, *v2_i, *v2_end));
+    BOOST_TEST(is_adjacent(g2, o2c[0], o2c[1]));
+    BOOST_TEST(is_adjacent(g2, o2c[1], o2c[4]));
+    BOOST_TEST(is_adjacent(g2, o2c[2], o2c[3]));
+    BOOST_TEST(is_adjacent(g2, o2c[3], o2c[0]));
+    BOOST_TEST(is_adjacent(g2, o2c[4], o2c[5]));
+    BOOST_TEST(is_adjacent(g2, o2c[5], o2c[2]));
 
     return boost::report_errors();
 }
