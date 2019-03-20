@@ -45,6 +45,6 @@ main()
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
-    BOOST_ASSERT(edge(target(*ei, G), source(*ei, G), G_T).second);
+    BOOST_TEST(edge(target(*ei, G), source(*ei, G), G_T).second);
   return boost::report_errors();
 }

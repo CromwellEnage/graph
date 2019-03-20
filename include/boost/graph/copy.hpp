@@ -45,16 +45,18 @@
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/reverse_graph.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/detail/traits.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/core/enable_if.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/graph/detail/traits.hpp>
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
@@ -407,7 +409,9 @@ namespace boost {
 
   } // namespace detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+    )
   BOOST_PARAMETER_FUNCTION(
     (bool), copy_graph, ::boost::graph::keywords::tag,
     (required
@@ -740,7 +744,9 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
   // Copy all the vertices and edges of graph/g_in that are reachable
   // from the source vertex into result/g_out. Return the vertex
   // in result/g_out that matches the source vertex of graph/g_in.
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+    )
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<

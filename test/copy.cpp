@@ -97,17 +97,21 @@ int main()
     boost::copy_graph(
         g1_1,
         g2,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        boost::vertex_copy(c).orig_to_copy(
-#else
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || ( \
+        defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD) \
+    )
         boost::graph::keywords::_vertex_copy =
 #endif
         c,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || ( \
+        defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD) \
+    )
         boost::graph::keywords::_orig_to_copy =
 #endif
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::vertex_copy(c).orig_to_copy(
+#endif
             make_iterator_property_map(
                 o2c.begin(),
                 get(boost::vertex_index, g1_1)

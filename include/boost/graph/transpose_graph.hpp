@@ -15,9 +15,11 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/graph/copy.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
@@ -35,7 +37,9 @@
 
 namespace boost {
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+    )
   BOOST_PARAMETER_FUNCTION(
     (bool), transpose_graph, ::boost::graph::keywords::tag,
     (required
