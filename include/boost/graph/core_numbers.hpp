@@ -11,6 +11,165 @@
 #ifndef BOOST_GRAPH_CORE_NUMBERS_HPP
 #define BOOST_GRAPH_CORE_NUMBERS_HPP
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/detail/traits.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/parameter/config.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/eval_if.hpp>
+#include <boost/type_traits/add_pointer.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/declval.hpp>
+
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+#include <boost/typeof/typeof.hpp>
+#endif
+
+namespace boost { namespace detail {
+
+#if !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
+    template <typename T, typename G>
+    class is_core_numbers_visitor_impl
+    {
+        typedef typename boost::remove_const<T>::type _m_T;
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_exam_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().examine_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().examine_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_exam_v(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_exam_e(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().examine_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().examine_edge(
+                            boost::declval<
+                                typename graph_traits<P>::edge_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_exam_e(...);
+
+        template <typename B, typename P>
+        static graph_yes_tag
+            _check_end_v(
+                mpl::vector<B,P>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_KEYWORD((
+                        boost::detail::declref<B>().finish_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    ))
+#else
+                    decltype(
+                        boost::detail::declref<B>().finish_vertex(
+                            boost::declval<
+                                typename graph_traits<P>::vertex_descriptor
+                            >(),
+                            boost::detail::declcref<P>()
+                        )
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check_end_v(...);
+
+    public:
+        typedef mpl::bool_<
+            (
+                sizeof(
+                    is_core_numbers_visitor_impl<T,G>::_check_exam_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_core_numbers_visitor_impl<T,G>::_check_exam_e(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            ) && (
+                sizeof(
+                    is_core_numbers_visitor_impl<T,G>::_check_end_v(
+                        static_cast<mpl::vector<_m_T,G>*>(
+                            BOOST_GRAPH_DETAIL_NULLPTR
+                        )
+                    )
+                ) == sizeof(graph_yes_tag)
+            )
+        > type;
+    };
+
+    template <typename T, typename G>
+    struct is_core_numbers_visitor
+      : mpl::eval_if<
+        is_bgl_graph<G>,
+        is_core_numbers_visitor_impl<T,G>,
+        mpl::false_
+      >::type
+    { };
+
+    typedef argument_with_graph_predicate<
+      is_core_numbers_visitor
+    > core_numbers_visitor_predicate;
+#else   // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
+    typedef visitor_predicate core_numbers_visitor_predicate;
+#endif  // !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD)
+}}
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
@@ -89,8 +248,10 @@ namespace boost {
     { return core_numbers_visitor<Visitors>(vis); }
 
     typedef core_numbers_visitor<> default_core_numbers_visitor;
+}
 
-    namespace detail {
+
+namespace boost { namespace detail {
 
         // implement a constant_property_map to simplify compute_in_degree
         // for the weighted and unweighted case
@@ -282,8 +443,26 @@ namespace boost {
             }
             return v_cn;
         }
+}} // namespace boost::detail
 
-    } // namespace detail
+#include <boost/core/enable_if.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
+namespace boost {
 
     // non-named parameter version for the unweighted case
     template <typename Graph, typename CoreMap, typename CoreNumVisitor>

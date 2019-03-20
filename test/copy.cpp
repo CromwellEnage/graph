@@ -9,13 +9,13 @@
 
 typedef boost::adjacency_list<
     boost::vecS, boost::vecS, boost::directedS,
-    boost::property<boost::vertex_rank_t, int>
+    boost::property<boost::vertex_rank_t, std::size_t>
 > G1;
 typedef boost::graph_traits<G1>::vertex_descriptor V1;
 typedef boost::graph_traits<G1>::vertex_iterator V1Itr;
 typedef boost::adjacency_list<
     boost::vecS, boost::setS, boost::directedS,
-    boost::property<boost::vertex_index_t, std::size_t>
+    boost::property<boost::vertex_discover_time_t, std::size_t>
 > G2;
 typedef boost::graph_traits<G2>::vertex_descriptor V2;
 
@@ -34,9 +34,9 @@ public:
     void operator()(const V1& v1, const V2& v2) const
     {
         put(
-            get(boost::vertex_index, this->_g2), v2, (
+            get(boost::vertex_discover_time, this->_g2), v2, (
                 num_vertices(this->_g1) - 1 -
-                get(get(boost::vertex_index, this->_g1), v1)
+                get(get(boost::vertex_rank, this->_g1), v1)
             )
         );
     }
@@ -116,10 +116,14 @@ int main()
 
     for (boost::tie(v1_i, v1_end) = vertices(g1_1); v1_i != v1_end; ++v1_i)
     {
-        std::size_t i = get(get(boost::vertex_index, g1_1), *v1_i);
         BOOST_TEST_EQ(
-            num_vertices(g1_1) - i - 1,
-            get(get(boost::vertex_index, g2), o2c[i])
+            num_vertices(
+                g1_1
+            ) - 1 - get(get(boost::vertex_rank, g1_1), *v1_i),
+            get(
+                get(boost::vertex_discover_time, g2),
+                o2c[get(get(boost::vertex_index, g1_1), *v1_i)]
+            )
         );
     }
 
