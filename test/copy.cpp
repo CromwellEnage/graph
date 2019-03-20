@@ -52,15 +52,20 @@ int main()
 {
     G1 g1_1, g1_2;
     G2 g2;
-    V1 v1_1, v1_2;
+    V1 v1_1 = add_vertex(g1_1);
+    V1 v1_2 = add_vertex(g1_1);
 
-    add_edge(v1_1 = add_vertex(g1_1), v1_2 = add_vertex(g1_1), g1_1);
+    add_edge(v1_1, v1_2, g1_1);
     put(get(boost::vertex_rank, g1_1), v1_1, 4);
     put(get(boost::vertex_rank, g1_1), v1_2, 8);
-    add_edge(v1_1 = add_vertex(g1_1), v1_2 = add_vertex(g1_1), g1_1);
+    v1_1 = add_vertex(g1_1);
+    v1_2 = add_vertex(g1_1);
+    add_edge(v1_1, v1_2, g1_1);
     put(get(boost::vertex_rank, g1_1), v1_1, 15);
     put(get(boost::vertex_rank, g1_1), v1_2, 16);
-    add_edge(v1_1 = add_vertex(g1_1), v1_2 = add_vertex(g1_1), g1_1);
+    v1_1 = add_vertex(g1_1);
+    v1_2 = add_vertex(g1_1);
+    add_edge(v1_1, v1_2, g1_1);
     put(get(boost::vertex_rank, g1_1), v1_1, 23);
     put(get(boost::vertex_rank, g1_1), v1_2, 42);
     add_edge(vertex(1, g1_1), vertex(4, g1_1), g1_1);
