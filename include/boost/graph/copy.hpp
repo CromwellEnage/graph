@@ -55,7 +55,7 @@
 #include <boost/core/enable_if.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
-        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+        !defined(BOOST_NO_CXX11_DECLTYPE) \
     )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -410,7 +410,7 @@ namespace boost {
   } // namespace detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
-        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+        !defined(BOOST_NO_CXX11_DECLTYPE) \
     )
   BOOST_PARAMETER_FUNCTION(
     (bool), copy_graph, ::boost::graph::keywords::tag,
@@ -745,7 +745,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
   // from the source vertex into result/g_out. Return the vertex
   // in result/g_out that matches the source vertex of graph/g_in.
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
-        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+        !defined(BOOST_NO_CXX11_DECLTYPE) \
     )
   BOOST_PARAMETER_FUNCTION(
     (

@@ -99,13 +99,13 @@ int main()
         g2,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || ( \
-        defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD) \
+        defined(BOOST_NO_CXX11_DECLTYPE) \
     )
         boost::graph::keywords::_vertex_copy =
 #endif
         c,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || ( \
-        defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD) \
+        defined(BOOST_NO_CXX11_DECLTYPE) \
     )
         boost::graph::keywords::_orig_to_copy =
 #endif
