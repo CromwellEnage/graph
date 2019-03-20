@@ -13,7 +13,8 @@
 
 using namespace boost;
 
-void test_1() {
+void test_1()
+{
     // core numbers of sample graph
     typedef adjacency_list<vecS,vecS,undirectedS> Graph;
 
@@ -50,21 +51,27 @@ void test_1() {
 
     std::vector<int> core_nums(num_vertices(G));
 
-    core_numbers(G,
-        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
+    core_numbers(
+        G,
+        make_iterator_property_map(core_nums.begin(), get(vertex_index,G))
+    );
 
     int correct[21]={1,2,2,3,3,3,3,3,2,3,2,1,1,3,3,0,2,2,2,2,1};
 
-    for (size_t i=0; i<num_vertices(G); ++i) {
+    for (size_t i=0; i<num_vertices(G); ++i)
+    {
         BOOST_TEST_EQ(core_nums[i], correct[i]);
-        if (core_nums[i] != correct[i]) {
+
+        if (core_nums[i] != correct[i])
+        {
             std::cerr << "vertex " << i << " core number " << core_nums[i];
             std::cerr << " should be " << correct[i] << std::endl;
         }
     }
 }
 
-void test_2() {
+void test_2()
+{
     // core numbers of sample graph
     typedef adjacency_list < listS, vecS, undirectedS,
         no_property, property < edge_weight_t, int > > graph_t;
@@ -76,21 +83,41 @@ void test_2() {
     graph_t G(edge_array, edge_array + num_arcs, weights, num_nodes);
     std::vector<int> core_nums(num_vertices(G));
 
-    weighted_core_numbers(G,
-        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    core_numbers(
+        G,
+        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)),
+        get(edge_weight,G)
+    );
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    core_numbers(
+        G,
+        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)),
+        boost::graph::keywords::_weight_map = get(edge_weight,G)
+    );
+#else
+    weighted_core_numbers(
+        G,
+        make_iterator_property_map(core_nums.begin(), get(vertex_index,G))
+    );
+#endif
 
     int correct[3]={-1,-1,-4};
 
-    for (size_t i=0; i<num_vertices(G); ++i) {
+    for (size_t i=0; i<num_vertices(G); ++i)
+    {
         BOOST_TEST_EQ(core_nums[i], correct[i]);
-        if (core_nums[i] != correct[i]) {
+
+        if (core_nums[i] != correct[i])
+        {
             std::cerr << "vertex " << i << " core number " << core_nums[i];
             std::cerr << " should be " << correct[i] << std::endl;
         }
     }
 }
 
-void test_3() {
+void test_3()
+{
     // core numbers of a directed graph, the core numbers of a directed
     // cycle are always one
     typedef adjacency_list < vecS, vecS, directedS > graph_t;
@@ -101,21 +128,27 @@ void test_3() {
     graph_t G(edge_array, edge_array + num_arcs, num_nodes);
     std::vector<int> core_nums(num_vertices(G));
 
-    core_numbers(G,
-        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)));
+    core_numbers(
+        G,
+        make_iterator_property_map(core_nums.begin(), get(vertex_index,G))
+    );
 
     int correct[5]={1,1,1,1,1};
 
-    for (size_t i=0; i<num_vertices(G); ++i) {
+    for (size_t i=0; i<num_vertices(G); ++i)
+    {
         BOOST_TEST_EQ(core_nums[i], correct[i]);
-        if (core_nums[i] != correct[i]) {
+
+        if (core_nums[i] != correct[i])
+        {
             std::cerr << "vertex " << i << " core number " << core_nums[i];
             std::cerr << " should be " << correct[i] << std::endl;
         }
     }
 }
 
-int main(int, char **) {
+int main(int, char **)
+{
     std::cout << "Testing core_numbers..." << std::endl;
     test_1();
 
