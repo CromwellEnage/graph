@@ -77,7 +77,9 @@ template <typename Graph, typename Args>
 inline typename boost::lazy_enable_if<
     parameter::is_argument_pack<Args>,
     detail::graph_or_arg_packed_property_map_value<
-        Graph, boost::edge_weight_t, Args,
+        Graph,
+        edge_weight_t,
+        Args,
         boost::graph::keywords::tag::weight_map
     >
 >::type find_flow_cost(const Graph& g, const Args& args)
@@ -152,7 +154,11 @@ namespace boost {
 
 template <typename Graph>
 inline typename property_traits<
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    typename property_map< Graph, edge_weight_t >::type
+#else
     typename property_map< Graph, edge_capacity_t >::type
+#endif
 >::value_type
 find_flow_cost(const Graph& g)
 {

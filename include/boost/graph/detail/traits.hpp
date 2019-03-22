@@ -1363,25 +1363,31 @@ namespace boost { namespace detail {
         >::value_type type;
     };
 
-    template <typename Graph, typename Tag, typename Args, typename Key>
+    template <typename Graph, typename PTag, typename Args, typename KTag>
     struct graph_or_arg_packed_mutable_value_type
         : boost::remove_const<
             typename boost::remove_reference<
-                typename boost::parameter::value_type<
+                typename boost::detail::override_const_property_result<
                     Args,
-                    Key,
-                    typename property_map<Graph,Tag>::type
+                    KTag,
+                    PTag,
+                    Graph
                 >::type
             >::type
         >
     {
     };
 
-    template <typename G, typename T, typename A, typename K>
+    template <typename Graph, typename PTag, typename Args, typename KTag>
     struct graph_or_arg_packed_property_map_value
     {
         typedef typename property_traits<
-            typename graph_or_arg_packed_mutable_value_type<G,T,A,K>::type
+            typename graph_or_arg_packed_mutable_value_type<
+                Graph,
+                PTag,
+                Args,
+                KTag
+            >::type
         >::value_type type;
     };
 }}
@@ -1392,8 +1398,11 @@ namespace boost { namespace detail {
 
     template <typename G, typename T, typename K, typename ...A>
     struct graph_or_tagged_args_property_map_value
-        : graph_or_arg_packed_mutable_value_type<
-            G,T,typename parameter::result_of::compose<A...>::type,K
+        : graph_or_arg_packed_property_map_value<
+            G,
+            T,
+            typename parameter::result_of::compose<A...>::type,
+            K
         >
     {
     };
@@ -1413,7 +1422,7 @@ namespace boost { namespace detail { \
         BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename A) \
     > \
     struct name<G, T, K BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, A)> \
-        : graph_or_arg_packed_mutable_value_type< \
+        : graph_or_arg_packed_property_map_value< \
             G, \
             T, \
             typename parameter::result_of::compose< \
