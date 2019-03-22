@@ -328,6 +328,7 @@ edmonds_karp_max_flow(Graph& g,
 #if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 // Boost.Parameter-enabled tagged-argument overloads
 // TODO: return the same type as the argument-pack overload
+// need parameter::result_of::compose
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
 template <typename Graph, typename TA \
           BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \

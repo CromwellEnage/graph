@@ -1362,7 +1362,94 @@ namespace boost { namespace detail {
             typename mutable_value_type<Args,Tag>::type
         >::value_type type;
     };
+
+    template <typename Graph, typename Tag, typename Args, typename Key>
+    struct graph_or_arg_packed_mutable_value_type
+        : boost::remove_const<
+            typename boost::remove_reference<
+                typename boost::parameter::value_type<
+                    Args,
+                    Key,
+                    typename property_map<Graph,Tag>::type
+                >::type
+            >::type
+        >
+    {
+    };
+
+    template <typename G, typename T, typename A, typename K>
+    struct graph_or_arg_packed_property_map_value
+    {
+        typedef typename property_traits<
+            typename graph_or_arg_packed_mutable_value_type<G,T,A,K>::type
+        >::value_type type;
+    };
 }}
+
+#if 0 // need parameter::result_of::compose
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+namespace boost { namespace detail {
+
+    template <typename G, typename T, typename K, typename ...A>
+    struct graph_or_tagged_args_property_map_value
+        : graph_or_arg_packed_mutable_value_type<
+            G,T,typename parameter::result_of::compose<A...>::type,K
+        >
+    {
+    };
+}}
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+#include <boost/preprocessor/arithmetic/inc.hpp>
+#include <boost/preprocessor/facilities/intercept.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/repeat.hpp>
+
+#define BOOST_GRAPH_METAFUNCTION_SPECIALIZATION(z, n, name) \
+namespace boost { namespace detail { \
+    template < \
+        typename G, typename T, typename K \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename A) \
+    > \
+    struct name<G, T, K BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, A)> \
+        : graph_or_arg_packed_mutable_value_type< \
+            G, \
+            T, \
+            typename parameter::result_of::compose< \
+                BOOST_PP_ENUM_PARAMS_Z(z, n, prefix) \
+            >::type, \
+            K \
+        > \
+    { \
+    }; \
+}}
+
+namespace boost { namespace detail {
+
+    template <
+        typename G, typename T, typename K
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(
+            BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY)
+          , typename TaggedArg
+          , = void BOOST_PP_INTERCEPT
+        )
+    >
+    struct graph_or_tagged_args_property_map_value;
+}}
+
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+BOOST_PP_REPEAT_FROM_TO(
+    1,
+    BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY),
+    BOOST_GRAPH_METAFUNCTION_SPECIALIZATION,
+    graph_or_tagged_args_property_map_value
+)
+
+#undef BOOST_GRAPH_METAFUNCTION_SPECIALIZATION
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#endif  // need parameter::result_of::compose
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
@@ -1561,6 +1648,11 @@ namespace boost { namespace detail {
         >
     {
     };
+}}
+
+#include <boost/mpl/has_key.hpp>
+
+namespace boost { namespace detail {
 
     template <typename Args, typename Tag>
     struct is_iterator_argument
@@ -1663,11 +1755,6 @@ namespace boost { namespace detail {
         >::type
     {
     };
-}}
-
-#include <boost/mpl/has_key.hpp>
-
-namespace boost { namespace detail {
 
     template <typename Args, typename VertexTag, typename GraphTag>
     struct is_vertex_property_map_of_graph_argument
