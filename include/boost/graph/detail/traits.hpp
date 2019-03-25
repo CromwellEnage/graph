@@ -1415,7 +1415,7 @@ namespace boost { namespace detail {
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
 
-#define BOOST_GRAPH_METAFUNCTION_SPECIALIZATION(z, n, name) \
+#define BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION(z, n, name) \
 namespace boost { namespace detail { \
     template < \
         typename G, typename T, typename K \
@@ -1452,11 +1452,11 @@ namespace boost { namespace detail {
 BOOST_PP_REPEAT_FROM_TO(
     1,
     BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY),
-    BOOST_GRAPH_METAFUNCTION_SPECIALIZATION,
+    BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION,
     graph_or_tagged_args_property_map_value
 )
 
-#undef BOOST_GRAPH_METAFUNCTION_SPECIALIZATION
+#undef BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION
 #endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
 #endif  // need parameter::result_of::compose
 

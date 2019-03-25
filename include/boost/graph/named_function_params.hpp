@@ -571,6 +571,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       >::value_type type;
     };
 
+// need parameter::result_of::compose
 #if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     template <typename Tag, typename Prop, typename Graph, typename ...TaggedArgs>
