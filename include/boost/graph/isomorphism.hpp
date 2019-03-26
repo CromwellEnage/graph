@@ -494,7 +494,8 @@ namespace boost { namespace detail {
     };
 }} // namespace boost::detail
 
-namespace boost { namespace graph { namespace detail {
+namespace boost { namespace graph {
+  namespace detail {
 
     template <typename Graph1, typename Graph2>
     struct isomorphism_impl {
@@ -558,7 +559,9 @@ namespace boost { namespace graph { namespace detail {
           );
         }
     };
-}}}
+  } // namespace detail
+  BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+}} // namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/is_argument_pack.hpp>
@@ -579,7 +582,7 @@ namespace boost {
   template <typename Graph1, typename Graph2>
   inline bool isomorphism(const Graph1& g1, const Graph2& g2)
   {
-    return isomorphism(g1, g2, boost::parameter::compose());
+    return boost::isomorphism(g1, g2, boost::parameter::compose());
   }
 
   template <typename G1, typename G2, typename P, typename T, typename R>
@@ -624,9 +627,6 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, isomorphism)
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #else
 namespace boost {
-  namespace graph {
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
-  }
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
 }

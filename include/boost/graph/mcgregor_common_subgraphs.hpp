@@ -495,11 +495,11 @@ namespace boost {
     detail::mcgregor_common_subgraphs_internal_init(
       graph1, graph2,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
@@ -729,11 +729,11 @@ namespace boost {
     mcgregor_common_subgraphs_unique(
       graph1, graph2,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
@@ -962,11 +962,11 @@ namespace boost {
     mcgregor_common_subgraphs_maximum(
       graph1, graph2,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
@@ -1212,11 +1212,11 @@ namespace boost {
     mcgregor_common_subgraphs_maximum_unique(
       graph1, graph2,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[

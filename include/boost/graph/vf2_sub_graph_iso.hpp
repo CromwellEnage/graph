@@ -964,11 +964,11 @@ namespace boost {
     return detail::vf2_subgraph_morphism<detail::subgraph_mono>(
       graph_small, graph_large, user_callback,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph_small, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph_large, vertex_index)
       ],
       vertex_order_small,
@@ -1076,11 +1076,11 @@ namespace boost {
     return detail::vf2_subgraph_morphism<detail::subgraph_iso>(
       graph1, graph2, user_callback,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       vertex_order1,
@@ -1247,11 +1247,11 @@ namespace boost {
     return vf2_graph_iso(
       graph1, graph2, user_callback,
       args[
-        boost::graph::keywords::_vertex_index_map1 |
+        boost::graph::keywords::_vertex_index1_map |
         detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
-        boost::graph::keywords::_vertex_index_map2 |
+        boost::graph::keywords::_vertex_index2_map |
         detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       vertex_order1,
