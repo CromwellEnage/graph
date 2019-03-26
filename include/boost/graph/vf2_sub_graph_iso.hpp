@@ -940,18 +940,25 @@ namespace boost {
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/core/enable_if.hpp>
 
 namespace boost {
 
   // Named parameter variant of vf2_subgraph_mono
+  // with explicit user_callback
   template <typename GraphSmall,
             typename GraphLarge,
-            typename VertexOrderSmall,
             typename SubGraphCallback,
+            typename VertexOrderSmall,
             typename Args>
   typename boost::enable_if<
-    parameter::is_argument_pack<Args>,
+    typename mpl::if_<
+      parameter::is_argument_pack<VertexOrderSmall>,
+      mpl::false_,
+      parameter::is_argument_pack<Args>
+    >::type,
     bool
   >::type vf2_subgraph_mono(
     const GraphSmall& graph_small,
@@ -982,6 +989,28 @@ namespace boost {
       ]
     );
   }
+
+  // Named parameter variant of vf2_subgraph_mono
+  // with default user_callback
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphCallback,
+            typename Args>
+  typename boost::enable_if<
+    parameter::is_argument_pack<Args>,
+    bool
+  >::type vf2_subgraph_mono(
+    const GraphSmall& graph_small,
+    const GraphLarge& graph_large,
+    SubGraphCallback user_callback,
+    const Args& args
+  )
+  {
+    return vf2_subgraph_mono(
+      graph_small, graph_large, user_callback,
+      vertex_order_by_mult(graph_small), args
+    );
+  }
 } // namespace boost
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
@@ -1003,8 +1032,8 @@ namespace boost {
   // Old-style named parameter interface of vf2_subgraph_iso
   template <typename GraphSmall,
             typename GraphLarge,
-            typename VertexOrderSmall,
             typename SubGraphIsoMapCallback,
+            typename VertexOrderSmall,
             typename Param,
             typename Tag,
             typename Rest>
@@ -1031,12 +1060,12 @@ namespace boost {
   // search space has been fully explored.
   template <typename GraphSmall,
             typename GraphLarge,
+            typename SubGraphIsoMapCallback,
             typename IndexMapSmall,
             typename IndexMapLarge,
             typename VertexOrderSmall,
             typename EdgeEquivalencePredicate,
-            typename VertexEquivalencePredicate,
-            typename SubGraphIsoMapCallback>
+            typename VertexEquivalencePredicate>
   bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
                         SubGraphIsoMapCallback user_callback,
                         IndexMapSmall index_map_small, IndexMapLarge index_map_large, 
@@ -1057,13 +1086,18 @@ namespace boost {
 namespace boost {
 
   // Named parameter variant of vf2_subgraph_iso
+  // with explicit user_callback
   template <typename GraphFirst,
             typename GraphSecond,
-            typename VertexOrder1,
             typename SubGraphCallback,
+            typename VertexOrder1,
             typename Args>
   inline typename boost::enable_if<
-    parameter::is_argument_pack<Args>,
+    typename mpl::if_<
+      parameter::is_argument_pack<VertexOrder1>,
+      mpl::false_,
+      parameter::is_argument_pack<Args>
+    >::type,
     bool
   >::type vf2_subgraph_iso(
     const GraphFirst& graph1,
@@ -1094,6 +1128,28 @@ namespace boost {
       ]
     );
   }
+
+  // Named parameter variant of vf2_subgraph_iso
+  // with default user_callback
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Args>
+  inline typename boost::enable_if<
+    parameter::is_argument_pack<Args>,
+    bool
+  >::type vf2_subgraph_iso(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    SubGraphCallback user_callback,
+    const Args& args
+  )
+  {
+    return vf2_subgraph_iso(
+      graph_small, graph_large, user_callback,
+      vertex_order_by_mult(graph_small), args
+    );
+  }
 } // namespace boost
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
@@ -1116,8 +1172,8 @@ namespace boost {
   // Old-style named parameter interface of vf2_subgraph_iso
   template <typename GraphSmall,
             typename GraphLarge,
-            typename VertexOrderSmall,
             typename SubGraphIsoMapCallback,
+            typename VertexOrderSmall,
             typename Param,
             typename Tag,
             typename Rest>
@@ -1146,12 +1202,12 @@ namespace boost {
   // fully explored.
   template <typename Graph1,
             typename Graph2,
+            typename GraphIsoMapCallback,
             typename IndexMap1,
             typename IndexMap2,
             typename VertexOrder1,
             typename EdgeEquivalencePredicate,
-            typename VertexEquivalencePredicate,
-            typename GraphIsoMapCallback>
+            typename VertexEquivalencePredicate>
   bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
                      GraphIsoMapCallback user_callback,
                      IndexMap1 index_map1, IndexMap2 index_map2, 
@@ -1228,13 +1284,18 @@ namespace boost {
 namespace boost {
 
   // Named parameter variant of vf2_graph_iso
+  // with explicit user_callback
   template <typename GraphFirst,
             typename GraphSecond,
-            typename VertexOrder1,
             typename GraphIsoMapCallback,
+            typename VertexOrder1,
             typename Args>
   inline typename boost::enable_if<
-    parameter::is_argument_pack<Args>,
+    typename mpl::if_<
+      parameter::is_argument_pack<VertexOrder1>,
+      mpl::false_,
+      parameter::is_argument_pack<Args>
+    >::type,
     bool
   >::type vf2_graph_iso(
     const GraphFirst& graph1,
@@ -1265,6 +1326,28 @@ namespace boost {
       ]
     );
   }
+
+  // Named parameter variant of vf2_graph_iso
+  // with default user_callback
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename GraphIsoMapCallback,
+            typename Args>
+  inline typename boost::enable_if<
+    parameter::is_argument_pack<Args>,
+    bool
+  >::type vf2_graph_iso(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    GraphIsoMapCallback user_callback,
+    const Args& args
+  )
+  {
+    return vf2_graph_iso(
+      graph_small, graph_large, user_callback,
+      vertex_order_by_mult(graph_small), args
+    );
+  }
 } // namespace boost
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
@@ -1287,8 +1370,8 @@ namespace boost {
   // Old-style named parameter interface of vf2_graph_iso
   template <typename Graph1,
             typename Graph2,
-            typename VertexOrder1,
             typename GraphIsoMapCallback,
+            typename VertexOrder1,
             typename Param,
             typename Tag,
             typename Rest>
@@ -1371,13 +1454,18 @@ namespace boost {
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
         typename GraphFirst, typename GraphSecond, \
-        typename VertexOrder1, typename GraphIsoMapCallback, typename TA \
+        typename GraphIsoMapCallback, typename VertexOrder1, typename TA \
         BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
     > \
     inline typename boost::enable_if< \
-        parameter::are_tagged_arguments< \
-            TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-        >, bool \
+        typename mpl::if_< \
+            parameter::is_argument_pack<VertexOrder1>, \
+            mpl::false_, \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            > \
+        >::type, \
+        bool \
     >::type name( \
         const GraphFirst& graph1, const GraphSecond& graph2, \
         GraphIsoMapCallback user_callback, \
@@ -1387,6 +1475,43 @@ namespace boost {
     { \
         return name( \
             graph1, graph2, user_callback, vertex_order1, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
+
+namespace boost {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_subgraph_mono
+)
+BOOST_PP_REPEAT_FROM_TO(
+    1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_subgraph_iso
+)
+BOOST_PP_REPEAT_FROM_TO(
+    1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_graph_iso
+)
+} // namespace boost
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template < \
+        typename GraphFirst, typename GraphSecond, \
+        typename GraphIsoMapCallback, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline typename boost::enable_if< \
+        parameter::are_tagged_arguments< \
+            TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+        >, bool \
+    >::type name( \
+        const GraphFirst& graph1, const GraphSecond& graph2, \
+        GraphIsoMapCallback user_callback, const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+    ) \
+    { \
+        return name( \
+            graph1, graph2, user_callback, \
             parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
         ); \
     }

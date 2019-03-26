@@ -249,11 +249,12 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
   std::cout << std::endl;
   BOOST_CHECK(
     vf2_subgraph_iso(
-      g1, g2, callback, vertex_order_by_mult(g1),
+      g1, g2, callback,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_edges_equivalent = edge_comp,
       boost::graph::keywords::_vertices_equivalent = vertex_comp
 #else
+      vertex_order_by_mult(g1),
       edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)
 #endif
     )
@@ -271,11 +272,12 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
     std::cout << std::endl;
     BOOST_CHECK(
       vf2_graph_iso(
-        g1, g2, callback, vertex_order_by_mult(g1),
+        g1, g2, callback,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_edges_equivalent = edge_comp,
         boost::graph::keywords::_vertices_equivalent = vertex_comp
 #else
+        vertex_order_by_mult(g1),
         edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)
 #endif
       )
