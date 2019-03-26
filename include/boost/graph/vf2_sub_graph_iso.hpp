@@ -1070,7 +1070,7 @@ namespace boost {
     const GraphSecond& graph2,
     SubGraphCallback user_callback,
     const VertexOrder1& vertex_order1,
-    const Args& args,
+    const Args& args
   )
   {
     return detail::vf2_subgraph_morphism<detail::subgraph_iso>(
@@ -1241,7 +1241,7 @@ namespace boost {
     const GraphSecond& graph2,
     GraphIsoMapCallback user_callback,
     const VertexOrder1& vertex_order1,
-    const Args& args,
+    const Args& args
   )
   {
     return vf2_graph_iso(
