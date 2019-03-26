@@ -1146,8 +1146,8 @@ namespace boost {
   )
   {
     return vf2_subgraph_iso(
-      graph_small, graph_large, user_callback,
-      vertex_order_by_mult(graph_small), args
+      graph1, graph2, user_callback,
+      vertex_order_by_mult(graph1), args
     );
   }
 } // namespace boost
@@ -1344,8 +1344,8 @@ namespace boost {
   )
   {
     return vf2_graph_iso(
-      graph_small, graph_large, user_callback,
-      vertex_order_by_mult(graph_small), args
+      graph1, graph2, user_callback,
+      vertex_order_by_mult(graph1), args
     );
   }
 } // namespace boost
