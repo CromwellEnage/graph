@@ -16,7 +16,7 @@
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <sys/time.h>
+#include <ctime>
 #include <vector>
 #include <list>
 #include <iostream>

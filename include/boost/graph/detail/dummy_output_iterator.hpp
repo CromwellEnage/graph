@@ -1,8 +1,8 @@
 // Copyright (c) Jeremy Siek 2001
 // Copyright (c) Douglas Gregor 2004
 //
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_GRAPH_DETAIL_DUMMY_OUTPUT_ITERATOR_HPP
