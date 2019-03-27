@@ -338,10 +338,22 @@ void graph_test(const OrigGraph& g)
   typedef boost::graph_traits<CSRGraphT>::edge_descriptor edge_descriptor;
   std::vector<edge_descriptor> mst_edges;
   mst_edges.reserve(num_vertices(g3));
-  kruskal_minimum_spanning_tree
-    (g3, std::back_inserter(mst_edges),
-     weight_map(make_iterator_property_map(edge_centralities.begin(),
-                                           get(boost::edge_index, g3))));
+  kruskal_minimum_spanning_tree(
+    g3,
+    std::back_inserter(mst_edges),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    weight_map(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_weight_map =
+#endif
+      make_iterator_property_map(
+        edge_centralities.begin(),
+        get(boost::edge_index, g3)
+      )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 }
 
 void graph_test(int nnodes, double density, int seed)
@@ -393,11 +405,18 @@ void test_vertex_and_edge_properties()
   double centrality[5] = { 0.0, 1.5, 0.0, 1.0, 0.5 };
 
   CSRGraphWithPropsT g(boost::edges_are_sorted, &edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
-  brandes_betweenness_centrality
-    (g,
-     centrality_map(get(&Vertex::centrality, g)).
-     weight_map(get(&Edge::weight, g)).
-     edge_centrality_map(get(&Edge::centrality, g)));
+  brandes_betweenness_centrality(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_centrality_map = get(&Vertex::centrality, g),
+    boost::graph::keywords::_weight_map = get(&Edge::weight, g),
+    boost::graph::keywords::_edge_centrality_map = get(&Edge::centrality, g)
+#else
+    centrality_map(get(&Vertex::centrality, g)).
+    weight_map(get(&Edge::weight, g)).
+    edge_centrality_map(get(&Edge::centrality, g))
+#endif
+  );
 
   BGL_FORALL_VERTICES(v, g, CSRGraphWithPropsT)
     BOOST_CHECK(g[v].centrality == centrality[v]);
