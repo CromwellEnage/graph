@@ -743,6 +743,7 @@ namespace boost { namespace graph_detail {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_type)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(graph_tag)
     BOOST_MPL_HAS_XXX_TRAIT_DEF(centrality_type)
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(inherited_vertex_properties)
 }}
 
 #include <boost/range/has_range_iterator.hpp>
@@ -1239,19 +1240,28 @@ namespace boost { namespace detail {
                     mpl::true_,
 #endif
                     mpl::eval_if<
-                        is_graph_with_vertex_property_type<G,vertex_index_t>,
+                        // for compressed_sparse_row_graph
+                        graph_detail::has_inherited_vertex_properties<G>,
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
                         has_internal_property_map_impl<G,vertex_index_t>,
 #else
                         mpl::true_,
 #endif
                         mpl::eval_if<
-                            graph_detail::has_graph_type<G>,  // for adaptors
-                            has_graph_type_with_internal_vertex_property_map<
-                                G,
-                                vertex_index_t
-                            >,
-                            mpl::false_
+                            is_graph_with_vertex_property_type<G,vertex_index_t>,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                            has_internal_property_map_impl<G,vertex_index_t>,
+#else
+                            mpl::true_,
+#endif
+                            mpl::eval_if<
+                                graph_detail::has_graph_type<G>,  // for adaptors
+                                has_graph_type_with_internal_vertex_property_map<
+                                    G,
+                                    vertex_index_t
+                                >,
+                                mpl::false_
+                            >
                         >
                     >
                 >
