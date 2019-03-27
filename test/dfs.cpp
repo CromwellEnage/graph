@@ -113,9 +113,9 @@ struct dfs_test
 
     boost::mt19937 gen, dfs_chooser_gen;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-    boost::uniform_int<> dfs_choices(0, 2);
+    boost::uniform_int<> dfs_choices(0, 3);
 #else
-    boost::uniform_int<> dfs_choices(0, 1);
+    boost::uniform_int<> dfs_choices(0, 2);
 #endif
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
@@ -158,10 +158,17 @@ struct dfs_test
             boost::depth_first_search(g, visitor(vis).color_map(color));
             break;
           case 1:
+            boost::depth_first_search(
+              g,
+              boost::graph::keywords::_visitor = vis,
+              boost::graph::keywords::_color_map = color
+            );
+            break;
+          case 2:
             boost::depth_first_search(g, vis, color);
             break;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-          case 2:
+          case 3:
             boost::depth_first_search(g, color, vis);
             break;
 #endif

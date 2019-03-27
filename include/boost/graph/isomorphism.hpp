@@ -336,7 +336,6 @@ fi_adj_loop_k:++fi_adj.first;
     }
 }} // namespace boost::detail
 
-
 namespace boost {
 
   template <typename InDegreeMap, typename Graph>
@@ -436,7 +435,6 @@ namespace boost {
   }
 }
 
-
 namespace boost { namespace detail {
 
     template <typename Graph1, typename Graph2, 
@@ -494,8 +492,7 @@ namespace boost { namespace detail {
     };
 }} // namespace boost::detail
 
-namespace boost { namespace graph {
-  namespace detail {
+namespace boost { namespace graph { namespace detail {
 
     template <typename Graph1, typename Graph2>
     struct isomorphism_impl {
@@ -559,16 +556,14 @@ namespace boost { namespace graph {
           );
         }
     };
-  } // namespace detail
-  BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
-}} // namespace boost::graph
+}}} // namespace boost::graph::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/core/enable_if.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
   template <typename Graph1, typename Graph2, typename Args>
   inline typename boost::enable_if<
@@ -594,7 +589,7 @@ namespace boost {
     boost::graph::detail::isomorphism_impl<G1, G2> f;
     return f(g1, g2, arg_pack);
   }
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -619,14 +614,22 @@ namespace boost {
     ); \
   }
 
-namespace boost {
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, isomorphism)
+}} // namespace boost::graph
+
+namespace boost {
+
+using ::boost::graph::isomorphism;
 }
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #else
 namespace boost {
+  namespace graph {
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+  }
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
 }

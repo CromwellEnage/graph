@@ -33,9 +33,7 @@
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #endif
 
-namespace boost {
-
-  namespace detail {
+namespace boost { namespace detail {
 
 // Define BOOST_RECURSIVE_DFS to use older, recursive version.
 // It is retained for a while in order to perform performance
@@ -148,22 +146,24 @@ namespace boost {
 
 #endif // ! BOOST_RECURSIVE_DFS
 
-  } // namespace detail
+}} // namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost { namespace graph {
+
   // Boost.Parameter-enabled variant
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_dfs, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_edge_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_edge_list_graph>))
     )
     (deduced
       (required
         (edge_color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_color_map_of_graph
             >
           )
         )
@@ -171,16 +171,16 @@ namespace boost {
       (optional
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+          ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
           ,make_shared_array_property_map(
@@ -190,16 +190,16 @@ namespace boost {
           )
         )
         (visitor
-          ,*(detail::dfs_visitor_predicate)
+          ,*(boost::detail::dfs_visitor_predicate)
           ,default_dfs_visitor()
         )
         (root_vertex
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
             >
           )
-          ,detail::get_default_starting_vertex(graph)
+          ,boost::detail::get_default_starting_vertex(graph)
         )
       )
     )
@@ -254,16 +254,18 @@ namespace boost {
 
     Vertex s = root_vertex;
 
-    if (s != detail::get_default_starting_vertex(graph)) {
+    if (s != boost::detail::get_default_starting_vertex(graph)) {
       vis.start_vertex(s, graph);
-      detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
+      boost::detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
     }
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
       ColorValue u_color = get(color_map, *ui);
       if (u_color == Color::white()) {
         vis.start_vertex(*ui, graph);
-        detail::undir_dfv_impl(graph, *ui, vis, color_map, edge_color_map);
+        boost::detail::undir_dfv_impl(
+          graph, *ui, vis, color_map, edge_color_map
+        );
       }
     }
 
@@ -291,7 +293,7 @@ namespace boost {
       vis,
       vertex_color,
       edge_color,
-      detail::get_default_starting_vertex(g)
+      boost::detail::get_default_starting_vertex(g)
     );
   }
 
@@ -357,6 +359,9 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+}} // namespace boost::graph
+
+namespace boost {
 
   // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
@@ -392,34 +397,37 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
       ]
     );
   }
+} // namespace boost
+
+namespace boost { namespace graph {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), undirected_depth_first_visit, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_incidence_graph>))
+      (graph, *(boost::detail::argument_predicate<is_incidence_graph>))
     )
     (deduced
       (required
         (root_vertex
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
             >
           )
         )
-        (visitor, *(detail::dfs_visitor_predicate))
+        (visitor, *(boost::detail::dfs_visitor_predicate))
         (color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
         )
         (edge_color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_color_map_of_graph
             >
           )
         )
@@ -445,10 +453,19 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
     typename boost::remove_const<
       typename boost::remove_reference<visitor_type>::type
     >::type vis = visitor;
-    detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
+    boost::detail::undir_dfv_impl(graph, s, vis, color_map, edge_color_map);
     return true;
   }
+}} // namespace boost::graph
+
+namespace boost {
+
+  using ::boost::graph::undirected_dfs;
+  using ::boost::graph::undirected_depth_first_visit;
+}
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
   template <typename Graph, typename DFSVisitor, 
             typename VertexColorMap, typename EdgeColorMap, 
             typename Vertex>
@@ -531,11 +548,35 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
            start_vertex);
       }
     };
-
   } // namespace detail
-  
 
-  // Named Parameter Variant
+  // Boost.Parameter named parameter variant
+  namespace graph {
+    namespace detail {
+      template <typename Graph>
+      struct undirected_dfs_impl {
+        typedef void result_type;
+        template <typename ArgPack>
+        void operator()(const Graph& g, const ArgPack& arg_pack) const {
+          using namespace boost::graph::keywords;
+          boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::edge_color_map,
+            default_color_type
+          > make_edge_color_map_from_arg_pack(white_color);
+          boost::undirected_dfs(
+            g,
+            arg_pack[_visitor | make_dfs_visitor(null_visitor())],
+            boost::detail::make_color_map_from_arg_pack(g, arg_pack),
+            make_edge_color_map_from_arg_pack(g, arg_pack),
+            arg_pack[_root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)]
+          );
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(undirected_dfs, 1, 5)
+  }
+
+  // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
   void
   undirected_dfs(const Graph& g, 
@@ -553,7 +594,6 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
        get_param(params, vertex_color)
        );
   }
-  
 
   template <typename IncidenceGraph, typename DFSVisitor, 
     typename VertexColorMap, typename EdgeColorMap>
@@ -564,7 +604,34 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
   {
     detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
   }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-} // namespace boost
 
-#endif
+  // Boost.Parameter named parameter variant
+  namespace graph {
+    namespace detail {
+      template <typename Graph>
+      struct undirected_depth_first_visit_impl {
+        typedef void result_type;
+        template <typename ArgPack>
+        void operator()(const Graph& g, const ArgPack& arg_pack) const {
+          using namespace boost::graph::keywords;
+          boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::edge_color_map,
+            default_color_type
+          > make_edge_color_map_from_arg_pack(white_color);
+          boost::undirected_depth_first_visit(
+            g,
+            arg_pack[_root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)],
+            arg_pack[_visitor | make_dfs_visitor(null_visitor())],
+            boost::detail::make_color_map_from_arg_pack(g, arg_pack),
+            make_edge_color_map_from_arg_pack(g, arg_pack)
+          );
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(undirected_depth_first_visit, 1, 5)
+  }
+
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(undirected_depth_first_visit, 1)
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // include guard

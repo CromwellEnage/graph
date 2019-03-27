@@ -731,29 +731,32 @@ namespace boost {
     return dfs_visitor<Visitors>(vis);
   }
   typedef dfs_visitor<> default_dfs_visitor;
+} // namespace boost
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost { namespace graph {
+
   // Boost.Parameter-enabled variant
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), depth_first_search, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (optional
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+          ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
           ,make_shared_array_property_map(
@@ -763,16 +766,16 @@ namespace boost {
           )
         )
         (visitor
-          ,*(detail::dfs_visitor_predicate)
+          ,*(boost::detail::dfs_visitor_predicate)
           ,default_dfs_visitor()
         )
         (root_vertex
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
             >
           )
-          ,detail::get_default_starting_vertex(graph)
+          ,boost::detail::get_default_starting_vertex(graph)
         )
       )
     )
@@ -781,7 +784,7 @@ namespace boost {
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
-        detail::is_bgl_named_param_argument<
+        boost::detail::is_bgl_named_param_argument<
           Args,
           boost::graph::keywords::tag::visitor
         >,
@@ -798,10 +801,10 @@ namespace boost {
         ,make_shared_array_property_map(
           num_vertices(graph),
           white_color,
-          detail::vertex_or_dummy_property_map(graph, vertex_index)
+          boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
       )
-      (root_vertex, *, detail::get_default_starting_vertex(graph))
+      (root_vertex, *, boost::detail::get_default_starting_vertex(graph))
     )
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
@@ -831,10 +834,11 @@ namespace boost {
 
     Vertex s = root_vertex;
 
-    if (s != detail::get_default_starting_vertex(graph)) {
+    if (s != boost::detail::get_default_starting_vertex(graph)) {
       vis.start_vertex(s, graph);
-      detail::depth_first_visit_impl(graph, s, vis, color_map,
-                                     detail::nontruth2());
+      boost::detail::depth_first_visit_impl(
+        graph, s, vis, color_map, boost::detail::nontruth2()
+      );
     }
 
     for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui) {
@@ -842,13 +846,80 @@ namespace boost {
       ColorValue u_color = get(color_map, u);
       if (u_color == Color::white()) {
         vis.start_vertex(u, graph);
-        detail::depth_first_visit_impl(graph, u, vis, color_map,
-                                       detail::nontruth2());
+        boost::detail::depth_first_visit_impl(
+          graph, u, vis, color_map, boost::detail::nontruth2()
+        );
       }
     }
 
     return true;
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(boost::detail::argument_predicate<is_incidence_graph>))
+    )
+    (deduced
+      (required
+        (root_vertex
+          ,*(
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
+            >
+          )
+        )
+        (visitor, *(boost::detail::dfs_visitor_predicate))
+        (color_map
+          ,*(
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
+            >
+          )
+        )
+      )
+      (optional
+        (terminator_function
+          ,*(boost::detail::binary_function_graph_predicate)
+          ,boost::detail::nontruth2()
+        )
+      )
+    )
+  )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (root_vertex, *)
+      (visitor, *)
+      (color_map, *)
+    )
+    (optional
+      (terminator_function, *, boost::detail::nontruth2())
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+  {
+    typename boost::remove_const<
+      typename boost::remove_reference<root_vertex_type>::type
+    >::type s = root_vertex;
+    typename boost::remove_const<
+      typename boost::remove_reference<visitor_type>::type
+    >::type vis = visitor;
+    vis.start_vertex(s, graph);
+    boost::detail::depth_first_visit_impl(
+        graph, s, vis, color_map, terminator_function
+    );
+    return true;
+  }
+}} // namespace boost::graph
+
+namespace boost {
+
+  using ::boost::graph::depth_first_search;
+  using ::boost::graph::depth_first_visit;
 
   // Old-style named parameter variant
   template <typename Graph, typename P, typename T, typename R>
@@ -870,7 +941,7 @@ namespace boost {
           white_color,
           arg_pack[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(g, vertex_index)
+            boost::detail::vertex_or_dummy_property_map(g, vertex_index)
           ]
         )
       ],
@@ -880,66 +951,9 @@ namespace boost {
       ]
     );
   }
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  BOOST_PARAMETER_FUNCTION(
-    (bool), depth_first_visit, ::boost::graph::keywords::tag,
-    (required
-      (graph, *(detail::argument_predicate<is_incidence_graph>))
-    )
-    (deduced
-      (required
-        (root_vertex
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
-            >
-          )
-        )
-        (visitor, *(detail::dfs_visitor_predicate))
-        (color_map
-          ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
-            >
-          )
-        )
-      )
-      (optional
-        (terminator_function
-          ,*(detail::binary_function_graph_predicate)
-          ,detail::nontruth2()
-        )
-      )
-    )
-  )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  BOOST_PARAMETER_FUNCTION(
-    (bool), depth_first_visit, ::boost::graph::keywords::tag,
-    (required
-      (graph, *)
-      (root_vertex, *)
-      (visitor, *)
-      (color_map, *)
-    )
-    (optional
-      (terminator_function, *, detail::nontruth2())
-    )
-  )
-#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
-  {
-    typename boost::remove_const<
-      typename boost::remove_reference<root_vertex_type>::type
-    >::type s = root_vertex;
-    typename boost::remove_const<
-      typename boost::remove_reference<visitor_type>::type
-    >::type vis = visitor;
-    vis.start_vertex(s, graph);
-    detail::depth_first_visit_impl(graph, s, vis, color_map,
-                                   terminator_function);
-    return true;
-  }
+} // namespace boost
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
   // Boost.Parameter named parameter variant
   namespace graph {
     namespace detail {
@@ -981,8 +995,8 @@ namespace boost {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, func);
   }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 } // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)
 

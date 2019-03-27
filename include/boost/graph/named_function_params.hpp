@@ -17,6 +17,7 @@
 #include <boost/core/ref.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/preprocessor.hpp>
+#include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
@@ -658,19 +659,27 @@ BOOST_PP_REPEAT(
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE(z, nnamed, seq) \
   BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, BOOST_PP_SEQ_ELEM(0, seq), BOOST_PP_SEQ_ELEM(1, seq))
 
+#define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX_PREFIX_0(nnamed) \
+  BOOST_PP_EXPR_IF(nnamed, boost::lazy_enable_if<boost::parameter::are_tagged_arguments<)
+
+#define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX_PREFIX_1(nnamed) \
+  boost::lazy_enable_if<boost::parameter::is_argument_pack<
+
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
   template < \
     BOOST_PP_ENUM_PARAMS_Z(z, nfixed, typename Param) \
-    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename ArgumentPack) \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename TaggedArg) \
   > \
   typename \
-  BOOST_PP_EXPR_IF(nnamed, boost::lazy_enable_if<boost::parameter::is_argument_pack<ArgumentPack0>) \
+  BOOST_PP_CAT(BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX_PREFIX_, BOOST_PP_EQUAL(nnamed, 1))(nnamed) \
+  BOOST_PP_ENUM_PARAMS_Z(z, nnamed, TaggedArg) \
+  BOOST_PP_EXPR_IF(nnamed, >) \
   BOOST_PP_COMMA_IF(nnamed) \
     ::boost::graph::detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS_Z(z, nfixed, Param)> \
   BOOST_PP_EXPR_IF(nnamed, >)::type \
   name( \
     BOOST_PP_ENUM_BINARY_PARAMS_Z(z, nfixed, Param, const& param) \
-    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, ArgumentPack, const& tagged_arg) \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, TaggedArg, const& tagged_arg) \
   ) \
   { \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)( \
