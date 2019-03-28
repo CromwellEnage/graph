@@ -27,10 +27,8 @@ int main()
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, color);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    depth_first_search(g, boost::graph::keywords::_color_map = color);
 #else
-    depth_first_search(g, boost::color_map(color));
+    depth_first_search(g, boost::graph::keywords::_color_map = color);
 #endif
   }
   {
@@ -43,7 +41,10 @@ int main()
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, v_index);
 #else
-    depth_first_search(g, vertex_index_map(v_index));
+    depth_first_search(
+      g,
+      boost::graph::keywords::_vertex_index_map = v_index
+    );
 #endif
   }
   {
@@ -55,11 +56,7 @@ int main()
       graph_t;
     graph_t& g = static_object<graph_t>::get();
     dfs_visitor<> v;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    depth_first_search(g, v);
-#else
-    depth_first_search(g, visitor(v));
-#endif
+    depth_first_search(g, boost::graph::keywords::_visitor = v);
   }
   return 0;
 }

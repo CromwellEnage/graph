@@ -41,13 +41,9 @@ main()
   topological_sort(
     g,
     std::front_inserter(topo_order),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::vertex_index_map(
-#endif
-    typed_identity_property_map<int>()
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
+    boost::graph::keywords::_vertex_index_map = typed_identity_property_map<
+      int
+    >()
   );
 
   int n = 1;

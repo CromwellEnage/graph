@@ -736,6 +736,7 @@ namespace boost {
 } // namespace boost
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
 namespace boost { namespace graph {
 
     // Boost.Parameter-enabled variant
@@ -937,7 +938,9 @@ namespace boost { namespace graph {
         return true;
     }
 }} // namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
 namespace boost {
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
@@ -1021,6 +1024,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_search, 1, 4)
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_visit, 1, 5)
 }} // namespace boost::graph
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {

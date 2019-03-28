@@ -67,7 +67,9 @@ main(int, char*[])
   std::cout << "DFS parenthesis:" << std::endl;
   depth_first_search(
     G,
-    make_dfs_visitor(std::make_pair(open_paren(), close_paren()))
+    boost::graph::keywords::_visitor = make_dfs_visitor(
+      std::make_pair(open_paren(), close_paren())
+    )
   );
   std::cout << std::endl;
   return 0;

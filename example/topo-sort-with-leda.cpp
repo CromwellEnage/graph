@@ -41,8 +41,11 @@ main()
   std::vector < vertex_t > topo_order;
   node_array < default_color_type > color_array(leda_g);
 
-  topological_sort(leda_g, std::back_inserter(topo_order),
-                   color_map(make_leda_node_property_map(color_array)));
+  topological_sort(
+    leda_g, std::back_inserter(topo_order),
+    boost::graph::keywords::_color_map =
+    make_leda_node_property_map(color_array)
+  );
 
   std::reverse(topo_order.begin(), topo_order.end());
   int n = 1;

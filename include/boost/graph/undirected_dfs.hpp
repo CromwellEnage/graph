@@ -40,108 +40,141 @@ namespace boost { namespace detail {
 // comparison.
 #ifndef BOOST_RECURSIVE_DFS
 
-    template <typename IncidenceGraph, typename DFSVisitor, 
-              typename VertexColorMap, typename EdgeColorMap>
-    void undir_dfv_impl
-      (const IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-       DFSVisitor& vis,
-       VertexColorMap vertex_color,
-       EdgeColorMap edge_color)
+    template <
+        typename IncidenceGraph, typename DFSVisitor,
+        typename VertexColorMap, typename EdgeColorMap
+    >
+    void undir_dfv_impl(
+        const IncidenceGraph& g,
+        typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+        DFSVisitor& vis,
+        VertexColorMap vertex_color,
+        EdgeColorMap edge_color
+    )
     {
-      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<IncidenceGraph> ));
-      BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, IncidenceGraph> ));
-      typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
-      typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<VertexColorMap,Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<EdgeColorMap,Edge> ));
-      typedef typename property_traits<VertexColorMap>::value_type ColorValue;
-      typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
-      BOOST_CONCEPT_ASSERT(( ColorValueConcept<ColorValue> ));
-      BOOST_CONCEPT_ASSERT(( ColorValueConcept<EColorValue> ));
-      typedef color_traits<ColorValue> Color;
-      typedef color_traits<EColorValue> EColor;
-      typedef typename graph_traits<IncidenceGraph>::out_edge_iterator Iter;
-      typedef std::pair<Vertex, std::pair<boost::optional<Edge>, std::pair<Iter, Iter> > > VertexInfo;
+        BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<IncidenceGraph> ));
+        BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, IncidenceGraph> ));
+        typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
+        typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
+        BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<VertexColorMap,Vertex> ));
+        BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<EdgeColorMap,Edge> ));
+        typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+        typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
+        BOOST_CONCEPT_ASSERT(( ColorValueConcept<ColorValue> ));
+        BOOST_CONCEPT_ASSERT(( ColorValueConcept<EColorValue> ));
+        typedef color_traits<ColorValue> Color;
+        typedef color_traits<EColorValue> EColor;
+        typedef typename graph_traits<IncidenceGraph>::out_edge_iterator Iter;
+        typedef std::pair<
+            Vertex, std::pair<boost::optional<Edge>, std::pair<Iter, Iter> >
+        > VertexInfo;
 
-      std::vector<VertexInfo> stack;
+        std::vector<VertexInfo> stack;
 
-      put(vertex_color, u, Color::gray());
-      vis.discover_vertex(u, g);
-      stack.push_back(std::make_pair(u, std::make_pair(boost::optional<Edge>(), out_edges(u, g))));
-      while (!stack.empty()) {
-        VertexInfo& back = stack.back();
-        u = back.first;
-        boost::optional<Edge> src_e = back.second.first;
-        Iter ei = back.second.second.first, ei_end = back.second.second.second;
-        stack.pop_back();
-        while (ei != ei_end) {
-          Vertex v = target(*ei, g);
-          vis.examine_edge(*ei, g);
-          ColorValue v_color = get(vertex_color, v);
-          EColorValue uv_color = get(edge_color, *ei);
-          put(edge_color, *ei, EColor::black());
-          if (v_color == Color::white()) {
-            vis.tree_edge(*ei, g);
-            src_e = *ei;
-            stack.push_back(std::make_pair(u, std::make_pair(src_e, std::make_pair(++ei, ei_end))));
-            u = v;
-            put(vertex_color, u, Color::gray());
-            vis.discover_vertex(u, g);
-            boost::tie(ei, ei_end) = out_edges(u, g);
-          } else if (v_color == Color::gray()) {
-            if (uv_color == EColor::white()) vis.back_edge(*ei, g);
-            call_finish_edge(vis, *ei, g);
-            ++ei;
-          } else { // if (v_color == Color::black())
-            call_finish_edge(vis, *ei, g);
-            ++ei;
-          }
+        put(vertex_color, u, Color::gray());
+        vis.discover_vertex(u, g);
+        stack.push_back(
+            std::make_pair(
+                u, std::make_pair(boost::optional<Edge>(), out_edges(u, g))
+            )
+        );
+
+        while (!stack.empty())
+        {
+            VertexInfo& back = stack.back();
+            u = back.first;
+            boost::optional<Edge> src_e = back.second.first;
+            Iter ei = back.second.second.first, ei_end = back.second.second.second;
+            stack.pop_back();
+
+            while (ei != ei_end)
+            {
+                Vertex v = target(*ei, g);
+                vis.examine_edge(*ei, g);
+                ColorValue v_color = get(vertex_color, v);
+                EColorValue uv_color = get(edge_color, *ei);
+                put(edge_color, *ei, EColor::black());
+
+                if (v_color == Color::white())
+                {
+                    vis.tree_edge(*ei, g);
+                    src_e = *ei;
+                    stack.push_back(
+                        std::make_pair(
+                            u,
+                            std::make_pair(
+                                src_e, std::make_pair(++ei, ei_end)
+                            )
+                        )
+                    );
+                    u = v;
+                    put(vertex_color, u, Color::gray());
+                    vis.discover_vertex(u, g);
+                    boost::tie(ei, ei_end) = out_edges(u, g);
+                }
+                else if (v_color == Color::gray())
+                {
+                    if (uv_color == EColor::white()) vis.back_edge(*ei, g);
+                    call_finish_edge(vis, *ei, g);
+                    ++ei;
+                }
+                else
+                { // if (v_color == Color::black())
+                    call_finish_edge(vis, *ei, g);
+                    ++ei;
+                }
+            }
+
+            put(vertex_color, u, Color::black());
+            vis.finish_vertex(u, g);
+            if (src_e) call_finish_edge(vis, src_e.get(), g);
         }
-        put(vertex_color, u, Color::black());
-        vis.finish_vertex(u, g);
-        if (src_e) call_finish_edge(vis, src_e.get(), g);
-      }
     }
 
 #else // BOOST_RECURSIVE_DFS
 
-    template <typename IncidenceGraph, typename DFSVisitor, 
-              typename VertexColorMap, typename EdgeColorMap>
-    void undir_dfv_impl
-      (const IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-       DFSVisitor& vis,  // pass-by-reference here, important!
-       VertexColorMap vertex_color,
-       EdgeColorMap edge_color)
+    template <
+        typename IncidenceGraph, typename DFSVisitor,
+        typename VertexColorMap, typename EdgeColorMap
+    >
+    void undir_dfv_impl(
+        const IncidenceGraph& g,
+        typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+        DFSVisitor& vis,  // pass-by-reference here, important!
+        VertexColorMap vertex_color,
+        EdgeColorMap edge_color
+    )
     {
-      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<IncidenceGraph> ));
-      BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, IncidenceGraph> ));
-      typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
-      typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<VertexColorMap,Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<EdgeColorMap,Edge> ));
-      typedef typename property_traits<VertexColorMap>::value_type ColorValue;
-      typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
-      BOOST_CONCEPT_ASSERT(( ColorValueConcept<ColorValue> ));
-      BOOST_CONCEPT_ASSERT(( ColorValueConcept<EColorValue> ));
-      typedef color_traits<ColorValue> Color;
-      typedef color_traits<EColorValue> EColor;
-      typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
+        BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<IncidenceGraph> ));
+        BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, IncidenceGraph> ));
+        typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
+        typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
+        BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<VertexColorMap,Vertex> ));
+        BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<EdgeColorMap,Edge> ));
+        typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+        typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
+        BOOST_CONCEPT_ASSERT(( ColorValueConcept<ColorValue> ));
+        BOOST_CONCEPT_ASSERT(( ColorValueConcept<EColorValue> ));
+        typedef color_traits<ColorValue> Color;
+        typedef color_traits<EColorValue> EColor;
+        typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
 
-      put(vertex_color, u, Color::gray());   vis.discover_vertex(u, g);
-      for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-        Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
-        ColorValue v_color = get(vertex_color, v);
-        EColorValue uv_color = get(edge_color, *ei);
-        put(edge_color, *ei, EColor::black());
-        if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
-          undir_dfv_impl(g, v, vis, vertex_color, edge_color);
-        } else if (v_color == Color::gray() && uv_color == EColor::white())
-                                             vis.back_edge(*ei, g);
-                                             call_finish_edge(vis, *ei, g);
-      }
-      put(vertex_color, u, Color::black());  vis.finish_vertex(u, g);
+        put(vertex_color, u, Color::gray());     vis.discover_vertex(u, g);
+
+        for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
+        {
+            Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
+            ColorValue v_color = get(vertex_color, v);
+            EColorValue uv_color = get(edge_color, *ei);
+            put(edge_color, *ei, EColor::black());
+            if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
+                undir_dfv_impl(g, v, vis, vertex_color, edge_color);
+            } else if (v_color == Color::gray() && uv_color == EColor::white())
+                                                 vis.back_edge(*ei, g);
+                                                 call_finish_edge(vis, *ei, g);
+        }
+
+        put(vertex_color, u, Color::black());  vis.finish_vertex(u, g);
     }
 
 #endif // ! BOOST_RECURSIVE_DFS
@@ -149,6 +182,7 @@ namespace boost { namespace detail {
 }} // namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
 namespace boost { namespace graph {
 
     // Boost.Parameter-enabled variant
@@ -291,91 +325,102 @@ namespace boost { namespace graph {
     }
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  template <typename Graph, typename DFSVisitor, typename VertexColorMap,
-    typename EdgeColorMap>
-  inline void
-  undirected_dfs(
-    const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
-    EdgeColorMap edge_color, typename boost::disable_if<
-      parameter::are_tagged_arguments<
-        DFSVisitor, VertexColorMap, EdgeColorMap
-      >,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
+    template <
+        typename Graph, typename DFSVisitor, typename VertexColorMap,
+        typename EdgeColorMap
+    >
+    inline void
     undirected_dfs(
-      g,
-      vis,
-      vertex_color,
-      edge_color,
-      boost::detail::get_default_starting_vertex(g)
-    );
-  }
+        const Graph& g, DFSVisitor vis, VertexColorMap vertex_color,
+        EdgeColorMap edge_color, typename boost::disable_if<
+            parameter::are_tagged_arguments<
+                DFSVisitor, VertexColorMap, EdgeColorMap
+            >,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        undirected_dfs(
+            g,
+            vis,
+            vertex_color,
+            edge_color,
+            boost::detail::get_default_starting_vertex(g)
+        );
+    }
 
-  template <typename Graph, typename Args>
-  inline void
-  undirected_dfs(
-    const Graph& g,
-    const Args& arg_pack,
-    typename boost::enable_if<
-      parameter::is_argument_pack<Args>,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
+    template <typename Graph, typename Args>
+    inline void
     undirected_dfs(
-      g,
-      arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<default_dfs_visitor>()
-      ],
-      arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(g),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            get(vertex_index, g)
-          ]
-        )
-      ],
-      arg_pack[
-        boost::graph::keywords::_edge_color_map
-      ],
-      arg_pack[
-        boost::graph::keywords::_root_vertex ||
-        boost::detail::get_default_starting_vertex_t<Graph>(g)
-      ]
-    );
-  }
+        const Graph& g,
+        const Args& arg_pack,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        undirected_dfs(
+            
+            g,
+            arg_pack[
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
+            ],
+            arg_pack[
+                boost::graph::keywords::_color_map |
+                make_shared_array_property_map(
+                    num_vertices(g),
+                    white_color,
+                    arg_pack[
+                        boost::graph::keywords::_vertex_index_map |
+                        get(vertex_index, g)
+                    ]
+                )
+            ],
+            arg_pack[
+                boost::graph::keywords::_edge_color_map
+            ],
+            arg_pack[
+                boost::graph::keywords::_root_vertex ||
+                boost::detail::get_default_starting_vertex_t<Graph>(g)
+            ]
+        );
+    }
+}} // namespace boost::graph
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph, typename TA \
-            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline void name \
-    (const Graph &g, const TA &ta \
-     BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-     typename boost::enable_if< \
-       parameter::are_tagged_arguments< \
-         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-       >, \
-       mpl::true_ \
-     >::type = mpl::true_()) \
-  { \
-    name( \
-      g, \
-      parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
-    ); \
-  }
+    template < \
+        typename Graph, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        const Graph &g, const TA &ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+           parameter::are_tagged_arguments< \
+               TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+           >, \
+           mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            g, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
 
-BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs)
+namespace boost { namespace graph {
+
+    BOOST_PP_REPEAT_FROM_TO(
+        1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, undirected_dfs
+    )
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-}} // namespace boost::graph
 
 namespace boost {
 
@@ -475,8 +520,10 @@ namespace boost { namespace graph {
         return true;
     }
 }} // namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
+
+namespace boost { namespace graph {
 
   template <typename Graph, typename DFSVisitor, 
             typename VertexColorMap, typename EdgeColorMap, 
@@ -501,13 +548,13 @@ namespace boost {
       put(edge_color, *ei, Color::white());
 
     if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
-      detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
+      boost::detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
     }
 
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(vertex_color, *ui);
       if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-        detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);
+        boost::detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);
       }
     }
   }
@@ -521,7 +568,20 @@ namespace boost {
     undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
   }
 
+  template <typename IncidenceGraph, typename DFSVisitor, 
+    typename VertexColorMap, typename EdgeColorMap>
+  void undirected_depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
+  {
+    boost::detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
+  }
+}} // namespace boost::graph
+
+namespace boost {
   namespace detail {
+
     template <typename VertexColorMap>
     struct udfs_dispatch {
 
@@ -580,16 +640,6 @@ namespace boost {
        get_param(params, vertex_color)
        );
   }
-
-  template <typename IncidenceGraph, typename DFSVisitor, 
-    typename VertexColorMap, typename EdgeColorMap>
-  void undirected_depth_first_visit
-    (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-     DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
-  {
-    detail::undir_dfv_impl(g, u, vis, vertex_color, edge_color);
-  }
 } // namespace boost
 
 namespace boost { namespace graph { namespace detail {
@@ -606,7 +656,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::edge_color_map,
                 default_color_type
             > make_edge_color_map_from_arg_pack(white_color);
-            boost::undirected_dfs(
+            undirected_dfs(
                 g,
                 arg_pack[
                     boost::graph::keywords::_visitor |
@@ -634,7 +684,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::edge_color_map,
                 default_color_type
             > make_edge_color_map_from_arg_pack(white_color);
-            boost::undirected_depth_first_visit(
+            undirected_depth_first_visit(
                 g,
                 arg_pack[
                     boost::graph::keywords::_root_vertex ||

@@ -39,8 +39,10 @@ main()
 
   typedef graph_traits < Graph * >::vertex_descriptor vertex_t;
   std::vector < vertex_t > topo_order;
-  topological_sort(sgb_g, std::back_inserter(topo_order),
-                   vertex_index_map(get(vertex_index, sgb_g)));
+  topological_sort(
+    sgb_g, std::back_inserter(topo_order),
+    boost::graph::keywords::_vertex_index_map = get(vertex_index, sgb_g)
+  );
   int n = 1;
   for (std::vector < vertex_t >::reverse_iterator i = topo_order.rbegin();
        i != topo_order.rend(); ++i, ++n)

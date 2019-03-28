@@ -114,7 +114,7 @@ main(int , char* [])
   int t = 0;
   depth_first_search(
     G,
-    categorize_edges(
+    boost::graph::keywords::_visitor = categorize_edges(
       make_pair(
         stamp_times(&d[0], t, on_discover_vertex()),
         stamp_times(&f[0], t, on_finish_vertex())

@@ -32,9 +32,7 @@
 #include <boost/type_traits/remove_reference.hpp>
 #endif
 
-namespace boost {
-
-  namespace detail {
+namespace boost { namespace detail {
 
     /**
      * The bipartite_visitor_error is thrown if an edge cannot be colored.
@@ -186,8 +184,9 @@ namespace boost {
 
       return std::make_pair (iter1, iter2);
     }
+}}
 
-  }
+namespace boost { namespace graph {
 
   /**
    * Checks a given graph for bipartiteness and fills the given color map with
@@ -205,22 +204,22 @@ namespace boost {
   BOOST_PARAMETER_FUNCTION(
     (bool), is_bipartite, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (optional
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,get(vertex_index, graph)
         )
         (partition_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
           ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
@@ -277,9 +276,9 @@ namespace boost {
 #endif
         make_dfs_visitor(
           std::make_pair(
-            detail::colorize_bipartition(partition_map),
+            boost::detail::colorize_bipartition(partition_map),
             std::make_pair(
-              detail::check_bipartition(partition_map),
+              boost::detail::check_bipartition(partition_map),
               put_property(
                 partition_map,
                 color_traits<partition_color_t>::white(),
@@ -297,7 +296,7 @@ namespace boost {
 #endif
       );
     }
-    catch (const detail::bipartite_visitor_error<vertex_descriptor_t>&)
+    catch (const boost::detail::bipartite_visitor_error<vertex_descriptor_t>&)
     {
       return false;
     }
@@ -358,29 +357,29 @@ namespace boost {
     (
       boost::lazy_enable_if<
         typename mpl::has_key<Args,boost::graph::keywords::tag::result>::type,
-        detail::mutable_value_type<Args,boost::graph::keywords::tag::result>
+        boost::detail::mutable_value_type<Args,boost::graph::keywords::tag::result>
       >
     ), find_odd_cycle, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (result, *(boost::detail::argument_predicate<boost::detail::is_iterator>))
       )
       (optional
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,get(vertex_index, graph)
         )
         (partition_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
           ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
@@ -429,9 +428,9 @@ namespace boost {
         vertex_index_map,
         make_dfs_visitor(
           std::make_pair(
-            detail::colorize_bipartition(partition_map),
+            boost::detail::colorize_bipartition(partition_map),
             std::make_pair(
-              detail::check_bipartition(partition_map),
+              boost::detail::check_bipartition(partition_map),
               std::make_pair(
                 put_property(
                   partition_map,
@@ -445,7 +444,7 @@ namespace boost {
         )
       );
     }
-    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
+    catch (const boost::detail::bipartite_visitor_error <vertex_descriptor_t>& error)
     {
       typedef std::vector <vertex_descriptor_t> path_t;
 
@@ -473,7 +472,7 @@ namespace boost {
       while (current != next);
 
       /// Find beginning of common suffix
-      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = detail::reverse_mismatch (
+      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = boost::detail::reverse_mismatch (
           std::make_pair (path1.begin (), path1.end ()), std::make_pair (path2.begin (), path2.end ()));
 
       /// Copy the odd-length cycle
@@ -517,9 +516,9 @@ namespace boost {
         graph,
         make_dfs_visitor(
           std::make_pair(
-            detail::colorize_bipartition(partition_map),
+            boost::detail::colorize_bipartition(partition_map),
             std::make_pair(
-              detail::check_bipartition(partition_map),
+              boost::detail::check_bipartition(partition_map),
               std::make_pair(
                 put_property(
                   partition_map,
@@ -538,7 +537,7 @@ namespace boost {
         )
       );
     }
-    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
+    catch (const boost::detail::bipartite_visitor_error <vertex_descriptor_t>& error)
     {
       typedef std::vector <vertex_descriptor_t> path_t;
 
@@ -566,7 +565,7 @@ namespace boost {
       while (current != next);
 
       /// Find beginning of common suffix
-      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = detail::reverse_mismatch (
+      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = boost::detail::reverse_mismatch (
           std::make_pair (path1.begin (), path1.end ()), std::make_pair (path2.begin (), path2.end ()));
 
       /// Copy the odd-length cycle
@@ -592,6 +591,12 @@ namespace boost {
     return find_odd_cycle (graph, get (vertex_index, graph), result);
   }
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+}} // namespace boost::graph
+
+namespace boost {
+
+    using ::boost::graph::is_bipartite;
+    using ::boost::graph::find_odd_cycle;
 }
 
 #endif /// BOOST_GRAPH_BIPARTITE_HPP
