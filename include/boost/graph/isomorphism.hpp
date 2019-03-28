@@ -577,7 +577,7 @@ namespace boost { namespace graph {
   template <typename Graph1, typename Graph2>
   inline bool isomorphism(const Graph1& g1, const Graph2& g2)
   {
-    return boost::isomorphism(g1, g2, boost::parameter::compose());
+    return isomorphism(g1, g2, boost::parameter::compose());
   }
 
   template <typename G1, typename G2, typename P, typename T, typename R>
