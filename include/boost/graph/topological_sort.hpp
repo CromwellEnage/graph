@@ -76,25 +76,36 @@ namespace boost { namespace graph {
     BOOST_PARAMETER_FUNCTION(
         (bool), topological_sort, ::boost::graph::keywords::tag,
         (required
-            (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+            (graph
+              , *(boost::detail::argument_predicate<is_vertex_list_graph>)
+            )
         )
         (deduced
             (required
-                (result, *(detail::argument_predicate<detail::is_iterator>))
+                (result
+                  , *(
+                         boost::detail::argument_predicate<
+                             boost::detail::is_iterator
+                         >
+                     )
+                )
             )
             (optional
                 (vertex_index_map
                   , *(
-                        detail::argument_with_graph_predicate<
-                            detail::is_vertex_to_integer_map_of_graph
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_to_integer_map_of_graph
                         >
                     )
-                  , detail::vertex_or_dummy_property_map(graph, vertex_index)
+                  , boost::detail::vertex_or_dummy_property_map(
+                        graph,
+                        vertex_index
+                    )
                 )
                 (color_map
                   , *(
-                        detail::argument_with_graph_predicate<
-                            detail::is_vertex_color_map_of_graph
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_color_map_of_graph
                         >
                     )
                   , make_shared_array_property_map(
@@ -110,7 +121,7 @@ namespace boost { namespace graph {
     BOOST_PARAMETER_FUNCTION(
         (
             boost::disable_if<
-                detail::is_bgl_named_param_argument<
+                boost::detail::is_bgl_named_param_argument<
                     Args,
                     boost::graph::keywords::tag::vertex_index_map
                 >,
@@ -124,7 +135,10 @@ namespace boost { namespace graph {
         (optional
             (vertex_index_map
               , *
-              , detail::vertex_or_dummy_property_map(graph, vertex_index)
+              , boost::detail::vertex_or_dummy_property_map(
+                    graph,
+                    vertex_index
+                )
             )
             (color_map
               , *
@@ -158,26 +172,23 @@ namespace boost { namespace graph {
 
 namespace boost { namespace graph { namespace detail {
 
-    template <typename Graph>
+    template <typename Graph, typename OutputIterator>
     struct topological_sort_impl
     {
         typedef void result_type;
 
         template <typename ArgPack>
-        inline void operator()(const Graph& g, const ArgPack& arg_pack) const
+        inline void operator()(
+            const Graph& g, OutputIterator result, const ArgPack& arg_pack
+        ) const
         {
             depth_first_search(
                 g,
                 topo_sort_visitor<
                     typename boost::remove_const<
-                        typename boost::remove_reference<
-                            typename parameter::value_type<
-                                ArgPack,
-                                boost::graph::keywords::tag::result
-                            >::type
-                        >::type
+                        OutputIterator
                     >::type
-                >(arg_pack[boost::graph::keywords::_result]),
+                >(result),
                 boost::detail::make_color_map_from_arg_pack(g, arg_pack)
             );
         }
@@ -187,7 +198,7 @@ namespace boost { namespace graph { namespace detail {
 namespace boost { namespace graph {
 
     // Boost.Parameter-enabled variant
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(topological_sort, 1, 4)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(topological_sort, 2, 4)
 
     template <typename VertexListGraph, typename OutputIterator>
     inline void topological_sort(VertexListGraph& g, OutputIterator result)

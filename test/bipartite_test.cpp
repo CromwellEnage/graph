@@ -61,7 +61,7 @@ void check_odd_cycle (const Graph& g, RandomAccessIterator first, RandomAccessIt
 /// Call the is_bipartite and find_odd_cycle functions and verify their results.
 
 template <typename Graph, typename IndexMap>
-void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
+void check_bipartite (const Graph& g, IndexMap index_map, bool bipartite_flag)
 {
   typedef boost::graph_traits <Graph> traits;
   typedef std::vector <boost::default_color_type> partition_t;
@@ -73,24 +73,35 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
 
   vertex_vector_t odd_cycle (boost::num_vertices (g));
 
-  bool first_result = boost::is_bipartite (g, index_map, partition_map);
+  bool first_result = is_bipartite(
+    g, partition_map,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_vertex_index_map =
+#endif
+    index_map
+  );
 
-  BOOST_TEST (first_result == boost::is_bipartite(g, index_map));
+  BOOST_TEST (first_result == is_bipartite(g, index_map));
 
   if (first_result)
     check_two_coloring (g, partition_map);
 
-  BOOST_TEST (first_result == is_bipartite);
+  BOOST_TEST (first_result == bipartite_flag);
 
   typename vertex_vector_t::iterator second_first = odd_cycle.begin ();
-  typename vertex_vector_t::iterator second_beyond = boost::find_odd_cycle
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  (g, second_first, index_map, partition_map);
-#else
-  (g, index_map, partition_map, second_first);
+  typename vertex_vector_t::iterator second_beyond = find_odd_cycle(
+    g, second_first,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_vertex_index_map =
 #endif
+    index_map,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_partition_map =
+#endif
+    partition_map
+  );
 
-  if (is_bipartite)
+  if (bipartite_flag)
   {
     BOOST_TEST (second_beyond == second_first);
     check_two_coloring (g, partition_map);
@@ -100,13 +111,15 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
     check_odd_cycle (g, second_first, second_beyond);
   }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  second_beyond = boost::find_odd_cycle (g, second_first, index_map);
-#else
-  second_beyond = boost::find_odd_cycle (g, index_map, second_first);
+  second_beyond = find_odd_cycle(
+    g, second_first,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_vertex_index_map =
 #endif
+    index_map
+  );
 
-  if (is_bipartite)
+  if (bipartite_flag)
   {
     BOOST_TEST (second_beyond == second_first);
   }

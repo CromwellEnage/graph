@@ -323,8 +323,12 @@ namespace boost { namespace graph {
         return true;
 #endif
     }
+}} // namespace boost::graph
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+namespace boost { namespace graph {
+
     template <
         typename Graph, typename DFSVisitor, typename VertexColorMap,
         typename EdgeColorMap

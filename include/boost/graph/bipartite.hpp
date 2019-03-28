@@ -214,7 +214,7 @@ namespace boost { namespace graph {
               boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,get(vertex_index, graph)
+          ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (partition_map
           ,*(
@@ -234,7 +234,10 @@ namespace boost { namespace graph {
       (graph, *)
     )
     (optional
-      (vertex_index_map, *, get(vertex_index, graph))
+      (vertex_index_map
+        ,*
+        ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
+      )
       (partition_map
         ,*
         ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
@@ -592,6 +595,93 @@ namespace boost { namespace graph {
   }
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 }} // namespace boost::graph
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+namespace boost { namespace graph { namespace detail {
+
+    template <typename Graph>
+    struct is_bipartite_impl
+    {
+        typedef bool result_type;
+
+        template <typename ArgPack>
+        inline OutputIterator operator()(
+            const Graph& g, const ArgPack& arg_pack
+        ) const
+        {
+            typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::vertex_index_map,
+                vertex_index_t,
+                Graph
+            >::type v_i_map = detail::override_const_property(
+                arg_pack,
+                _vertex_index_map,
+                g,
+                vertex_index
+            );
+            return is_bipartite(
+                g,
+                v_i_map,
+                arg_pack[
+                    boost::graph::keywords::_partition_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        white_color,
+                        v_i_map
+                    )
+                ]
+            );
+        }
+    };
+
+    template <typename Graph, typename OutputIterator>
+    struct find_odd_cycle_impl
+    {
+        typedef OutputIterator result_type;
+
+        template <typename ArgPack>
+        inline OutputIterator operator()(
+            const Graph& g, OutputIterator result, const ArgPack& arg_pack
+        ) const
+        {
+            typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::vertex_index_map,
+                vertex_index_t,
+                Graph
+            >::type v_i_map = detail::override_const_property(
+                arg_pack,
+                _vertex_index_map,
+                g,
+                vertex_index
+            );
+            return find_odd_cycle(
+                g,
+                v_i_map,
+                arg_pack[
+                    boost::graph::keywords::_partition_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        white_color,
+                        v_i_map
+                    )
+                ],
+                result
+            );
+        }
+    };
+}}} // namespace boost::graph::detail
+
+namespace boost { namespace graph {
+
+    // Boost.Parameter-enabled variants
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(is_bipartite, 1, 3)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(find_odd_cycle, 2, 4)
+}} // namespace boost::graph
+
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
 namespace boost {
 
