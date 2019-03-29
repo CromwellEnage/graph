@@ -604,9 +604,10 @@ namespace boost { namespace graph { namespace detail {
     struct is_bipartite_impl
     {
         typedef bool result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
-        inline OutputIterator operator()(
+        inline bool operator()(
             const Graph& g, const ArgPack& arg_pack
         ) const
         {
@@ -640,6 +641,7 @@ namespace boost { namespace graph { namespace detail {
     struct find_odd_cycle_impl
     {
         typedef OutputIterator result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline OutputIterator operator()(

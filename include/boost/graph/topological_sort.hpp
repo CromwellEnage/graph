@@ -176,6 +176,7 @@ namespace boost { namespace graph { namespace detail {
     struct topological_sort_impl
     {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline void operator()(

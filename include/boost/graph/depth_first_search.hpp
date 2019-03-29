@@ -16,11 +16,11 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
+#include <boost/mpl/bool.hpp>
 #include <boost/config.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
-#include <boost/mpl/bool.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
@@ -431,14 +431,11 @@ namespace boost { namespace detail {
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/functional/value_factory.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/concept/assert.hpp>
 #include <vector>
 #include <utility>
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/core/enable_if.hpp>
-#endif
 
 namespace boost {
 
@@ -660,7 +657,11 @@ namespace boost {
 
   template <class VertexListGraph, class DFSVisitor, class ColorMap>
   void
-  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
+                     typename boost::disable_if<
+                       parameter::are_tagged_arguments<DFSVisitor, ColorMap>,
+                       mpl::true_
+                     >::type = mpl::true_())
   {
     typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
     std::pair<vi, vi> verts = vertices(g);
@@ -971,6 +972,7 @@ namespace boost { namespace graph { namespace detail {
     struct depth_first_search_impl
     {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
@@ -994,6 +996,7 @@ namespace boost { namespace graph { namespace detail {
     struct depth_first_visit_impl
     {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const

@@ -12,6 +12,7 @@
 #define BOOST_GRAPH_UNDIRECTED_DFS_HPP
 
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/parameter/are_tagged_arguments.hpp>
 #include <vector>
 #include <boost/concept/assert.hpp>
 #include <boost/mpl/vector.hpp>
@@ -19,15 +20,14 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-#include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
-#include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
@@ -535,7 +535,11 @@ namespace boost { namespace graph {
   void
   undirected_dfs(const Graph& g, DFSVisitor vis, 
                  VertexColorMap vertex_color, EdgeColorMap edge_color,
-                 Vertex start_vertex)
+                 Vertex start_vertex, typename boost::disable_if<
+                   parameter::are_tagged_arguments<
+                     DFSVisitor, VertexColorMap, EdgeColorMap, Vertex
+                   >
+                 >::type = mpl::true_())
   {
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
@@ -567,7 +571,12 @@ namespace boost { namespace graph {
     typename EdgeColorMap>
   void
   undirected_dfs(const Graph& g, DFSVisitor vis, 
-                 VertexColorMap vertex_color, EdgeColorMap edge_color)
+                 VertexColorMap vertex_color, EdgeColorMap edge_color,
+                 typename boost::disable_if<
+                   parameter::are_tagged_arguments<
+                     DFSVisitor, VertexColorMap, EdgeColorMap
+                   >
+                 >::type = mpl::true_())
   {
     undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
   }
@@ -652,6 +661,7 @@ namespace boost { namespace graph { namespace detail {
     struct undirected_dfs_impl
     {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
@@ -680,6 +690,7 @@ namespace boost { namespace graph { namespace detail {
     struct undirected_depth_first_visit_impl
     {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
