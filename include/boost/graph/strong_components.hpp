@@ -28,18 +28,18 @@
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#else
+#include <boost/parameter/compose.hpp>
 #endif
 
-namespace boost {
+namespace boost { namespace detail {
 
-  //==========================================================================
-  // This is Tarjan's algorithm for strongly connected components
-  // from his paper "Depth first search and linear graph algorithms".
-  // It calculates the components in a single application of DFS.
-  // We implement the algorithm as a dfs-visitor.
+    //========================================================================
+    // This is Tarjan's algorithm for strongly connected components
+    // from his paper "Depth first search and linear graph algorithms".
+    // It calculates the components in a single application of DFS.
+    // We implement the algorithm as a dfs-visitor.
 
-  namespace detail {
-    
     template <typename ComponentMap, typename RootMap, typename DiscoverTime,
               typename Stack>
     class tarjan_scc_visitor : public dfs_visitor<> 
@@ -255,141 +255,237 @@ namespace boost {
                                                            r_map);
     }
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  } // namespace detail
+}} // namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+namespace boost { namespace graph {
+
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  BOOST_PARAMETER_FUNCTION(
-    (
-      boost::lazy_enable_if<
-        typename mpl::has_key<
-          Args,
-          boost::graph::keywords::tag::component_map
-        >::type,
-        detail::property_map_value<
-          Args,
-          boost::graph::keywords::tag::component_map
-        >
-      >
-    ), strong_components, ::boost::graph::keywords::tag,
-    (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
-      (component_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_property_map_of_graph
-          >
+    BOOST_PARAMETER_FUNCTION(
+        (
+            boost::lazy_enable_if<
+                typename mpl::has_key<
+                    Args,
+                    boost::graph::keywords::tag::component_map
+                >::type,
+                boost::detail::property_map_value<
+                    Args,
+                    boost::graph::keywords::tag::component_map
+                >
+            >
+        ), strong_components, ::boost::graph::keywords::tag,
+        (required
+            (graph
+              , *(boost::detail::argument_predicate<is_vertex_list_graph>)
+            )
+            (component_map
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_property_map_of_graph
+                    >
+                )
+            )
         )
-      )
+        (optional
+            (vertex_index_map
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_to_integer_map_of_graph
+                    >
+                )
+              , boost::detail::vertex_or_dummy_property_map(
+                    graph,
+                    vertex_index
+                )
+            )
+            (root_map
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_to_vertex_map_of_graph
+                    >
+                )
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    boost::detail::get_null_vertex(graph),
+                    vertex_index_map
+                )
+            )
+            (discover_time_map
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_to_integer_map_of_graph
+                    >
+                )
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    num_vertices(graph) - num_vertices(graph),
+                    vertex_index_map
+                )
+            )
+            (color_map
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_color_map_of_graph
+                    >
+                )
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+        )
     )
-    (optional
-      (vertex_index_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
-          >
-        )
-        ,detail::vertex_or_dummy_property_map(graph, vertex_index)
-      )
-      (root_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_vertex_map_of_graph
-          >
-        )
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          detail::get_null_vertex(graph),
-          vertex_index_map
-        )
-      )
-      (discover_time_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
-          >
-        )
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          num_vertices(graph) - num_vertices(graph),
-          vertex_index_map
-        )
-      )
-      (color_map
-        ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_color_map_of_graph
-          >
-        )
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          white_color,
-          vertex_index_map
-        )
-      )
-    )
-  )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  BOOST_PARAMETER_FUNCTION(
-    (
-      boost::lazy_enable_if<
-        typename mpl::has_key<
-          Args,
-          boost::graph::keywords::tag::component_map
-        >::type,
-        detail::property_map_value<
-          Args,
-          boost::graph::keywords::tag::component_map
-        >
-      >
-    ), strong_components, ::boost::graph::keywords::tag,
-    (required
-      (graph, *)
-      (component_map, *)
+    BOOST_PARAMETER_FUNCTION(
+        (
+            boost::lazy_enable_if<
+                typename mpl::has_key<
+                    Args,
+                    boost::graph::keywords::tag::component_map
+                >::type,
+                boost::detail::property_map_value<
+                    Args,
+                    boost::graph::keywords::tag::component_map
+                >
+            >
+        ), strong_components, ::boost::graph::keywords::tag,
+        (required
+            (graph, *)
+            (component_map, *)
+        )
+        (optional
+            (vertex_index_map
+              , *
+              , boost::detail::vertex_or_dummy_property_map(
+                    graph,
+                    vertex_index
+                )
+            )
+            (root_map
+              , *
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    boost::detail::get_null_vertex(graph),
+                    vertex_index_map
+                )
+            )
+            (discover_time_map
+              , *
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    num_vertices(graph) - num_vertices(graph),
+                    vertex_index_map
+                )
+            )
+            (color_map
+              , *
+              , make_shared_array_property_map(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+        )
     )
-    (optional
-      (vertex_index_map
-        ,*
-        ,detail::vertex_or_dummy_property_map(graph, vertex_index)
-      )
-      (root_map
-        ,*
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          detail::get_null_vertex(graph),
-          vertex_index_map
-        )
-      )
-      (discover_time_map
-        ,*
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          num_vertices(graph) - num_vertices(graph),
-          vertex_index_map
-        )
-      )
-      (color_map
-        ,*
-        ,make_shared_array_property_map(
-          num_vertices(graph),
-          white_color,
-          vertex_index_map
-        )
-      )
-    )
-  )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
-  {
-    typedef typename graph_traits<
-      typename boost::remove_const<
-        typename boost::remove_reference<graph_type>::type
-      >::type
-    >::directed_category DirCat;
-    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    return detail::strong_components_impl(graph, component_map, root_map,
-                                          discover_time_map, color_map);
-  }
+    {
+        typedef typename graph_traits<
+            typename boost::remove_const<
+                typename boost::remove_reference<graph_type>::type
+            >::type
+        >::directed_category DirCat;
+        BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value));
+        return detail::strong_components_impl(
+            graph, component_map, root_map, discover_time_map, color_map
+        );
+    }
+}} // namespace boost::graph
+
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+namespace boost { namespace graph { namespace detail {
+
+    template <typename Graph, typename ComponentMap>
+    struct strong_components_impl
+    {
+        typedef typename property_traits<
+            ComponentMap
+        >::value_type result_type;
+        typedef result_type type;
+
+        template <typename ArgPack>
+        inline result_type operator()(
+            const Graph& g, ComponentMap c, const ArgPack& arg_pack
+        ) const
+        {
+            typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::vertex_index_map,
+                vertex_index_t,
+                Graph
+            >::type v_i_map = detail::override_const_property(
+                arg_pack,
+                _vertex_index_map,
+                g,
+                vertex_index
+            );
+            return boost::detail::strong_components_impl(
+                g,
+                c,
+                arg_pack[
+                    boost::graph::keywords::_root_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        graph_traits<Graph>::null_vertex(),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_discover_time_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        typename graph_traits<Graph>::vertices_size_type(0),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_color_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        white_color,
+                        v_i_map
+                    )
+                ]
+            );
+        }
+    };
+}}} // namespace boost::graph::detail
+
+namespace boost { namespace graph {
+
+    // Boost.Parameter-enabled variant
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(strong_components, 2, 6)
+
+    template <typename Graph, typename ComponentMap>
+    inline typename property_traits<ComponentMap>::value_type
+    strong_components(
+        const Graph& g, ComponentMap comp
+        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag)
+    )
+    {
+        typedef typename graph_traits<Graph>::directed_category DirCat;
+        BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value));
+        return strong_components(g, comp, parameter::compose());
+    }
+}} // namespace boost::graph
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+    using ::boost::graph::strong_components;
 
   template <class Graph, class ComponentMap, 
             class P, class T, class R>
@@ -445,19 +541,6 @@ namespace boost {
                                get_param(params, vertex_root_t()));
 #endif
   }
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <class Graph, class ComponentMap>
-  inline typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g, ComponentMap comp
-                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
-  {
-    typedef typename graph_traits<Graph>::directed_category DirCat;
-    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    bgl_named_params<int, int> params(0);
-    return strong_components(g, comp, params);
-  }
-#endif
 
   template <typename Graph, typename ComponentMap, typename ComponentLists>
   void build_component_lists

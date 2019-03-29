@@ -556,7 +556,7 @@ private:
 
 };
 
-
+namespace graph {
 
 template <
   typename Graph,
@@ -644,7 +644,7 @@ two_graphs_common_spanning_trees
   std::map<vertex_descriptor, vertex_descriptor> pred_map;
   std::map<vertex_descriptor, int> dist_map, low_map;
 
-  detail::bridges_visitor<
+  boost::detail::bridges_visitor<
       associative_property_map<
           std::map<vertex_descriptor, edge_descriptor>
         >,
@@ -716,10 +716,10 @@ two_graphs_common_spanning_trees
 
   undirected_dfs(
       make_filtered_graph(iG,
-        detail::inL_edge_status< associative_property_map<
+        boost::detail::inL_edge_status< associative_property_map<
           std::map<edge_descriptor, bool> > >(aiG_inL)),
       make_dfs_visitor(
-        detail::cycle_finder< std::stack<edge_descriptor> > (&iG_buf)),
+        boost::detail::cycle_finder< std::stack<edge_descriptor> > (&iG_buf)),
       associative_property_map<
         std::map<vertex_descriptor, default_color_type> >(vertex_color),
       associative_property_map<
@@ -727,10 +727,10 @@ two_graphs_common_spanning_trees
     );
   undirected_dfs(
       make_filtered_graph(vG,
-        detail::inL_edge_status< associative_property_map<
+        boost::detail::inL_edge_status< associative_property_map<
           std::map<edge_descriptor, bool> > >(avG_inL)),
       make_dfs_visitor(
-        detail::cycle_finder< std::stack<edge_descriptor> > (&vG_buf)),
+        boost::detail::cycle_finder< std::stack<edge_descriptor> > (&vG_buf)),
       associative_property_map<
         std::map<vertex_descriptor, default_color_type> >(vertex_color),
       associative_property_map<
@@ -757,10 +757,10 @@ two_graphs_common_spanning_trees
 
         undirected_dfs(
             make_filtered_graph(iG,
-              detail::inL_edge_status< associative_property_map<
+              boost::detail::inL_edge_status< associative_property_map<
                 std::map<edge_descriptor, bool> > >(aiG_inL)),
             make_dfs_visitor(
-              detail::cycle_finder< std::stack<edge_descriptor> > (&iG_buf)),
+              boost::detail::cycle_finder< std::stack<edge_descriptor> > (&iG_buf)),
             associative_property_map<
               std::map<vertex_descriptor, default_color_type> >(vertex_color),
             associative_property_map<
@@ -768,10 +768,10 @@ two_graphs_common_spanning_trees
           );
         undirected_dfs(
             make_filtered_graph(vG,
-              detail::inL_edge_status< associative_property_map<
+              boost::detail::inL_edge_status< associative_property_map<
                 std::map<edge_descriptor, bool> > >(avG_inL)),
             make_dfs_visitor(
-              detail::cycle_finder< std::stack<edge_descriptor> > (&vG_buf)),
+              boost::detail::cycle_finder< std::stack<edge_descriptor> > (&vG_buf)),
             associative_property_map<
               std::map<vertex_descriptor, default_color_type> >(vertex_color),
             associative_property_map<
@@ -795,13 +795,13 @@ two_graphs_common_spanning_trees
     std::map<vertex_descriptor, int> com_map;
     cc += connected_components(
         make_filtered_graph(iG,
-          detail::deleted_edge_status<associative_property_map<
+          boost::detail::deleted_edge_status<associative_property_map<
             std::map<edge_descriptor, bool> > >(diG)),
         associative_property_map<std::map<vertex_descriptor, int> >(com_map)
       );
     cc += connected_components(
         make_filtered_graph(vG,
-          detail::deleted_edge_status<associative_property_map<
+          boost::detail::deleted_edge_status<associative_property_map<
             std::map<edge_descriptor, bool> > >(dvG)),
         associative_property_map< std::map<vertex_descriptor, int> >(com_map)
       );
@@ -810,7 +810,7 @@ two_graphs_common_spanning_trees
       return;
 
     // REC
-    detail::rec_two_graphs_common_spanning_trees<Graph, Func, Seq,
+    boost::detail::rec_two_graphs_common_spanning_trees<Graph, Func, Seq,
         associative_property_map< std::map<edge_descriptor, bool> > >
       (iG, iG_bimap, aiG_inL, diG, vG, vG_bimap, aiG_inL, dvG, func, inL);
 
@@ -855,7 +855,9 @@ two_graphs_common_spanning_trees
 
   two_graphs_common_spanning_trees(iG, iGO, vG, vGO, func, inL);
 }
+} // namespace graph
 
+using ::boost::graph::two_graphs_common_spanning_trees;
 
 } // namespace boost
 

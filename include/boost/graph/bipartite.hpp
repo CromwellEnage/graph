@@ -23,13 +23,16 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/bind.hpp>
+#include <boost/core/enable_if.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
-#include <boost/core/enable_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#else
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
 #endif
 
 namespace boost { namespace detail {
@@ -247,8 +250,14 @@ namespace boost { namespace graph {
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <typename graph_type, typename IndexMap,
             typename partition_map_type>
-  bool is_bipartite(const graph_type& graph, const IndexMap vertex_index_map,
-                    partition_map_type partition_map)
+  inline typename boost::disable_if<
+    parameter::are_tagged_arguments<IndexMap, partition_map_type>,
+    bool
+  >::type
+  bool is_bipartite(
+    const graph_type& graph, const IndexMap vertex_index_map,
+    partition_map_type partition_map
+  )
 #endif
   {
     /// General types and variables
@@ -317,7 +326,11 @@ namespace boost { namespace graph {
    */
 
   template <typename Graph, typename IndexMap>
-  bool is_bipartite (const Graph& graph, const IndexMap index_map)
+  inline typename boost::disable_if<
+    parameter::is_argument_pack<IndexMap>,
+    bool
+  >::type
+  is_bipartite(const Graph& graph, const IndexMap index_map)
   {
     typedef one_bit_color_map <IndexMap> partition_map_t;
     partition_map_t partition_map (num_vertices (graph), index_map);
@@ -488,8 +501,12 @@ namespace boost { namespace graph {
   }
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   // Fall back on the old public interface. -- Cromwell D. Enage
-  template <typename Graph, typename IndexMap, typename PartitionMap, typename OutputIterator>
-  OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, PartitionMap partition_map,
+  template <class Graph, class IndexMap, class PartitionMap, class OutputIterator>
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<PartitionMap, OutputIterator>,
+    OutputIterator
+  >::type
+  find_odd_cycle(const Graph& graph, const IndexMap index_map, PartitionMap partition_map,
       OutputIterator result)
   {
     /// General types and variables
@@ -580,18 +597,22 @@ namespace boost { namespace graph {
   }
 
   template <typename Graph, typename IndexMap, typename OutputIterator>
-  OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, OutputIterator result)
+  typename boost::disable_if<
+    parameter::is_argument_pack<OutputIterator>,
+    OutputIterator
+  >::type
+  find_odd_cycle(const Graph& graph, const IndexMap index_map, OutputIterator result)
   {
-    typedef one_bit_color_map <IndexMap> partition_map_t;
-    partition_map_t partition_map (num_vertices (graph), index_map);
-
-    return find_odd_cycle (graph, index_map, partition_map, result);
+    typedef one_bit_color_map<IndexMap> partition_map_t;
+    partition_map_t partition_map(num_vertices(graph), index_map);
+    return find_odd_cycle(graph, index_map, partition_map, result);
   }
 
   template <typename Graph, typename OutputIterator>
-  OutputIterator find_odd_cycle (const Graph& graph, OutputIterator result)
+  inline OutputIterator
+  find_odd_cycle(const Graph& graph, OutputIterator result)
   {
-    return find_odd_cycle (graph, get (vertex_index, graph), result);
+    return find_odd_cycle(graph, get(vertex_index, graph), result);
   }
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 }} // namespace boost::graph
@@ -607,9 +628,7 @@ namespace boost { namespace graph { namespace detail {
         typedef result_type type;
 
         template <typename ArgPack>
-        inline bool operator()(
-            const Graph& g, const ArgPack& arg_pack
-        ) const
+        inline bool operator()(const Graph& g, const ArgPack& arg_pack) const
         {
             typename boost::detail::override_const_property_result<
                 ArgPack,
@@ -653,7 +672,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::vertex_index_map,
                 vertex_index_t,
                 Graph
-            >::type v_i_map = detail::override_const_property(
+            >::type v_i_map = boost::detail::override_const_property(
                 arg_pack,
                 _vertex_index_map,
                 g,

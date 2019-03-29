@@ -20,24 +20,25 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/core/enable_if.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
     !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 #include <boost/parameter/preprocessor.hpp>
-#include <boost/core/enable_if.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#else
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
 #endif
 
-namespace boost
-{
-  namespace detail
-  {
+namespace boost { namespace detail {
+
     template<typename ComponentMap, typename DiscoverTimeMap,
              typename LowPointMap, typename PredecessorMap,
              typename OutputIterator, typename Stack,
@@ -343,17 +344,20 @@ namespace boost
       }
     };
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-  } // end namespace detail
+}} // end namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
     !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+
+namespace boost { namespace graph {
+
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -362,32 +366,34 @@ namespace boost
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
         >::type,
-        detail::make_size_t_value_pair<
+        boost::detail::make_size_t_value_pair<
           Args,
           boost::graph::keywords::tag::result
         >
       >
     ), biconnected_components, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
         (component_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_property_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_property_map_of_graph
             >
           )
         )
-        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (result
+          ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+        )
       )
     )
     (optional
       (discover_time_map
         ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_vertex_to_integer_map_of_graph
           >
         )
         ,make_shared_array_property_map(
@@ -398,8 +404,8 @@ namespace boost
       )
       (lowpoint_map
         ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_vertex_to_integer_map_of_graph
           >
         )
         ,make_shared_array_property_map(
@@ -410,18 +416,22 @@ namespace boost
       )
       (predecessor_map
         ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_vertex_map_of_graph
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_vertex_to_vertex_map_of_graph
           >
         )
         ,make_shared_array_property_map(
           num_vertices(graph),
-          detail::get_null_vertex(graph),
+          boost::detail::get_null_vertex(graph),
           get(vertex_index, graph)
         )
       )
       (visitor
-        ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+        ,*(
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_dfs_visitor
+          >
+        )
         ,default_dfs_visitor()
       )
     )
@@ -433,19 +443,19 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::result
               >,
               mpl::true_,
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::discover_time_map
               >
             >::type,
             mpl::false_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -453,7 +463,7 @@ namespace boost
             >
           >::type,
           mpl::eval_if<
-            detail::is_vertex_property_map_of_graph_argument<
+            boost::detail::is_vertex_property_map_of_graph_argument<
               Args,
               boost::graph::keywords::tag::result,
               boost::graph::keywords::tag::graph
@@ -463,7 +473,7 @@ namespace boost
           >,
           mpl::false_
         >::type,
-        detail::make_size_t_value_pair<
+        boost::detail::make_size_t_value_pair<
           Args,
           boost::graph::keywords::tag::result
         >
@@ -495,7 +505,7 @@ namespace boost
         ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
-          detail::get_null_vertex(graph),
+          boost::detail::get_null_vertex(graph),
           get(vertex_index, graph)
         )
       )
@@ -507,7 +517,7 @@ namespace boost
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       component_map,
       result,
@@ -524,8 +534,8 @@ namespace boost
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -534,36 +544,40 @@ namespace boost
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
-        detail::make_size_t_value_pair<
+        boost::detail::make_size_t_value_pair<
           Args,
           boost::graph::keywords::tag::result
         >
       >
     ), biconnected_components, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
         (component_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_property_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_property_map_of_graph
             >
           )
         )
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
         )
       )
       (optional
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_dfs_visitor
+            >
+          )
           ,default_dfs_visitor()
         )
       )
@@ -576,19 +590,19 @@ namespace boost
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::result
               >,
               mpl::true_,
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::vertex_index_map
               >
             >::type,
             mpl::true_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -597,7 +611,7 @@ namespace boost
           >::type,
           mpl::false_,
           mpl::eval_if<
-            detail::is_vertex_property_map_of_graph_argument<
+            boost::detail::is_vertex_property_map_of_graph_argument<
               Args,
               boost::graph::keywords::tag::result,
               boost::graph::keywords::tag::graph
@@ -606,7 +620,7 @@ namespace boost
             mpl::has_key<Args,boost::graph::keywords::tag::result>
           >
         >::type,
-        detail::make_size_t_value_pair<
+        boost::detail::make_size_t_value_pair<
           Args,
           boost::graph::keywords::tag::result
         >
@@ -624,7 +638,7 @@ namespace boost
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       component_map,
       result,
@@ -641,28 +655,30 @@ namespace boost
       ),
       make_shared_array_property_map(
         num_vertices(graph),
-        detail::get_null_vertex(graph),
+        boost::detail::get_null_vertex(graph),
         vertex_index_map
       ),
       visitor
     );
   }
+}} // end namespace boost::graph
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-} // end namespace boost
 
 #include <boost/graph/detail/dummy_output_iterator.hpp>
 
-namespace boost {
-
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
     !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+
+namespace boost { namespace graph {
+
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (
       boost::disable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -675,14 +691,14 @@ namespace boost {
       >
     ), biconnected_components, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
         (component_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_property_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_property_map_of_graph
             >
           )
         )
@@ -690,8 +706,8 @@ namespace boost {
       (optional
         (discover_time_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,make_shared_array_property_map(
@@ -702,18 +718,22 @@ namespace boost {
         )
         (predecessor_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_vertex_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_vertex_map_of_graph
             >
           )
           ,make_shared_array_property_map(
             num_vertices(graph),
-            detail::get_null_vertex(graph),
+            boost::detail::get_null_vertex(graph),
             get(vertex_index, graph)
           )
         )
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_dfs_visitor
+            >
+          )
           ,default_dfs_visitor()
         )
       )
@@ -721,8 +741,8 @@ namespace boost {
     (optional
       (lowpoint_map
         ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_vertex_to_integer_map_of_graph
           >
         )
         ,make_shared_array_property_map(
@@ -745,19 +765,19 @@ namespace boost {
                 boost::graph::keywords::tag::discover_time_map
               >::type,
               mpl::eval_if<
-                detail::is_bgl_named_param_argument<
+                boost::detail::is_bgl_named_param_argument<
                   Args,
                   boost::graph::keywords::tag::discover_time_map
                 >,
                 mpl::true_,
                 mpl::eval_if<
-                  detail::is_bgl_named_param_argument<
+                  boost::detail::is_bgl_named_param_argument<
                     Args,
                     boost::graph::keywords::tag::predecessor_map
                   >,
                   mpl::true_,
                   mpl::eval_if<
-                    detail::is_vertex_property_map_of_graph_argument<
+                    boost::detail::is_vertex_property_map_of_graph_argument<
                       Args,
                       boost::graph::keywords::tag::discover_time_map,
                       boost::graph::keywords::tag::graph
@@ -770,8 +790,8 @@ namespace boost {
               mpl::false_
             >::type,
             mpl::false_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -801,7 +821,7 @@ namespace boost {
         ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
-          detail::get_null_vertex(graph),
+          boost::detail::get_null_vertex(graph),
           get(vertex_index, graph)
         )
       )
@@ -818,10 +838,10 @@ namespace boost {
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       component_map,
-      graph_detail::dummy_output_iterator(),
+      boost::graph_detail::dummy_output_iterator(),
       get(vertex_index, graph),
       discover_time_map,
       lowpoint_map,
@@ -835,8 +855,8 @@ namespace boost {
     (
       boost::disable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -849,28 +869,32 @@ namespace boost {
       >
     ), biconnected_components, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
         (component_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_edge_property_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_edge_property_map_of_graph
             >
           )
         )
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
         )
       )
       (optional
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_dfs_visitor
+            >
+          )
           ,default_dfs_visitor()
         )
       )
@@ -883,19 +907,19 @@ namespace boost {
         typename mpl::eval_if<
           typename mpl::eval_if<
             typename mpl::eval_if<
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::vertex_index_map
               >,
               mpl::true_,
-              detail::is_bgl_named_param_argument<
+              boost::detail::is_bgl_named_param_argument<
                 Args,
                 boost::graph::keywords::tag::visitor
               >
             >::type,
             mpl::true_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -919,10 +943,10 @@ namespace boost {
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       component_map,
-      graph_detail::dummy_output_iterator(),
+      boost::graph_detail::dummy_output_iterator(),
       vertex_index_map,
       make_shared_array_property_map(
         num_vertices(graph),
@@ -936,7 +960,7 @@ namespace boost {
       ),
       make_shared_array_property_map(
         num_vertices(graph),
-        detail::get_null_vertex(graph),
+        boost::detail::get_null_vertex(graph),
         vertex_index_map
       ),
       visitor
@@ -948,8 +972,8 @@ namespace boost {
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -958,24 +982,24 @@ namespace boost {
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
         >::type,
-        detail::mutable_value_type<
+        boost::detail::mutable_value_type<
           Args,
           boost::graph::keywords::tag::result
         >
       >
     ), articulation_points, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
       )
       (optional
         (discover_time_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
           ,make_shared_array_property_map(
@@ -986,18 +1010,20 @@ namespace boost {
         )
         (predecessor_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_vertex_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_vertex_map_of_graph
             >
           )
           ,make_shared_array_property_map(
             num_vertices(graph),
-            detail::get_null_vertex(graph),
+            boost::detail::get_null_vertex(graph),
             get(vertex_index, graph)
           )
         )
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(
+            boost::detail::argument_with_graph_predicate<detail::is_dfs_visitor>
+          )
           ,default_dfs_visitor()
         )
       )
@@ -1005,8 +1031,8 @@ namespace boost {
     (optional
       (lowpoint_map
         ,*(
-          detail::argument_with_graph_predicate<
-            detail::is_vertex_to_integer_map_of_graph
+          boost::detail::argument_with_graph_predicate<
+            boost::detail::is_vertex_to_integer_map_of_graph
           >
         )
         ,make_shared_array_property_map(
@@ -1023,13 +1049,13 @@ namespace boost {
       boost::lazy_enable_if<
         typename mpl::eval_if<
           typename mpl::eval_if<
-            detail::is_bgl_named_param_argument<
+            boost::detail::is_bgl_named_param_argument<
               Args,
               boost::graph::keywords::tag::discover_time_map
             >,
             mpl::false_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -1039,7 +1065,7 @@ namespace boost {
           mpl::has_key<Args,boost::graph::keywords::tag::result>,
           mpl::false_
         >::type,
-        detail::mutable_value_type<
+        boost::detail::mutable_value_type<
           Args,
           boost::graph::keywords::tag::result
         >
@@ -1062,7 +1088,7 @@ namespace boost {
         ,*
         ,make_shared_array_property_map(
           num_vertices(graph),
-          detail::get_null_vertex(graph),
+          boost::detail::get_null_vertex(graph),
           get(vertex_index, graph)
         )
       )
@@ -1079,7 +1105,7 @@ namespace boost {
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       dummy_property_map(),
       result,
@@ -1096,8 +1122,8 @@ namespace boost {
     (
       boost::lazy_enable_if<
         typename mpl::eval_if<
-          detail::has_internal_vertex_property_map<
-            typename detail::mutable_value_type<
+          boost::detail::has_internal_vertex_property_map<
+            typename boost::detail::mutable_value_type<
               Args,
               boost::graph::keywords::tag::graph
             >::type,
@@ -1106,29 +1132,31 @@ namespace boost {
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
-        detail::mutable_value_type<
+        boost::detail::mutable_value_type<
           Args,
           boost::graph::keywords::tag::result
         >
       >
     ), articulation_points, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<detail::is_iterator>))
+        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
         )
       )
       (optional
         (visitor
-          ,*(detail::argument_with_graph_predicate<detail::is_dfs_visitor>)
+          ,*(
+            boost::detail::argument_with_graph_predicate<detail::is_dfs_visitor>
+          )
           ,default_dfs_visitor()
         )
       )
@@ -1140,13 +1168,13 @@ namespace boost {
       boost::lazy_enable_if<
         typename mpl::eval_if<
           typename mpl::eval_if<
-            detail::is_bgl_named_param_argument<
+            boost::detail::is_bgl_named_param_argument<
               Args,
               boost::graph::keywords::tag::vertex_index_map
             >,
             mpl::true_,
-            detail::has_internal_vertex_property_map<
-              typename detail::mutable_value_type<
+            boost::detail::has_internal_vertex_property_map<
+              typename boost::detail::mutable_value_type<
                 Args,
                 boost::graph::keywords::tag::graph
               >::type,
@@ -1156,7 +1184,7 @@ namespace boost {
           mpl::false_,
           mpl::has_key<Args,boost::graph::keywords::tag::result>
         >::type,
-        detail::mutable_value_type<
+        boost::detail::mutable_value_type<
           Args,
           boost::graph::keywords::tag::result
         >
@@ -1173,7 +1201,7 @@ namespace boost {
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
   {
-    return detail::biconnected_components_impl(
+    return boost::detail::biconnected_components_impl(
       graph,
       dummy_property_map(),
       result,
@@ -1190,22 +1218,30 @@ namespace boost {
       ),
       make_shared_array_property_map(
         num_vertices(graph),
-        detail::get_null_vertex(graph),
+        boost::detail::get_null_vertex(graph),
         vertex_index_map
       ),
       visitor
     ).second;
   }
+}} // end namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+namespace boost { namespace graph {
+
   template<typename Graph, typename ComponentMap, typename OutputIterator,
       typename DiscoverTimeMap, typename LowPointMap>
-  std::pair<std::size_t, OutputIterator>
+  inline boost::disable_if<
+    parameter::are_tagged_arguments<DiscoverTimeMap, LowPointMap>,
+    std::pair<std::size_t, OutputIterator>
+  >::type
   biconnected_components(const Graph& g, ComponentMap comp, 
       OutputIterator out, DiscoverTimeMap dtm, LowPointMap lowpt)
   {
     typedef param_not_found dispatch_type;
 
-    return detail::bicomp_dispatch3<dispatch_type>::apply
+    return boost::detail::bicomp_dispatch3<dispatch_type>::apply
             (g, comp, out, 
              get(vertex_index, g), 
              dtm, lowpt, 
@@ -1214,7 +1250,10 @@ namespace boost {
   }
 
   template < typename Graph, typename ComponentMap, typename OutputIterator>
-  std::pair<std::size_t, OutputIterator>
+  inline boost::disable_if<
+    parameter::is_argument_pack<OutputIterator>,
+    std::pair<std::size_t, OutputIterator>
+  >::type
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
   {
     return biconnected_components(g, comp, out,  
@@ -1226,9 +1265,16 @@ namespace boost {
   biconnected_components(const Graph& g, ComponentMap comp)
   {
     return biconnected_components(g, comp,
-                                  graph_detail::dummy_output_iterator()).first;
+                                  boost::graph_detail::dummy_output_iterator()).first;
   }
+}} // end namespace boost::graph
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+    using ::boost::graph::biconnected_components;
+    using ::boost::graph::articulation_points;
 
   template <typename Graph, typename ComponentMap, typename OutputIterator,
       typename P, typename T, typename R>

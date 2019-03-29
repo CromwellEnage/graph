@@ -118,8 +118,8 @@ namespace boost { namespace detail {
                     call_finish_edge(vis, *ei, g);
                     ++ei;
                 }
-                else
-                { // if (v_color == Color::black())
+                else // if (v_color == Color::black())
+                {
                     call_finish_edge(vis, *ei, g);
                     ++ei;
                 }
@@ -365,7 +365,6 @@ namespace boost { namespace graph {
     )
     {
         undirected_dfs(
-            
             g,
             arg_pack[
                 boost::graph::keywords::_visitor ||
@@ -538,7 +537,8 @@ namespace boost { namespace graph {
                  Vertex start_vertex, typename boost::disable_if<
                    parameter::are_tagged_arguments<
                      DFSVisitor, VertexColorMap, EdgeColorMap, Vertex
-                   >
+                   >,
+                   mpl::true_
                  >::type = mpl::true_())
   {
     BOOST_CONCEPT_ASSERT(( DFSVisitorConcept<DFSVisitor, Graph> ));
@@ -575,7 +575,8 @@ namespace boost { namespace graph {
                  typename boost::disable_if<
                    parameter::are_tagged_arguments<
                      DFSVisitor, VertexColorMap, EdgeColorMap
-                   >
+                   >,
+                   mpl::true_
                  >::type = mpl::true_())
   {
     undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
