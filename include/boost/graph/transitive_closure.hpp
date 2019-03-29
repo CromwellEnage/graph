@@ -22,78 +22,79 @@
 #include <boost/graph/detail/traits.hpp>
 #include <boost/concept/assert.hpp>
 
+namespace boost { namespace detail {
+
+    template <typename T>
+    inline void union_successor_sets(
+        const std::vector<T>& s1, const std::vector<T>& s2, std::vector<T>& s3
+    )
+    {
+        BOOST_USING_STD_MIN();
+        for (std::size_t k = 0; k < s1.size(); ++k)
+            s3[k] = min BOOST_PREVENT_MACRO_SUBSTITUTION(s1[k], s2[k]);
+    }
+
+    template <
+        typename TheContainer, typename ST = std::size_t,
+        typename VT = typename TheContainer::value_type
+    >
+    struct subscript_t
+    {
+        typedef ST argument_type;
+        typedef VT& result_type;
+
+        subscript_t(TheContainer& c) : container(&c)
+        {
+        }
+
+        VT& operator()(const ST& i) const
+        {
+            return (*this->container)[i];
+        }
+
+    protected:
+        TheContainer* container;
+    };
+
+    template <typename TheContainer>
+    subscript_t<TheContainer> subscript(TheContainer& c)
+    {
+        return subscript_t<TheContainer>(c);
+    }
+}} // namespace boost::detail
+
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #endif
 
-namespace boost
-{
-
-  namespace detail
-  {
-    template <typename T>
-    inline void
-      union_successor_sets(const std::vector < T > &s1,
-                           const std::vector < T > &s2,
-                           std::vector < T > &s3)
-    {
-      BOOST_USING_STD_MIN();
-      for (std::size_t k = 0; k < s1.size(); ++k)
-        s3[k] = min BOOST_PREVENT_MACRO_SUBSTITUTION(s1[k], s2[k]);
-    }
-  }                             // namespace detail
-
-  namespace detail
-  {
-    template < typename TheContainer, typename ST = std::size_t,
-      typename VT = typename TheContainer::value_type >
-      struct subscript_t
-    {
-      typedef ST argument_type;
-      typedef VT& result_type;
-
-      subscript_t(TheContainer & c):container(&c)
-      {
-      }
-      VT & operator() (const ST & i) const
-      {
-        return (*container)[i];
-      }
-    protected:
-        TheContainer * container;
-    };
-    template < typename TheContainer >
-      subscript_t < TheContainer > subscript(TheContainer & c) {
-      return subscript_t < TheContainer > (c);
-    }
-  }                             // namespace detail
+namespace boost {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
     (bool), transitive_closure, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+      (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
     )
     (deduced
       (required
-        (result, *(detail::argument_predicate<is_bgl_graph>))
+        (result, *(boost::detail::argument_predicate<is_bgl_graph>))
       )
       (optional
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
-          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+          ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         )
         (orig_to_copy
-          ,*(detail::orig_to_copy_vertex_map_predicate)
+          ,*(boost::detail::orig_to_copy_vertex_map_predicate)
           ,make_shared_array_property_map(
             num_vertices(graph),
-            detail::get_null_vertex(result),
+            boost::detail::get_null_vertex(result),
             vertex_index_map
           )
         )
@@ -150,7 +151,7 @@ namespace boost
     size_type num_scc = strong_components(
       graph,
       component_number,
-      boost::vertex_index_map(vertex_index_map)
+      boost::graph::keywords::_vertex_index_map = vertex_index_map
     );
 #endif
 
@@ -187,12 +188,9 @@ namespace boost
       CG,
       std::back_inserter(topo_order),
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      boost::vertex_index_map(
+      boost::graph::keywords::_vertex_index_map =
 #endif
       identity_property_map()
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      )
-#endif
     );
     std::reverse(topo_order.begin(), topo_order.end());
     size_type n = 0;
@@ -207,8 +205,8 @@ namespace boost
       CG_vec[i].assign(pr.first, pr.second);
       std::sort(CG_vec[i].begin(), CG_vec[i].end(),
                 boost::bind(std::less<cg_vertex>(),
-                            boost::bind(detail::subscript(topo_number), _1),
-                            boost::bind(detail::subscript(topo_number), _2)));
+                            boost::bind(boost::detail::subscript(topo_number), _1),
+                            boost::bind(boost::detail::subscript(topo_number), _2)));
     }
 
     std::vector<std::vector<cg_vertex> > chains;
@@ -225,7 +223,7 @@ namespace boost
             in_a_chain[v] = true;
             typename std::vector<cg_vertex>::const_iterator next
               = std::find_if(CG_vec[v].begin(), CG_vec[v].end(),
-                             std::not1(detail::subscript(in_a_chain)));
+                             std::not1(boost::detail::subscript(in_a_chain)));
             if (next != CG_vec[v].end())
               v = *next;
             else
@@ -257,8 +255,9 @@ namespace boost
         cg_vertex v = *adj;
         if (topo_number[v] < successors[u][chain_number[v]]) {
           // Succ(u) = Succ(u) U Succ(v)
-          detail::union_successor_sets(successors[u], successors[v],
-                                       successors[u]);
+          boost::detail::union_successor_sets(
+            successors[u], successors[v], successors[u]
+          );
           // Succ(u) = Succ(u) U {v}
           successors[u][chain_number[v]] = topo_number[v];
         }
@@ -324,28 +323,35 @@ namespace boost
 
     return true;
   }
+} // namespace boost
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-  template <typename Graph, typename GraphTC>
-  void transitive_closure(const Graph & g, GraphTC & tc)
-  {
-    if (num_vertices(g) == 0)
-      return;
-    typedef typename property_map<Graph, vertex_index_t>::const_type
-      VertexIndexMap;
-    VertexIndexMap index_map = get(vertex_index, g);
 
-    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
-    std::vector<tc_vertex> to_tc_vec(num_vertices(g));
-    iterator_property_map < tc_vertex *, VertexIndexMap, tc_vertex, tc_vertex&>
-      g_to_tc_map(&to_tc_vec[0], index_map);
+namespace boost {
 
-    transitive_closure(g, tc, g_to_tc_map, index_map);
-  }
-#endif
+    template <typename Graph, typename GraphTC>
+    void transitive_closure(const Graph& g, GraphTC& tc)
+    {
+        if (num_vertices(g) == 0) return;
+        typedef typename property_map<
+            Graph, vertex_index_t
+        >::const_type VertexIndexMap;
+        VertexIndexMap index_map = get(vertex_index, g);
+        typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+        std::vector<tc_vertex> to_tc_vec(num_vertices(g));
+        iterator_property_map<
+            typename std::vector<tc_vertex>::iterator, VertexIndexMap,
+            tc_vertex, tc_vertex&
+        > g_to_tc_map(to_tc_vec.begin(), index_map);
 
-  namespace detail
-  {
+        transitive_closure(g, tc, g_to_tc_map, index_map);
+    }
+} // namespace boost
+
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+namespace boost { namespace detail {
+
     template < typename Graph, typename GraphTC, typename G_to_TC_VertexMap,
       typename VertexIndexMap>
     void transitive_closure_dispatch
@@ -363,7 +369,11 @@ namespace boost
                       (to_tc_vec.begin(), index_map, to_tc_vec[0])),
          index_map);
     }
-  }                             // namespace detail
+}} // namespace boost::detail
+
+namespace boost {
+
+//    using ::boost::graph::transitive_closure;
 
   template < typename Graph, typename GraphTC,
     typename P, typename T, typename R >

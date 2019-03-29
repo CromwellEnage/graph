@@ -49,7 +49,7 @@ namespace boost { namespace detail {
         components_recorder(ComponentsMap c, comp_type& c_count)
         : m_component(c), m_count(c_count) {}
 
-        template <typename Vertex,typenameclass Graph>
+        template <typename Vertex, typename Graph>
         void start_vertex(Vertex, Graph&)
         {
             if (this->m_count == (std::numeric_limits<comp_type>::max)())
@@ -233,7 +233,7 @@ namespace boost { namespace graph {
     // c_count initialized to "nil" (with nil represented by (max)())
     comp_type c_count((std::numeric_limits<comp_type>::max)());
     boost::detail::components_recorder<ComponentMap> vis(c, c_count);
-    depth_first_search(g, oost::graph::keywords::_visitor = vis);
+    depth_first_search(g, boost::graph::keywords::_visitor = vis);
     return c_count + 1;
   }
 }} // namespace boost::graph

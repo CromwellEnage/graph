@@ -46,125 +46,172 @@ namespace boost { namespace detail {
              typename DFSVisitor>
     struct biconnected_components_visitor : public dfs_visitor<>
     {
-      biconnected_components_visitor
-        (ComponentMap comp, std::size_t& c, 
-         std::size_t& children_of_root, DiscoverTimeMap dtm,
-         std::size_t& dfs_time, LowPointMap lowpt, PredecessorMap pred,
-         OutputIterator out, Stack& S,
-         ArticulationVector& is_articulation_point, IndexMap index_map,
-         DFSVisitor vis)
-          : dfs_visitor<>(), comp(comp), c(c),
+        biconnected_components_visitor(
+            ComponentMap comp, std::size_t& c, std::size_t& children_of_root,
+            DiscoverTimeMap dtm, std::size_t& dfs_time, LowPointMap lowpt,
+            PredecessorMap pred, OutputIterator out, Stack& S,
+            ArticulationVector& is_articulation_point, IndexMap index_map,
+            DFSVisitor vis
+        ) : dfs_visitor<>(), comp(comp), c(c),
             children_of_root(children_of_root), dtm(dtm), dfs_time(dfs_time),
             lowpt(lowpt), pred(pred), out(out), S(S),
             is_articulation_point(is_articulation_point),
-            index_map(index_map), vis(vis) { }
-
-      template <typename Vertex, typename Graph>
-      void initialize_vertex(const Vertex& u, Graph& g)
-      {
-        put(pred, u, u);
-        vis.initialize_vertex(u, g);
-      }
-
-      template <typename Vertex, typename Graph>
-      void start_vertex(const Vertex& u, Graph& g)
-      {
-        children_of_root = 0;
-        vis.start_vertex(u, g);
-      }
-
-      template <typename Vertex, typename Graph>
-      void discover_vertex(const Vertex& u, Graph& g)
-      {
-        put(dtm, u, ++dfs_time);
-        put(lowpt, u, get(dtm, u));
-        vis.discover_vertex(u, g);
-      }
-
-      template <typename Edge, typename Graph>
-      void examine_edge(const Edge& e, Graph& g)
-      {
-        vis.examine_edge(e, g);
-      }
-
-      template <typename Edge, typename Graph>
-      void tree_edge(const Edge& e, Graph& g)
-      {
-        typename boost::graph_traits<Graph>::vertex_descriptor src = source(e, g);
-        typename boost::graph_traits<Graph>::vertex_descriptor tgt = target(e, g);
-
-        S.push(e);
-        put(pred, tgt, src);
-        if ( get(pred, src) == src ) {
-          ++children_of_root;
+            index_map(index_map), vis(vis)
+        {
         }
-        vis.tree_edge(e, g);
-      }
 
-      template <typename Edge, typename Graph>
-      void back_edge(const Edge& e, Graph& g)
-      {
-        BOOST_USING_STD_MIN();
-
-        typename boost::graph_traits<Graph>::vertex_descriptor src = source(e, g);
-        typename boost::graph_traits<Graph>::vertex_descriptor tgt = target(e, g);
-        if ( tgt != get(pred, src) ) {
-          S.push(e);
-          put(lowpt, src,
-              min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, src),
-                                                   get(dtm, tgt)));
+        template <typename Vertex, typename Graph>
+        inline void initialize_vertex(const Vertex& u, Graph& g)
+        {
+            put(this->pred, u, u);
+            this->vis.initialize_vertex(u, g);
         }
-        vis.back_edge(e, g);
-      }
 
-      template <typename Edge, typename Graph>
-      void forward_or_cross_edge(const Edge& e, Graph& g)
-      {
-        vis.forward_or_cross_edge(e, g);
-      }
+        template <typename Vertex, typename Graph>
+        inline void start_vertex(const Vertex& u, Graph& g)
+        {
+            this->children_of_root = 0;
+            this->vis.start_vertex(u, g);
+        }
 
-      template <typename Vertex, typename Graph>
-      void finish_vertex(const Vertex& u, Graph& g)
-      {
-        BOOST_USING_STD_MIN();
-        Vertex parent = get(pred, u);
-        if (parent == u) { // Root of tree is special
-          is_articulation_point[get(index_map, u)] = (children_of_root > 1);
-        } else {
-          put(lowpt, parent,
-              min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, parent),
-                                                 get(lowpt, u)));
-          if ( get(lowpt, u) >= get(dtm, parent) ) {
-            is_articulation_point[get(index_map, parent)] = true;
-            while ( get(dtm, source(S.top(), g)) >= get(dtm, u) ) {
-              put(comp, S.top(), c);
-              S.pop();
+        template <typename Vertex, typename Graph>
+        inline void discover_vertex(const Vertex& u, Graph& g)
+        {
+            put(this->dtm, u, ++this->dfs_time);
+            put(this->lowpt, u, get(this->dtm, u));
+            this->vis.discover_vertex(u, g);
+        }
+
+        template <typename Edge, typename Graph>
+        inline void examine_edge(const Edge& e, Graph& g)
+        {
+            this->vis.examine_edge(e, g);
+        }
+
+        template <typename Edge, typename Graph>
+        void tree_edge(const Edge& e, Graph& g)
+        {
+            typename boost::graph_traits<
+                Graph
+            >::vertex_descriptor src = source(e, g);
+            typename boost::graph_traits<
+                Graph
+            >::vertex_descriptor tgt = target(e, g);
+
+            this->S.push(e);
+            put(this->pred, tgt, src);
+
+            if (get(this->pred, src) == src)
+            {
+                ++this->children_of_root;
             }
-            BOOST_ASSERT (source(S.top(), g) == parent);
-            BOOST_ASSERT (target(S.top(), g) == u);
-            put(comp, S.top(), c);
-            S.pop();
-            ++c;
-          }
-        }
-        if ( is_articulation_point[get(index_map, u)] ) {
-          *out++ = u;
-        }
-        vis.finish_vertex(u, g);
-      }
 
-      ComponentMap comp;
-      std::size_t& c;
-      std::size_t& children_of_root;
-      DiscoverTimeMap dtm;
-      std::size_t& dfs_time;
-      LowPointMap lowpt;
-      PredecessorMap pred;
-      OutputIterator out;
-      Stack& S;
-      ArticulationVector& is_articulation_point;
-      IndexMap index_map;
-      DFSVisitor vis;
+            this->vis.tree_edge(e, g);
+        }
+
+        template <typename Edge, typename Graph>
+        void back_edge(const Edge& e, Graph& g)
+        {
+            BOOST_USING_STD_MIN();
+
+            typename boost::graph_traits<
+                Graph
+            >::vertex_descriptor src = source(e, g);
+            typename boost::graph_traits<
+                Graph
+            >::vertex_descriptor tgt = target(e, g);
+
+            if (tgt != get(this->pred, src))
+            {
+                this->S.push(e);
+                put(
+                    this->lowpt,
+                    src,
+                    min BOOST_PREVENT_MACRO_SUBSTITUTION(
+                        get(this->lowpt, src),
+                        get(this->dtm, tgt)
+                    )
+                );
+            }
+
+            this->vis.back_edge(e, g);
+        }
+
+        template <typename Edge, typename Graph>
+        inline void forward_or_cross_edge(const Edge& e, Graph& g)
+        {
+            this->vis.forward_or_cross_edge(e, g);
+        }
+
+        template <typename Vertex, typename Graph>
+        void finish_vertex(const Vertex& u, Graph& g)
+        {
+            BOOST_USING_STD_MIN();
+            Vertex parent = get(this->pred, u);
+
+            if (parent == u)
+            {
+                // Root of tree is special
+                this->is_articulation_point[
+                    get(this->index_map, u)
+                ] = (this->children_of_root > 1);
+            }
+            else
+            {
+                put(
+                    this->lowpt,
+                    parent,
+                    min BOOST_PREVENT_MACRO_SUBSTITUTION(
+                        get(this->lowpt, parent),
+                        get(this->lowpt, u)
+                    )
+                );
+
+                if (get(this->lowpt, u) >= get(this->dtm, parent))
+                {
+                    this->is_articulation_point[
+                        get(this->index_map, parent)
+                    ] = true;
+
+                    while (
+                        get(
+                            this->dtm,
+                            source(this->S.top(), g)
+                        ) >= get(this->dtm, u)
+                    )
+                    {
+                        put(this->comp, this->S.top(), this->c);
+                        this->S.pop();
+                    }
+
+                    BOOST_ASSERT(source(this->S.top(), g) == parent);
+                    BOOST_ASSERT(target(this->S.top(), g) == u);
+                    put(this->comp, this->S.top(), this->c);
+                    this->S.pop();
+                    ++this->c;
+                }
+            }
+
+            if (this->is_articulation_point[get(this->index_map, u)])
+            {
+                *this->out++ = u;
+            }
+
+            this->vis.finish_vertex(u, g);
+        }
+
+        ComponentMap comp;
+        std::size_t& c;
+        std::size_t& children_of_root;
+        DiscoverTimeMap dtm;
+        std::size_t& dfs_time;
+        LowPointMap lowpt;
+        PredecessorMap pred;
+        OutputIterator out;
+        Stack& S;
+        ArticulationVector& is_articulation_point;
+        IndexMap index_map;
+        DFSVisitor vis;
     };
 
     template<typename Graph, typename ComponentMap, typename OutputIterator,
@@ -343,7 +390,7 @@ namespace boost { namespace detail {
              params, get_param(params, vertex_lowpoint));
       }
     };
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 }} // end namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
@@ -555,7 +602,9 @@ namespace boost { namespace graph {
     )
     (deduced
       (required
-        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
+        (result
+          ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+        )
         (component_map
           ,*(
             boost::detail::argument_with_graph_predicate<
@@ -993,7 +1042,9 @@ namespace boost { namespace graph {
     )
     (deduced
       (required
-        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
+        (result
+          ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+        )
       )
       (optional
         (discover_time_map
@@ -1022,7 +1073,9 @@ namespace boost { namespace graph {
         )
         (visitor
           ,*(
-            boost::detail::argument_with_graph_predicate<detail::is_dfs_visitor>
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_dfs_visitor
+            >
           )
           ,default_dfs_visitor()
         )
@@ -1143,7 +1196,9 @@ namespace boost { namespace graph {
     )
     (deduced
       (required
-        (result, *(boost::detail::argument_predicate<detail::is_iterator>))
+        (result
+          ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+        )
         (vertex_index_map
           ,*(
             boost::detail::argument_with_graph_predicate<
@@ -1155,7 +1210,9 @@ namespace boost { namespace graph {
       (optional
         (visitor
           ,*(
-            boost::detail::argument_with_graph_predicate<detail::is_dfs_visitor>
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_dfs_visitor
+            >
           )
           ,default_dfs_visitor()
         )
@@ -1228,45 +1285,183 @@ namespace boost { namespace graph {
 
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
+namespace boost { namespace graph { namespace detail {
+
+    template <typename Graph, typename ComponentMap, typename OutputIterator>
+    struct biconnected_components_impl
+    {
+        typedef std::pair<std::size_t, OutputIterator> result_type;
+        typedef result_type type;
+
+        template <typename ArgPack>
+        inline result_type operator()(
+            const Graph& g, ComponentMap comp, OutputIterator out,
+            const ArgPack& arg_pack
+        ) const
+        {
+            typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::vertex_index_map,
+                vertex_index_t,
+                Graph
+            >::type v_i_map = detail::override_const_property(
+                arg_pack,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            );
+            return boost::detail::biconnected_components_impl(
+                g,
+                comp,
+                out,
+                v_i_map,
+                arg_pack[
+                    boost::graph::keywords::_discover_time_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        typename graph_traits<Graph>::vertices_size_type(0),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_lowpoint_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        typename graph_traits<Graph>::vertices_size_type(0),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_predecessor_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        graph_traits<Graph>::null_vertex(),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_visitor |
+                    default_dfs_visitor()
+                ]
+            );
+        }
+    };
+
+    template <typename Graph, typename OutputIterator>
+    struct articulation_points_impl
+    {
+        typedef OutputIterator result_type;
+        typedef result_type type;
+
+        template <typename ArgPack>
+        inline result_type operator()(
+            const Graph& g, OutputIterator result, const ArgPack& arg_pack
+        ) const
+        {
+            typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::vertex_index_map,
+                vertex_index_t,
+                Graph
+            >::type v_i_map = detail::override_const_property(
+                arg_pack,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            );
+            return boost::detail::biconnected_components_impl(
+                g,
+                dummy_property_map(),
+                result,
+                v_i_map,
+                arg_pack[
+                    boost::graph::keywords::_discover_time_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        typename graph_traits<Graph>::vertices_size_type(0),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_lowpoint_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        typename graph_traits<Graph>::vertices_size_type(0),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_predecessor_map |
+                    make_shared_array_property_map(
+                        num_vertices(g),
+                        graph_traits<Graph>::null_vertex(),
+                        v_i_map
+                    )
+                ],
+                arg_pack[
+                    boost::graph::keywords::_visitor |
+                    default_dfs_visitor()
+                ]
+            ).second;
+        }
+    };
+}}} // namespace boost::graph::detail
+
 namespace boost { namespace graph {
 
-  template<typename Graph, typename ComponentMap, typename OutputIterator,
-      typename DiscoverTimeMap, typename LowPointMap>
-  inline boost::disable_if<
-    parameter::are_tagged_arguments<DiscoverTimeMap, LowPointMap>,
-    std::pair<std::size_t, OutputIterator>
-  >::type
-  biconnected_components(const Graph& g, ComponentMap comp, 
-      OutputIterator out, DiscoverTimeMap dtm, LowPointMap lowpt)
-  {
-    typedef param_not_found dispatch_type;
+    // Boost.Parameter-enabled variants
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(biconnected_components, 3, 7)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(articulation_points, 2, 6)
 
-    return boost::detail::bicomp_dispatch3<dispatch_type>::apply
-            (g, comp, out, 
-             get(vertex_index, g), 
-             dtm, lowpt, 
-             bgl_named_params<int, buffer_param_t>(0), 
-             param_not_found());
-  }
+    template <
+        typename Graph, typename ComponentMap, typename OutputIterator,
+        typename DiscoverTimeMap, typename LowPointMap
+    >
+    inline boost::disable_if<
+        parameter::are_tagged_arguments<DiscoverTimeMap, LowPointMap>,
+        std::pair<std::size_t, OutputIterator>
+    >::type
+    biconnected_components(
+        const Graph& g, ComponentMap comp, OutputIterator out,
+        DiscoverTimeMap dtm, LowPointMap lowpt
+    )
+    {
+        return biconnected_components(
+            g, comp, out,
+            boost::graph::keywords::_discover_time_map = dtm,
+            boost::graph::keywords::_lowpoint_map = lowpt
+        );
+    }
 
-  template < typename Graph, typename ComponentMap, typename OutputIterator>
-  inline boost::disable_if<
-    parameter::is_argument_pack<OutputIterator>,
-    std::pair<std::size_t, OutputIterator>
-  >::type
-  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
-  {
-    return biconnected_components(g, comp, out,  
-        bgl_named_params<int, buffer_param_t>(0));
-  }
+    template <typename Graph, typename ComponentMap, typename OutputIterator>
+    inline boost::disable_if<
+        parameter::is_argument_pack<OutputIterator>,
+        std::pair<std::size_t, OutputIterator>
+    >::type
+    biconnected_components(
+        const Graph& g, ComponentMap comp, OutputIterator out
+    )
+    {
+        return biconnected_components(g, comp, out, parameter::compose());
+    }
 
-  template <typename Graph, typename ComponentMap>
-  std::size_t
-  biconnected_components(const Graph& g, ComponentMap comp)
-  {
-    return biconnected_components(g, comp,
-                                  boost::graph_detail::dummy_output_iterator()).first;
-  }
+    template <typename Graph, typename ComponentMap>
+    inline std::size_t
+    biconnected_components(const Graph& g, ComponentMap comp)
+    {
+        return biconnected_components(
+            g, comp, boost::graph_detail::dummy_output_iterator()
+        ).first;
+    }
+
+    template <typename Graph, typename OutputIterator>
+    inline OutputIterator
+    articulation_points(const Graph& g, OutputIterator out)
+    {
+        return biconnected_components(
+            g, dummy_property_map(), out, parameter::compose()
+        ).second;
+    }
 }} // end namespace boost::graph
 
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
@@ -1340,7 +1535,7 @@ namespace boost {
 
   template <typename Graph, typename ComponentMap,
       typename P, typename T, typename R>
-  std::size_t
+  inline std::size_t
   biconnected_components(const Graph& g, ComponentMap comp, 
       const bgl_named_params<P, T, R>& params)
   {
@@ -1350,24 +1545,13 @@ namespace boost {
 
   template<typename Graph, typename OutputIterator, 
       typename P, typename T, typename R>
-  OutputIterator
+  inline OutputIterator
   articulation_points(const Graph& g, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
     return biconnected_components(g, dummy_property_map(), out, 
         params).second;
   }
-
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
-    (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
-  template<typename Graph, typename OutputIterator>
-  OutputIterator
-  articulation_points(const Graph& g, OutputIterator out)
-  {
-    return biconnected_components(g, dummy_property_map(), out, 
-        bgl_named_params<int, buffer_param_t>(0)).second;
-  }
-#endif
 } // namespace boost
 
 #endif  /* BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP */

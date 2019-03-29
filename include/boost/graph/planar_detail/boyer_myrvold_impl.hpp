@@ -274,7 +274,7 @@ namespace boost
       depth_first_search(
         g,
         vis,
-        make_shared_array_property_map(num_vertices(g), white_color, vm)
+        boost::graph::keywords::_vertex_index_map = vm
       );
 #endif
 

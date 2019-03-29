@@ -42,84 +42,124 @@ namespace boost { namespace detail {
 
     template <typename ComponentMap, typename RootMap, typename DiscoverTime,
               typename Stack>
-    class tarjan_scc_visitor : public dfs_visitor<> 
+    class tarjan_scc_visitor : public dfs_visitor<>
     {
-      typedef typename property_traits<ComponentMap>::value_type comp_type;
-      typedef typename property_traits<DiscoverTime>::value_type time_type;
+        typedef typename property_traits<ComponentMap>::value_type comp_type;
+        typedef typename property_traits<DiscoverTime>::value_type time_type;
+
     public:
-      tarjan_scc_visitor(ComponentMap comp_map, RootMap r, DiscoverTime d, 
-                         comp_type& c_, Stack& s_)
-        : c(c_), comp(comp_map), root(r), discover_time(d),
-          dfs_time(time_type()), s(s_) { }
+        tarjan_scc_visitor(
+            ComponentMap comp_map, RootMap r, DiscoverTime d,
+            comp_type& c_, Stack& s_
+        ) : c(c_), comp(comp_map), root(r), discover_time(d),
+            dfs_time(time_type()), s(s_)
+        {
+        }
 
-      template <typename Graph>
-      void discover_vertex(typename graph_traits<Graph>::vertex_descriptor v,
-                           const Graph&) {
-        put(root, v, v);
-        put(comp, v, (std::numeric_limits<comp_type>::max)());
-        put(discover_time, v, dfs_time++);
-        s.push(v);
-      }
-      template <typename Graph>
-      void finish_vertex(typename graph_traits<Graph>::vertex_descriptor v,
-                         const Graph& g) {
-        typename graph_traits<Graph>::vertex_descriptor w;
-        typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-        for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
-          w = target(*ei, g);
-          if (get(comp, w) == (std::numeric_limits<comp_type>::max)())
-            put(root, v, this->min_discover_time(get(root,v), get(root,w)));
+        template <typename Graph>
+        void discover_vertex(
+            typename graph_traits<Graph>::vertex_descriptor v,
+            const Graph&
+        )
+        {
+            put(this->root, v, v);
+            put(this->comp, v, (std::numeric_limits<comp_type>::max)());
+            put(this->discover_time, v, this->dfs_time++);
+            this->s.push(v);
         }
-        if (get(root, v) == v) {
-          do {
-            w = s.top(); s.pop();
-            put(comp, w, c);
-	    put(root, w, v);
-          } while (w != v);
-          ++c;
+
+        template <typename Graph>
+        void finish_vertex(
+            typename graph_traits<Graph>::vertex_descriptor v,
+            const Graph& g
+        )
+        {
+            typename graph_traits<Graph>::vertex_descriptor w;
+            typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+
+            for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei)
+            {
+                w = target(*ei, g);
+                if (
+                    get(this->comp, w) == (
+                        std::numeric_limits<comp_type>::max
+                    )()
+                )
+                {
+                    put(
+                        this->root,
+                        v,
+                        this->min_discover_time(
+                            get(this->root, v),
+                            get(this->root, w)
+                        )
+                    );
+                }
+            }
+
+            if (get(this->root, v) == v)
+            {
+                do
+                {
+	                w = this->s.top(); this->s.pop();
+	                put(this->comp, w, this->c);
+                    put(this->root, w, v);
+                } while (w != v);
+                ++c;
+            }
         }
-      }
+
     private:
-      template <typename Vertex>
-      Vertex min_discover_time(Vertex u, Vertex v) {
-        return get(discover_time, u) < get(discover_time,v) ? u : v;
-      }
+        template <typename Vertex>
+        Vertex min_discover_time(Vertex u, Vertex v)
+        {
+            return (
+                get(this->discover_time, u) < get(this->discover_time, v)
+            ) ? u : v;
+        }
 
-      comp_type& c;
-      ComponentMap comp;
-      RootMap root;
-      DiscoverTime discover_time;
-      time_type dfs_time;
-      Stack& s;
+        comp_type& c;
+        ComponentMap comp;
+        RootMap root;
+        DiscoverTime discover_time;
+        time_type dfs_time;
+        Stack& s;
     };
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    template <class Graph, class ComponentMap, class RootMap,
-              class DiscoverTime, class ColorMap>
+    template <typename Graph, typename ComponentMap, typename RootMap,
+              typename DiscoverTime, typename ColorMap>
     typename property_traits<ComponentMap>::value_type
-    strong_components_impl
-      (const Graph& g,    // Input
-       ComponentMap comp, // Output
-       // Internal record keeping
-       RootMap root,
-       DiscoverTime discover_time,
-       ColorMap color)
+    strong_components_impl(
+        const Graph& g,    // Input
+        ComponentMap comp, // Output
+        // Internal record keeping
+        RootMap root,
+        DiscoverTime discover_time,
+        ColorMap color
+    )
     {
-      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ComponentMap, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<RootMap, Vertex> ));
-      typedef typename property_traits<RootMap>::value_type RootV;
-      BOOST_CONCEPT_ASSERT(( ConvertibleConcept<RootV, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DiscoverTime, Vertex> ));
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        BOOST_CONCEPT_ASSERT((
+            ReadWritePropertyMapConcept<ComponentMap, Vertex>
+        ));
+        BOOST_CONCEPT_ASSERT((
+            ReadWritePropertyMapConcept<RootMap, Vertex>
+        ));
+        typedef typename property_traits<RootMap>::value_type RootV;
+        BOOST_CONCEPT_ASSERT(( ConvertibleConcept<RootV, Vertex> ));
+        BOOST_CONCEPT_ASSERT((
+            ReadWritePropertyMapConcept<DiscoverTime, Vertex>
+        ));
 
-      typename property_traits<ComponentMap>::value_type total = 0;
+        typename property_traits<ComponentMap>::value_type total = 0;
 
-      std::stack<Vertex> s;
-      detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
-        std::stack<Vertex> > 
-        vis(comp, root, discover_time, total, s);
-      depth_first_search(g, vis, color);
-      return total;
+        std::stack<Vertex> s;
+        detail::tarjan_scc_visitor<
+            ComponentMap, RootMap, DiscoverTime, std::stack<Vertex>
+        > vis(comp, root, discover_time, total, s);
+        depth_first_search(g, vis, color);
+        return total;
     }
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <class Graph, class ComponentMap, class RootMap,
@@ -254,7 +294,7 @@ namespace boost { namespace detail {
       return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
                                                            r_map);
     }
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 }} // namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
@@ -397,7 +437,7 @@ namespace boost { namespace graph {
             >::type
         >::directed_category DirCat;
         BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value));
-        return detail::strong_components_impl(
+        return boost::detail::strong_components_impl(
             graph, component_map, root_map, discover_time_map, color_map
         );
     }
@@ -427,7 +467,7 @@ namespace boost { namespace graph { namespace detail {
                 Graph
             >::type v_i_map = detail::override_const_property(
                 arg_pack,
-                _vertex_index_map,
+                boost::graph::keywords::_vertex_index_map,
                 g,
                 vertex_index
             );
