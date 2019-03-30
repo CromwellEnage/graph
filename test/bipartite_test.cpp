@@ -74,7 +74,11 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool bipartite_flag)
   vertex_vector_t odd_cycle (boost::num_vertices (g));
 
   bool first_result = is_bipartite(
-    g, partition_map,
+    g,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_partition_map =
+#endif
+    partition_map,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_vertex_index_map =
 #endif

@@ -649,7 +649,7 @@ namespace boost { namespace graph { namespace detail {
                 Graph
             >::type v_i_map = detail::override_const_property(
                 arg_pack,
-                _vertex_index_map,
+                boost::graph::keywords::_vertex_index_map,
                 g,
                 vertex_index
             );
@@ -686,7 +686,7 @@ namespace boost { namespace graph { namespace detail {
                 Graph
             >::type v_i_map = boost::detail::override_const_property(
                 arg_pack,
-                _vertex_index_map,
+                boost::graph::keywords::_vertex_index_map,
                 g,
                 vertex_index
             );
