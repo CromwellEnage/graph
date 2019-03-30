@@ -824,7 +824,7 @@ namespace boost
 #else
       depth_first_search(
         fg,
-        occ,
+        boost::graph::keywords::_visitor = occ,
         boost::graph::keywords::_vertex_index_map = vm
       );
 #endif

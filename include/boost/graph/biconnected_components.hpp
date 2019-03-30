@@ -250,12 +250,8 @@ namespace boost { namespace detail {
 #else
       depth_first_search(
         g,
-        vis,
-        make_shared_array_property_map(
-          num_vertices(g),
-          white_color,
-          index_map
-        )
+        boost::graph::keywords::_visitor = vis,
+        boost::graph::keywords::_vertex_index_map = index_map
       );
 #endif
 
@@ -1304,7 +1300,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::vertex_index_map,
                 vertex_index_t,
                 Graph
-            >::type v_i_map = detail::override_const_property(
+            >::type v_i_map = boost::detail::override_const_property(
                 arg_pack,
                 boost::graph::keywords::_vertex_index_map,
                 g,
@@ -1363,7 +1359,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::vertex_index_map,
                 vertex_index_t,
                 Graph
-            >::type v_i_map = detail::override_const_property(
+            >::type v_i_map = boost::detail::override_const_property(
                 arg_pack,
                 boost::graph::keywords::_vertex_index_map,
                 g,
@@ -1417,7 +1413,7 @@ namespace boost { namespace graph {
         typename Graph, typename ComponentMap, typename OutputIterator,
         typename DiscoverTimeMap, typename LowPointMap
     >
-    inline boost::disable_if<
+    inline typename boost::disable_if<
         parameter::are_tagged_arguments<DiscoverTimeMap, LowPointMap>,
         std::pair<std::size_t, OutputIterator>
     >::type
@@ -1434,7 +1430,7 @@ namespace boost { namespace graph {
     }
 
     template <typename Graph, typename ComponentMap, typename OutputIterator>
-    inline boost::disable_if<
+    inline typename boost::disable_if<
         parameter::is_argument_pack<OutputIterator>,
         std::pair<std::size_t, OutputIterator>
     >::type

@@ -43,20 +43,18 @@ namespace boost { namespace detail {
      */
 
     template <typename Vertex>
-    struct BOOST_SYMBOL_VISIBLE bipartite_visitor_error: std::exception
+    struct BOOST_SYMBOL_VISIBLE bipartite_visitor_error : std::exception
     {
-      std::pair <Vertex, Vertex> witnesses;
+        std::pair<Vertex, Vertex> witnesses;
 
-      bipartite_visitor_error (Vertex a, Vertex b) :
-        witnesses (a, b)
-      {
+        bipartite_visitor_error(Vertex a, Vertex b) : witnesses (a, b)
+        {
+        }
 
-      }
-
-      const char* what () const throw ()
-      {
-        return "Graph is not bipartite.";
-      }
+        const char* what() const throw()
+        {
+            return "Graph is not bipartite.";
+        }
     };
 
     /**
@@ -66,30 +64,31 @@ namespace boost { namespace detail {
     template <typename PartitionMap>
     struct bipartition_colorize
     {
-      typedef on_tree_edge event_filter;
+        typedef on_tree_edge event_filter;
 
-      bipartition_colorize (PartitionMap partition_map) :
-        partition_map_ (partition_map)
-      {
+        bipartition_colorize (PartitionMap partition_map) :
+            partition_map_(partition_map)
+        {
+        }
 
-      }
+        template <typename Edge, typename Graph>
+        inline void operator()(Edge e, const Graph& g)
+        {
+            typedef color_traits<
+                typename property_traits<PartitionMap>::value_type
+            > color_traits;
 
-      template <typename Edge, typename Graph>
-      void operator() (Edge e, const Graph& g)
-      {
-        typedef typename graph_traits <Graph>::vertex_descriptor vertex_descriptor_t;
-        typedef color_traits <typename property_traits <PartitionMap>::value_type> color_traits;
-
-        vertex_descriptor_t source_vertex = source (e, g);
-        vertex_descriptor_t target_vertex = target (e, g);
-        if (get (partition_map_, source_vertex) == color_traits::white ())
-          put (partition_map_, target_vertex, color_traits::black ());
-        else
-          put (partition_map_, target_vertex, color_traits::white ());
-      }
+            put(
+                this->partition_map_,
+                target(e, g),
+                (
+                    get(this->partition_map_, source(e, g))
+                ) ? color_traits::black() : color_traits::white()
+            );
+        }
 
     private:
-      PartitionMap partition_map_;
+        PartitionMap partition_map_;
     };
 
     /**
@@ -101,9 +100,10 @@ namespace boost { namespace detail {
      */
 
     template <typename PartitionMap>
-    inline bipartition_colorize <PartitionMap> colorize_bipartition (PartitionMap partition_map)
+    inline bipartition_colorize<PartitionMap>
+    colorize_bipartition(PartitionMap partition_map)
     {
-      return bipartition_colorize <PartitionMap> (partition_map);
+        return bipartition_colorize<PartitionMap>(partition_map);
     }
 
     /**
@@ -113,27 +113,38 @@ namespace boost { namespace detail {
     template <typename PartitionMap>
     struct bipartition_check
     {
-      typedef on_back_edge event_filter;
+        typedef on_back_edge event_filter;
 
-      bipartition_check (PartitionMap partition_map) :
-        partition_map_ (partition_map)
-      {
+        bipartition_check(PartitionMap partition_map) :
+            partition_map_(partition_map)
+        {
+        }
 
-      }
+        template <typename Edge, typename Graph>
+        void operator()(Edge e, const Graph& g)
+        {
+            typedef typename graph_traits<
+                Graph
+            >::vertex_descriptor vertex_descriptor_t;
 
-      template <typename Edge, typename Graph>
-      void operator() (Edge e, const Graph& g)
-      {
-        typedef typename graph_traits <Graph>::vertex_descriptor vertex_descriptor_t;
+            vertex_descriptor_t source_vertex = source(e, g);
+            vertex_descriptor_t target_vertex = target(e, g);
 
-        vertex_descriptor_t source_vertex = source (e, g);
-        vertex_descriptor_t target_vertex = target (e, g);
-        if (get (partition_map_, source_vertex) == get (partition_map_, target_vertex))
-          throw bipartite_visitor_error <vertex_descriptor_t> (source_vertex, target_vertex);
-      }
+            if (
+                get(
+                    this->partition_map_,
+                    source_vertex
+                ) == get(this->partition_map_, target_vertex)
+            )
+            {
+                throw bipartite_visitor_error<
+                    vertex_descriptor_t
+                >(source_vertex, target_vertex);
+            }
+        }
 
     private:
-      PartitionMap partition_map_;
+        PartitionMap partition_map_;
     };
 
     /**
@@ -145,9 +156,10 @@ namespace boost { namespace detail {
      */
 
     template <typename PartitionMap>
-    inline bipartition_check <PartitionMap> check_bipartition (PartitionMap partition_map)
+    inline bipartition_check<PartitionMap>
+    check_bipartition(PartitionMap partition_map)
     {
-      return bipartition_check <PartitionMap> (partition_map);
+        return bipartition_check<PartitionMap>(partition_map);
     }
 
     /**
@@ -254,7 +266,7 @@ namespace boost { namespace graph {
     parameter::are_tagged_arguments<IndexMap, partition_map_type>,
     bool
   >::type
-  bool is_bipartite(
+  is_bipartite(
     const graph_type& graph, const IndexMap vertex_index_map,
     partition_map_type partition_map
   )

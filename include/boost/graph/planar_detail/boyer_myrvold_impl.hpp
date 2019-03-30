@@ -273,7 +273,7 @@ namespace boost
 #else
       depth_first_search(
         g,
-        vis,
+        boost::graph::keywords::_visitor = vis,
         boost::graph::keywords::_vertex_index_map = vm
       );
 #endif
