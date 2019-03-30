@@ -38,12 +38,94 @@
 
 #include <boost/concept_check.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/graph/graph_traits.hpp>
+
+namespace boost {
+
+    template <typename Visitor, typename Graph>
+    struct MASVisitorConcept
+    {
+        void constraints()
+        {
+            boost::function_requires<
+                boost::CopyConstructibleConcept<Visitor>
+            >();
+            vis.initialize_vertex(u, g);
+            vis.start_vertex(u, g);
+            vis.examine_edge(e, g);
+            vis.finish_vertex(u, g);
+        }
+
+        Visitor vis;
+        Graph g;
+        typename boost::graph_traits<Graph>::vertex_descriptor u;
+        typename boost::graph_traits<Graph>::edge_descriptor e;
+    };
+}
+
+#include <boost/graph/visitors.hpp>
+
+namespace boost {
+
+    template <typename Visitors = null_visitor>
+    class mas_visitor
+    {
+    public:
+        mas_visitor()
+        {
+        }
+
+        mas_visitor(Visitors vis) : m_vis(vis)
+        {
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void initialize_vertex(Vertex u, Graph& g)
+        {
+            invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void start_vertex(Vertex u, Graph& g)
+        {
+            invoke_visitors(m_vis, u, g, ::boost::on_start_vertex());
+        }
+
+        template <typename Edge, typename Graph>
+        inline void examine_edge(Edge e, Graph& g)
+        {
+            invoke_visitors(m_vis, e, g, ::boost::on_examine_edge());
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void finish_vertex(Vertex u, Graph& g)
+        {
+            invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
+        }
+
+        BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,mas)
+        BOOST_GRAPH_EVENT_STUB(on_start_vertex,mas)
+        BOOST_GRAPH_EVENT_STUB(on_examine_edge,mas)
+        BOOST_GRAPH_EVENT_STUB(on_finish_vertex,mas)
+
+    protected:
+        Visitors m_vis;
+    };
+
+    template <class Visitors>
+    inline mas_visitor<Visitors> make_mas_visitor(Visitors vis)
+    {
+        return mas_visitor<Visitors>(vis);
+    }
+
+    typedef mas_visitor<> default_mas_visitor;
+}
+
 #include <boost/graph/buffer_concepts.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/visitors.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
@@ -62,72 +144,8 @@
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #endif
 
-namespace boost {
-  template <class Visitor, class Graph>
-  struct MASVisitorConcept {
-    void constraints() {
-      boost::function_requires< boost::CopyConstructibleConcept<Visitor> >();
-      vis.initialize_vertex(u, g);
-      vis.start_vertex(u, g);
-      vis.examine_edge(e, g);
-      vis.finish_vertex(u, g);
-    }
-    Visitor vis;
-    Graph g;
-    typename boost::graph_traits<Graph>::vertex_descriptor u;
-    typename boost::graph_traits<Graph>::edge_descriptor e;
-  };
+namespace boost { namespace detail {
 
-  template <class Visitors = null_visitor>
-  class mas_visitor {
-  public:
-    mas_visitor() { }
-    mas_visitor(Visitors vis) : m_vis(vis) { }
-
-    template <class Vertex, class Graph>
-    void
-    initialize_vertex(Vertex u, Graph& g)
-    {
-      invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
-    }
-
-    template <class Vertex, class Graph>
-    void
-    start_vertex(Vertex u, Graph& g)
-    {
-      invoke_visitors(m_vis, u, g, ::boost::on_start_vertex());
-    }
-
-    template <class Edge, class Graph>
-    void
-    examine_edge(Edge e, Graph& g)
-    {
-      invoke_visitors(m_vis, e, g, ::boost::on_examine_edge());
-    }
-
-    template <class Vertex, class Graph>
-    void
-    finish_vertex(Vertex u, Graph& g)
-    {
-      invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
-    }
-
-    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,mas)
-    BOOST_GRAPH_EVENT_STUB(on_start_vertex,mas)
-    BOOST_GRAPH_EVENT_STUB(on_examine_edge,mas)
-    BOOST_GRAPH_EVENT_STUB(on_finish_vertex,mas)
-
-  protected:
-    Visitors m_vis;
-  };
-  template <class Visitors>
-  mas_visitor<Visitors>
-  make_mas_visitor(Visitors vis) {
-    return mas_visitor<Visitors>(vis);
-  }
-  typedef mas_visitor<> default_mas_visitor;
-
-  namespace detail {
     template <
       typename Graph, typename WeightMap, typename MASVisitor,
       typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
@@ -255,7 +273,9 @@ namespace boost {
       detail::maximum_adjacency_search(g, weights, mas_vis, start, vam, pq);
     }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-  } // end namespace detail
+}} // end namespace boost::detail
+
+namespace boost {
 
   template <
     typename Graph, typename WeightMap, typename MASVisitor,
@@ -274,7 +294,7 @@ namespace boost {
     KeyedUpdatablePriorityQueue pq
   )
   {
-    detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
+    boost::detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
   }
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
@@ -291,7 +311,7 @@ namespace boost {
     KeyedUpdatablePriorityQueue pq
   )
   {
-    detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
+    boost::detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
   }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
@@ -417,7 +437,7 @@ namespace boost {
         edge_weight_t,
         Graph
     >::type WeightMap;
-    WeightMap w_map = detail::override_const_property(
+    WeightMap w_map = boost::detail::override_const_property(
         arg_pack,
         boost::graph::keywords::_weight_map,
         g,
@@ -455,12 +475,17 @@ namespace boost {
         std::greater<Weight>
     > PQGenerator;
     PQGenerator pq_gen(
-        choose_param(get_param(arg_pack, boost::distance_zero_t()), zero_weight)
+        choose_param(
+            get_param(arg_pack, boost::distance_zero_t()),
+            zero_weight
+        )
     );
     typename PQGenerator::BOOST_NESTED_TEMPLATE result<
         PQGenerator(const Graph&, const Args&)
     >::type pq = pq_gen(g, arg_pack);
-    detail::maximum_adjacency_search(g, w_map, vis, s, vert_asgn_map, pq);
+    boost::detail::maximum_adjacency_search(
+        g, w_map, vis, s, vert_asgn_map, pq
+    );
   }
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \

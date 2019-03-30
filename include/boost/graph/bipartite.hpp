@@ -66,7 +66,7 @@ namespace boost { namespace detail {
     {
         typedef on_tree_edge event_filter;
 
-        bipartition_colorize (PartitionMap partition_map) :
+        bipartition_colorize(PartitionMap partition_map) :
             partition_map_(partition_map)
         {
         }
@@ -83,7 +83,7 @@ namespace boost { namespace detail {
                 target(e, g),
                 (
                     get(this->partition_map_, source(e, g))
-                ) ? color_traits::black() : color_traits::white()
+                ) ? color_traits::white() : color_traits::black()
             );
         }
 
@@ -647,7 +647,7 @@ namespace boost { namespace graph { namespace detail {
                 boost::graph::keywords::tag::vertex_index_map,
                 vertex_index_t,
                 Graph
-            >::type v_i_map = detail::override_const_property(
+            >::type v_i_map = boost::detail::override_const_property(
                 arg_pack,
                 boost::graph::keywords::_vertex_index_map,
                 g,
