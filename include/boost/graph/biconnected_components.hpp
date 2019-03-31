@@ -1429,18 +1429,6 @@ namespace boost { namespace graph {
         );
     }
 
-    template <typename Graph, typename ComponentMap, typename OutputIterator>
-    inline typename boost::disable_if<
-        parameter::is_argument_pack<OutputIterator>,
-        std::pair<std::size_t, OutputIterator>
-    >::type
-    biconnected_components(
-        const Graph& g, ComponentMap comp, OutputIterator out
-    )
-    {
-        return biconnected_components(g, comp, out, parameter::compose());
-    }
-
     template <typename Graph, typename ComponentMap>
     inline std::size_t
     biconnected_components(const Graph& g, ComponentMap comp)
@@ -1448,15 +1436,6 @@ namespace boost { namespace graph {
         return biconnected_components(
             g, comp, boost::graph_detail::dummy_output_iterator()
         ).first;
-    }
-
-    template <typename Graph, typename OutputIterator>
-    inline OutputIterator
-    articulation_points(const Graph& g, OutputIterator out)
-    {
-        return biconnected_components(
-            g, dummy_property_map(), out, parameter::compose()
-        ).second;
     }
 }} // end namespace boost::graph
 

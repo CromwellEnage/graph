@@ -126,7 +126,6 @@ namespace boost { namespace detail {
         Stack& s;
     };
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <typename Graph, typename ComponentMap, typename RootMap,
               typename DiscoverTime, typename ColorMap>
     typename property_traits<ComponentMap>::value_type
@@ -161,7 +160,8 @@ namespace boost { namespace detail {
         depth_first_search(g, vis, color);
         return total;
     }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <class Graph, class ComponentMap, class RootMap,
               class DiscoverTime, class P, class T, class R>
     typename property_traits<ComponentMap>::value_type
@@ -294,7 +294,7 @@ namespace boost { namespace detail {
       return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
                                                            r_map);
     }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 }} // namespace boost::detail
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
@@ -436,7 +436,9 @@ namespace boost { namespace graph {
                 typename boost::remove_reference<graph_type>::type
             >::type
         >::directed_category DirCat;
-        BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value));
+        BOOST_STATIC_ASSERT((
+            boost::is_convertible<DirCat*, directed_tag*>::value
+        ));
         return boost::detail::strong_components_impl(
             graph, component_map, root_map, discover_time_map, color_map
         );
@@ -460,6 +462,10 @@ namespace boost { namespace graph { namespace detail {
             const Graph& g, ComponentMap c, const ArgPack& arg_pack
         ) const
         {
+            typedef typename graph_traits<Graph>::directed_category DirCat;
+            BOOST_STATIC_ASSERT((
+                boost::is_convertible<DirCat*, directed_tag*>::value
+            ));
             typename boost::detail::override_const_property_result<
                 ArgPack,
                 boost::graph::keywords::tag::vertex_index_map,
@@ -507,18 +513,6 @@ namespace boost { namespace graph {
 
     // Boost.Parameter-enabled variant
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(strong_components, 2, 6)
-
-    template <typename Graph, typename ComponentMap>
-    inline typename property_traits<ComponentMap>::value_type
-    strong_components(
-        const Graph& g, ComponentMap comp
-        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag)
-    )
-    {
-        typedef typename graph_traits<Graph>::directed_category DirCat;
-        BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value));
-        return strong_components(g, comp, parameter::compose());
-    }
 }} // namespace boost::graph
 
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
@@ -535,7 +529,7 @@ namespace boost {
                     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
-    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+    BOOST_STATIC_ASSERT((boost::is_convertible<DirCat*, directed_tag*>::value));
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)

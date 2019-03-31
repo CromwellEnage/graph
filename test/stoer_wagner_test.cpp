@@ -225,7 +225,7 @@ void test_prgen_20_70_2(std::string test_dir)
 
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
-  BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
+  BOOST_TEST(boost::connected_components(g, components) == 1U); // verify the connectedness assumption
 
   typedef boost::shared_array_property_map<weight_type, boost::property_map<undirected_graph, boost::vertex_index_t>::const_type> distances_type;
   distances_type distances = boost::make_shared_array_property_map(num_vertices(g), weight_type(0), get(boost::vertex_index, g));
@@ -257,7 +257,7 @@ void test_prgen_50_40_2(std::string test_dir)
 
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
-  BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
+  BOOST_TEST(boost::connected_components(g, components) == 1U); // verify the connectedness assumption
 
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 10056);
@@ -274,7 +274,7 @@ void test_prgen_50_70_2(std::string test_dir)
 
   std::map<vertex_descriptor, std::size_t> component;
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
-  BOOST_TEST_EQ(boost::connected_components(g, components), 1U); // verify the connectedness assumption
+  BOOST_TEST(boost::connected_components(g, components) == 1U); // verify the connectedness assumption
 
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 21755);

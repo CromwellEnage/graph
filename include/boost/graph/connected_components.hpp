@@ -50,7 +50,7 @@ namespace boost { namespace detail {
         : m_component(c), m_count(c_count) {}
 
         template <typename Vertex, typename Graph>
-        void start_vertex(Vertex, Graph&)
+        inline void start_vertex(Vertex, Graph&)
         {
             if (this->m_count == (std::numeric_limits<comp_type>::max)())
                 this->m_count = 0; // start counting components at zero
@@ -59,7 +59,7 @@ namespace boost { namespace detail {
         }
 
         template <typename Vertex, typename Graph>
-        void discover_vertex(Vertex u, Graph&)
+        inline void discover_vertex(Vertex u, Graph&)
         {
             put(this->m_component, u, this->m_count);
         }
@@ -209,35 +209,6 @@ namespace boost { namespace graph {
 
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
-namespace boost { namespace graph {
-
-  // This function computes the connected components of an undirected graph
-  // using a single application of depth first search.
-  template <class Graph, class ComponentMap>
-  inline typename property_traits<ComponentMap>::value_type
-  connected_components(const Graph& g, ComponentMap c,
-                       typename boost::disable_if<
-                         parameter::is_argument_pack<ComponentMap>,
-                         mpl::true_
-                       >::type = mpl::true_()
-                       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
-  {
-    if (num_vertices(g) == 0) return 0;
-
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<ComponentMap, Vertex> ));
-    // typedef typename boost::graph_traits<Graph>::directed_category directed;
-    // BOOST_STATIC_ASSERT((boost::is_same<directed, undirected_tag>::value));
-
-    typedef typename property_traits<ComponentMap>::value_type comp_type;
-    // c_count initialized to "nil" (with nil represented by (max)())
-    comp_type c_count((std::numeric_limits<comp_type>::max)());
-    boost::detail::components_recorder<ComponentMap> vis(c, c_count);
-    depth_first_search(g, boost::graph::keywords::_visitor = vis);
-    return c_count + 1;
-  }
-}} // namespace boost::graph
-
 namespace boost { namespace graph { namespace detail {
 
     template <typename Graph, typename ComponentMap>
@@ -253,13 +224,23 @@ namespace boost { namespace graph { namespace detail {
             const Graph& g, ComponentMap c, const ArgPack& arg_pack
         ) const
         {
+            if (num_vertices(g) == 0) return 0;
+
+            typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+            typedef typename boost::remove_const<
+                typename boost::remove_reference<ComponentMap>::type
+            >::type C;
+            BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<C, Vertex> ));
+            // typedef typename graph_traits<
+            //     Graph
+            // >::directed_category directed;
+            // BOOST_STATIC_ASSERT((
+            //     boost::is_same<directed, undirected_tag>::value
+            // ));
+
             // c_count initialized to "nil" (with nil represented by (max)())
             result_type c_count((std::numeric_limits<result_type>::max)());
-            boost::detail::components_recorder<
-                typename boost::remove_const<
-                    typename boost::remove_reference<ComponentMap>::type
-                >::type
-            > vis(c, c_count);
+            boost::detail::components_recorder<C> vis(c, c_count);
             depth_first_search(
                 g,
                 vis,

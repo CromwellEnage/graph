@@ -78,11 +78,7 @@ int main(int, char*[])
   std::cout << "The example graph:" << std::endl;
   print_graph(G);
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  depth_first_search(G, TalkativeVisitor<Graph>());
-#else
-  depth_first_search(G, boost::visitor(TalkativeVisitor<Graph>()));
-#endif
+  depth_first_search(G, boost::graph::keywords::_visitor = TalkativeVisitor<Graph>());
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
         !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
