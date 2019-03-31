@@ -75,7 +75,7 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool bipartite_flag)
 
   bool first_result = is_bipartite(
     g,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_partition_map =
 #endif
     partition_map,

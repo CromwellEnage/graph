@@ -92,8 +92,8 @@ main(int, char*[])
   cout << "DFS categorized directed graph" << endl;
   depth_first_search(
     G,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
 #endif
     make_dfs_visitor(
       make_list(
@@ -102,9 +102,6 @@ main(int, char*[])
         print_edge("forward or cross", on_forward_or_cross_edge())
       )
     )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   cout << endl << "BFS categorized directed graph" << endl;

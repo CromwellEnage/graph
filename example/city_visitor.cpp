@@ -121,8 +121,8 @@ int main(int, char*[])
   cout << "*** Depth First ***" << endl;
   depth_first_search(
     G,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
 #endif
     make_dfs_visitor(
       boost::make_list(
@@ -131,9 +131,6 @@ int main(int, char*[])
         finish_city(names)
       )
     )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
   cout << endl;
 
