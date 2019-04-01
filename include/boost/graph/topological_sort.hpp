@@ -200,12 +200,6 @@ namespace boost { namespace graph {
 
     // Boost.Parameter-enabled variant
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(topological_sort, 2, 4)
-
-    template <typename VertexListGraph, typename OutputIterator>
-    inline void topological_sort(VertexListGraph& g, OutputIterator result)
-    {
-        topological_sort(g, result, parameter::compose());
-    }
 }} // namespace boost::graph
 
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS

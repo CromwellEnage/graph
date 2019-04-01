@@ -683,9 +683,11 @@ BOOST_PP_REPEAT(
   ) \
   { \
     return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)( \
-      BOOST_PP_ENUM_PARAMS_Z(z, nfixed, param), ::boost::parameter::compose( \
-        BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg) \
-      ) \
+      BOOST_PP_ENUM_PARAMS_Z(z, nfixed, param), \
+      BOOST_PP_EXPR_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1)), ::boost::parameter::compose) \
+      BOOST_PP_LPAREN_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1))) \
+      BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg) \
+      BOOST_PP_RPAREN_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1))) \
     ); \
   }
 

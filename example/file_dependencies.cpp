@@ -178,7 +178,7 @@ int main(int,char*[])
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, vis);
 #else
-    depth_first_search(g, boost::graph::keyworsd::_visitor = vis);
+    depth_first_search(g, boost::graph::keywords::_visitor = vis);
 #endif
     cout << "The graph has a cycle? " << has_cycle << endl;
   }
@@ -198,7 +198,7 @@ int main(int,char*[])
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     depth_first_search(g, vis);
 #else
-    depth_first_search(g, boost::graph::keyworsd::_visitor = vis);
+    depth_first_search(g, boost::graph::keywords::_visitor = vis);
 #endif
     cout << "The graph has a cycle now? " << has_cycle << endl;
   }

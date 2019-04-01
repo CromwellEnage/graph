@@ -57,7 +57,7 @@ namespace boost { namespace detail {
         }
 
         template <typename Graph>
-        void discover_vertex(
+        inline void discover_vertex(
             typename graph_traits<Graph>::vertex_descriptor v,
             const Graph&
         )
@@ -111,7 +111,7 @@ namespace boost { namespace detail {
 
     private:
         template <typename Vertex>
-        Vertex min_discover_time(Vertex u, Vertex v)
+        inline Vertex min_discover_time(Vertex u, Vertex v)
         {
             return (
                 get(this->discover_time, u) < get(this->discover_time, v)

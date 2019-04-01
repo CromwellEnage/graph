@@ -258,7 +258,7 @@ namespace boost { namespace graph { namespace detail {
                         ]
                     )
                 ]
-            )
+            );
             return c_count + 1;
         }
     };
