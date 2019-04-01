@@ -17,12 +17,12 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/mpl/bool.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/config.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/mpl/vector.hpp>
 #include <boost/type_traits/add_pointer.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
@@ -947,13 +947,29 @@ namespace boost { namespace graph { namespace detail {
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
         {
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+                g,
+                arg_pack
+            );
             depth_first_search(
                 g,
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    make_dfs_visitor(null_visitor())
-                ],
-                boost::detail::make_color_map_from_arg_pack(g, arg_pack),
+                vis,
+                c_map,
                 arg_pack[
                     boost::graph::keywords::_root_vertex ||
                     boost::detail::get_default_starting_vertex_t<Graph>(g)
@@ -971,21 +987,44 @@ namespace boost { namespace graph { namespace detail {
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
         {
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+                g,
+                arg_pack
+            );
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::terminator_function,
+                    boost::detail::nontruth2
+                >::type
+            >::type tfunc = arg_pack[
+                boost::graph::keywords::_terminator_function |
+                boost::detail::nontruth2()
+            ];
             depth_first_visit(
                 g,
                 arg_pack[
                     boost::graph::keywords::_root_vertex ||
                     boost::detail::get_default_starting_vertex_t<Graph>(g)
                 ],
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    make_dfs_visitor(null_visitor())
-                ],
-                boost::detail::make_color_map_from_arg_pack(g, arg_pack),
-                arg_pack[
-                    boost::graph::keywords::_terminator_function |
-                    boost::detail::nontruth2()
-                ]
+                vis,
+                c_map,
+                tfunc
             );
         }
     };

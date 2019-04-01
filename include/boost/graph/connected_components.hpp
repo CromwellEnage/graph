@@ -241,24 +241,16 @@ namespace boost { namespace graph { namespace detail {
             // c_count initialized to "nil" (with nil represented by (max)())
             result_type c_count((std::numeric_limits<result_type>::max)());
             boost::detail::components_recorder<C> vis(c, c_count);
-            depth_first_search(
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
                 g,
-                vis,
-                arg_pack[
-                    boost::graph::keywords::_color_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        white_color,
-                        arg_pack[
-                            boost::graph::keywords::_vertex_index_map |
-                            boost::detail::vertex_or_dummy_property_map(
-                                g,
-                                vertex_index
-                            )
-                        ]
-                    )
-                ]
+                arg_pack
             );
+            depth_first_search(g, vis, c_map);
             return c_count + 1;
         }
     };

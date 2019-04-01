@@ -609,18 +609,17 @@ namespace boost { namespace graph { namespace detail {
                 g,
                 vertex_index
             );
-            return is_bipartite(
-                g,
-                v_i_map,
-                arg_pack[
-                    boost::graph::keywords::_partition_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        white_color,
-                        v_i_map
-                    )
-                ]
-            );
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::partition_map,
+                default_color_type
+            > part_map_gen(white_color);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::partition_map,
+                default_color_type
+            >::map_type part_map = part_map_gen(g, arg_pack);
+            return is_bipartite(g, v_i_map, part_map);
         }
     };
 }}} // namespace boost::graph::detail
@@ -678,19 +677,17 @@ namespace boost { namespace graph { namespace detail {
                 g,
                 vertex_index
             );
-            return find_odd_cycle(
-                g,
-                v_i_map,
-                arg_pack[
-                    boost::graph::keywords::_partition_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        white_color,
-                        v_i_map
-                    )
-                ],
-                result
-            );
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::partition_map,
+                default_color_type
+            > part_map_gen(white_color);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::partition_map,
+                default_color_type
+            >::map_type part_map = part_map_gen(g, arg_pack);
+            return find_odd_cycle(g, v_i_map, part_map, result);
         }
     };
 }}} // namespace boost::graph::detail

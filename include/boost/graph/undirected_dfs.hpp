@@ -667,18 +667,40 @@ namespace boost { namespace graph { namespace detail {
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
         {
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+                g,
+                arg_pack
+            );
             boost::detail::make_property_map_from_arg_pack_gen<
                 boost::graph::keywords::tag::edge_color_map,
                 default_color_type
-            > make_edge_color_map_from_arg_pack(white_color);
+            > e_c_map_gen(white_color);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::edge_color_map,
+                default_color_type
+            >::map_type e_c_map = e_c_map_gen(g, arg_pack);
             undirected_dfs(
                 g,
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    make_dfs_visitor(null_visitor())
-                ],
-                boost::detail::make_color_map_from_arg_pack(g, arg_pack),
-                make_edge_color_map_from_arg_pack(g, arg_pack),
+                vis,
+                c_map,
+                e_c_map,
                 arg_pack[
                     boost::graph::keywords::_root_vertex ||
                     boost::detail::get_default_starting_vertex_t<Graph>(g)
@@ -696,22 +718,44 @@ namespace boost { namespace graph { namespace detail {
         template <typename ArgPack>
         inline void operator()(const Graph& g, const ArgPack& arg_pack) const
         {
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+                g,
+                arg_pack
+            );
             boost::detail::make_property_map_from_arg_pack_gen<
                 boost::graph::keywords::tag::edge_color_map,
                 default_color_type
-            > make_edge_color_map_from_arg_pack(white_color);
+            > e_c_map_gen(white_color);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::edge_color_map,
+                default_color_type
+            >::map_type e_c_map = e_c_map_gen(g, arg_pack);
             undirected_depth_first_visit(
                 g,
                 arg_pack[
                     boost::graph::keywords::_root_vertex ||
                     boost::detail::get_default_starting_vertex_t<Graph>(g)
                 ],
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    make_dfs_visitor(null_visitor())
-                ],
-                boost::detail::make_color_map_from_arg_pack(g, arg_pack),
-                make_edge_color_map_from_arg_pack(g, arg_pack)
+                vis,
+                c_map,
+                e_c_map
             );
         }
     };

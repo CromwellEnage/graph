@@ -21,6 +21,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/core/enable_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
@@ -30,11 +31,11 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #else
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/value_type.hpp>
 #endif
 
 namespace boost { namespace detail {
@@ -1306,39 +1307,58 @@ namespace boost { namespace graph { namespace detail {
                 g,
                 vertex_index
             );
+            typedef typename graph_traits<Graph>::vertices_size_type VSize;
+            const VSize no_vertices = VSize();
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            > dtime_map_gen(no_vertices);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            >::map_type dtime_map = dtime_map_gen(g, arg_pack);
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::lowpoint_map,
+                VSize
+            > lowpt_map_gen(no_vertices);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::lowpoint_map,
+                VSize
+            >::map_type lowpt_map = lowpt_map_gen(g, arg_pack);
+            typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::predecessor_map,
+                Vertex
+            > pred_map_gen(graph_traits<Graph>::null_vertex());
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::predecessor_map,
+                Vertex
+            >::map_type pred_map = pred_map_gen(g, arg_pack);
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
             return boost::detail::biconnected_components_impl(
                 g,
                 comp,
                 out,
                 v_i_map,
-                arg_pack[
-                    boost::graph::keywords::_discover_time_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        typename graph_traits<Graph>::vertices_size_type(0),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_lowpoint_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        typename graph_traits<Graph>::vertices_size_type(0),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_predecessor_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        graph_traits<Graph>::null_vertex(),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    default_dfs_visitor()
-                ]
+                dtime_map,
+                lowpt_map,
+                pred_map,
+                vis
             );
         }
     };
@@ -1365,39 +1385,58 @@ namespace boost { namespace graph { namespace detail {
                 g,
                 vertex_index
             );
+            typedef typename graph_traits<Graph>::vertices_size_type VSize;
+            const VSize no_vertices = VSize();
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            > dtime_map_gen(no_vertices);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            >::map_type dtime_map = dtime_map_gen(g, arg_pack);
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::lowpoint_map,
+                VSize
+            > lowpt_map_gen(no_vertices);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::lowpoint_map,
+                VSize
+            >::map_type lowpt_map = lowpt_map_gen(g, arg_pack);
+            typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::predecessor_map,
+                Vertex
+            > pred_map_gen(graph_traits<Graph>::null_vertex());
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::predecessor_map,
+                Vertex
+            >::map_type pred_map = pred_map_gen(g, arg_pack);
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_dfs_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor |
+                default_dfs_visitor()
+            ];
             return boost::detail::biconnected_components_impl(
                 g,
                 dummy_property_map(),
                 result,
                 v_i_map,
-                arg_pack[
-                    boost::graph::keywords::_discover_time_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        typename graph_traits<Graph>::vertices_size_type(0),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_lowpoint_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        typename graph_traits<Graph>::vertices_size_type(0),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_predecessor_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        graph_traits<Graph>::null_vertex(),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_visitor |
-                    default_dfs_visitor()
-                ]
+                dtime_map,
+                lowpt_map,
+                pred_map,
+                vis
             ).second;
         }
     };
