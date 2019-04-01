@@ -1282,6 +1282,8 @@ namespace boost { namespace graph {
 
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
+#include <boost/functional/value_factory.hpp>
+
 namespace boost { namespace graph { namespace detail {
 
     template <typename Graph, typename ComponentMap, typename OutputIterator>
@@ -1347,8 +1349,8 @@ namespace boost { namespace graph { namespace detail {
                     default_dfs_visitor
                 >::type
             >::type vis = arg_pack[
-                boost::graph::keywords::_visitor |
-                default_dfs_visitor()
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
             ];
             return boost::detail::biconnected_components_impl(
                 g,
@@ -1425,8 +1427,8 @@ namespace boost { namespace graph { namespace detail {
                     default_dfs_visitor
                 >::type
             >::type vis = arg_pack[
-                boost::graph::keywords::_visitor |
-                default_dfs_visitor()
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
             ];
             return boost::detail::biconnected_components_impl(
                 g,

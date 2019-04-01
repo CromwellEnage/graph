@@ -936,6 +936,8 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
+#include <boost/functional/value_factory.hpp>
+
 namespace boost { namespace graph { namespace detail {
 
     template <typename Graph>
@@ -954,8 +956,8 @@ namespace boost { namespace graph { namespace detail {
                     default_dfs_visitor
                 >::type
             >::type vis = arg_pack[
-                boost::graph::keywords::_visitor |
-                default_dfs_visitor()
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
             ];
             typename boost::detail::map_maker<
                 Graph,
@@ -994,8 +996,8 @@ namespace boost { namespace graph { namespace detail {
                     default_dfs_visitor
                 >::type
             >::type vis = arg_pack[
-                boost::graph::keywords::_visitor |
-                default_dfs_visitor()
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
             ];
             typename boost::detail::map_maker<
                 Graph,
@@ -1013,8 +1015,8 @@ namespace boost { namespace graph { namespace detail {
                     boost::detail::nontruth2
                 >::type
             >::type tfunc = arg_pack[
-                boost::graph::keywords::_terminator_function |
-                boost::detail::nontruth2()
+                boost::graph::keywords::_terminator_function ||
+                boost::value_factory<boost::detail::nontruth2>()
             ];
             depth_first_visit(
                 g,

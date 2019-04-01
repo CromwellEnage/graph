@@ -466,44 +466,44 @@ namespace boost { namespace graph { namespace detail {
             BOOST_STATIC_ASSERT((
                 boost::is_convertible<DirCat*, directed_tag*>::value
             ));
-            typename boost::detail::override_const_property_result<
+            typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::root_map,
+                Vertex
+            > rt_map_gen(graph_traits<Graph>::null_vertex());
+            typename boost::detail::map_maker<
+                Graph,
                 ArgPack,
-                boost::graph::keywords::tag::vertex_index_map,
-                vertex_index_t,
-                Graph
-            >::type v_i_map = boost::detail::override_const_property(
-                arg_pack,
-                boost::graph::keywords::_vertex_index_map,
+                boost::graph::keywords::tag::root_map,
+                Vertex
+            >::map_type rt_map = rt_map_gen(g, arg_pack);
+            typedef typename graph_traits<Graph>::vertices_size_type VSize;
+            const VSize no_vertices = VSize();
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            > dtime_map_gen(no_vertices);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::discover_time_map,
+                VSize
+            >::map_type dtime_map = dtime_map_gen(g, arg_pack);
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
                 g,
-                vertex_index
+                arg_pack
             );
             return boost::detail::strong_components_impl(
                 g,
                 c,
-                arg_pack[
-                    boost::graph::keywords::_root_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        graph_traits<Graph>::null_vertex(),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_discover_time_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        typename graph_traits<Graph>::vertices_size_type(0),
-                        v_i_map
-                    )
-                ],
-                arg_pack[
-                    boost::graph::keywords::_color_map |
-                    make_shared_array_property_map(
-                        num_vertices(g),
-                        white_color,
-                        v_i_map
-                    )
-                ]
+                rt_map,
+                dtime_map,
+                c_map
             );
         }
     };
