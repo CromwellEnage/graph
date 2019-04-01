@@ -585,19 +585,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-
-namespace boost { namespace graph {
-
-    template <typename Graph, typename OutputIterator>
-    inline OutputIterator
-    find_odd_cycle(const Graph& graph, OutputIterator result)
-    {
-        return find_odd_cycle(graph, get(vertex_index, graph), result);
-    }
-}} // namespace boost::graph
-
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
 namespace boost { namespace graph { namespace detail {
 
