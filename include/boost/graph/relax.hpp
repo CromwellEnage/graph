@@ -22,6 +22,8 @@ namespace boost {
     template <class T>
     struct closed_plus
     {
+      typedef T result_type;
+
       const T inf;
 
       closed_plus() : inf((std::numeric_limits<T>::max)()) { }
@@ -38,6 +40,8 @@ namespace boost {
     template <class T>
     struct closed_plus_gen
     {
+      typedef closed_plus<T> result_type;
+
       const T inf;
 
       closed_plus_gen(T inf) : inf(inf) { }

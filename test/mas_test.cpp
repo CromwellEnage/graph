@@ -114,19 +114,11 @@ void test0()
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_root_vertex = *vertices(g).first,
     boost::graph::keywords::_vertex_assignment_map = assignments,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(weights).
-    visitor(test_vis).
-    root_vertex(*vertices(g).first).
-    vertex_assignment_map(assignments).
-    max_priority_queue(pq)
-#endif
   );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
@@ -136,17 +128,10 @@ void test0()
   test_vis.clear();
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_root_vertex = *vertices(g).first,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(weights).
-    visitor(test_vis).
-    root_vertex(*vertices(g).first).
-    max_priority_queue(pq)
-#endif
   );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
@@ -156,15 +141,9 @@ void test0()
   test_vis.clear();
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(weights).
-    visitor(test_vis).
-    max_priority_queue(pq)
-#endif
   );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
@@ -173,47 +152,28 @@ void test0()
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor =
     boost::make_mas_visitor(boost::null_visitor())
-#else
-    boost::weight_map(weights).
-    visitor(boost::make_mas_visitor(boost::null_visitor()))
-#endif
   );
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weights
-#else
-    boost::weight_map(weights)
-#endif
   );
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_root_vertex = *vertices(g).first
-#else
-    boost::root_vertex(*vertices(g).first)
-#endif
   );
 
   test_vis.clear();
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map =
     boost::make_constant_property<edge_descriptor>(weight_type(1)),
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).
-    visitor(test_vis).
-    max_priority_queue(pq)
-#endif
   );
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(3));
@@ -246,15 +206,10 @@ void test1()
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map =
     boost::make_constant_property<edge_descriptor>(weight_type(1)),
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).
-    visitor(test_vis).max_priority_queue(pq)
-#endif
   );
 
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
@@ -273,13 +228,9 @@ void test1()
 
   boost::maximum_adjacency_search(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = ws_map,
     boost::graph::keywords::_visitor = test_vis,
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::weight_map(ws_map).visitor(test_vis).max_priority_queue(pq)
-#endif
   );
   BOOST_TEST_EQ(test_vis.curr(), vertex_descriptor(7));
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));

@@ -175,19 +175,11 @@ namespace boost { namespace detail {
         vis.clear();
         boost::maximum_adjacency_search(
             g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::graph::keywords::_weight_map = weights,
             boost::graph::keywords::_visitor = vis,
             boost::graph::keywords::_root_vertex = *u_iter,
             boost::graph::keywords::_vertex_assignment_map = assignments,
             boost::graph::keywords::_max_priority_queue = pq
-#else
-            boost::weight_map(weights).
-            visitor(vis).
-            root_vertex(*u_iter).
-            vertex_assignment_map(assignments).
-            max_priority_queue(pq)
-#endif
         );
         if (bestThisTime < bestW) {
           bestW = bestThisTime;
@@ -200,19 +192,11 @@ namespace boost { namespace detail {
       vis.clear();
       boost::maximum_adjacency_search(
         g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_vertex_assignment_map = assignments,
         boost::graph::keywords::_weight_map = weights,
         boost::graph::keywords::_visitor = vis,
         boost::graph::keywords::_root_vertex = bestStart,
         boost::graph::keywords::_max_priority_queue = pq
-#else
-        boost::vertex_assignment_map(assignments).
-        weight_map(weights).
-        visitor(vis).
-        root_vertex(bestStart).
-        max_priority_queue(pq)
-#endif
       );
 
 //      BOOST_ASSERT(bestW == bestThisTime);
@@ -332,6 +316,16 @@ namespace boost { namespace graph {
             vertex_index
         );
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::vertex_assignment_map,
+            Vertex
+        > vertex_assignment_map_gen(graph_traits<Graph>::null_vertex());
+        typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::vertex_assignment_map,
+            Vertex
+        >::map_type v_a_map = vertex_assignment_map_gen(g, arg_pack);
         typedef typename graph_traits<Graph>::vertices_size_type VIndex;
         const VIndex zero_index = VIndex();
         dummy_property_map dummy_prop;
@@ -379,21 +373,7 @@ namespace boost { namespace graph {
             boost::graph::keywords::tag::buffer,
             DefaultBuffer&
         >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
-        return stoer_wagner_min_cut(
-            g,
-            weights,
-            p_map,
-            arg_pack[
-                boost::graph::keywords::_vertex_assignment_map |
-                make_shared_array_property_map(
-                    num_vertices(g),
-                    boost::detail::get_null_vertex(g),
-                    v_i_map
-                )
-            ],
-            Q,
-            v_i_map
-        );
+        return stoer_wagner_min_cut(g, weights, p_map, v_a_map, Q, v_i_map);
     }
 }} // end namespace boost::graph
 

@@ -136,6 +136,8 @@ namespace boost {
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
+#include <boost/parameter/value_type.hpp>
+#include <boost/functional/value_factory.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -149,7 +151,7 @@ namespace boost { namespace detail {
       typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
     >
     void
-    maximum_adjacency_search(
+    maximum_adjacency_search_impl(
       const Graph& g, WeightMap weights,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       MASVisitor& vis,
@@ -259,7 +261,7 @@ namespace boost { namespace detail {
       typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
     >
     void
-    maximum_adjacency_search(
+    maximum_adjacency_search_impl(
       const Graph& g, WeightMap weights,
       const MASVisitor& vis,
       const typename boost::graph_traits<Graph>::vertex_descriptor start,
@@ -268,263 +270,240 @@ namespace boost { namespace detail {
     )
     {
       MASVisitor mas_vis = vis;
-      detail::maximum_adjacency_search(g, weights, mas_vis, start, vam, pq);
+      maximum_adjacency_search_impl(g, weights, mas_vis, start, vam, pq);
     }
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 }} // end namespace boost::detail
 
-namespace boost {
+namespace boost { namespace graph {
 
-  template <
-    typename Graph, typename WeightMap, typename MASVisitor,
-    typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
-  >
-  void
-  maximum_adjacency_search(
-    const Graph& g, WeightMap weights,
+    template <
+        typename Graph, typename WeightMap, typename MASVisitor,
+        typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+    >
+    inline void maximum_adjacency_search(
+        const Graph& g, WeightMap weights,
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    MASVisitor& vis,
+        MASVisitor& vis,
 #else
-    MASVisitor vis,
+        MASVisitor vis,
 #endif
-    const typename boost::graph_traits<Graph>::vertex_descriptor start,
-    VertexAssignmentMap assignments,
-    KeyedUpdatablePriorityQueue pq
-  )
-  {
-    boost::detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
-  }
+        const typename boost::graph_traits<Graph>::vertex_descriptor start,
+        VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq
+    )
+    {
+        boost::detail::maximum_adjacency_search_impl(
+            g, weights, vis, start, assignments, pq
+        );
+    }
+}} // end namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <
-    typename Graph, typename WeightMap, typename MASVisitor,
-    typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
-  >
-  void
-  maximum_adjacency_search(
-    const Graph& g, WeightMap weights,
-    const MASVisitor& vis,
-    const typename boost::graph_traits<Graph>::vertex_descriptor start,
-    VertexAssignmentMap assignments,
-    KeyedUpdatablePriorityQueue pq
-  )
-  {
-    boost::detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
-  }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
-  namespace graph {
-    namespace detail {
-      template <typename WeightMap>
-      struct mas_dispatch {
-        typedef void result_type;
-        template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g,
-                          //const bgl_named_params<P,T,R>& params,
-                          const ArgPack& params,
-                          WeightMap w) {
+namespace boost { namespace graph {
 
-          using namespace boost::graph::keywords;
-          typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-          typedef typename WeightMap::value_type weight_type;
+    template <
+        typename Graph, typename WeightMap, typename MASVisitor,
+        typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+    >
+    inline void maximum_adjacency_search(
+        const Graph& g, WeightMap weights, const MASVisitor& vis,
+        const typename boost::graph_traits<Graph>::vertex_descriptor start,
+        VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq
+    )
+    {
+        boost::detail::maximum_adjacency_search_impl(
+            g, weights, vis, start, assignments, pq
+        );
+    }
 
-          typedef boost::detail::make_priority_queue_from_arg_pack_gen<boost::graph::keywords::tag::max_priority_queue, weight_type, vertex_descriptor, std::greater<weight_type> > default_pq_gen_type;
-
-          default_pq_gen_type pq_gen(choose_param(get_param(params, boost::distance_zero_t()), weight_type(0)));
-
-          typename boost::result_of<default_pq_gen_type(const Graph&, const ArgPack&)>::type pq = pq_gen(g, params);
-
-          boost::null_visitor null_vis;
-          boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
-          vertex_descriptor v = vertex_descriptor();
-          boost::detail::make_property_map_from_arg_pack_gen<
-              boost::graph::keywords::tag::vertex_assignment_map,
-              vertex_descriptor
-          > map_gen(v);
-          typename boost::detail::map_maker<
-              Graph,
-              ArgPack,
-              boost::graph::keywords::tag::vertex_assignment_map,
-              vertex_descriptor
-          >::map_type default_map = map_gen(g, params);
-          boost::maximum_adjacency_search
-               (g,
-                w,
-                params [ _visitor | default_visitor],
-                params [ _root_vertex | *vertices(g).first],
-                params [ _vertex_assignment_map | default_map],
-                pq
-                );
-        }
-      };
-
-      template <>
-      struct mas_dispatch<boost::param_not_found> {
-        typedef void result_type;
-
-        template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g,
-                          const ArgPack& params,
-                          param_not_found) {
-
-          using namespace boost::graph::keywords;
-          typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-
-          // get edge_weight_t as the weight type
-          typedef typename boost::property_map<Graph, edge_weight_t> WeightMap;
-          typedef typename WeightMap::value_type weight_type;
-
-          typedef boost::detail::make_priority_queue_from_arg_pack_gen<boost::graph::keywords::tag::max_priority_queue, weight_type, vertex_descriptor, std::greater<weight_type> > default_pq_gen_type;
-
-          default_pq_gen_type pq_gen(choose_param(get_param(params, boost::distance_zero_t()), weight_type(0)));
-
-          typename boost::result_of<default_pq_gen_type(const Graph&, const ArgPack&)>::type pq = pq_gen(g, params);
-
-          boost::null_visitor null_vis;
-          boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
-          vertex_descriptor v = vertex_descriptor();
-          boost::detail::make_property_map_from_arg_pack_gen<
-              boost::graph::keywords::tag::vertex_assignment_map,
-              vertex_descriptor
-          > map_gen(v);
-          typename boost::detail::map_maker<
-              Graph,
-              ArgPack,
-              boost::graph::keywords::tag::vertex_assignment_map,
-              vertex_descriptor
-          >::map_type default_map = map_gen(g, params);
-          boost::maximum_adjacency_search
-               (g,
-                get(edge_weight, g),
-                params [ _visitor | default_visitor],
-                params [ _root_vertex | *vertices(g).first],
-                params [ _vertex_assignment_map | default_map],
-                pq
-                );
-        }
-      };
-    } // end namespace detail
-  } // end namespace graph
-
-  // Named parameter interface
-  //BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(maximum_adjacency_search, 1)
-  template <typename Graph, typename P, typename T, typename R>
-  void
-  maximum_adjacency_search (const Graph& g,
-      const bgl_named_params<P,T,R>& params) {
-
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-
-    // do the dispatch based on WeightMap
-    typedef typename get_param_type<edge_weight_t, bgl_named_params<P,T,R> >::type W;
-    graph::detail::mas_dispatch<W>::apply(g, arg_pack, get_param(params, edge_weight));
-  }
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <typename Graph, typename Args>
-  inline void maximum_adjacency_search(
-    const Graph& g, const Args& arg_pack, typename boost::enable_if<
-      parameter::is_argument_pack<Args>, mpl::true_
-    >::type = mpl::true_()
-  )
-  {
-    typedef typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
-        Graph
-    >::type WeightMap;
-    WeightMap w_map = boost::detail::override_const_property(
-        arg_pack,
-        boost::graph::keywords::_weight_map,
-        g,
-        edge_weight
-    );
-    default_mas_visitor default_visitor;
-    typename boost::remove_const<
-        typename parameter::value_type<
+    template <typename Graph, typename Args>
+    void maximum_adjacency_search(
+        const Graph& g, const Args& arg_pack, typename boost::enable_if<
+            parameter::is_argument_pack<Args>, mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typedef typename boost::detail::override_const_property_result<
             Args,
-            boost::graph::keywords::tag::visitor,
-            default_mas_visitor
-        >::type
-    >::type vis = arg_pack[
-        boost::graph::keywords::_visitor | default_visitor
-    ];
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    const Vertex zero_vertex = Vertex();
-    Vertex s = arg_pack[boost::graph::keywords::_root_vertex | zero_vertex];
-    boost::detail::make_property_map_from_arg_pack_gen<
-        boost::graph::keywords::tag::vertex_assignment_map,
-        Vertex
-    > vertex_assignment_map_gen(zero_vertex);
-    typename boost::detail::map_maker<
-        Graph,
-        Args,
-        boost::graph::keywords::tag::vertex_assignment_map,
-        Vertex
-    >::map_type vert_asgn_map = vertex_assignment_map_gen(g, arg_pack);
-    typedef typename boost::property_traits<WeightMap>::value_type Weight;
-    const Weight zero_weight = Weight();
-    typedef boost::detail::make_priority_queue_from_arg_pack_gen<
-        boost::graph::keywords::tag::max_priority_queue,
-        Weight,
-        Vertex,
-        std::greater<Weight>
-    > PQGenerator;
-    PQGenerator pq_gen(
-        choose_param(
-            get_param(arg_pack, boost::distance_zero_t()),
-            zero_weight
-        )
-    );
-    typename PQGenerator::BOOST_NESTED_TEMPLATE result<
-        PQGenerator(const Graph&, const Args&)
-    >::type pq = pq_gen(g, arg_pack);
-    boost::detail::maximum_adjacency_search(
-        g, w_map, vis, s, vert_asgn_map, pq
-    );
-  }
+            boost::graph::keywords::tag::weight_map,
+            edge_weight_t,
+            Graph
+        >::type WeightMap;
+        WeightMap w_map = boost::detail::override_const_property(
+            arg_pack,
+            boost::graph::keywords::_weight_map,
+            g,
+            edge_weight
+        );
+        typename boost::remove_const<
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::visitor,
+                default_mas_visitor
+            >::type
+        >::type vis = arg_pack[
+            boost::graph::keywords::_visitor ||
+            boost::value_factory<default_mas_visitor>()
+        ];
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        Vertex s = arg_pack[
+            boost::graph::keywords::_root_vertex ||
+            boost::detail::get_default_starting_vertex_t<Graph>(g)
+        ];
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::vertex_assignment_map,
+            Vertex
+        > vertex_assignment_map_gen(graph_traits<Graph>::null_vertex());
+        typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::vertex_assignment_map,
+            Vertex
+        >::map_type vert_asgn_map = vertex_assignment_map_gen(g, arg_pack);
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+        const Weight zero_weight = Weight();
+        typedef boost::detail::make_priority_queue_from_arg_pack_gen<
+            boost::graph::keywords::tag::max_priority_queue,
+            Weight,
+            Vertex,
+            std::greater<Weight>
+        > PQGenerator;
+        PQGenerator pq_gen(
+            choose_param(
+                get_param(arg_pack, boost::distance_zero_t()),
+                zero_weight
+            )
+        );
+        typename PQGenerator::BOOST_NESTED_TEMPLATE result<
+            PQGenerator(const Graph&, const Args&)
+        >::type pq = pq_gen(g, arg_pack);
+        boost::detail::maximum_adjacency_search_impl(
+            g, w_map, vis, s, vert_asgn_map, pq
+        );
+    }
+}} // end namespace boost::graph
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph, typename TA \
-            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline void name( \
-    const Graph &g, const TA& ta \
-    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-    typename boost::enable_if< \
-      parameter::are_tagged_arguments< \
-        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-      >, mpl::true_ \
-    >::type = mpl::true_() \
-  ) \
-  { \
-    name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
-  }
+    template < \
+        typename Graph, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        const Graph &g, const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            >, mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            g, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
 
-BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, maximum_adjacency_search)
+namespace boost { namespace graph {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, maximum_adjacency_search
+)
+}} // end namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  namespace graph {
-    namespace detail {
-      template <typename Graph>
-      struct maximum_adjacency_search_impl {
+
+namespace boost { namespace graph { namespace detail {
+
+    template <typename Graph>
+    struct maximum_adjacency_search_impl
+    {
         typedef void result_type;
+        typedef result_type type;
 
         template <typename ArgPack>
-        void
-        operator() (const Graph& g, const ArgPack& arg_pack) const {
-          // call the function that does the dispatching
-          typedef typename get_param_type<edge_weight_t, ArgPack >::type W;
-          graph::detail::mas_dispatch<W>::apply(g, arg_pack, get_param(arg_pack, edge_weight));
+        void operator()(const Graph& g, const ArgPack& arg_pack) const
+        {
+            typedef typename boost::detail::override_const_property_result<
+                ArgPack,
+                boost::graph::keywords::tag::weight_map,
+                edge_weight_t,
+                Graph
+            >::type WeightMap;
+            WeightMap w_map = boost::detail::override_const_property(
+                arg_pack,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            );
+            typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+            const Vertex s = arg_pack[
+                boost::graph::keywords::_root_vertex ||
+                boost::detail::get_default_starting_vertex_t<Graph>(g)
+            ];
+            typedef typename property_traits<WeightMap>::value_type Weight;
+            const Weight zero_weight = Weight();
+            typedef boost::detail::make_priority_queue_from_arg_pack_gen<
+                boost::graph::keywords::tag::max_priority_queue, Weight,
+                Vertex, std::greater<Weight>
+            > default_pq_gen_type;
+            default_pq_gen_type pq_gen(
+                choose_param(
+                    get_param(arg_pack, boost::distance_zero_t()), zero_weight
+                )
+            );
+            typename boost::result_of<
+                default_pq_gen_type(const Graph&, const ArgPack&)
+            >::type pq = pq_gen(g, arg_pack);
+            typename boost::remove_const<
+                typename boost::parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    default_mas_visitor
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_mas_visitor>()
+            ];
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::vertex_assignment_map,
+                Vertex
+            > v_a_map_gen(graph_traits<Graph>::null_vertex());
+            typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::vertex_assignment_map,
+                Vertex
+            >::map_type v_a_map = v_a_map_gen(g, arg_pack);
+            maximum_adjacency_search(g, w_map, vis, s, v_a_map, pq);
         }
-      };
-    } // end namespace detail
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search,1,5)
-  } // end namespace graph
+    };
+}}} // end namespace boost::graph::detail
+
+namespace boost { namespace graph {
+
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search, 1, 9)
+}} // end namespace boost::graph
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
+namespace boost {
+
+    using ::boost::graph::maximum_adjacency_search;
+
+    // Old-style named parameter interface
+    template <typename Graph, typename P, typename T, typename R>
+    void maximum_adjacency_search(
+        const Graph& g, const bgl_named_params<P, T, R>& params
+    )
+    {
+        typedef bgl_named_params<P, T, R> params_type;
+        BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+        maximum_adjacency_search(g, arg_pack);
+    }
 } // end namespace boost
 
 #include <boost/graph/iteration_macros_undef.hpp>
