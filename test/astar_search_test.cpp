@@ -193,17 +193,10 @@ int main(int, char **)
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
        _predecessor_map = make_iterator_property_map(p.begin(), idx),
        _distance_map = make_iterator_property_map(d.begin(), idx),
        _visitor = astar_goal_visitor<vertex>(goal),
        _distance_inf = my_float((std::numeric_limits<float>::max)())
-#else
-       boost::predecessor_map(make_iterator_property_map(p.begin(), idx))
-       .distance_map(make_iterator_property_map(d.begin(), idx))
-       .visitor(astar_goal_visitor<vertex>(goal))
-       .distance_inf(my_float((std::numeric_limits<float>::max)()))
-#endif
        );
   } catch(found_goal const& fg) { // found a path to the goal
     list<vertex> shortest_path;

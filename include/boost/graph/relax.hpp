@@ -34,7 +34,19 @@ namespace boost {
        return a + b;
       }
     };
-    
+
+    template <class T>
+    struct closed_plus_gen
+    {
+      const T inf;
+
+      closed_plus_gen(T inf) : inf(inf) { }
+
+      closed_plus<T> operator()() const {
+        return closed_plus<T>(inf);
+      }
+    };
+
     template <class Graph, class WeightMap, 
             class PredecessorMap, class DistanceMap, 
             class BinaryFunction, class BinaryPredicate>
