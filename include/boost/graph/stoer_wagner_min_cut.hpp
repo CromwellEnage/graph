@@ -150,7 +150,7 @@ namespace boost { namespace detail {
       typename IndexMap
     >
     typename boost::property_traits<WeightMap>::value_type
-    stoer_wagner_min_cut(
+    stoer_wagner_min_cut_impl(
       const UndirectedGraph& g, WeightMap weights, ParityMap parities,
       VertexAssignmentMap assignments,
       KeyedUpdatablePriorityQueue& pq,
@@ -220,59 +220,96 @@ namespace boost { namespace detail {
     }
 }} // end namespace boost::detail
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <
-      typename UndirectedGraph, typename WeightMap, typename ParityMap,
-      typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue,
-      typename IndexMap
+        typename UndirectedGraph, typename WeightMap, typename ParityMap,
+        typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue,
+        typename IndexMap
     >
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typename boost::disable_if<
-      parameter::are_tagged_arguments<
-        ParityMap, VertexAssignmentMap,
-        KeyedUpdatablePriorityQueue, IndexMap
-      >,
-#endif
-      typename boost::property_traits<WeightMap>::value_type
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        parameter::are_tagged_arguments<
+            ParityMap, VertexAssignmentMap,
+            KeyedUpdatablePriorityQueue, IndexMap
+        >,
+        typename boost::property_traits<WeightMap>::value_type
     >::type
-#endif
     stoer_wagner_min_cut(
-      const UndirectedGraph& g, WeightMap weights, ParityMap parities,
-      VertexAssignmentMap assignments,
-      KeyedUpdatablePriorityQueue& pq,
-      IndexMap index_map
+        const UndirectedGraph& g, WeightMap weights, ParityMap parities,
+        VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue& pq,
+        IndexMap index_map
     )
     {
-      BOOST_CONCEPT_ASSERT((boost::IncidenceGraphConcept<UndirectedGraph>));
-      BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<UndirectedGraph>));
-      typedef typename boost::graph_traits<UndirectedGraph>::vertex_descriptor vertex_descriptor;
-      typedef typename boost::graph_traits<UndirectedGraph>::vertices_size_type vertices_size_type;
-      typedef typename boost::graph_traits<UndirectedGraph>::edge_descriptor edge_descriptor;
-      BOOST_CONCEPT_ASSERT((boost::Convertible<typename boost::graph_traits<UndirectedGraph>::directed_category, boost::undirected_tag>));
-      BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept<WeightMap, edge_descriptor>));
-      // typedef typename boost::property_traits<WeightMap>::value_type weight_type;
-      BOOST_CONCEPT_ASSERT((boost::WritablePropertyMapConcept<ParityMap, vertex_descriptor>));
-      // typedef typename boost::property_traits<ParityMap>::value_type parity_type;
-      BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
-      BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
-      BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept<KeyedUpdatablePriorityQueue>));
+        BOOST_CONCEPT_ASSERT((
+            boost::IncidenceGraphConcept<UndirectedGraph>
+        ));
+        BOOST_CONCEPT_ASSERT((
+            boost::VertexListGraphConcept<UndirectedGraph>
+        ));
+        typedef typename graph_traits<
+            UndirectedGraph
+        >::vertex_descriptor vertex_descriptor;
+        typedef typename graph_traits<
+            UndirectedGraph
+        >::vertices_size_type vertices_size_type;
+        typedef typename graph_traits<
+            UndirectedGraph
+        >::edge_descriptor edge_descriptor;
+        BOOST_CONCEPT_ASSERT((
+            boost::Convertible<
+                typename graph_traits<UndirectedGraph>::directed_category,
+                boost::undirected_tag
+            >
+        ));
+        BOOST_CONCEPT_ASSERT((
+            boost::ReadablePropertyMapConcept<WeightMap, edge_descriptor>
+        ));
+        // typedef typename boost::property_traits<
+        //     WeightMap
+        // >::value_type weight_type;
+        BOOST_CONCEPT_ASSERT((
+            boost::WritablePropertyMapConcept<ParityMap, vertex_descriptor>
+        ));
+        // typedef typename boost::property_traits<
+        //     ParityMap
+        // >::value_type parity_type;
+        BOOST_CONCEPT_ASSERT((
+            boost::ReadWritePropertyMapConcept<
+                VertexAssignmentMap,
+                vertex_descriptor
+            >
+        ));
+        BOOST_CONCEPT_ASSERT((
+            boost::Convertible<
+                vertex_descriptor,
+                typename boost::property_traits<
+                    VertexAssignmentMap
+                >::value_type
+            >
+        ));
+        BOOST_CONCEPT_ASSERT((
+            boost::KeyedUpdatableQueueConcept<KeyedUpdatablePriorityQueue>
+        ));
 
-      vertices_size_type n = num_vertices(g);
-      if (n < 2)
-        throw boost::bad_graph("the input graph must have at least two vertices.");
-      else if (!pq.empty())
-        throw std::invalid_argument("the max-priority queue must be empty initially.");
+        vertices_size_type n = num_vertices(g);
+        if (n < 2)
+            throw boost::bad_graph(
+                "the input graph must have at least two vertices."
+            );
+        else if (!pq.empty())
+            throw std::invalid_argument(
+                "the max-priority queue must be empty initially."
+            );
 
-      return detail::stoer_wagner_min_cut(
-        g, weights, parities, assignments, pq, index_map
-      );
+        return boost::detail::stoer_wagner_min_cut_impl(
+            g, weights, parities, assignments, pq, index_map
+        );
     }
-} // end namespace boost
+}} // end namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
+
+namespace boost { namespace graph {
 
     template <typename Graph, typename WeightMap, typename Args>
     inline typename boost::enable_if<
@@ -283,116 +320,132 @@ namespace boost {
         const Graph& g, WeightMap weights, const Args& arg_pack
     )
     {
-      typename boost::detail::override_const_property_result<
-          Args,
-          boost::graph::keywords::tag::vertex_index_map,
-          vertex_index_t,
-          Graph
-      >::type v_i_map = detail::override_const_property(
-          arg_pack,
-          boost::graph::keywords::_vertex_index_map,
-          g,
-          vertex_index
-      );
-      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      typedef typename graph_traits<Graph>::vertices_size_type VIndex;
-      const VIndex zero_index = VIndex();
-      dummy_property_map dummy_prop;
-      typename boost::parameter::binding<
-          Args, 
-          boost::graph::keywords::tag::parity_map,
-          dummy_property_map&
-      >::type p_map = arg_pack[
-          boost::graph::keywords::_parity_map | dummy_prop
-      ];
-      boost::detail::make_property_map_from_arg_pack_gen<
-          boost::graph::keywords::tag::index_in_heap_map,
-          VIndex
-      > i_in_h_map_gen(zero_index);
-      typedef typename boost::detail::map_maker<
-          Graph,
-          Args,
-          boost::graph::keywords::tag::index_in_heap_map,
-          VIndex
-      >::map_type IndexInHeapPMap;
-      IndexInHeapPMap i_in_h_map = i_in_h_map_gen(g, arg_pack);
-      typedef typename boost::property_traits<WeightMap>::value_type D;
-      const D zero_distance = D();
-      boost::detail::make_property_map_from_arg_pack_gen<
-          boost::graph::keywords::tag::distance_map,
-          D
-      > dist_map_gen(zero_distance);
-      typedef typename boost::detail::map_maker<
-          Graph,
-          Args,
-          boost::graph::keywords::tag::distance_map,
-          D
-      >::map_type DistanceMap;
-      DistanceMap dist_map = dist_map_gen(g, arg_pack);
-      typedef d_ary_heap_indirect<
-          Vertex,
-          4,
-          IndexInHeapPMap,
-          DistanceMap,
-          std::greater<Vertex>
-      > DefaultBuffer;
-      DefaultBuffer d_buf(dist_map, i_in_h_map, std::greater<Vertex>());
-      typename parameter::binding<
-          Args,
-          boost::graph::keywords::tag::buffer,
-          DefaultBuffer&
-      >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
-      return boost::stoer_wagner_min_cut(
-        g,
-        weights,
-        p_map,
-        arg_pack[
-          boost::graph::keywords::_vertex_assignment_map |
-          make_shared_array_property_map(
-            num_vertices(g),
-            detail::get_null_vertex(g),
+        typename boost::detail::override_const_property_result<
+            Args,
+            boost::graph::keywords::tag::vertex_index_map,
+            vertex_index_t,
+            Graph
+        >::type v_i_map = boost::detail::override_const_property(
+            arg_pack,
+            boost::graph::keywords::_vertex_index_map,
+            g,
+            vertex_index
+        );
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        typedef typename graph_traits<Graph>::vertices_size_type VIndex;
+        const VIndex zero_index = VIndex();
+        dummy_property_map dummy_prop;
+        typename boost::parameter::binding<
+            Args,
+            boost::graph::keywords::tag::parity_map,
+            dummy_property_map&
+        >::type p_map = arg_pack[
+            boost::graph::keywords::_parity_map | dummy_prop
+        ];
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::index_in_heap_map,
+            VIndex
+        > i_in_h_map_gen(zero_index);
+        typedef typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::index_in_heap_map,
+            VIndex
+        >::map_type IndexInHeapPMap;
+        IndexInHeapPMap i_in_h_map = i_in_h_map_gen(g, arg_pack);
+        typedef typename boost::property_traits<WeightMap>::value_type D;
+        const D zero_distance = D();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map,
+            D
+        > dist_map_gen(zero_distance);
+        typedef typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::distance_map,
+            D
+        >::map_type DistanceMap;
+        DistanceMap dist_map = dist_map_gen(g, arg_pack);
+        typedef d_ary_heap_indirect<
+            Vertex,
+            4,
+            IndexInHeapPMap,
+            DistanceMap,
+            std::greater<Vertex>
+        > DefaultBuffer;
+        DefaultBuffer d_buf(dist_map, i_in_h_map, std::greater<Vertex>());
+        typename parameter::binding<
+            Args,
+            boost::graph::keywords::tag::buffer,
+            DefaultBuffer&
+        >::type Q = arg_pack[boost::graph::keywords::_buffer | d_buf];
+        return stoer_wagner_min_cut(
+            g,
+            weights,
+            p_map,
+            arg_pack[
+                boost::graph::keywords::_vertex_assignment_map |
+                make_shared_array_property_map(
+                    num_vertices(g),
+                    boost::detail::get_null_vertex(g),
+                    v_i_map
+                )
+            ],
+            Q,
             v_i_map
-          )
-        ],
-        Q,
-        v_i_map
-      );
+        );
     }
+}} // end namespace boost::graph
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-    template <typename Graph, typename WeightMap, typename TA \
-              BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+    template < \
+        typename Graph, typename WeightMap, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
     inline typename boost::enable_if< \
-      parameter::are_tagged_arguments< \
-        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-      >, \
-      typename boost::property_traits<WeightMap>::value_type \
+        parameter::are_tagged_arguments< \
+            TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+        >, \
+        typename boost::property_traits<WeightMap>::value_type \
     >::type \
     name( \
-      const Graph &g, WeightMap weights, const TA& ta \
-      BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+        const Graph& g, WeightMap weights, const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
     ) \
     { \
-      return name(g, weights, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+        return name( \
+            g, weights, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
     }
 
-BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, stoer_wagner_min_cut)
+namespace boost { namespace graph {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, stoer_wagner_min_cut
+)
+}} // end namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
+namespace boost { namespace graph {
 
     template <typename Graph, typename WeightMap>
     inline typename boost::property_traits<WeightMap>::value_type
     stoer_wagner_min_cut(const Graph& g, WeightMap weights)
     {
-      return stoer_wagner_min_cut(g, weights, parameter::compose());
+        return stoer_wagner_min_cut(g, weights, parameter::compose());
     }
-} // end namespace boost
+}} // end namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost { namespace graph {
-  namespace detail {
+
+namespace boost { namespace graph { namespace detail {
+
     template <class UndirectedGraph, class WeightMap>
     struct stoer_wagner_min_cut_impl {
       typedef typename boost::property_traits<WeightMap>::value_type result_type;
+      typedef result_type type;
       template <typename ArgPack>
       result_type operator() (const UndirectedGraph& g, WeightMap weights, const ArgPack& arg_pack) const {
         using namespace boost::graph::keywords;
@@ -406,7 +459,8 @@ namespace boost { namespace graph {
         typename boost::result_of<gen_type(const UndirectedGraph&, const ArgPack&)>::type pq = gen(g, arg_pack);
 
         boost::dummy_property_map dummy_prop;
-        return boost::stoer_wagner_min_cut(g,
+        return stoer_wagner_min_cut(
+          g,
           weights,
           arg_pack [_parity_map | dummy_prop],
           boost::detail::make_property_map_from_arg_pack_gen<tag::vertex_assignment_map, vertex_descriptor>(vertex_descriptor())(g, arg_pack),
@@ -415,18 +469,23 @@ namespace boost { namespace graph {
         );
       }
     };
-  }
-  BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(stoer_wagner_min_cut,2,4)
+}}} // end namespace boost::graph::detail
+
+namespace boost { namespace graph {
+
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(stoer_wagner_min_cut,2,4)
 }} // end namespace boost::graph
 
 namespace boost {
 
-  // Named parameter interface
-  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(stoer_wagner_min_cut, 2)
+    // Named parameter interface
+    BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(stoer_wagner_min_cut, 2)
 } // end namespace boost
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost { namespace graph {
+
     // version without IndexMap kept for backwards compatibility
     // (but requires vertex_index_t to be defined in the graph)
     // Place after the macro to avoid compilation errors
@@ -439,6 +498,11 @@ namespace boost { namespace graph {
                                   get(vertex_index, g));
     }
 }} // end namespace boost::graph
+
+namespace boost {
+
+    using ::boost::graph::stoer_wagner_min_cut;
+} // end namespace boost
 
 #include <boost/graph/iteration_macros_undef.hpp>
 

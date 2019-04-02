@@ -49,11 +49,7 @@ void test0()
   int w = boost::stoer_wagner_min_cut(
     g,
     weights,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_parity_map = parities
-#else
-    boost::parity_map(parities)
-#endif
   );
   BOOST_TEST_EQ(w, 4);
   const bool parity0 = get(parities, 0);
@@ -89,12 +85,8 @@ void test1()
     int w = boost::stoer_wagner_min_cut(
       g,
       weights,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_parity_map = parities,
       boost::graph::keywords::_vertex_assignment_map = assignments
-#else
-      boost::parity_map(parities).vertex_assignment_map(assignments)
-#endif
     );
     BOOST_TEST_EQ(w, 3);
     const bool parity2 = get(parities, 2),
@@ -117,11 +109,7 @@ void test2()
   int w = boost::stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_parity_map = parities
-#else
-    boost::parity_map(parities)
-#endif
   );
   BOOST_TEST_EQ(w, 3);
   const bool parity2 = get(parities, 2);
@@ -148,11 +136,7 @@ void test3()
   int w = boost::stoer_wagner_min_cut(
     g,
     weights,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_parity_map = parities
-#else
-    boost::parity_map(parities)
-#endif
   );
   BOOST_TEST_EQ(w, 7);
   const bool parity1 = get(parities, 1);
@@ -183,12 +167,8 @@ void test4()
   int w = boost::stoer_wagner_min_cut(
     g,
     boost::make_constant_property<edge_descriptor>(weight_type(1)),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_vertex_assignment_map = assignments,
     boost::graph::keywords::_parity_map = parities
-#else
-    boost::vertex_assignment_map(assignments).parity_map(parities)
-#endif
   );
   BOOST_TEST_EQ(w, 2);
   const bool parity0 = get(parities, 0);
@@ -237,11 +217,7 @@ void test_prgen_20_70_2(std::string test_dir)
   int w = boost::stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_max_priority_queue = pq
-#else
-    boost::max_priority_queue(pq)
-#endif
   );
   BOOST_TEST_EQ(w, 3407);
 }

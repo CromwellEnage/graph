@@ -50,11 +50,7 @@ int main()
   int w = boost::stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_parity_map = parities
-#else
-    boost::parity_map(parities)
-#endif
   );
 
   cout << "The min-cut weight of G is " << w << ".\n" << endl;

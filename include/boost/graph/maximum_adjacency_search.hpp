@@ -131,7 +131,6 @@ namespace boost {
 #include <boost/type_traits/remove_reference.hpp>
 #include <set>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
@@ -142,7 +141,6 @@ namespace boost {
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
 
 namespace boost { namespace detail {
 
