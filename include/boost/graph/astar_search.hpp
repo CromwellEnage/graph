@@ -601,10 +601,10 @@ namespace boost { namespace graph {
             boost::value_factory<std::less<D> >()
         ];
         typename boost::remove_const<
-            typename boost::parameter::value_type<
+            typename boost::parameter::lazy_value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                closed_plus_gen<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
@@ -705,10 +705,10 @@ namespace boost { namespace graph {
             boost::value_factory<std::less<D> >()
         ];
         typename boost::remove_const<
-            typename boost::parameter::value_type<
+            typename boost::parameter::lazy_value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                closed_plus_gen<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
@@ -829,10 +829,10 @@ namespace boost { namespace graph {
             boost::value_factory<std::less<D> >()
         ];
         typename boost::remove_const<
-            typename boost::parameter::value_type<
+            typename boost::parameter::lazy_value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                closed_plus_gen<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
@@ -933,10 +933,10 @@ namespace boost { namespace graph {
             boost::value_factory<std::less<D> >()
         ];
         typename boost::remove_const<
-            typename boost::parameter::value_type<
+            typename boost::parameter::lazy_value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                closed_plus_gen<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||

@@ -30,80 +30,96 @@
 namespace boost { namespace detail {
 
     template < typename ParityMap, typename WeightMap, typename IndexMap >
-    class mas_min_cut_visitor : public boost::default_mas_visitor {
-      typedef one_bit_color_map <IndexMap> InternalParityMap;
-      typedef typename boost::property_traits<WeightMap>::value_type weight_type;
+    class mas_min_cut_visitor : public boost::default_mas_visitor
+    {
+        typedef one_bit_color_map<IndexMap> InternalParityMap;
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+
     public:
-      template < typename Graph >
-      mas_min_cut_visitor(const Graph& g,
-                          ParityMap parity,
-                          weight_type& cutweight,
-                          const WeightMap& weight_map, 
-                          IndexMap index_map)
-        : m_bestParity(parity),
-          m_parity(make_one_bit_color_map(num_vertices(g), index_map)),
-          m_bestWeight(cutweight),
-          m_cutweight(0),
-          m_visited(0),
-          m_weightMap(weight_map)
-      {
-        // set here since the init list sets the reference
-        m_bestWeight = (std::numeric_limits<weight_type>::max)();
-      }
-
-      template < typename Vertex, typename Graph >
-      void initialize_vertex(Vertex u, const Graph & g)
-      {
-        typedef typename boost::property_traits<ParityMap>::value_type parity_type;
-        typedef typename boost::property_traits<InternalParityMap>::value_type internal_parity_type;
-
-        put(m_parity, u, internal_parity_type(0));
-        put(m_bestParity, u, parity_type(0));
-      }
-
-      template < typename Edge, typename Graph >
-      void examine_edge(Edge e, const Graph & g)
-      {
-        weight_type w = get(m_weightMap, e);
-
-        // if the target of e is already marked then decrease cutweight
-        // otherwise, increase it
-        if (get(m_parity, boost::target(e, g))) {
-          m_cutweight -= w;
-        } else {
-          m_cutweight += w;
+        template < typename Graph >
+        mas_min_cut_visitor(
+            const Graph& g, ParityMap parity, Weight& cutweight,
+            const WeightMap& weight_map, IndexMap index_map
+        ) : m_bestParity(parity),
+            m_parity(make_one_bit_color_map(num_vertices(g), index_map)),
+            m_bestWeight(cutweight),
+            m_cutweight(0),
+            m_visited(0),
+            m_weightMap(weight_map)
+        {
+            // set here since the init list sets the reference
+            this->m_bestWeight = (std::numeric_limits<Weight>::max)();
         }
-      }
 
-      template < typename Vertex, typename Graph >
-      void finish_vertex(Vertex u, const Graph & g)
-      {
-        typedef typename boost::property_traits<InternalParityMap>::value_type internal_parity_type;
+        template < typename Vertex, typename Graph >
+        inline void initialize_vertex(Vertex u, const Graph& g)
+        {
+            typedef typename boost::property_traits<
+                ParityMap
+            >::value_type parity_type;
+            typedef typename boost::property_traits<
+                InternalParityMap
+            >::value_type internal_parity_type;
 
-        ++m_visited;
-        put(m_parity, u, internal_parity_type(1));
-
-        if (m_cutweight < m_bestWeight && m_visited < num_vertices(g)) {
-          m_bestWeight = m_cutweight;
-          BGL_FORALL_VERTICES_T(i, g, Graph) {
-            put(m_bestParity,i, get(m_parity,i));
-          }
+            put(this->m_parity, u, internal_parity_type(0));
+            put(this->m_bestParity, u, parity_type(0));
         }
-      }
 
-      inline void clear() {
-        m_bestWeight = (std::numeric_limits<weight_type>::max)();
-        m_visited = 0;
-        m_cutweight = 0;
-      }
+        template < typename Edge, typename Graph >
+        inline void examine_edge(Edge e, const Graph& g)
+        {
+            Weight w = get(this->m_weightMap, e);
+
+            // if the target of e is already marked then decrease cutweight
+            // otherwise, increase it
+            if (get(this->m_parity, boost::target(e, g)))
+            {
+                this->m_cutweight -= w;
+            }
+            else
+            {
+                this->m_cutweight += w;
+            }
+        }
+
+        template < typename Vertex, typename Graph >
+        void finish_vertex(Vertex u, const Graph& g)
+        {
+            typedef typename boost::property_traits<
+                InternalParityMap
+            >::value_type internal_parity_type;
+
+            ++this->m_visited;
+            put(this->m_parity, u, internal_parity_type(1));
+
+            if (
+                (this->m_cutweight < this->m_bestWeight) &&
+                (this->m_visited < num_vertices(g))
+            )
+            {
+                this->m_bestWeight = this->m_cutweight;
+
+                BGL_FORALL_VERTICES_T(i, g, Graph)
+                {
+                    put(this->m_bestParity, i, get(this->m_parity, i));
+                }
+            }
+        }
+
+        inline void clear()
+        {
+            this->m_bestWeight = (std::numeric_limits<Weight>::max)();
+            this->m_visited = 0;
+            this->m_cutweight = 0;
+        }
 
     private:
-      ParityMap m_bestParity;
-      InternalParityMap m_parity;
-      weight_type& m_bestWeight;
-      weight_type m_cutweight;
-      unsigned m_visited;
-      const WeightMap& m_weightMap;
+        ParityMap m_bestParity;
+        InternalParityMap m_parity;
+        Weight& m_bestWeight;
+        Weight m_cutweight;
+        unsigned m_visited;
+        const WeightMap& m_weightMap;
     };
 
     /**
