@@ -312,7 +312,7 @@ namespace boost { namespace graph {
 namespace boost { namespace graph {
 
     template <typename Graph, typename WeightMap, typename Args>
-    inline typename boost::enable_if<
+    typename boost::enable_if<
         parameter::is_argument_pack<Args>,
         typename boost::property_traits<WeightMap>::value_type
     >::type
@@ -476,12 +476,6 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(stoer_wagner_min_cut,2,4)
 }} // end namespace boost::graph
 
-namespace boost {
-
-    // Named parameter interface
-    BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(stoer_wagner_min_cut, 2)
-} // end namespace boost
-
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost { namespace graph {
@@ -502,6 +496,21 @@ namespace boost { namespace graph {
 namespace boost {
 
     using ::boost::graph::stoer_wagner_min_cut;
+
+    // Old-style named parameter variant
+    template <
+        typename Graph, typename WeightMap, typename P, typename T, typename R
+    >
+    typename boost::property_traits<WeightMap>::value_type
+    stoer_wagner_min_cut(
+        const Graph& g, WeightMap weights,
+        const bgl_named_params<P, T, R>& params
+    )
+    {
+        typedef bgl_named_params<P, T, R> params_type;
+        BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+        return stoer_wagner_min_cut(g, weights, arg_pack);
+    }
 } // end namespace boost
 
 #include <boost/graph/iteration_macros_undef.hpp>

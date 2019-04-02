@@ -602,10 +602,10 @@ namespace boost { namespace graph {
         ];
         closed_plus_gen<D> cp_gen(inf);
         typename boost::remove_const<
-            typename boost::parameter::lazy_value_type<
+            typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus_gen<D>
+                closed_plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine || cp_gen
@@ -706,10 +706,10 @@ namespace boost { namespace graph {
         ];
         closed_plus_gen<D> cp_gen(inf);
         typename boost::remove_const<
-            typename boost::parameter::lazy_value_type<
+            typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus_gen<D>
+                closed_plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine || cp_gen
@@ -830,10 +830,10 @@ namespace boost { namespace graph {
         ];
         closed_plus_gen<D> cp_gen(inf);
         typename boost::remove_const<
-            typename boost::parameter::lazy_value_type<
+            typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus_gen<D>
+                closed_plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine || cp_gen
@@ -934,10 +934,10 @@ namespace boost { namespace graph {
         ];
         closed_plus_gen<D> cp_gen(inf);
         typename boost::remove_const<
-            typename boost::parameter::lazy_value_type<
+            typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus_gen<D>
+                closed_plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine || cp_gen
