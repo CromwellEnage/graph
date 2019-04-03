@@ -19,9 +19,9 @@ int main()
     boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(g);
+    cycle_canceling(g);
 
-    long cost = boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_TEST_EQ(cost, 29);
     return boost::report_errors();
 }

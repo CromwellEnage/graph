@@ -23,9 +23,9 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_def_test) {
     boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(g);
+    cycle_canceling(g);
 
-    long cost = boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 29);
 }
 
@@ -35,9 +35,9 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
     boost::SampleGraph::getSampleGraph2(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(g);
+    cycle_canceling(g);
 
-    long cost =  boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 7);
 }
 
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
     boost::property_map<Graph, boost::vertex_index_t>::const_type idx = get(boost::vertex_index, g);
 
     boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(
+    cycle_canceling(
         g,
         boost::graph::keywords::_distance_map =
         boost::make_iterator_property_map(dist.begin(), idx),
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
         boost::graph::keywords::_vertex_index_map = idx
     );
 
-    long cost = boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 29);
 }
 

@@ -44,6 +44,7 @@ void build_graph(Graph& g,
     add_edge(v[4], v[0], g);
 }
 
+#include <boost/core/lightweight_test.hpp>
 
 template <typename Graph>
 void test_undirected()
@@ -73,14 +74,21 @@ void test_undirected()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_weight_map = wm
+#else
+        weight_map(wm)
+#endif
+    );
     all_closeness_centralities(g, dm, cm);
 
-    BOOST_ASSERT(cm[v[0]] == double(1)/5);
-    BOOST_ASSERT(cm[v[1]] == double(1)/7);
-    BOOST_ASSERT(cm[v[2]] == double(1)/7);
-    BOOST_ASSERT(cm[v[3]] == double(1)/9);
-    BOOST_ASSERT(cm[v[4]] == double(1)/6);
+    BOOST_TEST(cm[v[0]] == double(1)/5);
+    BOOST_TEST(cm[v[1]] == double(1)/7);
+    BOOST_TEST(cm[v[2]] == double(1)/7);
+    BOOST_TEST(cm[v[3]] == double(1)/9);
+    BOOST_TEST(cm[v[4]] == double(1)/6);
 }
 
 template <typename Graph>
@@ -111,14 +119,21 @@ void test_directed()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_weight_map = wm
+#else
+        weight_map(wm)
+#endif
+    );
     all_closeness_centralities(g, dm, cm);
 
-    BOOST_ASSERT(cm[v[0]] == double(0));
-    BOOST_ASSERT(cm[v[1]] == double(0));
-    BOOST_ASSERT(cm[v[2]] == double(0));
-    BOOST_ASSERT(cm[v[3]] == double(1)/10);
-    BOOST_ASSERT(cm[v[4]] == double(0));
+    BOOST_TEST(cm[v[0]] == double(0));
+    BOOST_TEST(cm[v[1]] == double(0));
+    BOOST_TEST(cm[v[2]] == double(0));
+    BOOST_TEST(cm[v[3]] == double(1)/10);
+    BOOST_TEST(cm[v[4]] == double(0));
 }
 
 int
@@ -129,4 +144,6 @@ main(int, char *[])
 
     test_undirected<Graph>();
     test_directed<Digraph>();
+
+    return boost::report_errors();
 }

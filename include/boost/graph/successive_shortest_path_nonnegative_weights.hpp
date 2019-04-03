@@ -113,7 +113,7 @@ namespace boost { namespace graph {
 
             dijkstra_shortest_paths(
                 gres, s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                 boost::graph::keywords::_weight_map =
                 boost::detail::make_mapReducedWeight(
                     gres, weight, distance_prev, rev

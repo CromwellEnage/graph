@@ -32,12 +32,12 @@ find_flow_cost(
 )
 {
     typedef typename property_traits<Weight>::value_type Cost;
-
-    Cost cost = 0;
+    const Cost zero_cost = Cost();
+    Cost cost = zero_cost;
 
     BGL_FORALL_EDGES_T(e, g, Graph)
     {
-        if (get(capacity, e) > Cost(0))
+        if (zero_cost < get(capacity, e))
         {
             cost += (
                 get(capacity, e) - get(residual_capacity, e)
