@@ -57,17 +57,19 @@ make_mapReducedWeight(const Graph & g, Weight w, Distance d, Reversed r)  {
 
 }} // namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
-#endif
 
-namespace boost {
+namespace boost { namespace graph {
 
-template <class Graph, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex>
-void successive_shortest_path_nonnegative_weights(
-        const Graph &g,
+    template <
+        typename Graph, typename Capacity, typename ResidualCapacity,
+        typename Weight, typename Reversed, typename VertexIndex,
+        typename Pred, typename Distance, typename Distance2
+    >
+    void successive_shortest_path_nonnegative_weights(
+        const Graph& g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -78,7 +80,6 @@ void successive_shortest_path_nonnegative_weights(
         Pred pred,
         Distance distance,
         Distance2 distance_prev
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         , typename boost::disable_if<
             parameter::are_tagged_arguments<
                 Capacity, ResidualCapacity, Weight, Reversed, VertexIndex,
@@ -86,44 +87,72 @@ void successive_shortest_path_nonnegative_weights(
             >,
             mpl::true_
         >::type = mpl::true_()
+    )
+    {
+        filtered_graph<
+            const Graph, is_residual_edge<ResidualCapacity>
+        > gres = boost::detail::residual_graph(g, residual_capacity);
+        typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
+
+        BGL_FORALL_EDGES_T(e, g, Graph)
+        {
+            put(residual_capacity, e, get(capacity, e));
+        }
+
+        BGL_FORALL_VERTICES_T(v, g, Graph)
+        {
+            put(distance_prev, v, 0);
+        }
+
+        for (;;)
+        {
+            BGL_FORALL_VERTICES_T(v, g, Graph)
+            {
+                put(pred, v, edge_descriptor());
+            }
+
+            dijkstra_shortest_paths(
+                gres, s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                boost::graph::keywords::_weight_map =
+                boost::detail::make_mapReducedWeight(
+                    gres, weight, distance_prev, rev
+                ),
+                boost::graph::keywords::_distance_map = distance,
+                boost::graph::keywords::_vertex_index_map = index,
+                boost::graph::keywords::_visitor = make_dijkstra_visitor(
+                    record_edge_predecessors(pred, on_edge_relaxed())
+                )
+#else
+                weight_map(
+                    boost::detail::make_mapReducedWeight(
+                        gres, weight, distance_prev, rev
+                    )
+                ).distance_map(distance).vertex_index_map(index).visitor(
+                    make_dijkstra_visitor(
+                        record_edge_predecessors(pred, on_edge_relaxed())
+                    )
+                )
 #endif
-        )
-{
-    filtered_graph<const Graph, is_residual_edge<ResidualCapacity> >
-        gres = detail::residual_graph(g, residual_capacity);
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
+            );
 
-    BGL_FORALL_EDGES_T(e, g, Graph) {
-        put(residual_capacity, e, get(capacity, e));
-    }
+            if (get(pred, t) == edge_descriptor())
+            {
+                break;
+            }
 
-    BGL_FORALL_VERTICES_T(v, g, Graph) {
-        put(distance_prev, v, 0);
-    }
+            BGL_FORALL_VERTICES_T(v, g, Graph)
+            {
+                put(
+                    distance_prev, v,
+                    get(distance_prev, v) + get(distance, v)
+                );
+            }
 
-    while(true) {
-        BGL_FORALL_VERTICES_T(v, g, Graph) {
-            put(pred, v, edge_descriptor());
+            boost::detail::augment(g, s, t, pred, residual_capacity, rev);
         }
-        dijkstra_shortest_paths(gres, s,
-                weight_map(detail::make_mapReducedWeight(gres, weight, distance_prev, rev)).
-                distance_map(distance).
-                vertex_index_map(index).
-                visitor(make_dijkstra_visitor(record_edge_predecessors(pred, on_edge_relaxed()))));
-
-        if(get(pred, t) == edge_descriptor()) {
-            break;
-        }
-
-        BGL_FORALL_VERTICES_T(v, g, Graph) {
-            put(distance_prev, v, get(distance_prev, v) + get(distance, v));
-        }
-
-        detail::augment(g, s, t, pred, residual_capacity, rev);
     }
-}
-
-} // namespace boost
+}} // namespace boost::graph
 
 //in this namespace argument dispatching takes place
 namespace boost { namespace detail {
@@ -241,112 +270,131 @@ void successive_shortest_path_nonnegative_weights_dispatch1(
             make_iterator_property_map(pred_vec.begin(), index),
             get_param(params, vertex_distance), params);
 }
-
 }} // namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
-template <typename Graph, typename Args>
-void successive_shortest_path_nonnegative_weights(
-        Graph &g,
+    template <typename Graph, typename Args>
+    void successive_shortest_path_nonnegative_weights(
+        Graph& g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         const Args& args,
         typename boost::enable_if<
             parameter::is_argument_pack<Args>,
             mpl::true_
-        >::type = mpl::true_()) {
-    typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::vertex_index_map,
-        vertex_index_t,
-        Graph
-    >::type v_i_map = detail::override_const_property(
-        args,
-        boost::graph::keywords::_vertex_index_map,
-        g,
-        vertex_index
-    );
-    typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::capacity_map,
-        edge_capacity_t,
-        Graph
-    >::type e_c_map = detail::override_const_property(
-        args,
-        boost::graph::keywords::_capacity_map,
-        g,
-        edge_capacity
-    );
-    typename boost::detail::override_property_result<
-        Args,
-        boost::graph::keywords::tag::residual_capacity_map,
-        edge_residual_capacity_t,
-        Graph
-    >::type e_rc_map = detail::override_property(
-        args,
-        boost::graph::keywords::_residual_capacity_map,
-        g,
-        edge_residual_capacity
-    );
-    typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::reverse_edge_map,
-        edge_reverse_t,
-        Graph
-    >::type e_rev_map = detail::override_const_property(
-        args,
-        boost::graph::keywords::_reverse_edge_map,
-        g,
-        edge_reverse
-    );
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
-    const Edge zer_edge = Edge();
-    boost::detail::make_property_map_from_arg_pack_gen<
-        boost::graph::keywords::tag::predecessor_map,
-        Edge
-    > pred_map_gen(zer_edge);
-    typedef typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
-        Graph
-    >::type WeightMap;
-    WeightMap e_w_map = detail::override_const_property(
-        args,
-        boost::graph::keywords::_weight_map,
-        g,
-        edge_weight
-    );
-    typedef typename boost::property_traits<WeightMap>::value_type Distance;
-    const Distance zero_distance = Distance();
-    boost::detail::make_property_map_from_arg_pack_gen<
-        boost::graph::keywords::tag::distance_map,
-        Distance
-    > dist_map_gen(zero_distance);
-    boost::detail::make_property_map_from_arg_pack_gen<
-        boost::graph::keywords::tag::distance_map2,
-        Distance
-    > dist_map2_gen(zero_distance);
-    successive_shortest_path_nonnegative_weights(
-        g, s, t,
-        e_c_map,
-        e_rc_map,
-        e_w_map,
-        e_rev_map,
-        v_i_map,
-        pred_map_gen(g, args),
-        dist_map_gen(g, args),
-        dist_map2_gen(g, args)
-    );
-}
+        >::type = mpl::true_()
+    )
+    {
+        typename boost::detail::override_const_property_result<
+            Args,
+            boost::graph::keywords::tag::vertex_index_map,
+            vertex_index_t,
+            Graph
+        >::type v_i_map = boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_vertex_index_map,
+            g,
+            vertex_index
+        );
+        typename boost::detail::override_const_property_result<
+            Args,
+            boost::graph::keywords::tag::capacity_map,
+            edge_capacity_t,
+            Graph
+        >::type e_c_map = boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_capacity_map,
+            g,
+            edge_capacity
+        );
+        typename boost::detail::override_property_result<
+            Args,
+            boost::graph::keywords::tag::residual_capacity_map,
+            edge_residual_capacity_t,
+            Graph
+        >::type e_rc_map = boost::detail::override_property(
+            args,
+            boost::graph::keywords::_residual_capacity_map,
+            g,
+            edge_residual_capacity
+        );
+        typename boost::detail::override_const_property_result<
+            Args,
+            boost::graph::keywords::tag::reverse_edge_map,
+            edge_reverse_t,
+            Graph
+        >::type e_rev_map = boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_reverse_edge_map,
+            g,
+            edge_reverse
+        );
+        typedef typename graph_traits<Graph>::edge_descriptor Edge;
+        const Edge zer_edge = Edge();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::predecessor_map,
+            Edge
+        > pred_map_gen(zer_edge);
+        typedef typename boost::detail::override_const_property_result<
+            Args,
+            boost::graph::keywords::tag::weight_map,
+            edge_weight_t,
+            Graph
+        >::type WeightMap;
+        WeightMap e_w_map = boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_weight_map,
+            g,
+            edge_weight
+        );
+        typedef typename boost::property_traits<
+            WeightMap
+        >::value_type Distance;
+        const Distance zero_distance = Distance();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map,
+            Distance
+        > dist_map_gen(zero_distance);
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map2,
+            Distance
+        > dist_map2_gen(zero_distance);
+        successive_shortest_path_nonnegative_weights(
+            g, s, t,
+            e_c_map,
+            e_rc_map,
+            e_w_map,
+            e_rev_map,
+            v_i_map,
+            pred_map_gen(g, args),
+            dist_map_gen(g, args),
+            dist_map2_gen(g, args)
+        );
+    }
+}} // namespace boost::graph
+
+#include <boost/parameter/compose.hpp>
+
+namespace boost { namespace graph {
+
+    template <typename Graph>
+    inline void successive_shortest_path_nonnegative_weights(
+        Graph& g,
+        typename graph_traits<Graph>::vertex_descriptor s,
+        typename graph_traits<Graph>::vertex_descriptor t
+    )
+    {
+        successive_shortest_path_nonnegative_weights(
+            g, s, t, parameter::compose()
+        );
+    }
+}} // namespace boost::graph
+
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
@@ -372,17 +420,21 @@ void successive_shortest_path_nonnegative_weights(
         ); \
     }
 
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
 BOOST_PP_REPEAT_FROM_TO(
     1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
     successive_shortest_path_nonnegative_weights
 )
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
 namespace boost {
+
+    using ::boost::graph::successive_shortest_path_nonnegative_weights;
 
 template <class Graph, class P, class T, class R>
 inline void successive_shortest_path_nonnegative_weights(
@@ -401,22 +453,5 @@ inline void successive_shortest_path_nonnegative_weights(
            get_param(params, vertex_predecessor),
            params);
 }
-
-template <class Graph>
-inline void successive_shortest_path_nonnegative_weights(
-        Graph &g,
-        typename graph_traits<Graph>::vertex_descriptor s,
-        typename graph_traits<Graph>::vertex_descriptor t) {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    successive_shortest_path_nonnegative_weights(
-        g, s, t, parameter::compose()
-    );
-#else
-    bgl_named_params<int, buffer_param_t> params(0);
-    successive_shortest_path_nonnegative_weights(g, s, t, params);
-#endif
-}
-
-
 }//boost
 #endif /* BOOST_GRAPH_SUCCESSIVE_SHORTEST_PATH_HPP */

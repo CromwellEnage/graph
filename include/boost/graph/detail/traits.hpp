@@ -129,6 +129,29 @@ namespace boost { namespace detail {
 namespace boost { namespace detail {
 
     template <
+        typename FirstArgument,
+        typename SecondArgument,
+        typename ResultPlaceholderExpr
+    >
+    struct is_addable_impl
+    {
+        typedef typename mpl::apply1<
+            ResultPlaceholderExpr,
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+            BOOST_TYPEOF_TPL((
+                boost::declval<FirstArgument>() +
+                boost::declval<SecondArgument>()
+            ))
+#else
+            decltype(
+                boost::declval<FirstArgument>() +
+                boost::declval<SecondArgument>()
+            )
+#endif
+        >::type type;
+    };
+
+    template <
         typename T,
         typename FirstArgument,
         typename SecondArgument,
@@ -194,6 +217,40 @@ namespace boost { namespace detail {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
+
+    template <typename FirstArg, typename SecondArg>
+    class is_addable_expr
+    {
+        template <typename A1, typename A2>
+        static graph_yes_tag
+            _check(
+                mpl::vector<A1,A2>*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL((
+                        boost::declval<A1>() + boost::declval<A2>()
+                    ))
+#else
+                    decltype(
+                        boost::declval<A1>() + boost::declval<A2>()
+                    )
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                is_addable_expr<FirstArg,SecondArg>::_check(
+                    static_cast<mpl::vector<FirstArg,SecondArg>*>(
+                        BOOST_GRAPH_DETAIL_NULLPTR
+                    )
+                )
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
 
     template <typename T, typename FirstArg, typename SecondArg>
     class is_binary_func
@@ -368,6 +425,24 @@ namespace boost { namespace detail {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
+
+    template <
+        typename FirstArgument,
+        typename SecondArgument,
+        typename ResultPlaceholderExpr
+    >
+    struct is_addable
+        : mpl::eval_if<
+            typename is_addable_expr<FirstArgument,SecondArgument>::type,
+            is_addable_impl<
+                FirstArgument,
+                SecondArgument,
+                ResultPlaceholderExpr
+            >,
+            mpl::false_
+        >::type
+    {
+    };
 
     template <
         typename T,
@@ -823,6 +898,29 @@ namespace boost { namespace detail {
         : mpl::if_<
             is_vertex_property_map_of_graph<T,G>,
             is_property_map_with_same_key_and_value_type_impl<T>,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <typename T, typename G>
+    struct is_property_map_with_edge_value
+        : mpl::if_<
+            boost::is_same<
+                typename property_traits<T>::value_type,
+                typename graph_traits<G>::edge_descriptor
+            >,
+            mpl::true_,
+            mpl::false_
+        >::type
+    {
+    };
+
+    template <typename T, typename G>
+    struct is_vertex_to_edge_map_of_graph
+        : mpl::if_<
+            is_vertex_property_map_of_graph<T,G>,
+            is_property_map_with_edge_value<T,G>,
             mpl::false_
         >::type
     {

@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_def_test) {
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);
 
-    int cost = boost::find_flow_cost(g);
+    long cost = boost::find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 29);
 }
 
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);
 
-    int cost =  boost::find_flow_cost(g);
+    long cost =  boost::find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 7);
 }
 
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
     boost::SampleGraph::Graph g; 
     boost::SampleGraph::getSampleGraph(g, s, t);
 
-    int N = num_vertices(g);
+    std::size_t N = num_vertices(g);
     std::vector<int> dist(N);
     typedef boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
     std::vector<edge_descriptor> pred(N);
@@ -55,9 +55,16 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
     boost::property_map<Graph, boost::vertex_index_t>::const_type idx = get(boost::vertex_index, g);
 
     boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(g, boost::distance_map(boost::make_iterator_property_map(dist.begin(), idx)).predecessor_map(boost::make_iterator_property_map(pred.begin(), idx)).vertex_index_map(idx));
+    boost::cycle_canceling(
+        g,
+        boost::graph::keywords::_distance_map =
+        boost::make_iterator_property_map(dist.begin(), idx),
+        boost::graph::keywords::_predecessor_map =
+        boost::make_iterator_property_map(pred.begin(), idx),
+        boost::graph::keywords::_vertex_index_map = idx
+    );
 
-    int cost = boost::find_flow_cost(g);
+    long cost = boost::find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 29);
 }
 
