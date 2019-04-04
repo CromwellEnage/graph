@@ -76,7 +76,7 @@ void test_undirected()
 
     floyd_warshall_all_pairs_shortest_paths(
         g, dm,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = wm
 #else
         weight_map(wm)
@@ -121,7 +121,7 @@ void test_directed()
 
     floyd_warshall_all_pairs_shortest_paths(
         g, dm,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = wm
 #else
         weight_map(wm)

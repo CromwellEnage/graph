@@ -117,31 +117,37 @@ BOOST_PARAMETER_FUNCTION(
     (deduced
         (required
             (terminator_function
-              ,*(detail::clustering_terminator_function_predicate)
+              , *(boost::detail::clustering_terminator_function_predicate)
             )
         )
         (optional
             (edge_centrality_map
-              ,*(
-                    detail::argument_with_graph_predicate<
-                        detail::is_edge_property_map_of_graph
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_edge_property_map_of_graph
                     >
                 )
               , make_shared_array_property_map(
                     num_edges(graph),
-                    detail::make_default_centrality_value(
+                    boost::detail::make_default_centrality_value(
                         terminator_function
                     ),
-                    detail::edge_or_dummy_property_map(graph, edge_index)
+                    boost::detail::edge_or_dummy_property_map(
+                        graph,
+                        edge_index
+                    )
                 )
             )
             (vertex_index_map
-              ,*(
-                    detail::argument_with_graph_predicate<
-                        detail::is_vertex_to_integer_map_of_graph
+              , *(
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_to_integer_map_of_graph
                     >
                 )
-              , detail::vertex_or_dummy_property_map(graph, vertex_index)
+              , boost::detail::vertex_or_dummy_property_map(
+                    graph,
+                    vertex_index
+                )
             )
         )
     )

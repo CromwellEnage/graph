@@ -188,7 +188,7 @@ namespace boost { namespace detail {
         BiDirectionalIterator1 iter1 = sequence1.second;
         BiDirectionalIterator2 iter2 = sequence2.second;
 
-        while (true)
+        for (;;)
         {
             --iter1;
             --iter2;

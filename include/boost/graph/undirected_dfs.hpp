@@ -377,7 +377,10 @@ namespace boost { namespace graph {
                     white_color,
                     arg_pack[
                         boost::graph::keywords::_vertex_index_map |
-                        get(vertex_index, g)
+                        boost::detail::vertex_or_dummy_property_map(
+                            graph,
+                            vertex_index
+                        )
                     ]
                 )
             ],

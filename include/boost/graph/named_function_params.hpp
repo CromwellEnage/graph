@@ -512,21 +512,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
-#else
-      result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
-#endif
     };
 
     template <typename ArgType, typename Prop, typename Graph>
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
-#else
-      result_type operator()(const Graph& g, const ArgType&) const {return get(Prop(), g);}
-#endif
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
@@ -544,11 +536,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, Graph& g, Prop)
-#else
-    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop)
-#endif
     {
     typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<

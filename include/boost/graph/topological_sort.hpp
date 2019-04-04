@@ -11,17 +11,52 @@
 #ifndef BOOST_GRAPH_TOPOLOGICAL_SORT_HPP
 #define BOOST_GRAPH_TOPOLOGICAL_SORT_HPP
 
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/exception.hpp>
+#include <boost/throw_exception.hpp>
+
+namespace boost { 
+
+    // Topological sort visitor
+    //
+    // This visitor merely writes the linear ordering into an OutputIterator.
+    // The OutputIterator could be something like an ostream_iterator,
+    // or it could be a back/front_insert_iterator.  Note that if it is a
+    // back_insert_iterator, the recorded order is the reverse topological
+    // order.  On the other hand, if it is a front_insert_iterator,
+    // the recorded order is the topological order.
+    //
+    template <typename OutputIterator>
+    struct topo_sort_visitor : public dfs_visitor<>
+    {
+        inline topo_sort_visitor(OutputIterator _iter) : m_iter(_iter)
+        {
+        }
+
+        template <typename Edge, typename Graph>
+        inline void back_edge(const Edge&, Graph&)
+        {
+            BOOST_THROW_EXCEPTION(not_a_dag());
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void finish_vertex(const Vertex& u, Graph&)
+        {
+            *this->m_iter++ = u;
+        }
+
+        OutputIterator m_iter;
+    };
+} // namespace boost
+
 #include <boost/config.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/detail/traits.hpp>
-#include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/graph/exception.hpp>
-#include <boost/throw_exception.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
@@ -32,42 +67,14 @@
 #include <boost/parameter/compose.hpp>
 #endif
 
-namespace boost { 
-
-  // Topological sort visitor
-  //
-  // This visitor merely writes the linear ordering into an
-  // OutputIterator. The OutputIterator could be something like an
-  // ostream_iterator, or it could be a back/front_insert_iterator.
-  // Note that if it is a back_insert_iterator, the recorded order is
-  // the reverse topological order. On the other hand, if it is a
-  // front_insert_iterator, the recorded order is the topological
-  // order.
-  //
-  template <typename OutputIterator>
-  struct topo_sort_visitor : public dfs_visitor<>
-  {
-    topo_sort_visitor(OutputIterator _iter)
-      : m_iter(_iter) { }
-    
-    template <typename Edge, typename Graph>
-    void back_edge(const Edge&, Graph&) { BOOST_THROW_EXCEPTION(not_a_dag()); }
-    
-    template <typename Vertex, typename Graph> 
-    void finish_vertex(const Vertex& u, Graph&) { *m_iter++ = u; }
-    
-    OutputIterator m_iter;
-  };
-} // namespace boost
-
-  // Topological Sort
-  //
-  // The topological sort algorithm creates a linear ordering
-  // of the vertices such that if edge (u,v) appears in the graph,
-  // then u comes before v in the ordering. The graph must
-  // be a directed acyclic graph (DAG). The implementation
-  // consists mainly of a call to depth-first search.
-  //
+// Topological Sort
+//
+// The topological sort algorithm creates a linear ordering
+// of the vertices such that if edge (u,v) appears in the graph,
+// then u comes before v in the ordering.  The graph must
+// be a directed acyclic graph (DAG).  The implementation
+// consists mainly of a call to depth-first search.
+//
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
 namespace boost { namespace graph {

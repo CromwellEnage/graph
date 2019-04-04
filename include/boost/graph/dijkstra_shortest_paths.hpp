@@ -15,10 +15,107 @@
 #ifndef BOOST_GRAPH_DIJKSTRA_HPP
 #define BOOST_GRAPH_DIJKSTRA_HPP
 
+namespace boost {
+
+    /**
+     * @brief Updates a particular value in a queue used by Dijkstra's
+     * algorithm.
+     *
+     * This routine is called by Dijkstra's algorithm after it has
+     * decreased the distance from the source vertex to the given @p
+     * vertex.  By default, this routine will just call @c
+     * Q.update(vertex).  However, other queues may provide more
+     * specialized versions of this routine.
+     *
+     * @param Q             the queue that will be updated.
+     * @param vertex        the vertex whose distance has been updated
+     * @param old_distance  the previous distance to @p vertex
+     */
+    template <typename Buffer, typename Vertex, typename DistanceType>
+    inline void
+    dijkstra_queue_update(Buffer& Q, Vertex vertex, DistanceType old_distance)
+    {
+        (void)old_distance;
+        Q.update(vertex);
+    }
+} // namespace boost
+
+#include <boost/concept_check.hpp>
+#include <boost/concept/assert.hpp>
+
+namespace boost {
+
+    template <typename Visitor, typename Graph>
+    struct DijkstraVisitorConcept
+    {
+        void constraints()
+        {
+            BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
+            vis.initialize_vertex(u, g);
+            vis.discover_vertex(u, g);
+            vis.examine_vertex(u, g);
+            vis.examine_edge(e, g);
+            vis.edge_relaxed(e, g);
+            vis.edge_not_relaxed(e, g);
+            vis.finish_vertex(u, g);
+        }
+
+        Visitor vis;
+        Graph g;
+        typename graph_traits<Graph>::vertex_descriptor u;
+        typename graph_traits<Graph>::edge_descriptor e;
+    };
+} // namespace boost
+
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/visitors.hpp>
+
+namespace boost {
+
+    template <typename Visitors = null_visitor>
+    class dijkstra_visitor : public bfs_visitor<Visitors>
+    {
+    public:
+        inline dijkstra_visitor()
+        {
+        }
+
+        inline dijkstra_visitor(Visitors vis) : bfs_visitor<Visitors>(vis)
+        {
+        }
+
+        template <typename Edge, typename Graph>
+        inline void edge_relaxed(Edge e, Graph& g)
+        {
+            invoke_visitors(this->m_vis, e, g, on_edge_relaxed());
+        }
+
+        template <typename Edge, typename Graph>
+        inline void edge_not_relaxed(Edge e, Graph& g)
+        {
+            invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());
+        }
+
+    private:
+        template <typename Edge, typename Graph>
+        inline void tree_edge(Edge u, Graph& g)
+        {
+        }
+    };
+
+    template <typename Visitors>
+    dijkstra_visitor<Visitors>
+    make_dijkstra_visitor(Visitors vis)
+    {
+        return dijkstra_visitor<Visitors>(vis);
+    }
+
+    typedef dijkstra_visitor<> default_dijkstra_visitor;
+} // namespace boost
+
 #include <functional>
 #include <boost/limits.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
@@ -30,7 +127,6 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/concept/assert.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
@@ -39,85 +135,13 @@
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #endif
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
 
-namespace boost {
-
-  /**
-   * @brief Updates a particular value in a queue used by Dijkstra's
-   * algorithm.
-   *
-   * This routine is called by Dijkstra's algorithm after it has
-   * decreased the distance from the source vertex to the given @p
-   * vertex. By default, this routine will just call @c
-   * Q.update(vertex). However, other queues may provide more
-   * specialized versions of this routine.
-   *
-   * @param Q             the queue that will be updated.
-   * @param vertex        the vertex whose distance has been updated
-   * @param old_distance  the previous distance to @p vertex
-   */
-  template<typename Buffer, typename Vertex, typename DistanceType>
-  inline void
-  dijkstra_queue_update(Buffer& Q, Vertex vertex, DistanceType old_distance)
-  {
-    (void)old_distance;
-    Q.update(vertex);
-  }
-
-
-  template <class Visitor, class Graph>
-  struct DijkstraVisitorConcept {
-    void constraints() {
-      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
-      vis.initialize_vertex(u, g);
-      vis.discover_vertex(u, g);
-      vis.examine_vertex(u, g);
-      vis.examine_edge(e, g);
-      vis.edge_relaxed(e, g);
-      vis.edge_not_relaxed(e, g);
-      vis.finish_vertex(u, g);
-    }
-    Visitor vis;
-    Graph g;
-    typename graph_traits<Graph>::vertex_descriptor u;
-    typename graph_traits<Graph>::edge_descriptor e;
-  };
-
-  template <class Visitors = null_visitor>
-  class dijkstra_visitor : public bfs_visitor<Visitors> {
-  public:
-    dijkstra_visitor() { }
-    dijkstra_visitor(Visitors vis)
-      : bfs_visitor<Visitors>(vis) { }
-
-    template <class Edge, class Graph>
-    void edge_relaxed(Edge e, Graph& g) {
-      invoke_visitors(this->m_vis, e, g, on_edge_relaxed());
-    }
-    template <class Edge, class Graph>
-    void edge_not_relaxed(Edge e, Graph& g) {
-      invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());
-    }
-  private:
-    template <class Edge, class Graph>
-    void tree_edge(Edge u, Graph& g) { }
-  };
-  template <class Visitors>
-  dijkstra_visitor<Visitors>
-  make_dijkstra_visitor(Visitors vis) {
-    return dijkstra_visitor<Visitors>(vis);
-  }
-  typedef dijkstra_visitor<> default_dijkstra_visitor;
-
-  namespace detail {
+namespace boost { namespace detail {
 
     template <class UniformCostVisitor, class UpdatableQueue,
       class WeightMap, class PredecessorMap, class DistanceMap,
@@ -216,9 +240,6 @@ namespace boost {
       D m_zero;
     };
 
-  } // namespace detail
-
-  namespace detail {
     template <class Graph, class IndexMap, class Value, bool KnownNumVertices>
     struct vertex_property_map_generator_helper {};
 
@@ -252,9 +273,7 @@ namespace boost {
         return helper::build(g, index, array_holder);
       }
     };
-  }
 
-  namespace detail {
     template <class Graph, class IndexMap, bool KnownNumVertices>
     struct default_color_map_generator_helper {};
 
@@ -287,7 +306,9 @@ namespace boost {
         return helper::build(g, index);
       }
     };
-  }
+}} // namespace boost::detail
+
+namespace boost { namespace graph {
 
   // Call breadth first search with default color map.
   template <class Graph, class SourceInputIter, class DijkstraVisitor,
@@ -304,7 +325,7 @@ namespace boost {
      DijkstraVisitor vis)
   {
     typedef
-      detail::default_color_map_generator<Graph, IndexMap>
+      boost::detail::default_color_map_generator<Graph, IndexMap>
       ColorMapHelper;
     typedef typename ColorMapHelper::type ColorMap;
     ColorMap color =
@@ -356,7 +377,7 @@ namespace boost {
     // Now the default: use a d-ary heap
       boost::scoped_array<std::size_t> index_in_heap_map_holder;
       typedef
-        detail::vertex_property_map_generator<Graph, IndexMap, std::size_t>
+        boost::detail::vertex_property_map_generator<Graph, IndexMap, std::size_t>
         IndexInHeapMapHelper;
       typedef typename IndexInHeapMapHelper::type IndexInHeapMap;
       IndexInHeapMap index_in_heap =
@@ -365,7 +386,7 @@ namespace boost {
         MutableQueue;
       MutableQueue Q(distance, index_in_heap, compare);
 
-    detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
+    boost::detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
       PredecessorMap, DistanceMap, Combine, Compare>
         bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
 
@@ -390,51 +411,6 @@ namespace boost {
     dijkstra_shortest_paths_no_init(g, srcs, srcs + 1, predecessor, distance,
                                     weight, index_map, compare, combine,
                                     zero, vis, color);
-  }
-
-  // Initialize distances and call breadth first search with default color map
-  template <class VertexListGraph, class SourceInputIter, class DijkstraVisitor,
-            class PredecessorMap, class DistanceMap,
-            class WeightMap, class IndexMap, class Compare, class Combine,
-            class DistInf, class DistZero, typename T, typename Tag,
-            typename Base>
-  inline void
-  dijkstra_shortest_paths
-    (const VertexListGraph& g,
-     SourceInputIter s_begin, SourceInputIter s_end,
-     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
-     IndexMap index_map,
-     Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis,
-     const bgl_named_params<T, Tag, Base>&
-     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
-  {
-    boost::two_bit_color_map<IndexMap> color(num_vertices(g), index_map);
-    dijkstra_shortest_paths(g, s_begin, s_end, predecessor, distance, weight,
-                            index_map, compare, combine, inf, zero, vis,
-                            color);
-  }
-
-  // Initialize distances and call breadth first search with default color map
-  template <class VertexListGraph, class DijkstraVisitor,
-            class PredecessorMap, class DistanceMap,
-            class WeightMap, class IndexMap, class Compare, class Combine,
-            class DistInf, class DistZero, typename T, typename Tag,
-            typename Base>
-  inline void
-  dijkstra_shortest_paths
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
-     IndexMap index_map,
-     Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis,
-     const bgl_named_params<T, Tag, Base>&
-     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
-  {
-    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
-    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
-                            index_map, compare, combine, inf, zero, vis);
   }
 
   // Initialize distances and call breadth first search
@@ -468,6 +444,10 @@ namespace boost {
                             weight, index_map, compare, combine, zero, vis,
                             color);
   }
+}} // namespace boost::graph
+
+
+namespace boost { namespace graph {
 
   // Initialize distances and call breadth first search
   template <class VertexListGraph, class DijkstraVisitor,
@@ -549,8 +529,138 @@ namespace boost {
                             weight, index_map,
                             compare, combine, inf, zero, vis);
   }
+}} // namespace boost::graph
 
-  namespace detail {
+
+namespace boost { namespace graph {
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Args>
+  inline void dijkstra_shortest_paths
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
+     const Args& arg_pack, typename boost::enable_if<
+       parameter::is_argument_pack<Args>, mpl::true_
+     >::type = mpl::true_())
+  {
+    using namespace boost::graph::keywords;
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = boost::detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D inf = arg_pack[_distance_inf || boost::detail::get_max<D>()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
+    null_visitor null_vis;
+    dijkstra_visitor<null_visitor> default_visitor(null_vis);
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::visitor,
+        dijkstra_visitor<null_visitor>&
+    >::type vis = arg_pack[_visitor | default_visitor];
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::predecessor_map,
+        dummy_property_map&
+    >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        D
+    > dist_map_gen(zero_actual);
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::distance_map,
+        D
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = boost::detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    std::less<D> default_compare;
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::distance_compare,
+        std::less<D>&
+    >::type dist_comp = arg_pack[_distance_compare | default_compare];
+    closed_plus<D> default_combine(inf);
+    typename boost::parameter::binding<
+        Args,
+        boost::graph::keywords::tag::distance_combine,
+        closed_plus<D>&
+    >::type dist_comb = arg_pack[_distance_combine | default_combine];
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(
+      g,
+      srcs,
+      srcs + 1,
+      pred_map,
+      dist_map,
+      w_map,
+      v_i_map,
+      dist_comp,
+      dist_comb,
+      inf,
+      zero_d,
+      vis,
+      arg_pack[_color_map | make_two_bit_color_map(num_vertices(g), v_i_map)]
+    );
+  }
+}} // namespace boost::graph
+
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths
+)
+}} // namespace boost::graph
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+    using ::boost::graph::dijkstra_shortest_paths_no_init;
+    using ::boost::graph::dijkstra_shortest_paths;
+} // namespace boost
+
+namespace boost { namespace detail {
 
     // Handle defaults for PredecessorMap and
     // Distance Compare, Combine, Inf and Zero
@@ -607,7 +717,9 @@ namespace boost {
                              distance_map[0])),
          weight, index_map, params);
     }
-  } // namespace detail
+}} // namespace boost::detail
+
+namespace boost {
 
   // Named Parameter Variant
   template <class VertexListGraph, class Param, class Tag, class Rest>
@@ -627,115 +739,50 @@ namespace boost {
        params);
   }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  template <typename Graph, typename Args>
-  inline void dijkstra_shortest_paths
-    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
-     const Args& arg_pack, typename boost::enable_if<
-       parameter::is_argument_pack<Args>, mpl::true_
-     >::type = mpl::true_())
+  // Initialize distances and call breadth first search with default color map
+  template <class VertexListGraph, class SourceInputIter, class DijkstraVisitor,
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine,
+            class DistInf, class DistZero, typename T, typename Tag,
+            typename Base>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     SourceInputIter s_begin, SourceInputIter s_end,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis,
+     const bgl_named_params<T, Tag, Base>&
+     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
   {
-    using namespace boost::graph::keywords;
-    typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::vertex_index_map,
-        vertex_index_t,
-        Graph
-    >::type v_i_map = detail::override_const_property(
-        arg_pack,
-        _vertex_index_map,
-        g,
-        vertex_index
-    );
-    typedef typename boost::detail::override_const_property_result<
-        Args,
-        boost::graph::keywords::tag::weight_map,
-        edge_weight_t,
-        Graph
-    >::type weight_map_type;
-    typedef typename boost::property_traits<weight_map_type>::value_type D;
-    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
-    const D zero_actual = D();
-    const D zero_d = arg_pack[_distance_zero | zero_actual];
-    null_visitor null_vis;
-    dijkstra_visitor<null_visitor> default_visitor(null_vis);
-    typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::visitor,
-        dijkstra_visitor<null_visitor>&
-    >::type vis = arg_pack[_visitor | default_visitor];
-    dummy_property_map dummy_prop;
-    typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::predecessor_map,
-        dummy_property_map&
-    >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
-    boost::detail::make_property_map_from_arg_pack_gen<
-        boost::graph::keywords::tag::distance_map,
-        D
-    > dist_map_gen(zero_actual);
-    typename boost::detail::map_maker<
-        Graph,
-        Args,
-        boost::graph::keywords::tag::distance_map,
-        D
-    >::map_type dist_map = dist_map_gen(g, arg_pack);
-    weight_map_type w_map = detail::override_const_property(
-        arg_pack,
-        _weight_map,
-        g,
-        edge_weight
-    );
-    std::less<D> default_compare;
-    typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::distance_compare,
-        std::less<D>&
-    >::type dist_comp = arg_pack[_distance_compare | default_compare];
-    closed_plus<D> default_combine(inf);
-    typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::distance_combine,
-        closed_plus<D>&
-    >::type dist_comb = arg_pack[_distance_combine | default_combine];
-    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
-    dijkstra_shortest_paths(
-      g,
-      srcs,
-      srcs + 1,
-      pred_map,
-      dist_map,
-      w_map,
-      v_i_map,
-      dist_comp,
-      dist_comb,
-      inf,
-      zero_d,
-      vis,
-      arg_pack[_color_map | make_two_bit_color_map(num_vertices(g), v_i_map)]
-    );
+    boost::two_bit_color_map<IndexMap> color(num_vertices(g), index_map);
+    dijkstra_shortest_paths(g, s_begin, s_end, predecessor, distance, weight,
+                            index_map, compare, combine, inf, zero, vis,
+                            color);
   }
 
-#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-  template <typename Graph, typename TA \
-            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-  inline void name \
-    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
-     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-     typename boost::enable_if< \
-       parameter::are_tagged_arguments< \
-         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-       >, mpl::true_ \
-     >::type = mpl::true_()) \
-  { \
-    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  // Initialize distances and call breadth first search with default color map
+  template <class VertexListGraph, class DijkstraVisitor,
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine,
+            class DistInf, class DistZero, typename T, typename Tag,
+            typename Base>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis,
+     const bgl_named_params<T, Tag, Base>&
+     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
+  {
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
+                            index_map, compare, combine, inf, zero, vis);
   }
-
-BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
-
-#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/dijkstra_shortest_paths.hpp>)

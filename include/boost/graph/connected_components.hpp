@@ -37,17 +37,18 @@
 
 namespace boost { namespace detail {
 
-    // This visitor is used both in the connected_components algorithm
-    // and in the kosaraju strong components algorithm during the
-    // second DFS traversal.
+    // This visitor is used both in the connected_components algorithm and in
+    // the kosaraju strong components algorithm during the 2nd DFS traversal.
     template <typename ComponentsMap>
     class components_recorder : public dfs_visitor<>
     {
         typedef typename property_traits<ComponentsMap>::value_type comp_type;
 
     public:
-        components_recorder(ComponentsMap c, comp_type& c_count)
-        : m_component(c), m_count(c_count) {}
+        inline components_recorder(ComponentsMap c, comp_type& c_count)
+          : m_component(c), m_count(c_count)
+        {
+        }
 
         template <typename Vertex, typename Graph>
         inline void start_vertex(Vertex, Graph&)
@@ -187,10 +188,12 @@ namespace boost { namespace graph {
         BOOST_CONCEPT_ASSERT((
             WritablePropertyMapConcept<ComponentMap, Vertex>
         ));
-        // typedef typename graph_traits<Graph>::directed_category directed;
-        // BOOST_STATIC_ASSERT((
-        //     boost::is_same<directed, undirected_tag>::value
-        // ));
+#if 0
+        typedef typename graph_traits<Graph>::directed_category directed;
+        BOOST_STATIC_ASSERT((
+            boost::is_same<directed, undirected_tag>::value
+        ));
+#endif
 
         typedef typename property_traits<ComponentMap>::value_type comp_type;
         // c_count initialized to "nil" (with nil represented by (max)())
@@ -231,12 +234,14 @@ namespace boost { namespace graph { namespace detail {
                 typename boost::remove_reference<ComponentMap>::type
             >::type C;
             BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<C, Vertex> ));
-            // typedef typename graph_traits<
-            //     Graph
-            // >::directed_category directed;
-            // BOOST_STATIC_ASSERT((
-            //     boost::is_same<directed, undirected_tag>::value
-            // ));
+#if 0
+            typedef typename graph_traits<
+                Graph
+            >::directed_category directed;
+            BOOST_STATIC_ASSERT((
+                boost::is_same<directed, undirected_tag>::value
+            ));
+#endif
 
             // c_count initialized to "nil" (with nil represented by (max)())
             result_type c_count((std::numeric_limits<result_type>::max)());

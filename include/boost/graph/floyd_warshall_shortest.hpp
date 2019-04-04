@@ -155,7 +155,7 @@ namespace boost
     {
       if (d[source(*first, g)][target(*first, g)] != inf) {
         d[source(*first, g)][target(*first, g)] = 
-          detail::min_with_compare(
+          boost::detail::min_with_compare(
             get(w, *first), 
             d[source(*first, g)][target(*first, g)],
             compare);
@@ -172,7 +172,7 @@ namespace boost
       {
         if (d[target(*first, g)][source(*first, g)] != inf)
           d[target(*first, g)][source(*first, g)] = 
-            detail::min_with_compare(
+            boost::detail::min_with_compare(
               get(w, *first), 
               d[target(*first, g)][source(*first, g)],
               compare);
@@ -182,7 +182,7 @@ namespace boost
     }
     
   
-    return detail::floyd_warshall_dispatch(g, d, compare, combine, 
+    return boost::detail::floyd_warshall_dispatch(g, d, compare, combine, 
       inf, zero);
   }
 
@@ -299,7 +299,7 @@ namespace boost
     const VertexListGraph& g, DistanceMatrix& d, 
     const bgl_named_params<P, T, R>& params)
   {
-    return detail::floyd_warshall_init_dispatch(g, d, 
+    return boost::detail::floyd_warshall_init_dispatch(g, d, 
       choose_const_pmap(get_param(params, edge_weight), g, edge_weight), 
       params);
   }
@@ -309,7 +309,7 @@ namespace boost
     const VertexListGraph& g, DistanceMatrix& d)
   {
     bgl_named_params<int,int> params(0);
-    return detail::floyd_warshall_init_dispatch(g, d,
+    return boost::detail::floyd_warshall_init_dispatch(g, d,
       get(edge_weight, g), params);
   }
 
@@ -319,7 +319,7 @@ namespace boost
     const VertexAndEdgeListGraph& g, DistanceMatrix& d, 
     const bgl_named_params<P, T, R>& params)
   {
-    return detail::floyd_warshall_noninit_dispatch(g, d, 
+    return boost::detail::floyd_warshall_noninit_dispatch(g, d, 
       choose_const_pmap(get_param(params, edge_weight), g, edge_weight), 
       params);
   }
@@ -329,7 +329,7 @@ namespace boost
     const VertexAndEdgeListGraph& g, DistanceMatrix& d)
   {
     bgl_named_params<int,int> params(0);
-    return detail::floyd_warshall_noninit_dispatch(g, d,
+    return boost::detail::floyd_warshall_noninit_dispatch(g, d,
       get(edge_weight, g), params);
   }
 
