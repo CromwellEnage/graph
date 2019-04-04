@@ -600,7 +600,6 @@ namespace boost { namespace graph {
             boost::graph::keywords::_distance_compare ||
             boost::value_factory<std::less<D> >()
         ];
-        closed_plus_gen<D> cp_gen(inf);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -608,7 +607,8 @@ namespace boost { namespace graph {
                 closed_plus<D>
             >::type
         >::type dist_comb = arg_pack[
-            boost::graph::keywords::_distance_combine || cp_gen
+            boost::graph::keywords::_distance_combine ||
+            closed_plus_gen<D>(inf)
         ];
         astar_search(
             g, s, h, vis, pred_map, r_map, dist_map, w_map, v_i_map, c_map,

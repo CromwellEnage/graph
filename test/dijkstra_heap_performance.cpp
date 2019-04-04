@@ -114,20 +114,11 @@ int main(int argc, char* argv[])
 
   dijkstra_shortest_paths(
     g, vertex(0, g),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_distance_map =
     boost::make_iterator_property_map(
       binary_heap_distances.begin(),
       get(boost::vertex_index, g)
     )
-#else
-    boost::distance_map(
-      boost::make_iterator_property_map(
-        binary_heap_distances.begin(),
-        get(boost::vertex_index, g)
-      )
-    )
-#endif
   );
   double binary_heap_time = t.elapsed();
   std::cout << binary_heap_time << " seconds.\n";
@@ -138,20 +129,11 @@ int main(int argc, char* argv[])
 
   dijkstra_shortest_paths(
     g, vertex(0, g),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_distance_map =
     boost::make_iterator_property_map(
       relaxed_heap_distances.begin(),
       get(boost::vertex_index, g)
     )
-#else
-    boost::distance_map(
-      boost::make_iterator_property_map(
-        relaxed_heap_distances.begin(),
-        get(boost::vertex_index, g)
-      )
-    )
-#endif
   );
   double relaxed_heap_time = t.elapsed();
   std::cout << relaxed_heap_time << " seconds.\n"

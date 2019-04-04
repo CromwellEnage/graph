@@ -145,17 +145,10 @@ namespace detail { namespace graph {
       dijkstra_shortest_paths(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = weight_map,
         boost::graph::keywords::_vertex_index_map = vertex_index,
         boost::graph::keywords::_distance_map = distance,
         boost::graph::keywords::_visitor = visitor
-#else
-        boost::weight_map(weight_map)
-        .vertex_index_map(vertex_index)
-        .distance_map(distance)
-        .visitor(visitor)
-#endif
       );
     }
 

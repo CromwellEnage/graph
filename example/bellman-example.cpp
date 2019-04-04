@@ -90,20 +90,11 @@ main()
 #else
   bool r = bellman_ford_shortest_paths(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = weight_pmap,
     boost::graph::keywords::_distance_map =
     boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g)),
     boost::graph::keywords::_predecessor_map =
     boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g))
-#else
-    int (N),
-    weight_map(weight_pmap).distance_map(
-      boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g))
-    ).predecessor_map(
-      boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g))
-    )
-#endif
   );
 #endif
 

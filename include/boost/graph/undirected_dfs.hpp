@@ -181,6 +181,8 @@ namespace boost { namespace detail {
 
 }} // namespace boost::detail
 
+#include <boost/functional/value_factory.hpp>
+
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
 namespace boost { namespace graph {
@@ -378,7 +380,7 @@ namespace boost { namespace graph {
                     arg_pack[
                         boost::graph::keywords::_vertex_index_map |
                         boost::detail::vertex_or_dummy_property_map(
-                            graph,
+                            g,
                             vertex_index
                         )
                     ]
@@ -430,40 +432,14 @@ namespace boost { namespace graph {
 
 namespace boost {
 
-  // Old-style named parameter variant
-  template <typename Graph, typename P, typename T, typename R>
-  void
-  undirected_dfs(const Graph& g, 
-                 const bgl_named_params<P, T, R>& params)
-  {
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    undirected_dfs(
-      g,
-      boost::graph::keywords::_visitor = arg_pack[
-        boost::graph::keywords::_visitor ||
-        boost::value_factory<default_dfs_visitor>()
-      ],
-      boost::graph::keywords::_color_map = arg_pack[
-        boost::graph::keywords::_color_map |
-        make_shared_array_property_map(
-          num_vertices(g),
-          white_color,
-          arg_pack[
-            boost::graph::keywords::_vertex_index_map |
-            get(vertex_index, g)
-          ]
-        )
-      ],
-      boost::graph::keywords::_edge_color_map = arg_pack[
-        boost::graph::keywords::_edge_color_map
-      ],
-      boost::graph::keywords::_root_vertex = arg_pack[
-        boost::graph::keywords::_root_vertex ||
-        boost::detail::get_default_starting_vertex_t<Graph>(g)
-      ]
-    );
-  }
+    // Old-style named parameter variant
+    template <typename Graph, typename P, typename T, typename R>
+    void undirected_dfs(const Graph& g, const bgl_named_params<P,T,R>& params)
+    {
+        typedef bgl_named_params<P,T,R> params_type;
+        BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+        undirected_dfs(g, arg_pack);
+    }
 } // namespace boost
 
 namespace boost { namespace graph {
@@ -658,8 +634,6 @@ namespace boost {
        );
   }
 } // namespace boost
-
-#include <boost/functional/value_factory.hpp>
 
 namespace boost { namespace graph { namespace detail {
 

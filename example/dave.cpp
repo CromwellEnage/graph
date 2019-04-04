@@ -221,20 +221,12 @@ main(int , char* [])
   parent[vertex(a, G)] = vertex(a, G);
   boost::dijkstra_shortest_paths
     (G, vertex(a, G),
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
      boost::graph::keywords::_distance_map =
      make_iterator_property_map(distance.begin(), vertex_id, distance[0]),
      boost::graph::keywords::_predecessor_map =
      make_iterator_property_map(parent.begin(), vertex_id, parent[0]),
      boost::graph::keywords::_visitor =
      make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))
-#else
-     distance_map(make_iterator_property_map(distance.begin(), vertex_id, 
-                                             distance[0])).
-     predecessor_map(make_iterator_property_map(parent.begin(), vertex_id,
-                                                parent[0])).
-     visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge())))
-#endif
     );
 
   cout << endl;

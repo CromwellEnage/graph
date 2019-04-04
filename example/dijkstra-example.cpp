@@ -41,18 +41,10 @@ main(int, char *[])
   dijkstra_shortest_paths(
     g,
     s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_predecessor_map =
     boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g)),
     boost::graph::keywords::_distance_map =
     boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
-#else
-    boost::predecessor_map(
-      boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g))
-    ).distance_map(
-      boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
-    )
-#endif
   );
 
   std::cout << "distances and parents:" << std::endl;

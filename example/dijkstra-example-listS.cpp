@@ -58,12 +58,8 @@ main(int, char *[])
   dijkstra_shortest_paths(
     g,
     s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_predecessor_map = p,
     boost::graph::keywords::_distance_map = d
-#else
-    boost::predecessor_map(p).distance_map(d)
-#endif
   );
 
   std::cout << "distances and parents:" << std::endl;

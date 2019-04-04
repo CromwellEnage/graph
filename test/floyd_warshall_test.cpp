@@ -144,17 +144,10 @@ bool acceptance_test(Graph& g, int vec, int e)
       boost::put(distance_row, *firstv, 0);
       bellman = boost::bellman_ford_shortest_paths(
         g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_size = vec,
         boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
         boost::graph::keywords::_distance_map = boost::get(boost::vertex_distance, g),
         boost::graph::keywords::_predecessor_map = dummy_map
-#else
-        vec,
-        weight_map(boost::get(boost::edge_weight, g)).
-        distance_map(boost::get(boost::vertex_distance, g)).
-        predecessor_map(dummy_map)
-#endif
       );
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
@@ -330,17 +323,10 @@ bool acceptance_test2(Graph& g, int vec, int e)
       boost::put(distance_row, *firstv, 0);
       bellman = boost::bellman_ford_shortest_paths(
         g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_size = vec,
         boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
         boost::graph::keywords::_distance_map = boost::get(boost::vertex_distance, g),
         boost::graph::keywords::_predecessor_map = dummy_map
-#else
-        vec,
-        weight_map(boost::get(boost::edge_weight, g)).
-        distance_map(boost::get(boost::vertex_distance, g)).
-        predecessor_map(dummy_map)
-#endif
       );
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;

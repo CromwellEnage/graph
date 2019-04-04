@@ -111,21 +111,13 @@ namespace boost { namespace graph {
         while(
             !bellman_ford_shortest_paths(
                 gres,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                 boost::graph::keywords::_size = N,
                 boost::graph::keywords::_weight_map = weight,
                 boost::graph::keywords::_distance_map = distance,
                 boost::graph::keywords::_visitor =
-#else
-                N,
-                weight_map(weight).distance_map(distance).visitor(
-#endif
                     boost::detail::RecordEdgeMapAndCycleVertex<
                         Pred, vertex_descriptor
                     >(pred, cycleStart)
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-                )
-#endif
             )
         )
         {
