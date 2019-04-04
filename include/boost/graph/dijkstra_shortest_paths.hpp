@@ -40,6 +40,7 @@ namespace boost {
     }
 } // namespace boost
 
+#include <boost/graph/graph_traits.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/concept/assert.hpp>
 
