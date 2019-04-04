@@ -173,7 +173,7 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
   std::vector<double> edge_centrality3(E, 0.0);
   brandes_betweenness_centrality(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS_FOR_BRANDES_BTWN)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_edge_centrality_map =
       make_iterator_property_map(edge_centrality3.begin(),
                                  get(edge_index, g), 0.0)
