@@ -436,9 +436,17 @@ namespace boost {
     template <typename Graph, typename P, typename T, typename R>
     void undirected_dfs(const Graph& g, const bgl_named_params<P,T,R>& params)
     {
-        typedef bgl_named_params<P,T,R> params_type;
-        BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-        undirected_dfs(g, arg_pack);
+    typedef typename get_param_type< vertex_color_t, bgl_named_params<P, T, R> >::type C;
+    detail::udfs_dispatch<C>::apply
+      (g,
+       choose_param(get_param(params, graph_visitor),
+                    make_dfs_visitor(null_visitor())),
+       choose_param(get_param(params, root_vertex_t()),
+                    *vertices(g).first),
+       params,
+       get_param(params, edge_color),
+       get_param(params, vertex_color)
+       );
     }
 } // namespace boost
 
