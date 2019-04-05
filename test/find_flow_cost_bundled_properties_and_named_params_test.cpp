@@ -71,7 +71,8 @@ BOOST_AUTO_TEST_CASE(using_named_params_and_bundled_properties_with_find_max_flo
     pred,dist,dist_prev);
 
   // The  "named parameters" version (with "bundled properties"; producing errors)
-  int flow_cost = boost::find_flow_cost(g,
+  int flow_cost = boost::find_flow_cost(
+    g,
     (boost::graph::keywords::_capacity_map = capacity,
     boost::graph::keywords::_residual_capacity_map = residual_capacity,
     boost::graph::keywords::_weight_map = cost)
