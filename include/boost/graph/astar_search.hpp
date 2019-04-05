@@ -143,13 +143,13 @@ namespace boost {
     typedef astar_visitor<> default_astar_visitor;
 } // namespace boost
 
-#include <functional>
-#include <vector>
-#include <boost/limits.hpp>
-#include <boost/throw_exception.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/limits.hpp>
+#include <vector>
+#include <functional>
 
 namespace boost { namespace detail {
 

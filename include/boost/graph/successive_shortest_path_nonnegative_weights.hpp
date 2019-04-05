@@ -79,8 +79,8 @@ namespace boost { namespace graph {
         VertexIndex index,
         Pred pred,
         Distance distance,
-        Distance2 distance_prev
-        , typename boost::disable_if<
+        Distance2 distance_prev,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<
                 Capacity, ResidualCapacity, Weight, Reversed, VertexIndex,
                 Pred, Distance, Distance2

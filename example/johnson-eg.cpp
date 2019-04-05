@@ -51,18 +51,11 @@ main()
   johnson_all_pairs_shortest_paths(
     g,
     D,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_distance_map =
-#else
-    boost::distance_map(
-#endif
       boost::make_iterator_property_map(
         d.begin(),
         get(boost::vertex_index, g)
       )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   std::cout << "       ";

@@ -115,26 +115,16 @@ bool acceptance_test(Graph& g, int vec, int e)
     bool floyd1 = boost::floyd_warshall_initialized_all_pairs_shortest_paths(
       g,
       matrix,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
       boost::graph::keywords::_distance_inf = int_inf,
       boost::graph::keywords::_distance_zero = 0
-#else
-      weight_map(boost::get(boost::edge_weight, g)).
-      distance_inf(int_inf).
-      distance_zero(0)
-#endif
     );
     bool floyd2 = boost::floyd_warshall_all_pairs_shortest_paths(
       g,
       matrix3,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = local_edge_map,
       boost::graph::keywords::_distance_inf = int_inf,
       boost::graph::keywords::_distance_zero = 0
-#else
-      weight_map(local_edge_map).distance_inf(int_inf).distance_zero(0)
-#endif
     );
     bool floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 
@@ -294,26 +284,16 @@ bool acceptance_test2(Graph& g, int vec, int e)
     bool floyd1 = boost::floyd_warshall_initialized_all_pairs_shortest_paths(
       g,
       matrix,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
       boost::graph::keywords::_distance_inf = int_inf,
       boost::graph::keywords::_distance_zero = 0
-#else
-      weight_map(boost::get(boost::edge_weight, g)).
-      distance_inf(int_inf).
-      distance_zero(0)
-#endif
     );
     bool floyd2 = boost::floyd_warshall_all_pairs_shortest_paths(
       g,
       matrix3,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = local_edge_map,
       boost::graph::keywords::_distance_inf = int_inf,
       boost::graph::keywords::_distance_zero = 0
-#else
-      weight_map(local_edge_map).distance_inf(int_inf).distance_zero(0)
-#endif
     );
     bool floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 

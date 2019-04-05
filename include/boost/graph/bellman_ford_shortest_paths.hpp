@@ -198,6 +198,7 @@ namespace boost { namespace graph {
 
 #include <boost/graph/named_function_params.hpp>
 #include <boost/mpl/bool.hpp>
+#include <numeric>
 
 namespace boost { namespace detail {
 
@@ -242,6 +243,7 @@ namespace boost { namespace detail {
 #include <boost/functional/value_factory.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <functional>
 
 namespace boost { namespace graph {
 
@@ -286,13 +288,17 @@ namespace boost { namespace graph {
             >::type()
         );
         typedef typename boost::property_traits<WeightMap>::value_type D;
+        const D inf = args[
+            boost::graph::keywords::_distance_inf ||
+            boost::detail::get_max<D>()
+        ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::predecessor_map,
                 dummy_property_map
             >::type
-        >::type pred_map = arg_pack[
+        >::type pred_map = args[
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
@@ -302,7 +308,7 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::distance_compare,
                 std::less<D>
             >::type
-        >::type dist_comp = arg_pack[
+        >::type dist_comp = args[
             boost::graph::keywords::_distance_compare ||
             boost::value_factory<std::less<D> >()
         ];
@@ -312,7 +318,7 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::distance_combine,
                 closed_plus<D>
             >::type
-        >::type dist_comb = arg_pack[
+        >::type dist_comb = args[
             boost::graph::keywords::_distance_combine ||
             closed_plus_gen<D>(inf)
         ];
@@ -320,11 +326,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                bellman_visitor
+                default_bellman_visitor
             >::type
-        >::type vis = arg_pack[
+        >::type vis = args[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<bellman_visitor>()
+            boost::value_factory<default_bellman_visitor>()
         ];
         return bellman_ford_shortest_paths(
             g,
@@ -363,14 +369,15 @@ namespace boost { namespace graph {
         typename Graph, typename TA \
         BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
     > \
-    inline bool name( \
+    inline typename boost::enable_if< \
+        parameter::are_tagged_arguments< \
+            TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+        >, \
+        bool \
+    >::type \
+    name( \
         const Graph& g, const TA& ta \
-        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
-        typename boost::enable_if< \
-            parameter::are_tagged_arguments< \
-                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-            >, mpl::true_ \
-        >::type = mpl::true_() \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
     ) \
     { \
         return name( \

@@ -463,6 +463,7 @@ namespace boost { namespace graph {
 #include <boost/parameter/value_type.hpp>
 #include <boost/functional/value_factory.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <functional>
 
 namespace boost { namespace graph {
 
