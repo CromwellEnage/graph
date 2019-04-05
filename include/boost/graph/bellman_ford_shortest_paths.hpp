@@ -363,7 +363,7 @@ namespace boost { namespace graph {
         typename Graph, typename TA \
         BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
     > \
-    inline void name( \
+    inline bool name( \
         const Graph& g, const TA& ta \
         BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
         typename boost::enable_if< \
@@ -373,7 +373,7 @@ namespace boost { namespace graph {
         >::type = mpl::true_() \
     ) \
     { \
-        name( \
+        return name( \
             g, \
             parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
         ); \
