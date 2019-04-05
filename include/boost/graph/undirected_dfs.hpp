@@ -436,17 +436,36 @@ namespace boost {
     template <typename Graph, typename P, typename T, typename R>
     void undirected_dfs(const Graph& g, const bgl_named_params<P,T,R>& params)
     {
-    typedef typename get_param_type< vertex_color_t, bgl_named_params<P, T, R> >::type C;
-    detail::udfs_dispatch<C>::apply
-      (g,
-       choose_param(get_param(params, graph_visitor),
-                    make_dfs_visitor(null_visitor())),
-       choose_param(get_param(params, root_vertex_t()),
-                    *vertices(g).first),
-       params,
-       get_param(params, edge_color),
-       get_param(params, vertex_color)
-       );
+        typedef bgl_named_params<P,T,R> params_type;
+        BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+        undirected_dfs(
+            g,
+            boost::graph::keywords::_visitor = arg_pack[
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<default_dfs_visitor>()
+            ],
+            boost::graph::keywords::_color_map = arg_pack[
+                boost::graph::keywords::_color_map |
+                make_shared_array_property_map(
+                    num_vertices(g),
+                    white_color,
+                    arg_pack[
+                        boost::graph::keywords::_vertex_index_map |
+                        boost::detail::vertex_or_dummy_property_map(
+                            g,
+                            vertex_index
+                        )
+                    ]
+                )
+            ],
+            boost::graph::keywords::_edge_color_map = arg_pack[
+                boost::graph::keywords::_edge_color_map
+            ],
+            boost::graph::keywords::_root_vertex = arg_pack[
+                boost::graph::keywords::_root_vertex ||
+                boost::detail::get_default_starting_vertex_t<Graph>(g)
+            ]
+        );
     }
 } // namespace boost
 
