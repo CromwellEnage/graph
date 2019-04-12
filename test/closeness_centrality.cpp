@@ -76,11 +76,7 @@ void test_undirected()
 
     floyd_warshall_all_pairs_shortest_paths(
         g, dm,
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = wm
-#else
-        weight_map(wm)
-#endif
     );
     all_closeness_centralities(g, dm, cm);
 
@@ -121,11 +117,7 @@ void test_directed()
 
     floyd_warshall_all_pairs_shortest_paths(
         g, dm,
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_weight_map = wm
-#else
-        weight_map(wm)
-#endif
     );
     all_closeness_centralities(g, dm, cm);
 
