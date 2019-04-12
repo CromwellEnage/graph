@@ -268,7 +268,7 @@ void graph_test(const OrigGraph& g)
     boost::minstd_rand gen(1);
     if (num_edges(g) != 0) {
       for (std::size_t i = num_edges(g) - 1; i > 0; --i) {
-        std::size_t scrambled = boost::uniform_int<>(0, i)(gen);
+        std::size_t scrambled = boost::uniform_int<std::size_t>(0, i)(gen);
         if (scrambled == i) continue;
         using std::swap;
         swap(sources[i], sources[scrambled]);
@@ -350,18 +350,13 @@ void graph_test(const OrigGraph& g)
   kruskal_minimum_spanning_tree(
     g3,
     std::back_inserter(mst_edges),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    weight_map(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_weight_map =
 #endif
-      make_iterator_property_map(
-        edge_centralities.begin(),
-        get(boost::edge_index, g3)
-      )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    make_iterator_property_map(
+      edge_centralities.begin(),
+      get(boost::edge_index, g3)
     )
-#endif
   );
 }
 
