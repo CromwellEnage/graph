@@ -72,6 +72,9 @@ struct bc_clustering_threshold
   T threshold;
   T dividend;
 };
+}
+
+namespace boost { namespace graph {
 
 /** Graph clustering based on edge betweenness centrality.
  * 
@@ -245,6 +248,11 @@ betweenness_centrality_clustering(MutableGraph& g, Done done)
     get(vertex_index, g));
 }
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+}} // end namespace boost::graph
+
+namespace boost {
+
+using ::boost::graph::betweenness_centrality_clustering;
 } // end namespace boost
 
 #endif // BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP

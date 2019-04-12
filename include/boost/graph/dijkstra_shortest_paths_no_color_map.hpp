@@ -229,7 +229,7 @@ namespace boost { namespace detail {
 
 namespace boost {
 
-  // Named parameter version
+  // Old-style named parameter version
   template <typename Graph, typename Param, typename Tag, typename Rest>
   inline void
   dijkstra_shortest_paths_no_color_map
@@ -276,7 +276,7 @@ namespace boost { namespace graph {
             edge_weight_t,
             Graph
         >::type WeightMap;
-        WeightMap w_map = boost::detail::override_const_property(
+        WeightMap e_w_map = boost::detail::override_const_property(
             arg_pack,
             boost::graph::keywords::_weight_map,
             g,
@@ -308,20 +308,20 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::predecessor_map,
                 dummy_property_map
             >::type
-        >::type pred_map = arg_pack[
+        >::type v_p_map = arg_pack[
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
         boost::detail::make_property_map_from_arg_pack_gen<
             boost::graph::keywords::tag::distance_map,
             D
-        > dist_map_gen(zero_actual);
+        > v_d_map_gen(zero_actual);
         typename boost::detail::map_maker<
             Graph,
             Args,
             boost::graph::keywords::tag::distance_map,
             D
-        >::map_type dist_map = dist_map_gen(g, arg_pack);
+        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -349,19 +349,19 @@ namespace boost { namespace graph {
             vis.initialize_vertex(current_vertex, g);
 
             // Default all distances to infinity
-            put(dist_map, current_vertex, inf);
+            put(v_d_map, current_vertex, inf);
 
             // Default all vertex predecessors to the vertex itself
-            put(pred_map, current_vertex, current_vertex);
+            put(v_p_map, current_vertex, current_vertex);
         }
 
         // Set distance for start_vertex to zero
-        put(dist_map, s, zero_d);
+        put(v_d_map, s, zero_d);
 
         // Pass everything on to the no_init version
         dijkstra_shortest_paths_no_color_map_no_init(
-            g, s, pred_map, dist_map, w_map, v_i_map, dist_comp, dist_comb,
-            inf, zero_d, vis
+            g, s, v_p_map, v_d_map, e_w_map, v_i_map,
+            dist_comp, dist_comb, inf, zero_d, vis
         );
     }
 }} // namespace boost::graph

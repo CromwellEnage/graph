@@ -66,31 +66,31 @@ namespace boost {
         template <typename Edge, typename Graph>
         inline void examine_edge(Edge u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, on_examine_edge());
+            invoke_visitors(this->m_vis, u, g, on_examine_edge());
         }
 
         template <typename Edge, typename Graph>
         inline void edge_relaxed(Edge u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, on_edge_relaxed());
+            invoke_visitors(this->m_vis, u, g, on_edge_relaxed());
         }
 
         template <typename Edge, typename Graph>
         inline void edge_not_relaxed(Edge u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, on_edge_not_relaxed());
+            invoke_visitors(this->m_vis, u, g, on_edge_not_relaxed());
         }
 
         template <typename Edge, typename Graph>
         inline void edge_minimized(Edge u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, on_edge_minimized());
+            invoke_visitors(this->m_vis, u, g, on_edge_minimized());
         }
 
         template <typename Edge, typename Graph>
         inline void edge_not_minimized(Edge u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, on_edge_not_minimized());
+            invoke_visitors(this->m_vis, u, g, on_edge_not_minimized());
         }
     protected:
         Visitors m_vis;
@@ -298,7 +298,7 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::predecessor_map,
                 dummy_property_map
             >::type
-        >::type pred_map = args[
+        >::type v_p_map = args[
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
@@ -339,7 +339,7 @@ namespace boost { namespace graph {
                 boost::detail::make_vertex_count_nullary_function(g)
             ],
             e_w_map,
-            pred_map,
+            v_p_map,
             v_d_map,
             dist_comb,
             dist_comp,

@@ -106,7 +106,7 @@ namespace boost { namespace graph {
             edge_weight_t,
             Graph
         >::type WeightMap;
-        WeightMap w_map = boost::detail::override_const_property(
+        WeightMap e_w_map = boost::detail::override_const_property(
             arg_pack,
             boost::graph::keywords::_weight_map,
             g,
@@ -138,20 +138,20 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::predecessor_map,
                 dummy_property_map
             >::type
-        >::type pred_map = arg_pack[
+        >::type v_p_map = arg_pack[
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
         boost::detail::make_property_map_from_arg_pack_gen<
             boost::graph::keywords::tag::distance_map,
             D
-        > dist_map_gen(zero_actual);
+        > v_d_map_gen(zero_actual);
         typename boost::detail::map_maker<
             Graph,
             Args,
             boost::graph::keywords::tag::distance_map,
             D
-        >::map_type dist_map = dist_map_gen(g, arg_pack);
+        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -181,7 +181,7 @@ namespace boost { namespace graph {
                     IndexMap
                 >
             >::type
-        >::type c_map = arg_pack[
+        >::type v_c_map = arg_pack[
             boost::graph::keywords::_color_map ||
             boost::detail::two_bit_color_map_generator<
                 Graph,
@@ -189,7 +189,7 @@ namespace boost { namespace graph {
             >(g, v_i_map)
         ];
         dag_shortest_paths(
-            g, s, dist_map, w_map, c_map, pred_map, vis,
+            g, s, v_d_map, e_w_map, v_c_map, v_p_map, vis,
             dist_comp, dist_comb, inf, zero_d
         );
     }

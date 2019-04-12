@@ -1,8 +1,15 @@
-#define BOOST_TEST_MODULE find_flow_cost_bundled_properties_and_named_params_test
+//============================================================================
+// Copyright 2013 University of Warsaw.
+// Authors: Piotr Wygocki 
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//============================================================================
 
-#include <boost/test/unit_test.hpp>
 #include <boost/graph/successive_shortest_path_nonnegative_weights.hpp>
 #include <boost/graph/find_flow_cost.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include "min_cost_max_flow_utils.hpp"
 
 typedef boost::adjacency_list_traits<boost::vecS,boost::vecS,boost::directedS> traits;
@@ -22,7 +29,7 @@ typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, node_
 
 // Unit test written in order to fails (at compile time) if the find_flow_cost()
 // is not properly handling bundled properties
-BOOST_AUTO_TEST_CASE(using_bundled_properties_with_find_max_flow_test)
+void using_bundled_properties_with_find_max_flow_test()
 {
   Graph g;
   traits::vertex_descriptor s,t;
@@ -44,13 +51,13 @@ BOOST_AUTO_TEST_CASE(using_bundled_properties_with_find_max_flow_test)
       pred,dist,dist_prev);
 
   // The "bundled properties" version (producing errors)
-  int flow_cost = boost::find_flow_cost(g,capacity,residual_capacity,cost);
-  BOOST_CHECK_EQUAL(flow_cost, 29);
+  long flow_cost = boost::find_flow_cost(g,capacity,residual_capacity,cost);
+  BOOST_TEST_EQ(flow_cost, 29);
 }
 
 // Unit test written in order to fails (at compile time) if the find_flow_cost()
 // is not properly handling bundled properties
-BOOST_AUTO_TEST_CASE(using_named_params_and_bundled_properties_with_find_max_flow_test)
+void using_named_params_and_bundled_properties_with_find_max_flow_test()
 {
   Graph g;
   traits::vertex_descriptor s,t;
@@ -71,11 +78,19 @@ BOOST_AUTO_TEST_CASE(using_named_params_and_bundled_properties_with_find_max_flo
     pred,dist,dist_prev);
 
   // The  "named parameters" version (with "bundled properties"; producing errors)
-  int flow_cost = boost::find_flow_cost(
+  long flow_cost = boost::find_flow_cost(
     g,
     (boost::graph::keywords::_capacity_map = capacity,
     boost::graph::keywords::_residual_capacity_map = residual_capacity,
     boost::graph::keywords::_weight_map = cost)
   );
-  BOOST_CHECK_EQUAL(flow_cost, 29);
+  BOOST_TEST_EQ(flow_cost, 29);
 }
+
+int main()
+{
+  using_bundled_properties_with_find_max_flow_test();
+  using_named_params_and_bundled_properties_with_find_max_flow_test();
+  return boost::report_errors();
+}
+

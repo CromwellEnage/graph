@@ -39,7 +39,7 @@ namespace boost { namespace detail {
         }
 
      private:
-        inline result_type eval(mpl::true_) const
+        inline result_type _eval(mpl::true_) const
         {
             typename graph_traits<
                 Graph
@@ -47,7 +47,7 @@ namespace boost { namespace detail {
             return boost::two_bit_color_map<IndexMap>(nv, this->_index_map);
         }
 
-        inline result_type eval(mpl::false_) const
+        inline result_type _eval(mpl::false_) const
         {
             return boost::make_vector_property_map<
                 boost::two_bit_color_type
@@ -57,7 +57,7 @@ namespace boost { namespace detail {
      public:
         inline result_type operator()() const
         {
-            return this->eval(is_vertex_list_graph<Graph>());
+            return this->_eval(is_vertex_list_graph<Graph>());
         }
     };
 }}
