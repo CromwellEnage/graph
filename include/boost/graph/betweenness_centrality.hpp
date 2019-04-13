@@ -527,9 +527,8 @@ brandes_betweenness_centrality(const Graph& g,
 #include <boost/type_traits/is_same.hpp>
 #include <algorithm>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/parameter/compose.hpp>
-#include <boost/parameter/binding.hpp>
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/value_type.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -548,7 +547,7 @@ void brandes_betweenness_centrality_dispatch(
         edge_weight_t,
         Graph
     >::type WeightMap;
-    WeightMap w_map = boost::detail::override_const_property(
+    WeightMap e_w_map = boost::detail::override_const_property(
         arg_pack,
         boost::graph::keywords::_weight_map,
         g,
@@ -588,20 +587,25 @@ void brandes_betweenness_centrality_dispatch(
             >
         >::type
     >::value_type centrality_type;
-    dummy_property_map dummy_prop;
-    typename boost::parameter::binding<
-        Args,
-        boost::graph::keywords::tag::centrality_map,
-        dummy_property_map&
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::centrality_map,
+            dummy_property_map
+        >::type
     >::type v_c_map = arg_pack[
-        boost::graph::keywords::_centrality_map | dummy_prop
+        boost::graph::keywords::_centrality_map ||
+        boost::value_factory<dummy_property_map>()
     ];
-    typename boost::parameter::binding<
-        Args,
-        boost::graph::keywords::tag::edge_centrality_map,
-        dummy_property_map&
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::edge_centrality_map,
+            dummy_property_map
+        >::type
     >::type e_c_map = arg_pack[
-        boost::graph::keywords::_edge_centrality_map | dummy_prop
+        boost::graph::keywords::_edge_centrality_map ||
+        boost::value_factory<dummy_property_map>()
     ];
     std::vector<Edge> no_edges;
     const D zero_degree = D();
@@ -624,7 +628,7 @@ void brandes_betweenness_centrality_dispatch(
     > path_count_map_gen(zero_degree);
     graph::detail::brandes_dijkstra_shortest_paths<
         WeightMap
-    > bdsp(w_map);
+    > bdsp(e_w_map);
     graph::detail::brandes_betweenness_centrality_impl(
         g,
         v_c_map,
@@ -670,20 +674,25 @@ void brandes_betweenness_centrality_dispatch(
             >
         >::type
     >::value_type centrality_type;
-    dummy_property_map dummy_prop;
-    typename boost::parameter::binding<
-        Args,
-        boost::graph::keywords::tag::centrality_map,
-        dummy_property_map&
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::centrality_map,
+            dummy_property_map
+        >::type
     >::type v_c_map = arg_pack[
-        boost::graph::keywords::_centrality_map | dummy_prop
+        boost::graph::keywords::_centrality_map ||
+        boost::value_factory<dummy_property_map>()
     ];
-    typename boost::parameter::binding<
-        Args,
-        boost::graph::keywords::tag::edge_centrality_map,
-        dummy_property_map&
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::edge_centrality_map,
+            dummy_property_map
+        >::type
     >::type e_c_map = arg_pack[
-        boost::graph::keywords::_edge_centrality_map | dummy_prop
+        boost::graph::keywords::_edge_centrality_map ||
+        boost::value_factory<dummy_property_map>()
     ];
     std::vector<Edge> no_edges;
     const D zero_degree = D();
@@ -748,6 +757,7 @@ inline void brandes_betweenness_centrality(
 }
 }}  // end namespace boost::graph
 
+#include <boost/parameter/compose.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
@@ -907,7 +917,7 @@ inline typename boost::disable_if<
 brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     , typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap>,
         mpl::true_
@@ -916,7 +926,7 @@ brandes_betweenness_centrality(
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality
@@ -933,7 +943,7 @@ inline void brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality,
     EdgeCentralityMap edge_centrality_map
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     , typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap,EdgeCentralityMap>,
         mpl::true_
@@ -942,7 +952,7 @@ inline void brandes_betweenness_centrality(
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality,
@@ -968,7 +978,7 @@ inline void brandes_betweenness_centrality(
 )
 {
     typedef bgl_named_params<Param,Tag,Rest> named_params;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     using namespace boost::graph::keywords;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
     graph::detail::brandes_betweenness_centrality_dispatch(

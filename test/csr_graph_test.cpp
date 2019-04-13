@@ -411,7 +411,7 @@ void test_vertex_and_edge_properties()
   CSRGraphWithPropsT g(boost::edges_are_sorted, &edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
   brandes_betweenness_centrality(
     g,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_centrality_map = get(&Vertex::centrality, g),
     boost::graph::keywords::_weight_map = get(&Edge::weight, g),
     boost::graph::keywords::_edge_centrality_map = get(&Edge::centrality, g)
