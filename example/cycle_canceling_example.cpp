@@ -18,7 +18,7 @@ int main()
     boost::SampleGraph::Graph g;
     boost::SampleGraph::getSampleGraph(g, s, t);
 
-    boost::edmonds_karp_max_flow(g, s, t);
+    edmonds_karp_max_flow(g, s, t);
     cycle_canceling(g);
 
     long cost = find_flow_cost(g);

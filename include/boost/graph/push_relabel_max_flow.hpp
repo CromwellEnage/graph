@@ -10,53 +10,44 @@
 #ifndef BOOST_PUSH_RELABEL_MAX_FLOW_HPP
 #define BOOST_PUSH_RELABEL_MAX_FLOW_HPP
 
+#include <list>
+
+namespace boost { namespace detail {
+
+    template <typename Vertex>
+    struct preflow_layer
+    {
+        std::list<Vertex> active_vertices;
+        std::list<Vertex> inactive_vertices;
+    };
+}}
+
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
 #include <vector>
-#include <list>
 #include <iosfwd>
 #include <algorithm> // for std::min and std::max
 
 #include <boost/pending/queue.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/named_function_params.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/graph/detail/traits.hpp>
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
+// This implementation is based on Goldberg's 
+// "On Implementing Push-Relabel Method for the Maximum Flow Problem"
+// by B.V. Cherkassky and A.V. Goldberg, IPCO '95, pp. 157--171
+// and on the h_prf.c and hi_pr.c code written by the above authors.
 
-namespace boost {
+// This implements the highest-label version of the push-relabel method
+// with the global relabeling and gap relabeling heuristics.
 
-  namespace detail {
-    
-   // This implementation is based on Goldberg's 
-   // "On Implementing Push-Relabel Method for the Maximum Flow Problem"
-   // by B.V. Cherkassky and A.V. Goldberg, IPCO '95, pp. 157--171
-   // and on the h_prf.c and hi_pr.c code written by the above authors.
+// The terms "rank", "distance", "height" are synonyms in
+// Goldberg's implementation, paper and in the CLR.  A "layer" is a
+// group of vertices with the same distance. The vertices in each
+// layer are categorized as active or inactive.  An active vertex
+// has positive excess flow and its distance is less than n (it is
+// not blocked).
 
-   // This implements the highest-label version of the push-relabel method
-   // with the global relabeling and gap relabeling heuristics.
-
-   // The terms "rank", "distance", "height" are synonyms in
-   // Goldberg's implementation, paper and in the CLR.  A "layer" is a
-   // group of vertices with the same distance. The vertices in each
-   // layer are categorized as active or inactive.  An active vertex
-   // has positive excess flow and its distance is less than n (it is
-   // not blocked).
-
-    template <class Vertex>
-    struct preflow_layer {
-      std::list<Vertex> active_vertices;
-      std::list<Vertex> inactive_vertices;
-    };
+namespace boost { namespace detail {
 
     template <class Graph, 
               class EdgeCapacityMap,    // integer value type
@@ -690,9 +681,10 @@ namespace boost {
 
       long work_since_last_update;
     };
+}} // namespace boost::detail
 
-  } // namespace detail
-  
+namespace boost { namespace graph {
+
   template <class Graph, 
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
             class ReverseEdgeMap, class VertexIndexMap>
@@ -705,27 +697,33 @@ namespace boost {
      ReverseEdgeMap rev, VertexIndexMap index_map)
   {
     typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
-    
-    detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
+
+    boost::detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
       ReverseEdgeMap, VertexIndexMap, FlowValue>
       algo(g, cap, res, rev, src, sink, index_map);
-    
+
     FlowValue flow = algo.maximum_preflow();
-    
+
     algo.convert_preflow_to_flow();
-    
+
     BOOST_ASSERT(algo.is_flow());
     BOOST_ASSERT(algo.is_optimal());
-    
+
     return flow;
   } // push_relabel_max_flow()
+}} // namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/named_function_params.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost { namespace graph {
+
 // Boost.Parameter-enabled argument-pack overload
 template <typename Graph, typename Args>
 inline typename boost::lazy_enable_if<
   parameter::is_argument_pack<Args>,
-  detail::arg_packed_property_map_value<
+  boost::detail::arg_packed_property_map_value<
     Args, boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph
   >
 >::type
@@ -734,21 +732,96 @@ push_relabel_max_flow(Graph& g,
                       typename graph_traits<Graph>::vertex_descriptor sink,
                       const Args& arg_pack)
 {
-  using namespace boost::graph::keywords;
-  return push_relabel_max_flow(
-    g,
-    src,
-    sink,
-    detail::override_const_property(arg_pack, _capacity_map, g, edge_capacity),
-    detail::override_property(arg_pack, _residual_capacity_map, g, edge_residual_capacity),
-    detail::override_const_property(arg_pack, _reverse_edge_map, g, edge_reverse),
-    arg_pack[
-      _vertex_index_map |
-      detail::vertex_or_dummy_property_map(g, vertex_index)
-    ]
-  );
+    return push_relabel_max_flow(
+        g,
+        src,
+        sink,
+        boost::detail::override_const_property(
+            arg_pack,
+            boost::graph::keywords::_capacity_map,
+            g,
+            edge_capacity
+        ),
+        boost::detail::override_property(
+            arg_pack,
+            boost::graph::keywords::_residual_capacity_map,
+            g,
+            edge_residual_capacity
+        ),
+        boost::detail::override_const_property(
+            arg_pack,
+            boost::graph::keywords::_reverse_edge_map,
+            g,
+            edge_reverse
+        ),
+        boost::detail::override_const_property(
+            arg_pack,
+            boost::graph::keywords::_vertex_index_map,
+            g,
+            vertex_index
+        )
+    );
 }
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+}} // namespace boost::graph
+
+#include <boost/parameter/compose.hpp>
+
+namespace boost { namespace graph {
+
+  // all-defaults overload
+  template <typename Graph>
+  typename property_traits<
+    typename property_map<Graph, edge_capacity_t>::const_type
+  >::value_type
+  push_relabel_max_flow
+    (Graph& g, 
+     typename graph_traits<Graph>::vertex_descriptor src,
+     typename graph_traits<Graph>::vertex_descriptor sink)
+  {
+    return push_relabel_max_flow(g, src, sink, parameter::compose());
+  }
+}} // namespace boost::graph
+
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+
+// Boost.Parameter-enabled tagged-argument overloads
+// TODO: return the same type as the argument-pack overload
+// need parameter::result_of::compose
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+template <typename Graph, typename TA \
+          BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+inline typename boost::lazy_enable_if< \
+  parameter::are_tagged_arguments< \
+    TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+  >, \
+  boost::detail::tagged_property_map_value< \
+    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+  > \
+>::type \
+name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
+     typename graph_traits<Graph>::vertex_descriptor sink, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta)) \
+{ \
+  return name(g, src, sink, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+}
+
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
+BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, push_relabel_max_flow)
+}} // namespace boost::graph
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+  using ::boost::graph::push_relabel_max_flow;
 
   // old-style named-parameter overload
   template <class Graph, class P, class T, class R>
@@ -768,53 +841,6 @@ push_relabel_max_flow(Graph& g,
        choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
        );
   }
-
-  // all-defaults overload
-  template <typename Graph>
-  typename property_traits<
-    typename property_map<Graph, edge_capacity_t>::const_type
-  >::value_type
-  push_relabel_max_flow
-    (Graph& g, 
-     typename graph_traits<Graph>::vertex_descriptor src,
-     typename graph_traits<Graph>::vertex_descriptor sink)
-  {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    return push_relabel_max_flow(g, src, sink, parameter::compose());
-#else
-    bgl_named_params<int, buffer_param_t> params(0); // bogus empty param
-    return push_relabel_max_flow(g, src, sink, params);
-#endif
-  }
-
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-// Boost.Parameter-enabled tagged-argument overloads
-// TODO: return the same type as the argument-pack overload
-// need parameter::result_of::compose
-#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-template <typename Graph, typename TA \
-          BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
-inline typename boost::lazy_enable_if< \
-  parameter::are_tagged_arguments< \
-    TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-  >, \
-  detail::tagged_property_map_value< \
-    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
-    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
-  > \
->::type \
-name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
-     typename graph_traits<Graph>::vertex_descriptor sink, \
-     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta)) \
-{ \
-  return name(g, src, sink, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
-}
-
-BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, push_relabel_max_flow)
-
-#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
 } // namespace boost
 
 #endif // BOOST_PUSH_RELABEL_MAX_FLOW_HPP

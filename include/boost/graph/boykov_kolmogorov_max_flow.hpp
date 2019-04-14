@@ -45,21 +45,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/none_t.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/lookup_edge.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/concept/assert.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/core/enable_if.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
 
 // The algorithm impelemented here is described in:
 //
@@ -73,9 +59,7 @@
 // Kolmogorov, V. "Graph Based Algorithms for Scene Reconstruction from Two or
 // More Views". PhD thesis, Cornell University, Sep 2003.
 
-namespace boost {
-
-namespace detail {
+namespace boost { namespace detail {
 
 template <class Graph,
           class EdgeCapacityMap,
@@ -730,7 +714,11 @@ class bk_max_flow {
       out_edge_iterator m_last_grow_edge_end;
 };
 
-} //namespace boost::detail
+}} // namespace boost::detail
+
+#include <boost/concept/assert.hpp>
+
+namespace boost { namespace graph {
 
 /**
   * non-named-parameter version, given everything
@@ -771,7 +759,7 @@ boykov_kolmogorov_max_flow(Graph& g,
   BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, vertex_descriptor> )); //get index 0...|V|-1
   BOOST_ASSERT(num_vertices(g) >= 2 && src != sink);
 
-  detail::bk_max_flow<
+  boost::detail::bk_max_flow<
     Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, ReverseEdgeMap,
     PredecessorMap, ColorMap, DistanceMap, IndexMap
   > algo(g, cap, res_cap, rev_map, pre_map, color, dist, idx, src, sink);
@@ -843,12 +831,19 @@ boykov_kolmogorov_max_flow(Graph& g,
       idx, src, sink);
 }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+}} // namespace boost::graph
+
+#include <boost/graph/named_function_params.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost { namespace graph {
+
 // Boost.Parameter-enabled argument-pack overload
 template <typename Graph, typename Args>
 inline typename boost::lazy_enable_if<
   parameter::is_argument_pack<Args>,
-  detail::arg_packed_property_map_value<
+  boost::detail::arg_packed_property_map_value<
     Args, boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph
   >
 >::type
@@ -860,18 +855,41 @@ boykov_kolmogorov_max_flow(Graph& g,
   using namespace boost::graph::keywords;
   return boykov_kolmogorov_max_flow(
     g,
-    detail::override_const_property(arg_pack, _capacity_map, g, edge_capacity),
-    detail::override_property(arg_pack, _residual_capacity_map, g, edge_residual_capacity),
-    detail::override_const_property(arg_pack, _reverse_edge_map, g, edge_reverse),
-    detail::override_property(arg_pack, _predecessor_map, g, vertex_predecessor),
-    detail::override_property(arg_pack, _color_map, g, vertex_color),
-    detail::override_property(arg_pack, _distance_map, g, vertex_distance),
-    detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
+    boost::detail::override_const_property(arg_pack, _capacity_map, g, edge_capacity),
+    boost::detail::override_property(arg_pack, _residual_capacity_map, g, edge_residual_capacity),
+    boost::detail::override_const_property(arg_pack, _reverse_edge_map, g, edge_reverse),
+    boost::detail::override_property(arg_pack, _predecessor_map, g, vertex_predecessor),
+    boost::detail::override_property(arg_pack, _color_map, g, vertex_color),
+    boost::detail::override_property(arg_pack, _distance_map, g, vertex_distance),
+    boost::detail::override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
     src,
     sink
   );
 }
-#endif  // defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+}} // namespace boost::graph
+
+#include <boost/parameter/compose.hpp>
+
+namespace boost { namespace graph {
+
+// all-defaults overload
+template <typename Graph>
+inline typename property_traits<
+    typename property_map<Graph, edge_capacity_t>::const_type
+>::value_type
+boykov_kolmogorov_max_flow(Graph& g,
+                           typename graph_traits<Graph>::vertex_descriptor src,
+                           typename graph_traits<Graph>::vertex_descriptor sink)
+{
+  return boykov_kolmogorov_max_flow(g, src, sink, parameter::compose());
+}
+
+}} // namespace boost::graph
+
+namespace boost {
+
+using ::boost::graph::boykov_kolmogorov_max_flow;
 
 // old-style named-parameter overload
 template <typename Graph, typename P, typename T, typename R>
@@ -901,24 +919,13 @@ boykov_kolmogorov_max_flow(Graph& g,
     src, sink);
 }
 
-// all-defaults overload
-template <typename Graph>
-inline typename property_traits<
-    typename property_map<Graph, edge_capacity_t>::const_type
->::value_type
-boykov_kolmogorov_max_flow(Graph& g,
-                           typename graph_traits<Graph>::vertex_descriptor src,
-                           typename graph_traits<Graph>::vertex_descriptor sink)
-{
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  return boykov_kolmogorov_max_flow(g, src, sink, parameter::compose());
-#else
-  bgl_named_params<int, buffer_param_t> params(0); // bogus empty param
-  return boykov_kolmogorov_max_flow(g, src, sink, params);
-#endif
-}
+} // namespace boost
 
 #if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+
 // Boost.Parameter-enabled tagged-argument overloads
 // TODO: return the same type as the argument-pack overload
 // need parameter::result_of::compose
@@ -929,7 +936,7 @@ inline typename boost::lazy_enable_if< \
   parameter::are_tagged_arguments< \
     TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   >, \
-  detail::tagged_property_map_value< \
+  boost::detail::tagged_property_map_value< \
     boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
     BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   > \
@@ -941,12 +948,16 @@ name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
   return name(g, src, sink, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
 }
 
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
 BOOST_PP_REPEAT_FROM_TO(1, 8, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, boykov_kolmogorov_max_flow)
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
-} // namespace boost
+#endif // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 #endif // BOOST_BOYKOV_KOLMOGOROV_MAX_FLOW_HPP
 
