@@ -404,6 +404,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     namespace keywords {
       BOOST_PARAMETER_NAME(graph)
       BOOST_PARAMETER_NAME(result)
+      BOOST_PARAMETER_NAME(generator_function)
       BOOST_PARAMETER_NAME(terminator_function)
       BOOST_PARAMETER_NAME(incoming_map)
       BOOST_PARAMETER_NAME(dependency_map)

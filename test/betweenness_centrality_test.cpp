@@ -62,18 +62,11 @@ run_weighted_test(Graph*, std::size_t V, weighted_edge edge_init[],
   std::vector<double> centrality(V, 0.0);
   brandes_betweenness_centrality(
     g,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_centrality_map =
       make_iterator_property_map(centrality.begin(), get(vertex_index, g),
                                  0.0),
     boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
     boost::graph::keywords::_weight_map = get(edge_weight, g)
-#else
-    centrality_map(
-      make_iterator_property_map(centrality.begin(), get(vertex_index, g),
-                                 0.0))
-    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
-#endif
   );
 
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
@@ -127,7 +120,6 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
 
   brandes_betweenness_centrality(
     g,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_centrality_map =
       make_iterator_property_map(centrality.begin(), get(vertex_index, g),
                                  0.0),
@@ -135,22 +127,12 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
       make_iterator_property_map(edge_centrality1.begin(),
                                  get(edge_index, g), 0.0),
     boost::graph::keywords::_vertex_index_map = get(vertex_index, g)
-#else
-    centrality_map(
-      make_iterator_property_map(centrality.begin(), get(vertex_index, g),
-                                 0.0))
-    .edge_centrality_map(
-       make_iterator_property_map(edge_centrality1.begin(), 
-                                  get(edge_index, g), 0.0))
-    .vertex_index_map(get(vertex_index, g))
-#endif
   );
 
   std::vector<double> centrality2(V, 0.0);
   std::vector<double> edge_centrality2(E, 0.0);
   brandes_betweenness_centrality(
     g,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
     boost::graph::keywords::_weight_map = get(edge_weight, g),
     boost::graph::keywords::_centrality_map =
@@ -159,29 +141,14 @@ run_unweighted_test(Graph*, std::size_t V, unweighted_edge edge_init[],
     boost::graph::keywords::_edge_centrality_map =
       make_iterator_property_map(edge_centrality2.begin(),
                                  get(edge_index, g), 0.0)
-#else
-    vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
-    .centrality_map(
-       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
-                                  0.0))
-    .edge_centrality_map(
-       make_iterator_property_map(edge_centrality2.begin(), 
-                                  get(edge_index, g), 0.0))
-#endif
   );
 
   std::vector<double> edge_centrality3(E, 0.0);
   brandes_betweenness_centrality(
     g,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_edge_centrality_map =
       make_iterator_property_map(edge_centrality3.begin(),
                                  get(edge_index, g), 0.0)
-#else
-    edge_centrality_map(
-      make_iterator_property_map(edge_centrality3.begin(), 
-                                 get(edge_index, g), 0.0))
-#endif
   );
 
   for (std::vector<double>::size_type v = 0; v < V; ++v) {
@@ -272,18 +239,11 @@ run_wheel_test(Graph*, std::size_t V)
   std::vector<double> centrality2(V, 0.0);
   brandes_betweenness_centrality(
     g,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_centrality_map =
       make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
                                  0.0),
     boost::graph::keywords::_vertex_index_map = get(vertex_index, g),
     boost::graph::keywords::_weight_map = get(edge_weight, g)
-#else
-    centrality_map(
-      make_iterator_property_map(centrality2.begin(), get(vertex_index, g),
-                                 0.0))
-    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
-#endif
   );
 
   relative_betweenness_centrality(
@@ -523,18 +483,11 @@ void random_unweighted_test(Graph*, std::size_t n)
     put(edge_weight, g, *ei, 1);
 
   brandes_betweenness_centrality(
-    g, 
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    g,
     boost::graph::keywords::_weight_map = get(edge_weight, g),
     boost::graph::keywords::_centrality_map =
       make_iterator_property_map(centrality3.begin(), get(vertex_index, g),
                                  0.0)
-#else
-    weight_map(get(edge_weight, g))
-    .centrality_map(
-       make_iterator_property_map(centrality3.begin(), get(vertex_index, g),
-                                  0.0))
-#endif
   );
   std::cout << "DONE.\n";
 

@@ -522,17 +522,15 @@ brandes_betweenness_centrality(const Graph& g,
 }}  // end namespace boost::graph
 
 #include <boost/parameter/is_argument_pack.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <algorithm>
-
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/value_type.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <algorithm>
 
 namespace boost { namespace graph { namespace detail {
 
@@ -792,111 +790,6 @@ BOOST_PP_REPEAT_FROM_TO(
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-
-namespace boost { namespace graph { namespace detail {
-  template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
-           typename WeightMap, typename VertexIndexMap>
-  void 
-  brandes_betweenness_centrality_dispatch2(const Graph& g,
-                                           CentralityMap centrality,
-                                           EdgeCentralityMap edge_centrality_map,
-                                           WeightMap weight_map,
-                                           VertexIndexMap vertex_index)
-  {
-    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-    typedef typename mpl::if_c<(is_same<CentralityMap, 
-                                        dummy_property_map>::value),
-                                         EdgeCentralityMap, 
-                               CentralityMap>::type a_centrality_map;
-    typedef typename property_traits<a_centrality_map>::value_type 
-      centrality_type;
-
-    typename graph_traits<Graph>::vertices_size_type V = num_vertices(g);
-    
-    std::vector<std::vector<edge_descriptor> > incoming(V);
-    std::vector<centrality_type> distance(V);
-    std::vector<centrality_type> dependency(V);
-    std::vector<degree_size_type> path_count(V);
-
-    brandes_betweenness_centrality(
-      g, centrality, edge_centrality_map,
-      make_iterator_property_map(incoming.begin(), vertex_index),
-      make_iterator_property_map(distance.begin(), vertex_index),
-      make_iterator_property_map(dependency.begin(), vertex_index),
-      make_iterator_property_map(path_count.begin(), vertex_index),
-      vertex_index,
-      weight_map);
-  }
-  
-
-  template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
-           typename VertexIndexMap>
-  void 
-  brandes_betweenness_centrality_dispatch2(const Graph& g,
-                                           CentralityMap centrality,
-                                           EdgeCentralityMap edge_centrality_map,
-                                           VertexIndexMap vertex_index)
-  {
-    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-    typedef typename mpl::if_c<(is_same<CentralityMap, 
-                                        dummy_property_map>::value),
-                                         EdgeCentralityMap, 
-                               CentralityMap>::type a_centrality_map;
-    typedef typename property_traits<a_centrality_map>::value_type 
-      centrality_type;
-
-    typename graph_traits<Graph>::vertices_size_type V = num_vertices(g);
-    
-    std::vector<std::vector<edge_descriptor> > incoming(V);
-    std::vector<centrality_type> distance(V);
-    std::vector<centrality_type> dependency(V);
-    std::vector<degree_size_type> path_count(V);
-
-    brandes_betweenness_centrality(
-      g, centrality, edge_centrality_map,
-      make_iterator_property_map(incoming.begin(), vertex_index),
-      make_iterator_property_map(distance.begin(), vertex_index),
-      make_iterator_property_map(dependency.begin(), vertex_index),
-      make_iterator_property_map(path_count.begin(), vertex_index),
-      vertex_index);
-  }
-
-  template<typename WeightMap>
-  struct brandes_betweenness_centrality_dispatch1
-  {
-    template<typename Graph, typename CentralityMap, 
-             typename EdgeCentralityMap, typename VertexIndexMap>
-    static void 
-    run(const Graph& g, CentralityMap centrality, 
-        EdgeCentralityMap edge_centrality_map, VertexIndexMap vertex_index,
-        WeightMap weight_map)
-    {
-      brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
-                                               weight_map, vertex_index);
-    }
-  };
-
-  template<>
-  struct brandes_betweenness_centrality_dispatch1<param_not_found>
-  {
-    template<typename Graph, typename CentralityMap, 
-             typename EdgeCentralityMap, typename VertexIndexMap>
-    static void 
-    run(const Graph& g, CentralityMap centrality, 
-        EdgeCentralityMap edge_centrality_map, VertexIndexMap vertex_index,
-        param_not_found)
-    {
-      brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
-                                               vertex_index);
-    }
-  };
-}}} // end namespace boost::graph::detail
-
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
 namespace boost { namespace graph {
 
 // disable_if is required to work around problem with MSVC 7.1
@@ -916,53 +809,37 @@ inline typename boost::disable_if<
 >::type
 brandes_betweenness_centrality(
     const Graph& g,
-    CentralityMap centrality
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    , typename boost::disable_if<
+    CentralityMap centrality,
+    typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap>,
         mpl::true_
     >::type = mpl::true_()
-#endif
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality
     );
-#else
-    graph::detail::brandes_betweenness_centrality_dispatch2(
-      g, centrality, dummy_property_map(), get(vertex_index, g)
-    );
-#endif
 }
 
 template <typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 inline void brandes_betweenness_centrality(
     const Graph& g,
     CentralityMap centrality,
-    EdgeCentralityMap edge_centrality_map
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    , typename boost::disable_if<
+    EdgeCentralityMap edge_centrality_map,
+    typename boost::disable_if<
         parameter::are_tagged_arguments<CentralityMap,EdgeCentralityMap>,
         mpl::true_
     >::type = mpl::true_()
-#endif
     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
 )
 {
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     brandes_betweenness_centrality(
         g,
         boost::graph::keywords::_centrality_map = centrality,
         boost::graph::keywords::_edge_centrality_map = edge_centrality_map
     );
-#else
-    graph::detail::brandes_betweenness_centrality_dispatch2(
-      g, centrality, edge_centrality_map, get(vertex_index, g)
-    );
-#endif
 }
 }} // end namespace boost::graph
 
@@ -978,7 +855,6 @@ inline void brandes_betweenness_centrality(
 )
 {
     typedef bgl_named_params<Param,Tag,Rest> named_params;
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     using namespace boost::graph::keywords;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
     graph::detail::brandes_betweenness_centrality_dispatch(
@@ -989,16 +865,6 @@ inline void brandes_betweenness_centrality(
             boost::graph::keywords::tag::weight_map
         >::type()
     );
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    typedef typename get_param_type<edge_weight_t, named_params>::type ew;
-    graph::detail::brandes_betweenness_centrality_dispatch1<ew>::run(
-      g, 
-      choose_param(get_param(params, vertex_centrality), dummy_property_map()),
-      choose_param(get_param(params, edge_centrality), dummy_property_map()),
-      choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-      get_param(params, edge_weight)
-    );
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 }
 
 /**

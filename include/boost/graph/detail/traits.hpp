@@ -128,6 +128,19 @@ namespace boost { namespace detail {
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
 
+    template <typename T, typename ResultPlaceholderExpr>
+    struct is_generator_impl
+    {
+        typedef typename mpl::apply1<
+            ResultPlaceholderExpr,
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+            BOOST_TYPEOF_TPL((boost::declval<T>()()))
+#else
+            decltype(boost::declval<T>()())
+#endif
+        >::type type;
+    };
+
     template <
         typename FirstArgument,
         typename SecondArgument,
@@ -212,8 +225,42 @@ namespace boost { namespace detail {
 }}
 #endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
-#include <boost/mpl/vector.hpp>
 #include <boost/type_traits/add_pointer.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+namespace boost { namespace detail {
+
+    template <typename T>
+    class is_generator_func
+    {
+        template <typename B>
+        static graph_yes_tag
+            _check(
+                B*,
+                typename boost::add_pointer<
+#if defined(BOOST_NO_CXX11_DECLTYPE)
+                    BOOST_TYPEOF_TPL((boost::declval<B>()()))
+#else
+                    decltype(boost::declval<B>()())
+#endif
+                >::type = BOOST_GRAPH_DETAIL_NULLPTR
+            );
+
+        static graph_no_tag _check(...);
+
+     public:
+        typedef mpl::bool_<
+            sizeof(
+                is_generator_func<T>::_check(
+                    static_cast<T*>(BOOST_GRAPH_DETAIL_NULLPTR)
+                )
+            ) == sizeof(graph_yes_tag)
+        > type;
+    };
+}}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+#include <boost/mpl/vector.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
@@ -425,6 +472,16 @@ namespace boost { namespace detail {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {
+
+    template <typename T, typename ResultPlaceholderExpr>
+    struct is_generator
+        : mpl::eval_if<
+            typename is_generator_func<T>::type,
+            is_generator_impl<T,ResultPlaceholderExpr>,
+            mpl::false_
+        >::type
+    {
+    };
 
     template <
         typename FirstArgument,
@@ -1614,6 +1671,20 @@ namespace boost { namespace detail {
 #include <boost/mpl/always.hpp>
 
 namespace boost { namespace detail {
+
+    struct generator_predicate
+    {
+        template <typename Arg, typename ArgPack>
+        struct apply
+        {
+            typedef is_generator<
+                typename boost::remove_const<
+                    typename boost::remove_reference<Arg>::type
+                >::type,
+                mpl::always<mpl::true_>
+            > type;
+        };
+    };
 
     template <
         typename GraphTag1 = boost::graph::keywords::tag::graph,

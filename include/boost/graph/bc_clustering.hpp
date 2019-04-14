@@ -198,13 +198,8 @@ void betweenness_centrality_clustering(
   do {
     brandes_betweenness_centrality(
       graph,
-#if 1//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_edge_centrality_map = edge_centrality_map,
       boost::graph::keywords::_vertex_index_map = vertex_index_map
-#else
-      boost::edge_centrality_map(edge_centrality_map)
-      .vertex_index_map(vertex_index_map)
-#endif
     );
     std::pair<edge_iterator, edge_iterator> edges_iters = edges(graph);
     edge_descriptor e = *max_element(edges_iters.first, edges_iters.second, cmp);
