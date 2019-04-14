@@ -184,6 +184,10 @@ namespace boost { namespace graph {
     }
 }}
 
+#include <boost/graph/detail/static_property_map_gen.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/parameter/value_type.hpp>
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost { namespace graph {
