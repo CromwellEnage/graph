@@ -72,12 +72,14 @@ namespace boost { namespace detail {
 #include <boost/graph/detail/sparse_ordering.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/core/enable_if.hpp>
+#include <deque>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/parameter/value_type.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #endif
 
 namespace boost { namespace graph {
@@ -85,7 +87,7 @@ namespace boost { namespace graph {
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     // If user provides a reverse iterator, this will be a reverse
     // Cuthill-McKee algorithm, otherwise it will be a standard CM algorithm.
-    BOOST_PARAMETER_FUNCTION(
+    BOOST_PARAMETER_BASIC_FUNCTION(
         (
             boost::lazy_enable_if<
                 typename mpl::has_key<
@@ -134,7 +136,6 @@ namespace boost { namespace graph {
                             boost::detail::is_vertex_of_graph
                         >
                     )
-                  , boost::detail::get_null_vertex(graph)
                 )
                 (buffer
                   , *(
@@ -142,12 +143,6 @@ namespace boost { namespace graph {
                             boost::detail::has_container_typedefs
                         >
                     )
-                  , boost::sparse::make_ordering_default_queue_t(
-                        graph,
-                        root_vertex,
-                        color_map,
-                        degree_map
-                    )()
                 )
             )
         )
@@ -156,37 +151,70 @@ namespace boost { namespace graph {
     // Reverse Cuthill-McKee algorithm with a given queue
     // of starting vertices.
     template <
-        typename Graph, typename Buffer, typename OutputIterator,
+        typename Graph, typename VertexQueue, typename OutputIterator,
         typename ColorMap, typename DegreeMap
     >
     typename boost::enable_if<
-        boost::detail::has_container_typedefs<Buffer>,
+        boost::detail::has_container_typedefs<VertexQueue>,
         OutputIterator
     >::type
     cuthill_mckee_ordering(
-        const Graph& graph, Buffer& buffer, OutputIterator result,
-        ColorMap color_map, DegreeMap degree_map
+        const Graph& g, VertexQueue& vertex_queue, OutputIterator permutation,
+        ColorMap color, DegreeMap degree
     )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
     {
-        if (boost::graph::has_no_vertices(graph)) return result;
-
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
         typedef typename boost::remove_const<
-            typename boost::remove_reference<graph_type>::type
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::graph
+            >::type
         >::type Graph;
+        const Graph& g = args[boost::graph::keywords::_graph];
         typedef typename boost::remove_const<
-            typename boost::remove_reference<result_type>::type
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::result
+            >::type
         >::type OutputIterator;
-        typedef typename boost::remove_const<
-            typename boost::remove_reference<color_map_type>::type
-        >::type ColorMap;
-        typedef typename boost::remove_const<
-            typename boost::remove_reference<degree_map_type>::type
-        >::type DegreeMap;
+        OutputIterator permutation = args[boost::graph::keywords::_result];
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
-        // create queue, visitor...don't forget namespaces!
+
+        if (boost::graph::has_no_vertices(g)) return permutation;
+
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        Vertex root_vertex = args[
+            boost::graph::keywords::_root_vertex |
+            graph_traits<Graph>::null_vertex()
+        ];
+        typedef typename boost::remove_const<
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::color_map
+            >::type
+        >::type ColorMap;
+        ColorMap color = args[boost::graph::keywords::_color_map];
+        typedef typename boost::remove_const<
+            typename parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::degree_map
+            >::type
+        >::type DegreeMap;
+        DegreeMap degree = args[boost::graph::keywords::_degree_map];
+        std::deque<Vertex> default_vertex_queue;
+        typename parameter::binding<
+            Args,
+            boost::graph::keywords::tag::buffer,
+            std::deque<Vertex>
+        >::type vertex_queue = args[
+            boost::graph::keywords::_buffer ||
+            boost::sparse::make_ordering_default_queue_reference(
+                g, root_vertex, default_vertex_queue, color, degree
+            )
+        ];
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
         typedef boost::sparse::sparse_ordering_queue<Vertex> Queue;
         typedef boost::detail::bfs_rcm_visitor<
             OutputIterator, Queue, DegreeMap
@@ -198,27 +226,27 @@ namespace boost { namespace graph {
         Queue Q;
 
         // create a bfs_rcm_visitor as defined above
-        Visitor vis(result, Q, degree_map);
+        Visitor vis(permutation, Q, degree);
 
         typename graph_traits<Graph>::vertex_iterator ui, ui_end;    
 
         // Copy degree to pseudo_degree
         // initialize the color map
-        for (boost::tie(ui, ui_end) = vertices(graph); ui != ui_end; ++ui)
+        for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
         {
-            put(color_map, *ui, Color::white());
+            put(color, *ui, Color::white());
         }
 
-        while (!buffer.empty())
+        while (!vertex_queue.empty())
         {
-            Vertex s = buffer.front();
-            buffer.pop_front();
+            Vertex s = vertex_queue.front();
+            vertex_queue.pop_front();
 
             // call BFS with visitor
-            breadth_first_visit(graph, s, Q, vis, color_map);
+            breadth_first_visit(g, s, Q, vis, color);
         }
 
-        return result;
+        return permutation;
     }
 }} // namespace boost::graph
 
@@ -287,8 +315,6 @@ namespace boost { namespace graph {
 
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
-#include <deque>
-
 namespace boost { namespace graph {
 
     // Reverse Cuthill-McKee algorithm with a given starting vertex.
@@ -304,11 +330,12 @@ namespace boost { namespace graph {
     {
         std::deque<
             typename graph_traits<Graph>::vertex_descriptor
-        > Q = boost::sparse::make_ordering_default_queue_t(
-            graph, root_vertex, color_map, degree_map
+        > vertex_queue;
+        boost::sparse::initialize_ordering_default_queue_and_maps(
+            graph, root_vertex, vertex_queue, color_map, degree_map
         )();
         return cuthill_mckee_ordering(
-            graph, Q, result, color_map, degree_map
+            graph, vertex_queue, result, color_map, degree_map
         );
     }
 

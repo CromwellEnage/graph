@@ -293,45 +293,31 @@ namespace boost { namespace graph {
             boost::detail::make_out_degree_map_generator(graph)
         ];
         typedef typename boost::remove_const<
-            typename parameter::lazy_value_type<
+            typename parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::buffer,
-                boost::sparse::ordering_default_queue_t<
-                    Graph,
-                    ColorMap,
-                    DegreeMap
-                >
+                std::deque<Vertex>
             >::type
         >::type Buffer;
         Buffer buffer = args[
             boost::graph::keywords::_buffer ||
-            boost::sparse::make_ordering_default_queue_t(
-                graph,
-                root_vertex,
-                color_map,
-                degree_map
-            )
+            boost::sparse::make_ordering_default_queue_t<
+                std::deque<Vertex>
+            >(graph, root_vertex, color_map, degree_map)
         ];
         typedef boost::sparse::sparse_ordering_queue<Vertex> Queue;
+        Queue Q;
         typedef color_traits<
             typename property_traits<ColorMap>::value_type
         > Color;
         typedef typename property_traits<DegreeMap>::value_type Degree;
+        std::vector<Degree> ps_deg_vec(num_vertices(graph));
         typedef iterator_property_map<
             typename std::vector<Degree>::iterator, VertexIndexMap,
             Degree, Degree&
         > PseudoDegreeMap;
-        typedef indirect_cmp<PseudoDegreeMap, std::less<Degree> > Compare;
-        typedef boost::detail::bfs_king_visitor<
-            OutputIterator, Queue, Compare, PseudoDegreeMap,
-            std::vector<int>, VertexIndexMap
-        > Visitor;
-        typedef typename graph_traits<Graph>::vertices_size_type VSize;
-
-        std::vector<Degree> ps_deg_vec(num_vertices(graph));
         PseudoDegreeMap pseudo_degree(ps_deg_vec.begin(), vertex_index_map);
         typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-        Queue Q;
 
         // Copy degree to pseudo_degree
         // initialize the color map
@@ -340,6 +326,9 @@ namespace boost { namespace graph {
             put(pseudo_degree, *ui, get(degree_map, *ui));
             put(color_map, *ui, Color::white());
         }
+
+        typedef indirect_cmp<PseudoDegreeMap, std::less<Degree> > Compare;
+        typedef typename graph_traits<Graph>::vertices_size_type VSize;
 
         Compare comp(pseudo_degree);
         std::vector<int> colors(num_vertices(graph));
@@ -352,6 +341,11 @@ namespace boost { namespace graph {
         std::vector<int> loc(num_vertices(graph));
 
         // create the visitor
+        typedef boost::detail::bfs_king_visitor<
+            OutputIterator, Queue, Compare, PseudoDegreeMap,
+            std::vector<int>, VertexIndexMap
+        > Visitor;
+
         Visitor vis(
             result, Q, comp, pseudo_degree, loc, colors, vertex_index_map
         );

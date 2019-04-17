@@ -896,6 +896,29 @@ BOOST_PP_REPEAT(
       typedef T result_type;
     };
 
+    template <typename T>
+    class reference_generator
+    {
+        T& _t;
+
+    public:
+        typedef T& result_type;
+
+        inline explicit reference_generator(T& t) : _t(t)
+        {
+        }
+
+        inline result_type operator()() const
+        {
+            return this->_t;
+        }
+    };
+
+    template <typename T>
+    reference_generator<T> make_reference_generator(T& t)
+    {
+        return reference_generator<T>(t);
+    }
   } // namespace detail
 
 #undef BOOST_BGL_DECLARE_NAMED_PARAMS
