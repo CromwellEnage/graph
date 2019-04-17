@@ -20,15 +20,13 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/pending/indirect_cmp.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/pending/indirect_cmp.hpp>
 #include <boost/bind.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/depth_first_search.hpp>
 
-namespace boost {
-
-  namespace sparse {
+namespace boost { namespace sparse {
 
     // rcm_queue
     //
@@ -127,8 +125,9 @@ namespace boost {
     protected:
       //nothing
     };
-    
-  } // namespace sparse 
+}} // namespace boost::sparse 
+
+namespace boost {
 
   // Compute Pseudo peripheral
   //
@@ -196,31 +195,92 @@ namespace boost {
     }
     return x;
   }
-
-template <typename Graph>
-class out_degree_property_map 
-  : public put_get_helper<typename graph_traits<Graph>::degree_size_type,
-                          out_degree_property_map<Graph> >                  
-{
-public:
-  typedef typename graph_traits<Graph>::vertex_descriptor key_type;
-  typedef typename graph_traits<Graph>::degree_size_type value_type;
-  typedef value_type reference;
-  typedef readable_property_map_tag category;
-  out_degree_property_map(const Graph& g) : m_g(g) { }
-  value_type operator[](const key_type& v) const {
-    return out_degree(v, m_g);
-  }
-private:
-  const Graph& m_g;
-};
-template <typename Graph>
-inline out_degree_property_map<Graph>
-make_out_degree_map(const Graph& g) {
-  return out_degree_property_map<Graph>(g);
-}
-
 } // namespace boost
 
+#include <boost/graph/graph_utility.hpp>
+#include <deque>
+
+namespace boost { namespace sparse {
+
+    template <typename Graph, typename ColorMap, typename DegreeMap>
+    class ordering_default_queue_t
+    {
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        const Graph& _g;
+        Vertex _s;
+        ColorMap _c;
+        DegreeMap _d;
+
+    public:
+        typedef std::deque<Vertex> result_type;
+        typedef result_type type;
+
+        inline ordering_default_queue_t(
+            const Graph& g, Vertex s, ColorMap c, DegreeMap d
+        ) : _g(g), _s(s), _c(c), _d(d)
+        {
+        }
+
+        result_type operator()() const
+        {
+            result_type result;
+
+            if (boost::graph::has_no_vertices(this->_g)) return result;
+
+            if (this->_s == graph_traits<Graph>::null_vertex())
+            {
+                typedef color_traits<
+                    typename property_traits<ColorMap>::value_type
+                > Color;
+
+                BGL_FORALL_VERTICES_T(v, this->_g, Graph)
+                {
+                    put(this->_c, v, Color::white());
+                }
+
+                // Find one vertex from each connected component
+                BGL_FORALL_VERTICES_T(v, this->_g, Graph)
+                {
+                    if (get(this->_c, v) == Color::white())
+                    {
+                        depth_first_visit(
+                            this->_g, v, dfs_visitor<>(), this->_c
+                        );
+                        result.push_back(v);
+                    }
+                }
+
+                // Find starting nodes for all vertices
+                // TBD: How to do this with a directed graph?
+                for (
+                    typename result_type::size_type i = 0;
+                    i < result.size();
+                    ++i
+                )
+                {
+                    result[i] = find_starting_node(
+                        this->_g, result[i], this->_c, this->_d
+                    );
+                }
+            }
+            else
+            {
+                result.push_back(this->_s);
+            }
+
+            return result;
+        }
+    };
+
+    template <typename Graph, typename ColorMap, typename DegreeMap>
+    ordering_default_queue_t<Graph,ColorMap,DegreeMap>
+    make_ordering_default_queue_t(
+        const Graph& g, typename graph_traits<Graph>::vertex_descriptor s,
+        ColorMap c, DegreeMap d
+    )
+    {
+        return ordering_default_queue_t<Graph,ColorMap,DegreeMap>(g, s, c, d);
+    }
+}} // namespace boost::sparse
 
 #endif // BOOST_GRAPH_KING_HPP

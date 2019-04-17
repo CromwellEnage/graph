@@ -104,7 +104,7 @@ namespace boost { namespace graph {
         (bool), random_spanning_tree, ::boost::graph::keywords::tag,
         (required
             (graph
-              , *(boost::detail::argument_predicate<is_vertex_list_graph>)
+              , *(boost::detail::argument_predicate<is_bgl_graph>)
             )
         )
         (deduced

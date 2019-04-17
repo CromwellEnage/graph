@@ -1,4 +1,4 @@
-//=======================================================================
+//============================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //          Doug Gregor, D. Kevin McGrath
@@ -6,16 +6,16 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//=======================================================================
+//============================================================================
 
-#include <boost/config.hpp>
-#include <cstddef>
-#include <vector>
-#include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include <boost/core/lightweight_test.hpp>
+#include <boost/config.hpp>
+#include <cstddef>
+#include <vector>
 
 /*
   Sample Output
@@ -69,7 +69,7 @@ int main(int , char* [])
   property_map<Graph, vertex_index_t>::type
     index_map = get(vertex_index, G);
 
-  std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
+  BOOST_TEST_EQ(8, bandwidth(G));
 
   std::vector<Vertex> inv_perm(num_vertices(G));
   std::vector<size_type> perm(num_vertices(G));
@@ -78,54 +78,64 @@ int main(int , char* [])
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";    
-    for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
-         i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    BOOST_TEST_EQ(8, index_map[inv_perm[0]]);
+    BOOST_TEST_EQ(3, index_map[inv_perm[1]]);
+    BOOST_TEST_EQ(0, index_map[inv_perm[2]]);
+    BOOST_TEST_EQ(9, index_map[inv_perm[3]]);
+    BOOST_TEST_EQ(2, index_map[inv_perm[4]]);
+    BOOST_TEST_EQ(5, index_map[inv_perm[5]]);
+    BOOST_TEST_EQ(1, index_map[inv_perm[6]]);
+    BOOST_TEST_EQ(4, index_map[inv_perm[7]]);
+    BOOST_TEST_EQ(7, index_map[inv_perm[8]]);
+    BOOST_TEST_EQ(6, index_map[inv_perm[9]]);
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
-              << std::endl;
+
+    BOOST_TEST_EQ(4, bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0])));
   }
+
   {
     Vertex s = vertex(0, G);
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";
-    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    BOOST_TEST_EQ(9, index_map[inv_perm[0]]);
+    BOOST_TEST_EQ(1, index_map[inv_perm[1]]);
+    BOOST_TEST_EQ(4, index_map[inv_perm[2]]);
+    BOOST_TEST_EQ(6, index_map[inv_perm[3]]);
+    BOOST_TEST_EQ(7, index_map[inv_perm[4]]);
+    BOOST_TEST_EQ(2, index_map[inv_perm[5]]);
+    BOOST_TEST_EQ(8, index_map[inv_perm[6]]);
+    BOOST_TEST_EQ(5, index_map[inv_perm[7]]);
+    BOOST_TEST_EQ(3, index_map[inv_perm[8]]);
+    BOOST_TEST_EQ(0, index_map[inv_perm[9]]);
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
-              << std::endl;
+
+    BOOST_TEST_EQ(4, bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0])));
   }
 
   {
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, inv_perm.rbegin());
-    
-    cout << "Reverse Cuthill-McKee ordering:" << endl;
-    cout << "  ";
-    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    BOOST_TEST_EQ(0, index_map[inv_perm[0]]);
+    BOOST_TEST_EQ(8, index_map[inv_perm[1]]);
+    BOOST_TEST_EQ(5, index_map[inv_perm[2]]);
+    BOOST_TEST_EQ(7, index_map[inv_perm[3]]);
+    BOOST_TEST_EQ(3, index_map[inv_perm[4]]);
+    BOOST_TEST_EQ(6, index_map[inv_perm[5]]);
+    BOOST_TEST_EQ(4, index_map[inv_perm[6]]);
+    BOOST_TEST_EQ(2, index_map[inv_perm[7]]);
+    BOOST_TEST_EQ(1, index_map[inv_perm[8]]);
+    BOOST_TEST_EQ(9, index_map[inv_perm[9]]);
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
-              << std::endl;
+
+    BOOST_TEST_EQ(4, bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0])));
   }
-  return 0;
+
+  return boost::report_errors();
 }

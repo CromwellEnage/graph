@@ -411,6 +411,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       BOOST_PARAMETER_NAME(path_count_map)
       BOOST_PARAMETER_NAME(partition_map)
       BOOST_PARAMETER_NAME(component_map)
+      BOOST_PARAMETER_NAME(degree_map)
       BOOST_PARAMETER_NAME(size)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
