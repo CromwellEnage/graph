@@ -130,11 +130,7 @@ int main(int, char*[]) {
 
   boost::gursoy_atun_layout(
     graph, space, position,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_weight_map = get(boost::edge_weight, graph)
-#else
-    weight_map(get(boost::edge_weight, graph))
-#endif
   );
 
 #if 0

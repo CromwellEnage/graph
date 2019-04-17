@@ -270,13 +270,11 @@ namespace boost { namespace detail {
   };
 }} // end namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
-#endif
 
-namespace boost {
+namespace boost { namespace graph {
 
 template<typename Topology, typename Graph, typename PositionMap, 
          typename AttractiveForce, typename RepulsiveForce,
@@ -290,15 +288,13 @@ fruchterman_reingold_force_directed_layout
   RepulsiveForce  repulsive_force,
   ForcePairs      force_pairs,
   Cooling         cool,
-  DisplacementMap displacement
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  , typename boost::disable_if<
+  DisplacementMap displacement,
+  typename boost::disable_if<
     parameter::are_tagged_arguments<
       AttractiveForce, RepulsiveForce, ForcePairs, Cooling, DisplacementMap
     >,
     mpl::true_
   >::type = mpl::true_()
-#endif
   )
 {
   typedef typename graph_traits<Graph>::vertex_iterator   vertex_iterator;
@@ -310,8 +306,8 @@ fruchterman_reingold_force_directed_layout
   // assume positions are initialized randomly
   double k = pow(volume / num_vertices(g), 1. / (double)(Topology::point_difference_type::dimensions));
 
-  detail::fr_apply_force<Topology, PositionMap, DisplacementMap,
-                         RepulsiveForce, Graph>
+  boost::detail::fr_apply_force<Topology, PositionMap, DisplacementMap,
+                                RepulsiveForce, Graph>
     apply_force(topology, position, displacement, repulsive_force, k, g);
 
   do {
@@ -354,7 +350,7 @@ fruchterman_reingold_force_directed_layout
     }
   } while (true);
 }
-} // end namespace boost
+}} // end namespace boost::graph
 
 namespace boost { namespace detail {
 
@@ -414,10 +410,9 @@ namespace boost { namespace detail {
   };
 }} // end namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/is_argument_pack.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
 template <
     typename Topology, typename Graph, typename PositionMap, typename Args
@@ -469,7 +464,22 @@ fruchterman_reingold_force_directed_layout(
         disp_map
     );
 }
-} // end namespace boost
+
+template <typename Topology, typename Graph, typename PositionMap>
+inline void
+fruchterman_reingold_force_directed_layout(
+    const Graph&    g,
+    PositionMap     position,
+    const Topology& topology
+)
+{
+    fruchterman_reingold_force_directed_layout(
+        g, position, topology,
+        boost::graph::keywords::_attractive_force =
+        square_distance_attractive_force()
+    );
+}
+}} // end namespace boost::graph
 
 #include <boost/parameter/compose.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -498,18 +508,19 @@ fruchterman_reingold_force_directed_layout(
         ); \
     }
 
-namespace boost {
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
     1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
     fruchterman_reingold_force_directed_layout
 )
-} // end namespace boost
+}} // end namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
+
+using ::boost::graph::fruchterman_reingold_force_directed_layout;
 
 template<typename Topology, typename Graph, typename PositionMap, typename Param,
          typename Tag, typename Rest>
@@ -534,25 +545,6 @@ fruchterman_reingold_force_directed_layout
                   linear_cooling<double>(100)),
      get_param(params, vertex_displacement_t()),
      params);
-}
-
-template <typename Topology, typename Graph, typename PositionMap>
-inline void
-fruchterman_reingold_force_directed_layout(
-    const Graph&    g,
-    PositionMap     position,
-    const Topology& topology
-)
-{
-    fruchterman_reingold_force_directed_layout(
-        g, position, topology,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        boost::graph::keywords::_attractive_force =
-        square_distance_attractive_force()
-#else
-        attractive_force(square_distance_attractive_force())
-#endif
-    );
 }
 } // end namespace boost
 

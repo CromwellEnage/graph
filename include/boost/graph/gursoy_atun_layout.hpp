@@ -97,21 +97,13 @@ struct gursoy_shortest
     boost::dijkstra_shortest_paths(
       g,
       s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_weight_map = weight,
-      boost::graph::keywords::_visitor =
-#else
-      boost::weight_map(weight).visitor(
-#endif
-        boost::make_dijkstra_visitor(
-          std::make_pair(
-            boost::record_distances(node_distance, boost::on_edge_relaxed()),
-            update_position
-          )
+      boost::graph::keywords::_visitor = boost::make_dijkstra_visitor(
+        std::make_pair(
+          boost::record_distances(node_distance, boost::on_edge_relaxed()),
+          update_position
         )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       )
-#endif
     );
   }
 };
@@ -292,6 +284,9 @@ void gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
                      learning_constant_initial, learning_constant_final,
                      vertex_index_map, weight);
 }
+} // namespace boost
+
+namespace boost { namespace graph {
 
 template <typename VertexListAndIncidenceGraph,  typename Topology,
           typename PositionMap, typename VertexIndexMap>
@@ -339,7 +334,7 @@ void gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
 #endif
 
   gursoy_atun_layout(graph, space, position, nsteps, 
-                     sqrt((double)num_vertices(graph)));
+                     sqrt(static_cast<double>(num_vertices(graph))));
 }
 
 template <typename VertexListAndIncidenceGraph, typename Topology,
@@ -350,6 +345,9 @@ void gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
 {
   gursoy_atun_layout(graph, space, position, num_vertices(graph));
 }
+}} // end namespace boost::graph
+
+namespace boost {
 
 template<typename VertexListAndIncidenceGraph, typename Topology,
          typename PositionMap, typename P, typename T, typename R>
@@ -383,14 +381,13 @@ gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
 }
 } // namespace boost
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
 template <
     typename Graph, typename Topology, typename PositionMap, typename Args
@@ -442,15 +439,15 @@ gursoy_atun_layout(
         learn_range.second,
         args[
             boost::graph::keywords::_vertex_index_map |
-            detail::vertex_or_dummy_property_map(graph, vertex_index)
+            boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
         ],
         args[
             boost::graph::keywords::_weight_map |
-            detail::edge_or_dummy_property_map(graph, edge_weight)
+            boost::detail::edge_or_dummy_property_map(graph, edge_weight)
         ]
     );
 }
-} // end namespace boost
+}} // end namespace boost::graph
 
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/compose.hpp>
@@ -480,13 +477,18 @@ gursoy_atun_layout(
         ); \
     }
 
-namespace boost {
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
     1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, gursoy_atun_layout
 )
-} // end namespace boost
+}} // end namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+using ::boost::graph::gursoy_atun_layout;
+} // end namespace boost
+
 #endif  // BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP

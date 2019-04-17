@@ -126,8 +126,15 @@ int main(int , char* [])
     BOOST_TEST_EQ(7, index_map[inv_perm[3]]);
     BOOST_TEST_EQ(3, index_map[inv_perm[4]]);
     BOOST_TEST_EQ(6, index_map[inv_perm[5]]);
-    BOOST_TEST_EQ(2, index_map[inv_perm[6]]);
-    BOOST_TEST_EQ(4, index_map[inv_perm[7]]);
+
+    if (4 == index_map[inv_perm[6]])
+      BOOST_TEST_EQ(2, index_map[inv_perm[7]]);
+    else
+    {
+      BOOST_TEST_EQ(2, index_map[inv_perm[6]]);
+      BOOST_TEST_EQ(4, index_map[inv_perm[7]]);
+    }
+
     BOOST_TEST_EQ(1, index_map[inv_perm[8]]);
     BOOST_TEST_EQ(9, index_map[inv_perm[9]]);
 

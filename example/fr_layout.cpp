@@ -125,11 +125,7 @@ int main(int argc, char* argv[])
   random_graph_layout(g, position, topo);
   fruchterman_reingold_force_directed_layout(
     g, position, topo,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::graph::keywords::_cooling = progress_cooling(iterations)
-#else
-    cooling(progress_cooling(iterations))
-#endif
   );
 
   graph_traits<Graph>::vertex_iterator vi, vi_end;
