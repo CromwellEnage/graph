@@ -96,15 +96,11 @@ int main(int argc, char* argv[])
     boost::metric_tsp_approx(
         g, vertex(0, g), std::back_inserter(c)
     );
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else
     boost::metric_tsp_approx_tour(
         g,
         boost::graph::keywords::_result = std::back_inserter(c),
         boost::graph::keywords::_root_vertex = vertex(0, g)
-    );
-#else
-    boost::metric_tsp_approx_tour_from_vertex(
-        g, vertex(0, g), std::back_inserter(c)
     );
 #endif
 

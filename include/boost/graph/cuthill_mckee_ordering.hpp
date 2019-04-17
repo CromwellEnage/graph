@@ -333,7 +333,7 @@ namespace boost { namespace graph {
         > vertex_queue;
         boost::sparse::initialize_ordering_default_queue_and_maps(
             graph, root_vertex, vertex_queue, color_map, degree_map
-        )();
+        );
         return cuthill_mckee_ordering(
             graph, vertex_queue, result, color_map, degree_map
         );

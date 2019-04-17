@@ -10,6 +10,34 @@
 #ifndef BOOST_GRAPH_MCGREGOR_COMMON_SUBGRAPHS_HPP
 #define BOOST_GRAPH_MCGREGOR_COMMON_SUBGRAPHS_HPP
 
+#include <boost/property_map/shared_array_property_map.hpp>
+#include <boost/graph/graph_traits.hpp>
+
+namespace boost { namespace detail {
+
+    // Traits associated with common subgraphs, used mainly
+    // to keep a consistent type for the correspondence maps.
+    template <
+        typename GraphFirst, typename GraphSecond,
+        typename VertexIndexMapFirst, typename VertexIndexMapSecond
+    >
+    struct mcgregor_common_subgraph_traits
+    {
+        typedef typename graph_traits<
+            GraphFirst
+        >::vertex_descriptor vertex_first_type;
+        typedef typename graph_traits<
+            GraphSecond
+        >::vertex_descriptor vertex_second_type;
+        typedef shared_array_property_map<
+            vertex_second_type, VertexIndexMapFirst
+        > correspondence_map_first_to_second_type;
+        typedef shared_array_property_map<
+            vertex_first_type, VertexIndexMapSecond
+        > correspondence_map_second_to_first_type;
+    };  
+}} // namespace boost::detail
+
 #include <algorithm>
 #include <vector>
 #include <stack>
@@ -20,89 +48,16 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/property_map/shared_array_property_map.hpp>
 
-namespace boost {
+#include <boost/graph/detail/functional_equivalent.hpp>
 
-  namespace detail {
-
-    // Traits associated with common subgraphs, used mainly to keep a
-    // consistent type for the correspondence maps.
-    template <typename GraphFirst,
-              typename GraphSecond,
-              typename VertexIndexMapFirst,
-              typename VertexIndexMapSecond>
-    struct mcgregor_common_subgraph_traits {
-      typedef typename graph_traits<GraphFirst>::vertex_descriptor vertex_first_type;
-      typedef typename graph_traits<GraphSecond>::vertex_descriptor vertex_second_type;
-      
-      typedef shared_array_property_map<vertex_second_type, VertexIndexMapFirst>
-        correspondence_map_first_to_second_type;
-  
-      typedef shared_array_property_map<vertex_first_type, VertexIndexMapSecond>
-        correspondence_map_second_to_first_type;
-    };  
-
-  } // namespace detail
-
-  // ==========================================================================
-
-  // Binary function object that returns true if the values for item1
-  // in property_map1 and item2 in property_map2 are equivalent.
-  template <typename PropertyMapFirst,
-            typename PropertyMapSecond>
-  struct property_map_equivalent {
-
-    property_map_equivalent(const PropertyMapFirst property_map1,
-                            const PropertyMapSecond property_map2) :
-      m_property_map1(property_map1),
-      m_property_map2(property_map2) { }
-
-    template <typename ItemFirst,
-              typename ItemSecond>
-    bool operator()(const ItemFirst item1, const ItemSecond item2) const {
-      return (get(m_property_map1, item1) == get(m_property_map2, item2));
-    }
-
-  private:
-    const PropertyMapFirst m_property_map1;
-    const PropertyMapSecond m_property_map2;
-  };
-
-  // Returns a property_map_equivalent object that compares the values
-  // of property_map1 and property_map2.
-  template <typename PropertyMapFirst,
-            typename PropertyMapSecond>
-  property_map_equivalent<PropertyMapFirst,
-                          PropertyMapSecond>
-  make_property_map_equivalent
-  (const PropertyMapFirst property_map1,
-   const PropertyMapSecond property_map2) {
-
-    return (property_map_equivalent<PropertyMapFirst, PropertyMapSecond>
-            (property_map1, property_map2));
-  }
-
-  // Binary function object that always returns true.  Used when
-  // vertices or edges are always equivalent (i.e. have no labels).
-  struct always_equivalent {
-
-    template <typename ItemFirst,
-              typename ItemSecond>
-    bool operator()(const ItemFirst&, const ItemSecond&) const {
-      return (true);
-    }
-  };
-
-  // ==========================================================================
-
-  namespace detail {
+namespace boost { namespace detail {
 
     // Return true if new_vertex1 and new_vertex2 can extend the
     // subgraph represented by correspondence_map_1_to_2 and
     // correspondence_map_2_to_1.  The vertices_equivalent and
-    // edges_equivalent predicates are used to test vertex and edge
-    // equivalency between the two graphs.
+    // edges_equivalent predicates are used to test vertex and
+    // edge equivalency between the two graphs.
     template <typename GraphFirst,
               typename GraphSecond,
               typename CorrespondenceMapFirstToSecond,
@@ -432,10 +387,11 @@ namespace boost {
          only_connected_subgraphs,
          subgraph_callback);
     }
-
-  } // namespace detail
+}} // namespace boost::detail
 
   // ==========================================================================
+
+namespace boost { namespace graph {
 
   // Enumerates all common subgraphs present in graph1 and graph2.
   // Continues until the search space has been fully explored or false
@@ -457,23 +413,21 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-
-    detail::mcgregor_common_subgraphs_internal_init
+    boost::detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        vindex_map1, vindex_map2,
        edges_equivalent, vertices_equivalent,
        only_connected_subgraphs,
        user_callback);
   }
-} // namespace boost
+}} // namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
   // Named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,
@@ -492,15 +446,15 @@ namespace boost {
     >::type = mpl::true_()
   )
   {
-    detail::mcgregor_common_subgraphs_internal_init(
+    boost::detail::mcgregor_common_subgraphs_internal_init(
       graph1, graph2,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -513,10 +467,6 @@ namespace boost {
       only_connected_subgraphs, user_callback
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
 
   // Variant of mcgregor_common_subgraphs with all default parameters
   template <typename GraphFirst,
@@ -529,44 +479,17 @@ namespace boost {
    SubGraphCallback user_callback)
   {
 
-    detail::mcgregor_common_subgraphs_internal_init
+    boost::detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        get(vertex_index, graph1), get(vertex_index, graph2),
        always_equivalent(), always_equivalent(),
        only_connected_subgraphs, user_callback);
   }
-
-  // Old-style named parameter variant of mcgregor_common_subgraphs
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  void mcgregor_common_subgraphs
-  (const GraphFirst& graph1,
-   const GraphSecond& graph2,
-   bool only_connected_subgraphs,
-   SubGraphCallback user_callback,
-   const bgl_named_params<Param, Tag, Rest>& params)
-  {
-      
-    detail::mcgregor_common_subgraphs_internal_init
-      (graph1, graph2,
-       choose_const_pmap(get_param(params, vertex_index1),
-                         graph1, vertex_index),
-       choose_const_pmap(get_param(params, vertex_index2),
-                         graph2, vertex_index),
-       choose_param(get_param(params, edges_equivalent_t()),
-                    always_equivalent()),
-       choose_param(get_param(params, vertices_equivalent_t()),
-                    always_equivalent()),
-       only_connected_subgraphs, user_callback);
-  }
+}} // namespace boost::graph
 
   // ==========================================================================
 
-  namespace detail {
+namespace boost { namespace detail {
 
     // Binary function object that intercepts subgraphs from
     // mcgregor_common_subgraphs_internal and maintains a cache of
@@ -668,8 +591,9 @@ namespace boost {
       shared_ptr<SubGraphList> m_subgraphs;
       SubGraphCallback m_user_callback;
     };
-    
-  } // namespace detail
+}} // namespace boost::detail
+
+namespace boost { namespace graph {
 
   // Enumerates all unique common subgraphs between graph1 and graph2.
   // The user callback is invoked for each unique subgraph as they are
@@ -691,23 +615,19 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-    detail::unique_subgraph_interceptor<GraphFirst, GraphSecond,
+    boost::detail::unique_subgraph_interceptor<GraphFirst, GraphSecond,
       VertexIndexMapFirst, VertexIndexMapSecond,
       SubGraphCallback> unique_callback
       (graph1, graph2,
        vindex_map1, vindex_map2,
        user_callback);
       
-    detail::mcgregor_common_subgraphs_internal_init
+    boost::detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        vindex_map1, vindex_map2,
        edges_equivalent, vertices_equivalent,
        only_connected_subgraphs, unique_callback);
   }
-} // namespace boost
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
 
   // Named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,
@@ -730,11 +650,11 @@ namespace boost {
       graph1, graph2,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -747,10 +667,6 @@ namespace boost {
       only_connected_subgraphs, user_callback
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
 
   // Variant of mcgregor_common_subgraphs_unique with all default
   // parameters.
@@ -769,37 +685,11 @@ namespace boost {
        always_equivalent(), always_equivalent(),
        only_connected_subgraphs, user_callback);
   }
-
-  // Named parameter variant of mcgregor_common_subgraphs_unique
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  void mcgregor_common_subgraphs_unique
-  (const GraphFirst& graph1,
-   const GraphSecond& graph2,
-   bool only_connected_subgraphs,
-   SubGraphCallback user_callback,
-   const bgl_named_params<Param, Tag, Rest>& params)
-  {
-    mcgregor_common_subgraphs_unique
-      (graph1, graph2,
-       choose_const_pmap(get_param(params, vertex_index1),
-                         graph1, vertex_index),
-       choose_const_pmap(get_param(params, vertex_index2),
-                         graph2, vertex_index),
-       choose_param(get_param(params, edges_equivalent_t()),
-                    always_equivalent()),
-       choose_param(get_param(params, vertices_equivalent_t()),
-                    always_equivalent()),
-       only_connected_subgraphs, user_callback);
-  }
+}} // namespace boost::graph
 
   // ==========================================================================
 
-  namespace detail {
+namespace boost { namespace detail {
 
     // Binary function object that intercepts subgraphs from
     // mcgregor_common_subgraphs_internal and maintains a cache of the
@@ -900,8 +790,9 @@ namespace boost {
       shared_ptr<VertexSizeFirst> m_largest_size_so_far;
       SubGraphCallback m_user_callback;
     };
-    
-  } // namespace detail
+}} // namespace boost::detail
+
+namespace boost { namespace graph {
 
   // Enumerates the largest common subgraphs found between graph1
   // and graph2.  Note that the ENTIRE search space is explored before
@@ -923,12 +814,12 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-    detail::maximum_subgraph_interceptor<GraphFirst, GraphSecond,
+    boost::detail::maximum_subgraph_interceptor<GraphFirst, GraphSecond,
       VertexIndexMapFirst, VertexIndexMapSecond, SubGraphCallback>
       max_interceptor
       (graph1, graph2, vindex_map1, vindex_map2, user_callback);
       
-    detail::mcgregor_common_subgraphs_internal_init
+    boost::detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        vindex_map1, vindex_map2,
        edges_equivalent, vertices_equivalent,
@@ -937,10 +828,6 @@ namespace boost {
     // Only output the largest subgraphs
     max_interceptor.output_subgraphs();
   }
-} // namespace boost
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
 
   // Named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,
@@ -963,11 +850,11 @@ namespace boost {
       graph1, graph2,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -980,10 +867,6 @@ namespace boost {
       only_connected_subgraphs, user_callback
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
 
   // Variant of mcgregor_common_subgraphs_maximum with all default
   // parameters.
@@ -1002,37 +885,11 @@ namespace boost {
        always_equivalent(), always_equivalent(),
        only_connected_subgraphs, user_callback);
   }
-
-  // Named parameter variant of mcgregor_common_subgraphs_maximum
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  void mcgregor_common_subgraphs_maximum
-  (const GraphFirst& graph1,
-   const GraphSecond& graph2,
-   bool only_connected_subgraphs,
-   SubGraphCallback user_callback,
-   const bgl_named_params<Param, Tag, Rest>& params)
-  {
-    mcgregor_common_subgraphs_maximum
-      (graph1, graph2,
-       choose_const_pmap(get_param(params, vertex_index1),
-                         graph1, vertex_index),
-       choose_const_pmap(get_param(params, vertex_index2),
-                         graph2, vertex_index),
-       choose_param(get_param(params, edges_equivalent_t()),
-                    always_equivalent()),
-       choose_param(get_param(params, vertices_equivalent_t()),
-                    always_equivalent()),
-       only_connected_subgraphs, user_callback);
-  }
+}} // namespace boost::graph
 
   // ==========================================================================
 
-  namespace detail {
+namespace boost { namespace detail {
 
     // Binary function object that intercepts subgraphs from
     // mcgregor_common_subgraphs_internal and maintains a cache of the
@@ -1150,8 +1007,9 @@ namespace boost {
       shared_ptr<VertexSizeFirst> m_largest_size_so_far;
       SubGraphCallback m_user_callback;
     };
-    
-  } // namespace detail
+}} // namespace boost::detail
+
+namespace boost { namespace graph {
 
   // Enumerates the largest, unique common subgraphs found between
   // graph1 and graph2.  Note that the ENTIRE search space is explored
@@ -1173,12 +1031,12 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-    detail::unique_maximum_subgraph_interceptor<GraphFirst, GraphSecond,
+    boost::detail::unique_maximum_subgraph_interceptor<GraphFirst, GraphSecond,
       VertexIndexMapFirst, VertexIndexMapSecond, SubGraphCallback>
       unique_max_interceptor
       (graph1, graph2, vindex_map1, vindex_map2, user_callback);
       
-    detail::mcgregor_common_subgraphs_internal_init
+    boost::detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        vindex_map1, vindex_map2,
        edges_equivalent, vertices_equivalent,
@@ -1187,10 +1045,6 @@ namespace boost {
     // Only output the largest, unique subgraphs
     unique_max_interceptor.output_subgraphs();
   }
-} // namespace boost
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
 
   // Named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,
@@ -1213,11 +1067,11 @@ namespace boost {
       graph1, graph2,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -1230,10 +1084,6 @@ namespace boost {
       only_connected_subgraphs, user_callback
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
 
   // Variant of mcgregor_common_subgraphs_maximum_unique with all default parameters
   template <typename GraphFirst,
@@ -1252,36 +1102,11 @@ namespace boost {
        always_equivalent(), always_equivalent(),
        only_connected_subgraphs, user_callback);
   }
-
-  // Named parameter variant of
-  // mcgregor_common_subgraphs_maximum_unique
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  void mcgregor_common_subgraphs_maximum_unique
-  (const GraphFirst& graph1,
-   const GraphSecond& graph2,
-   bool only_connected_subgraphs,
-   SubGraphCallback user_callback,
-   const bgl_named_params<Param, Tag, Rest>& params)
-  {
-    mcgregor_common_subgraphs_maximum_unique
-      (graph1, graph2,
-       choose_const_pmap(get_param(params, vertex_index1),
-                         graph1, vertex_index),
-       choose_const_pmap(get_param(params, vertex_index2),
-                         graph2, vertex_index),
-       choose_param(get_param(params, edges_equivalent_t()),
-                    always_equivalent()),
-       choose_param(get_param(params, vertices_equivalent_t()),
-                    always_equivalent()),
-       only_connected_subgraphs, user_callback);
-  }
+}} // namespace boost::graph
 
   // ==========================================================================
+
+namespace boost {
 
   // Fills a membership map (vertex -> bool) using the information
   // present in correspondence_map_1_to_2. Every vertex in a
@@ -1331,12 +1156,10 @@ namespace boost {
   }
 } // namespace boost
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
@@ -1362,7 +1185,9 @@ namespace boost {
         ); \
     }
 
-namespace boost {
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
     1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, mcgregor_common_subgraphs
@@ -1377,8 +1202,126 @@ BOOST_PP_REPEAT_FROM_TO(
     1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
     mcgregor_common_subgraphs_maximum_unique
 )
-} // namespace boost
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+    using ::boost::graph::mcgregor_common_subgraphs;
+    using ::boost::graph::mcgregor_common_subgraphs_unique;
+    using ::boost::graph::mcgregor_common_subgraphs_maximum;
+    using ::boost::graph::mcgregor_common_subgraphs_maximum_unique;
+
+  // Old-style named parameter variant of mcgregor_common_subgraphs
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  void mcgregor_common_subgraphs
+  (const GraphFirst& graph1,
+   const GraphSecond& graph2,
+   bool only_connected_subgraphs,
+   SubGraphCallback user_callback,
+   const bgl_named_params<Param, Tag, Rest>& params)
+  {
+      
+    detail::mcgregor_common_subgraphs_internal_init
+      (graph1, graph2,
+       choose_const_pmap(get_param(params, vertex_index1),
+                         graph1, vertex_index),
+       choose_const_pmap(get_param(params, vertex_index2),
+                         graph2, vertex_index),
+       choose_param(get_param(params, edges_equivalent_t()),
+                    always_equivalent()),
+       choose_param(get_param(params, vertices_equivalent_t()),
+                    always_equivalent()),
+       only_connected_subgraphs, user_callback);
+  }
+
+  // Named parameter variant of mcgregor_common_subgraphs_unique
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  void mcgregor_common_subgraphs_unique
+  (const GraphFirst& graph1,
+   const GraphSecond& graph2,
+   bool only_connected_subgraphs,
+   SubGraphCallback user_callback,
+   const bgl_named_params<Param, Tag, Rest>& params)
+  {
+    mcgregor_common_subgraphs_unique
+      (graph1, graph2,
+       choose_const_pmap(get_param(params, vertex_index1),
+                         graph1, vertex_index),
+       choose_const_pmap(get_param(params, vertex_index2),
+                         graph2, vertex_index),
+       choose_param(get_param(params, edges_equivalent_t()),
+                    always_equivalent()),
+       choose_param(get_param(params, vertices_equivalent_t()),
+                    always_equivalent()),
+       only_connected_subgraphs, user_callback);
+  }
+
+  // Named parameter variant of mcgregor_common_subgraphs_maximum
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  void mcgregor_common_subgraphs_maximum
+  (const GraphFirst& graph1,
+   const GraphSecond& graph2,
+   bool only_connected_subgraphs,
+   SubGraphCallback user_callback,
+   const bgl_named_params<Param, Tag, Rest>& params)
+  {
+    mcgregor_common_subgraphs_maximum
+      (graph1, graph2,
+       choose_const_pmap(get_param(params, vertex_index1),
+                         graph1, vertex_index),
+       choose_const_pmap(get_param(params, vertex_index2),
+                         graph2, vertex_index),
+       choose_param(get_param(params, edges_equivalent_t()),
+                    always_equivalent()),
+       choose_param(get_param(params, vertices_equivalent_t()),
+                    always_equivalent()),
+       only_connected_subgraphs, user_callback);
+  }
+
+  // Named parameter variant of
+  // mcgregor_common_subgraphs_maximum_unique
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  void mcgregor_common_subgraphs_maximum_unique
+  (const GraphFirst& graph1,
+   const GraphSecond& graph2,
+   bool only_connected_subgraphs,
+   SubGraphCallback user_callback,
+   const bgl_named_params<Param, Tag, Rest>& params)
+  {
+    mcgregor_common_subgraphs_maximum_unique
+      (graph1, graph2,
+       choose_const_pmap(get_param(params, vertex_index1),
+                         graph1, vertex_index),
+       choose_const_pmap(get_param(params, vertex_index2),
+                         graph2, vertex_index),
+       choose_param(get_param(params, edges_equivalent_t()),
+                    always_equivalent()),
+       choose_param(get_param(params, vertices_equivalent_t()),
+                    always_equivalent()),
+       only_connected_subgraphs, user_callback);
+  }
+} // namespace boost
+
 #endif  // BOOST_GRAPH_MCGREGOR_COMMON_SUBGRAPHS_HPP

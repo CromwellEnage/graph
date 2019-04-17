@@ -80,29 +80,32 @@ int main(int argc, char* argv[])
       return-1;
     }
 
-   printf("The graph %s has %ld edges,\n", g->id, g->m / 2);
+    printf("The graph %s has %ld edges,\n", g->id, g->m / 2);
 
-   long sp_length = 0;
+    long sp_length = 0;
 
-   // Use the "z" utility field for distance.
-   typedef property_map<Graph*, z_property<long> >::type Distance;
-   Distance d = get(z_property<long>(), g);
-   // Use the "w" property for parent
-   typedef property_map<Graph*, w_property<Vertex*> >::type Parent;
-   Parent p = get(w_property<Vertex*>(), g);
-   total_length_visitor<Distance> length_vis(sp_length, d);
+    // Use the "z" utility field for distance.
+    typedef property_map<Graph*, z_property<long> >::type Distance;
+    Distance d = get(z_property<long>(), g);
+    // Use the "w" property for parent
+    typedef property_map<Graph*, w_property<Vertex*> >::type Parent;
+    Parent p = get(w_property<Vertex*>(), g);
+    total_length_visitor<Distance> length_vis(sp_length, d);
 
-   prim_minimum_spanning_tree(g, p,
-                              distance_map(get(z_property<long>(), g)).
-                              weight_map(get(edge_length_t(), g)). 
-                              // Use the "y" utility field for color
-                              color_map(get(y_property<long>(), g)).
-                              visitor(length_vis));
+    prim_minimum_spanning_tree(
+      g, p,
+      boost::graph::keywords::_distance_map = get(z_property<long>(), g),
+      boost::graph::keywords::_weight_map = get(edge_length_t(), g),
+      // Use the "y" utility field for color
+      boost::graph::keywords::_color_map = get(y_property<long>(), g),
+      boost::graph::keywords::_visitor = length_vis
+    );
 
-   printf("  and its minimum spanning tree has length %ld.\n", sp_length);
+    printf("  and its minimum spanning tree has length %ld.\n", sp_length);
 
-   gb_recycle(g);
-   s++;
- }
+    gb_recycle(g);
+    ++s;
+  }
+
   return 0;
 }

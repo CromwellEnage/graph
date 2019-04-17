@@ -122,8 +122,8 @@ namespace boost { namespace detail {
 #include <boost/graph/lookup_edge.hpp>
 #include <boost/throw_exception.hpp>
 
-namespace boost
-{
+namespace boost {
+
     // Define a concept for the concept-checking library.
     template <typename Visitor, typename Graph>
     struct TSPVertexVisitorConcept
@@ -244,8 +244,6 @@ namespace boost
 } // end namespace boost
 
 #include <boost/graph/detail/dummy_output_iterator.hpp>
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
@@ -253,15 +251,10 @@ namespace boost
 #else
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
 #include <boost/parameter/binding.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
 #endif
 
-namespace boost {
+namespace boost { namespace graph {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     BOOST_PARAMETER_FUNCTION(
@@ -282,41 +275,41 @@ namespace boost {
         >
       ), metric_tsp_approx, ::boost::graph::keywords::tag,
       (required
-        (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+        (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
       )
       (deduced
         (optional
           (result
-            ,*(detail::argument_predicate<detail::is_iterator>)
-            ,graph_detail::dummy_output_iterator()
+            ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+            ,boost::graph_detail::dummy_output_iterator()
           )
           (visitor
-            ,*(detail::tsp_tour_visitor_predicate)
+            ,*(boost::detail::tsp_tour_visitor_predicate)
             ,make_tsp_tour_visitor(result)
           )
           (root_vertex
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_of_graph
               >
             )
-            ,detail::get_default_starting_vertex(graph)
+            ,boost::detail::get_default_starting_vertex(graph)
           )
           (weight_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_edge_property_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_edge_property_map_of_graph
               >
             )
-            ,detail::edge_or_dummy_property_map(graph, edge_weight)
+            ,boost::detail::edge_or_dummy_property_map(graph, edge_weight)
           )
           (vertex_index_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_to_integer_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_to_integer_map_of_graph
               >
             )
-            ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+            ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
           )
         )
       )
@@ -333,14 +326,12 @@ namespace boost {
         typename graph_traits<VertexListGraph>::vertex_descriptor root_vertex,
         WeightMap weight_map,
         VertexIndexMap vertex_index_map,
-        TSPVertexVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        TSPVertexVisitor vis,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<
                 WeightMap, VertexIndexMap, TSPVertexVisitor
             >, mpl::true_
         >::type = mpl::true_()
-#endif
     )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
     {
@@ -397,15 +388,9 @@ namespace boost {
         prim_minimum_spanning_tree(
             graph,
             pred_pmap,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
             boost::graph::keywords::_root_vertex = root_vertex,
             boost::graph::keywords::_vertex_index_map = vertex_index_map,
             boost::graph::keywords::_weight_map = weight_map
-#else
-            boost::root_vertex(root_vertex)
-            .vertex_index_map(vertex_index_map)
-            .weight_map(weight_map)
-#endif
         );
 
         // Build a MST using the predecessor map from prim mst
@@ -456,20 +441,24 @@ namespace boost {
         return true;
 #endif
     }
+}} // namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+namespace boost { namespace graph {
+
     BOOST_PARAMETER_FUNCTION(
       (bool), metric_tsp_approx_from_vertex, ::boost::graph::keywords::tag,
       (required
-        (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+        (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
       )
       (deduced
         (required
-          (visitor, *(detail::tsp_tour_visitor_predicate))
+          (visitor, *(boost::detail::tsp_tour_visitor_predicate))
           (root_vertex
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_of_graph
               >
             )
           )
@@ -477,19 +466,19 @@ namespace boost {
         (optional
           (weight_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_edge_property_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_edge_property_map_of_graph
               >
             )
-            ,detail::edge_or_dummy_property_map(graph, edge_weight)
+            ,boost::detail::edge_or_dummy_property_map(graph, edge_weight)
           )
           (vertex_index_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_to_integer_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_to_integer_map_of_graph
               >
             )
-            ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+            ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
           )
         )
       )
@@ -504,15 +493,17 @@ namespace boost {
       (bool),
       metric_tsp_approx_tour_from_vertex, ::boost::graph::keywords::tag,
       (required
-        (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+        (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
       )
       (deduced
         (required
-          (result, *(detail::argument_predicate<detail::is_iterator>))
+          (result
+            ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+          )
           (root_vertex
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_of_graph
               >
             )
           )
@@ -520,19 +511,19 @@ namespace boost {
         (optional
           (weight_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_edge_property_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_edge_property_map_of_graph
               >
             )
-            ,detail::edge_or_dummy_property_map(graph, edge_weight)
+            ,boost::detail::edge_or_dummy_property_map(graph, edge_weight)
           )
           (vertex_index_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_to_integer_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_to_integer_map_of_graph
               >
             )
-            ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+            ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
           )
         )
       )
@@ -546,28 +537,30 @@ namespace boost {
     BOOST_PARAMETER_FUNCTION(
       (bool), metric_tsp_approx_tour, ::boost::graph::keywords::tag,
       (required
-        (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+        (graph, *(boost::detail::argument_predicate<is_vertex_list_graph>))
       )
       (deduced
         (required
-          (result, *(detail::argument_predicate<detail::is_iterator>))
+          (result
+            ,*(boost::detail::argument_predicate<boost::detail::is_iterator>)
+          )
         )
         (optional
           (weight_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_edge_property_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_edge_property_map_of_graph
               >
             )
-            ,detail::edge_or_dummy_property_map(graph, edge_weight)
+            ,boost::detail::edge_or_dummy_property_map(graph, edge_weight)
           )
           (vertex_index_map
             ,*(
-              detail::argument_with_graph_predicate<
-                detail::is_vertex_to_integer_map_of_graph
+              boost::detail::argument_with_graph_predicate<
+                boost::detail::is_vertex_to_integer_map_of_graph
               >
             )
-            ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+            ,boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
           )
         )
       )
@@ -575,7 +568,12 @@ namespace boost {
     {
         return metric_tsp_approx(graph, result, weight_map, vertex_index_map);
     }
+}} // namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+namespace boost { namespace graph {
+
     template <
         typename VertexListGraph,
         typename WeightMap,
@@ -585,13 +583,11 @@ namespace boost {
         VertexListGraph& g,
         typename graph_traits<VertexListGraph>::vertex_descriptor start,
         WeightMap w,
-        TSPVertexVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        TSPVertexVisitor vis,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<WeightMap, TSPVertexVisitor>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, start, w, get(vertex_index, g), vis);
@@ -600,13 +596,11 @@ namespace boost {
     template <typename VertexListGraph, typename TSPVertexVisitor>
     void metric_tsp_approx(
         VertexListGraph& g,
-        TSPVertexVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        TSPVertexVisitor vis,
+        typename boost::disable_if<
             parameter::is_argument_pack<TSPVertexVisitor>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, *vertices(g).first,
@@ -621,13 +615,11 @@ namespace boost {
     void metric_tsp_approx(
         VertexListGraph& g,
         WeightMap w,
-        TSPVertexVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        TSPVertexVisitor vis,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<WeightMap, TSPVertexVisitor>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, *vertices(g).first, w,
@@ -644,14 +636,12 @@ namespace boost {
         VertexListGraph& g,
         WeightMap w,
         VertexIndexMap id,
-        TSPVertexVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        TSPVertexVisitor vis,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<
                 WeightMap, VertexIndexMap, TSPVertexVisitor
             >, mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, *vertices(g).first, w, id, vis);
@@ -660,13 +650,11 @@ namespace boost {
     template <typename VertexListGraph, typename OutputIterator>
     void metric_tsp_approx_tour(
         VertexListGraph& g,
-        OutputIterator o
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        OutputIterator o,
+        typename boost::disable_if<
             parameter::is_argument_pack<OutputIterator>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, *vertices(g).first,
@@ -682,13 +670,11 @@ namespace boost {
     void metric_tsp_approx_tour(
         VertexListGraph& g,
         WeightMap w,
-        OutputIterator o
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        OutputIterator o,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<WeightMap, OutputIterator>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, *vertices(g).first,
@@ -699,13 +685,11 @@ namespace boost {
     void metric_tsp_approx_tour_from_vertex(
         VertexListGraph& g,
         typename graph_traits<VertexListGraph>::vertex_descriptor start,
-        OutputIterator o
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        OutputIterator o,
+        typename boost::disable_if<
             parameter::is_argument_pack<OutputIterator>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, start, get(edge_weight, g),
@@ -721,20 +705,17 @@ namespace boost {
         VertexListGraph& g,
         typename graph_traits<VertexListGraph>::vertex_descriptor start,
         WeightMap w,
-        OutputIterator o
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        OutputIterator o,
+        typename boost::disable_if<
             parameter::are_tagged_arguments<WeightMap, OutputIterator>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
         metric_tsp_approx_from_vertex(g, start, w, get(vertex_index, g),
             tsp_tour_visitor<OutputIterator>(o));
     }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     template <typename VertexListGraph, typename Args>
     inline void metric_tsp_approx(
         VertexListGraph& g,
@@ -747,21 +728,21 @@ namespace boost {
     {
         metric_tsp_approx_from_vertex(
             g,
-            detail::get_default_starting_vertex(g),
+            boost::detail::get_default_starting_vertex(g),
             args[
                 boost::graph::keywords::_weight_map |
-                detail::edge_or_dummy_property_map(g, edge_weight)
+                boost::detail::edge_or_dummy_property_map(g, edge_weight)
             ],
             args[
                 boost::graph::keywords::_vertex_index_map |
-                detail::vertex_or_dummy_property_map(g, vertex_index)
+                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
             ],
             args[
                 boost::graph::keywords::_visitor |
                 make_tsp_tour_visitor(
                     args[
                         boost::graph::keywords::_result |
-                        graph_detail::dummy_output_iterator()
+                        boost::graph_detail::dummy_output_iterator()
                     ]
                 )
             ]
@@ -780,19 +761,19 @@ namespace boost {
     {
         metric_tsp_approx_from_vertex(
             g,
-            detail::get_default_starting_vertex(g),
+            boost::detail::get_default_starting_vertex(g),
             args[
                 boost::graph::keywords::_weight_map |
-                detail::edge_or_dummy_property_map(g, edge_weight)
+                boost::detail::edge_or_dummy_property_map(g, edge_weight)
             ],
             args[
                 boost::graph::keywords::_vertex_index_map |
-                detail::vertex_or_dummy_property_map(g, vertex_index)
+                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
             ],
             make_tsp_tour_visitor(
                 args[
                     boost::graph::keywords::_result |
-                    graph_detail::dummy_output_iterator()
+                    boost::graph_detail::dummy_output_iterator()
                 ]
             )
         );
@@ -814,18 +795,18 @@ namespace boost {
             start,
             args[
                 boost::graph::keywords::_weight_map |
-                detail::edge_or_dummy_property_map(g, edge_weight)
+                boost::detail::edge_or_dummy_property_map(g, edge_weight)
             ],
             args[
                 boost::graph::keywords::_vertex_index_map |
-                detail::vertex_or_dummy_property_map(g, vertex_index)
+                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
             ],
             args[
                 boost::graph::keywords::_visitor |
                 make_tsp_tour_visitor(
                     args[
                         boost::graph::keywords::_result |
-                        graph_detail::dummy_output_iterator()
+                        boost::graph_detail::dummy_output_iterator()
                     ]
                 )
             ]
@@ -848,20 +829,25 @@ namespace boost {
             start,
             args[
                 boost::graph::keywords::_weight_map |
-                detail::edge_or_dummy_property_map(g, edge_weight)
+                boost::detail::edge_or_dummy_property_map(g, edge_weight)
             ],
             args[
                 boost::graph::keywords::_vertex_index_map |
-                detail::vertex_or_dummy_property_map(g, vertex_index)
+                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
             ],
             make_tsp_tour_visitor(
                 args[
                     boost::graph::keywords::_result |
-                    graph_detail::dummy_output_iterator()
+                    boost::graph_detail::dummy_output_iterator()
                 ]
             )
         );
     }
+}} // namespace boost::graph
+
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
@@ -906,6 +892,10 @@ namespace boost {
         ); \
     }
 
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
 BOOST_PP_REPEAT_FROM_TO(
     1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, metric_tsp_approx
 )
@@ -920,11 +910,18 @@ BOOST_PP_REPEAT_FROM_TO(
     1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD_WITH_VERTEX,
     metric_tsp_approx_tour_from_vertex
 )
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD_WITH_VERTEX
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
-} //boost
 
-#endif // BOOST_GRAPH_METRIC_TSP_APPROX_HPP
+namespace boost {
+
+    using ::boost::graph::metric_tsp_approx;
+    using ::boost::graph::metric_tsp_approx_tour;
+    using ::boost::graph::metric_tsp_approx_from_vertex;
+    using ::boost::graph::metric_tsp_approx_tour_from_vertex;
+}
+
+#endif  // BOOST_GRAPH_METRIC_TSP_APPROX_HPP
