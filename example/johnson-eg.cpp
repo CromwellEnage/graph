@@ -52,10 +52,10 @@ main()
     g,
     D,
     boost::graph::keywords::_distance_map =
-      boost::make_iterator_property_map(
-        d.begin(),
-        get(boost::vertex_index, g)
-      )
+    boost::make_iterator_property_map(
+      d.begin(),
+      get(boost::vertex_index, g)
+    )
   );
 
   std::cout << "       ";

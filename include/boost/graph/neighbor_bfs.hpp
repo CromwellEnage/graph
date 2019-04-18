@@ -24,6 +24,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/core/ref.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/concept/assert.hpp>
 #include <boost/config.hpp>
 
@@ -31,7 +32,6 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/type_traits/add_pointer.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/declval.hpp>
 
 #if defined(BOOST_NO_CXX11_DECLTYPE)
@@ -762,8 +762,8 @@ namespace boost { namespace detail {
     }
 }}
 
-#include <boost/parameter/config.hpp>
 #include <boost/pending/queue.hpp>
+#include <boost/functional/value_factory.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/preprocessor.hpp>
@@ -774,39 +774,41 @@ namespace boost { namespace detail {
 #include <boost/core/enable_if.hpp>
 #endif
 
-namespace boost {
+namespace boost { namespace graph {
 
   // Boost.Parameter-enabled variants
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_BASIC_FUNCTION(
     (bool), neighbor_breadth_first_visit, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_bidirectional_graph>))
+      (graph, *(boost::detail::argument_predicate<is_bidirectional_graph>))
     )
     (deduced
       (required
         (root_vertex
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
             >
           )
         )
       )
       (optional
-        (buffer, *(detail::argument_predicate<detail::is_buffer>))
-        (visitor, *(detail::neighbor_bfs_visitor_predicate))
+        (buffer
+          ,*(boost::detail::argument_predicate<boost::detail::is_buffer>)
+        )
+        (visitor, *(boost::detail::neighbor_bfs_visitor_predicate))
         (color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
         )
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
         )
@@ -817,7 +819,7 @@ namespace boost {
   BOOST_PARAMETER_BASIC_FUNCTION(
     (
       boost::disable_if<
-        detail::is_bgl_named_param_argument<
+        boost::detail::is_bgl_named_param_argument<
           Args,
           boost::graph::keywords::tag::buffer
         >,
@@ -856,22 +858,27 @@ namespace boost {
         Args,
         boost::graph::keywords::tag::buffer,
         boost::queue<Vertex>&
-    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
-    neighbor_bfs_visitor<> default_visitor;
+    >::type Q = args[
+        boost::graph::keywords::_buffer ||
+        boost::detail::make_reference_generator(d_buf)
+    ];
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
             boost::graph::keywords::tag::visitor,
             neighbor_bfs_visitor<>
         >::type
-    >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
+    >::type vis = args[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<neighbor_bfs_visitor<> >()
+    ];
     typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = detail::make_color_map_from_arg_pack(g, args);
-    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, args);
+    boost::detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
     return true;
   }
 
@@ -879,32 +886,34 @@ namespace boost {
   BOOST_PARAMETER_BASIC_FUNCTION(
     (bool), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
     (required
-      (graph, *(detail::argument_predicate<is_bidirectional_graph>))
+      (graph, *(boost::detail::argument_predicate<is_bidirectional_graph>))
     )
     (deduced
       (required
         (root_vertex
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_of_graph
             >
           )
         )
       )
       (optional
-        (buffer, *(detail::argument_predicate<detail::is_buffer>))
-        (visitor, *(detail::neighbor_bfs_visitor_predicate))
+        (buffer
+          ,*(boost::detail::argument_predicate<boost::detail::is_buffer>)
+        )
+        (visitor, *(boost::detail::neighbor_bfs_visitor_predicate))
         (color_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_color_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_color_map_of_graph
             >
           )
         )
         (vertex_index_map
           ,*(
-            detail::argument_with_graph_predicate<
-              detail::is_vertex_to_integer_map_of_graph
+            boost::detail::argument_with_graph_predicate<
+              boost::detail::is_vertex_to_integer_map_of_graph
             >
           )
         )
@@ -915,7 +924,7 @@ namespace boost {
   BOOST_PARAMETER_BASIC_FUNCTION(
     (
       boost::disable_if<
-        detail::is_bgl_named_param_argument<
+        boost::detail::is_bgl_named_param_argument<
           Args,
           boost::graph::keywords::tag::buffer
         >,
@@ -959,22 +968,27 @@ namespace boost {
         Args,
         boost::graph::keywords::tag::buffer,
         boost::queue<Vertex>&
-    >::type Q = args[boost::graph::keywords::_buffer | d_buf];
-    neighbor_bfs_visitor<> default_visitor;
+    >::type Q = args[
+        boost::graph::keywords::_buffer ||
+        boost::detail::make_reference_generator(d_buf)
+    ];
     typename boost::remove_const<
         typename parameter::value_type<
             Args,
             boost::graph::keywords::tag::visitor,
             neighbor_bfs_visitor<>
         >::type
-    >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
+    >::type vis = args[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<neighbor_bfs_visitor<> >()
+    ];
     typedef typename boost::detail::map_maker<
         VertexListGraph,
         Args,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
     >::map_type ColorMap;
-    ColorMap c_map = detail::make_color_map_from_arg_pack(g, args);
+    ColorMap c_map = boost::detail::make_color_map_from_arg_pack(g, args);
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
@@ -985,11 +999,109 @@ namespace boost {
       put(c_map, *i, Color::white());
       vis.initialize_vertex(*i, g);
     }
-    detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
+    boost::detail::neighbor_bfs_impl(g, s, Q, vis, c_map);
     return true;
   }
-}
+}}
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+
+namespace boost { namespace graph { namespace detail {
+
+    template <typename Graph, typename Source>
+    struct neighbor_breadth_first_visit_impl
+    {
+        typedef void result_type;
+        typedef result_type type;
+
+        template <typename ArgPack>
+        void operator()(
+            const Graph& g, const Source& source, const ArgPack& arg_pack
+        )
+        {
+            typedef typename boost::graph_traits<Graph>::vertex_descriptor V;
+            boost::queue<V> Q;
+            boost::detail::neighbor_bfs_impl(
+                g,
+                source,
+                arg_pack[
+                    boost::graph::keywords::_buffer ||
+                    boost::detail::make_reference_generator(Q)
+                ],
+                arg_pack[
+                    boost::graph::keywords::_visitor ||
+                    boost::value_factory<neighbor_bfs_visitor<> >()
+                ],
+                boost::detail::make_color_map_from_arg_pack(g, arg_pack)
+            );
+        }
+    };
+
+    template <typename Graph, typename Source>
+    struct neighbor_breadth_first_search_impl
+    {
+        typedef void result_type;
+        typedef result_type type;
+
+        template <typename ArgPack>
+        void operator()(
+            const Graph& g, const Source& source, const ArgPack& arg_pack
+        )
+        {
+            typedef typename boost::graph_traits<Graph>::vertex_descriptor V;
+            boost::queue<V> Q;
+            typename boost::remove_const<
+                typename parameter::value_type<
+                    ArgPack,
+                    boost::graph::keywords::tag::visitor,
+                    neighbor_bfs_visitor<>
+                >::type
+            >::type vis = arg_pack[
+                boost::graph::keywords::_visitor ||
+                boost::value_factory<neighbor_bfs_visitor<> >()
+            ];
+            typedef typename boost::detail::map_maker<
+                Graph,
+                ArgPack,
+                boost::graph::keywords::tag::color_map,
+                boost::default_color_type
+            >::map_type ColorMap;
+            ColorMap c_map = boost::detail::make_color_map_from_arg_pack(
+                g,
+                arg_pack
+            );
+            typedef typename property_traits<ColorMap>::value_type ColorValue;
+            typedef color_traits<ColorValue> Color;
+
+            // Initialization
+            typename graph_traits<Graph>::vertex_iterator i, i_end;
+
+            for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
+            {
+                put(c_map, *i, Color::white());
+                vis.initialize_vertex(*i, g);
+            }
+
+            boost::detail::neighbor_bfs_impl(
+                g,
+                source,
+                arg_pack[
+                    boost::graph::keywords::_buffer ||
+                    boost::detail::make_reference_generator(Q)
+                ],
+                vis,
+                c_map
+            );
+        }
+    };
+}}} // namespace boost::graph::detail
+
+namespace boost { namespace graph {
+
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(neighbor_breadth_first_visit, 2, 6)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(neighbor_breadth_first_search, 2, 6)
+}} // namespace boost::graph
+
 namespace boost { namespace detail {
 
     template <class VertexListGraph, class ColorMap, class BFSVisitor,
@@ -1066,11 +1178,15 @@ namespace boost { namespace detail {
       }
     };
 }} // namespace boost::detail
+
 #endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
 
-  // Named Parameter Variant
+    using ::boost::graph::neighbor_breadth_first_visit;
+    using ::boost::graph::neighbor_breadth_first_search;
+
+  // Old-style named parameter variant
   template <class VertexListGraph, class P, class T, class R>
   void neighbor_breadth_first_search
     (const VertexListGraph& g,
@@ -1171,5 +1287,5 @@ namespace boost {
   }
 } // namespace boost
 
-#endif // BOOST_GRAPH_NEIGHBOR_BREADTH_FIRST_SEARCH_HPP
+#endif  // BOOST_GRAPH_NEIGHBOR_BREADTH_FIRST_SEARCH_HPP
 

@@ -120,20 +120,15 @@ struct gursoy_shortest<dummy_property_map>
     boost::breadth_first_search(
       g,
       s,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
       boost::graph::keywords::_visitor =
 #endif
-        boost::make_bfs_visitor(
-          std::make_pair(
-            boost::record_distances(node_distance, boost::on_tree_edge()),
-            update_position
-          )
+      boost::make_bfs_visitor(
+        std::make_pair(
+          boost::record_distances(node_distance, boost::on_tree_edge()),
+          update_position
         )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       )
-#endif
     );
   }
 };
@@ -437,14 +432,18 @@ gursoy_atun_layout(
         diam_range.second,
         learn_range.first,
         learn_range.second,
-        args[
-            boost::graph::keywords::_vertex_index_map |
-            boost::detail::vertex_or_dummy_property_map(graph, vertex_index)
-        ],
-        args[
-            boost::graph::keywords::_weight_map |
-            boost::detail::edge_or_dummy_property_map(graph, edge_weight)
-        ]
+        boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_vertex_index_map,
+            graph,
+            vertex_index
+        ),
+        boost::detail::override_const_property(
+            args,
+            boost::graph::keywords::_weight_map,
+            graph,
+            edge_weight
+        )
     );
 }
 }} // end namespace boost::graph

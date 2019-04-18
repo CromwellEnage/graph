@@ -154,15 +154,16 @@ namespace boost { namespace detail {
 
     template <typename T, typename G>
     struct is_core_numbers_visitor
-      : mpl::eval_if<
-        is_bgl_graph<G>,
-        is_core_numbers_visitor_impl<T,G>,
-        mpl::false_
-      >::type
-    { };
+        : mpl::eval_if<
+            is_bgl_graph<G>,
+            is_core_numbers_visitor_impl<T,G>,
+            mpl::false_
+        >::type
+    {
+    };
 
     typedef argument_with_graph_predicate<
-      is_core_numbers_visitor
+        is_core_numbers_visitor
     > core_numbers_visitor_predicate;
 #else   // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
     typedef visitor_predicate core_numbers_visitor_predicate;
@@ -501,28 +502,18 @@ namespace boost { namespace detail {
     }
 }} // namespace boost::detail
 
+#include <boost/mpl/has_key.hpp>
 #include <boost/core/enable_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/preprocessor.hpp>
-#include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/is_argument_pack.hpp>
-#include <boost/parameter/compose.hpp>
-#include <boost/parameter/value_type.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
-#endif
 
-namespace boost {
+namespace boost { namespace graph {
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     BOOST_PARAMETER_FUNCTION(
         (
             boost::lazy_enable_if<
@@ -530,18 +521,18 @@ namespace boost {
                     Args,
                     boost::graph::keywords::tag::result
                 >::type,
-                detail::property_map_value<
+                boost::detail::property_map_value<
                     Args,
                     boost::graph::keywords::tag::result
                 >
             >
         ), core_numbers, ::boost::graph::keywords::tag,
         (required
-            (graph, *(detail::argument_predicate<is_bgl_graph>))
+            (graph, *(boost::detail::argument_predicate<is_bgl_graph>))
             (result
               , *(
-                    detail::argument_with_graph_predicate<
-                        detail::is_vertex_property_map_of_graph
+                    boost::detail::argument_with_graph_predicate<
+                        boost::detail::is_vertex_property_map_of_graph
                     >
                 )
             )
@@ -550,22 +541,28 @@ namespace boost {
             (optional
                 (weight_map
                   , *(
-                        detail::argument_with_graph_predicate<
-                            detail::is_edge_property_map_of_graph
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_edge_property_map_of_graph
                         >
                     )
-                  , detail::edge_or_dummy_property_map(graph, edge_weight)
+                  , boost::detail::edge_or_dummy_property_map(
+                        graph,
+                        edge_weight
+                    )
                 )
                 (vertex_index_map
                   , *(
-                        detail::argument_with_graph_predicate<
-                            detail::is_vertex_to_integer_map_of_graph
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_to_integer_map_of_graph
                         >
                     )
-                  , detail::vertex_or_dummy_property_map(graph, vertex_index)
+                  , boost::detail::vertex_or_dummy_property_map(
+                        graph,
+                        vertex_index
+                    )
                 )
                 (visitor
-                  , *(detail::core_numbers_visitor_predicate)
+                  , *(boost::detail::core_numbers_visitor_predicate)
                   , default_core_numbers_visitor()
                 )
             )
@@ -575,7 +572,7 @@ namespace boost {
         typename boost::remove_const<
             typename boost::remove_reference<visitor_type>::type
         >::type vis = visitor;
-        return detail::core_numbers_dispatch(
+        return boost::detail::core_numbers_dispatch(
             graph,
             result,
             weight_map,
@@ -595,7 +592,13 @@ namespace boost {
             >::type()
         );
     }
+}} // namespace boost::graph
+
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+
+namespace boost { namespace graph {
+
     // non-named parameter version for the weighted case
     template <
         typename Graph, typename CoreMap, typename EdgeWeightMap,
@@ -604,34 +607,35 @@ namespace boost {
     inline typename property_traits<CoreMap>::value_type
     core_numbers(
         Graph& g, CoreMap c, EdgeWeightMap wm, VertexIndexMap vim,
-        CoreNumVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        CoreNumVisitor vis, typename boost::disable_if<
             parameter::are_tagged_arguments<
                 EdgeWeightMap, VertexIndexMap, CoreNumVisitor
             >,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
-        return detail::core_numbers_dispatch(g,c,wm,vim,vis,mpl::true_());
+        return boost::detail::core_numbers_dispatch(
+            g, c, wm, vim, vis, mpl::true_()
+        );
     }
+}} // namespace boost::graph
+
+#include <boost/parameter/is_argument_pack.hpp>
+
+namespace boost { namespace graph {
 
     // non-named parameter version for the unweighted case
     template <typename Graph, typename CoreMap, typename CoreNumVisitor>
     inline typename property_traits<CoreMap>::value_type
     core_numbers(
-        Graph& g, CoreMap c, CoreNumVisitor vis
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        , typename boost::disable_if<
+        Graph& g, CoreMap c, CoreNumVisitor vis, typename boost::disable_if<
             parameter::is_argument_pack<CoreNumVisitor>,
             mpl::true_
         >::type = mpl::true_()
-#endif
     )
     {
-        return detail::core_numbers_dispatch(
+        return boost::detail::core_numbers_dispatch(
             g,
             c,
             dummy_property_map(),
@@ -641,13 +645,19 @@ namespace boost {
         );
     }
 
-    // non-named paramter version for the unweighted case
+    // non-named paramter version for the unweighted case with default visitor
     template <typename Graph, typename CoreMap>
     inline typename property_traits<CoreMap>::value_type
     core_numbers(Graph& g, CoreMap c)
     {
         return core_numbers(g, c, make_core_numbers_visitor(null_visitor()));
     }
+}} // namespace boost::graph
+
+#include <boost/parameter/value_type.hpp>
+#include <boost/functional/value_factory.hpp>
+
+namespace boost { namespace graph {
 
     // non-named parameter version for the weighted case
 //    template <typename Graph, typename CoreMap, typename EdgeWeightMap>
@@ -660,7 +670,6 @@ namespace boost {
 //            make_core_numbers_visitor(null_visitor()));
 //    }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     // named parameter version for all cases
     template <typename Graph, typename CoreMap, typename Args>
     inline typename property_traits<CoreMap>::value_type
@@ -672,24 +681,26 @@ namespace boost {
         >::type = mpl::true_()
     )
     {
-        default_core_numbers_visitor default_visitor;
         typename boost::remove_const<
             typename parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
                 default_core_numbers_visitor
             >::type
-        >::type vis = args[boost::graph::keywords::_visitor | default_visitor];
-        return detail::core_numbers_dispatch(
+        >::type vis = args[
+            boost::graph::keywords::_visitor ||
+            boost::value_factory<default_core_numbers_visitor>()
+        ];
+        return boost::detail::core_numbers_dispatch(
             g,
             c,
-            detail::override_const_property(
+            boost::detail::override_const_property(
                 args,
                 boost::graph::keywords::_weight_map,
                 g,
                 edge_weight
             ),
-            detail::override_const_property(
+            boost::detail::override_const_property(
                 args,
                 boost::graph::keywords::_vertex_index_map,
                 g,
@@ -702,6 +713,11 @@ namespace boost {
             >::type()
         );
     }
+}} // namespace boost::graph
+
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
@@ -724,11 +740,17 @@ namespace boost {
         ); \
     }
 
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
+
 BOOST_PP_REPEAT_FROM_TO(1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, core_numbers)
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+
+namespace boost { namespace graph {
 
     template <typename Graph, typename CoreMap, typename CoreNumVisitor>
     inline typename property_traits<CoreMap>::value_type
@@ -742,9 +764,15 @@ BOOST_PP_REPEAT_FROM_TO(1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, core_numbers)
     weighted_core_numbers(Graph& g, CoreMap c)
     {
         return weighted_core_numbers(
-            g,c, make_core_numbers_visitor(null_visitor())
+            g, c, make_core_numbers_visitor(null_visitor())
         );
     }
+}} // namespace boost::graph
+
+namespace boost {
+
+    using ::boost::graph::core_numbers;
+    using ::boost::graph::weighted_core_numbers;
 } // namespace boost
 
 #endif // BOOST_GRAPH_CORE_NUMBERS_HPP

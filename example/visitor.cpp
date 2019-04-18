@@ -108,9 +108,7 @@ main(int, char*[])
   boost::breadth_first_search(
     G,
     vertex(0, G),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
     make_bfs_visitor(
@@ -119,9 +117,6 @@ main(int, char*[])
         print_edge("cycle", on_non_tree_edge())
       )
     )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   return 0;

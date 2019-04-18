@@ -126,7 +126,6 @@ struct bfs_test
     typename Traits::vertex_iterator ui, ui_end;
 
     boost::mt19937 gen;
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     boost::mt19937 dfs_chooser_gen;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::uniform_int<> dfs_choices(0, 6);
@@ -136,7 +135,6 @@ struct bfs_test
     boost::variate_generator<
       boost::mt19937&, boost::uniform_int<>
     > dfs_rand(dfs_chooser_gen, dfs_choices);
-#endif
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
@@ -177,7 +175,6 @@ struct bfs_test
           color_pm_type>
           vis(start, distance_pm, parent_pm, color_pm);
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         switch (dfs_rand())
         {
           case 0:
@@ -217,13 +214,6 @@ struct bfs_test
             break;
 #endif
         }
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-        boost::breadth_first_search(
-          g,
-          start,
-          boost::visitor(vis).color_map(color_pm)
-        );
-#endif
 
         // All white vertices should be unreachable from the source.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)

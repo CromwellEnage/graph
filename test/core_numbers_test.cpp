@@ -83,24 +83,14 @@ void test_2()
     graph_t G(edge_array, edge_array + num_arcs, weights, num_nodes);
     std::vector<int> core_nums(num_vertices(G));
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     core_numbers(
         G,
         make_iterator_property_map(core_nums.begin(), get(vertex_index,G)),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        boost::graph::keywords::_weight_map =
+#endif
         get(edge_weight,G)
     );
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    core_numbers(
-        G,
-        make_iterator_property_map(core_nums.begin(), get(vertex_index,G)),
-        boost::graph::keywords::_weight_map = get(edge_weight,G)
-    );
-#else
-    weighted_core_numbers(
-        G,
-        make_iterator_property_map(core_nums.begin(), get(vertex_index,G))
-    );
-#endif
 
     int correct[3]={-1,-1,-4};
 

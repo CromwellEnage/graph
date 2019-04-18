@@ -90,11 +90,9 @@ main()
   std::cout << "BFS vertex discover order: ";
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   breadth_first_search(g, a, vis);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-  breadth_first_search(g, a, boost::graph::keywords::_visitor = vis);
 #else
-  breadth_first_search(g, a, boost::visitor(vis));
+  breadth_first_search(g, a, boost::graph::keywords::_visitor = vis);
 #endif
   std::cout << std::endl;
-
+  return 0;
 }

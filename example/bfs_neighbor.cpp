@@ -123,9 +123,7 @@ int main(int , char* [])
   boost::neighbor_breadth_first_search(
     G,
     s,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
     boost::make_neighbor_bfs_visitor(
@@ -134,9 +132,6 @@ int main(int , char* [])
         boost::record_predecessors(&p[0], boost::on_tree_edge())
       )
     )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   boost::print_graph(G);

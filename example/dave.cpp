@@ -233,9 +233,7 @@ main(int , char* [])
   cout << "Result:" << endl;
   boost::breadth_first_search
     (G, vertex(a, G),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-     visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
      boost::graph::keywords::_visitor =
 #endif
      make_bfs_visitor(
@@ -251,9 +249,6 @@ main(int , char* [])
                                             name[0]),
                  std::cout, on_examine_edge()),
       print_endl(std::cout, on_finish_vertex())))
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      )
-#endif
     );
 
   return 0;

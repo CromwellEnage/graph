@@ -142,9 +142,7 @@ int main(int, char*[])
   breadth_first_search(
     G,
     s,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
     make_bfs_visitor(
@@ -154,9 +152,6 @@ int main(int, char*[])
         finish_city(names)
       )
     )
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   return 0;

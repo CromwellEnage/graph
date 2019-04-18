@@ -104,8 +104,13 @@ main()
   Vertex src = actors["Kevin Bacon"];
   bacon_number[src] = 0;
 
-  breadth_first_search(g, src,
-                       visitor(record_bacon_number(&bacon_number[0])));
+  breadth_first_search(
+    g, src,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
+#endif
+    record_bacon_number(&bacon_number[0])
+  );
 
   graph_traits < Graph >::vertex_iterator i, end;
   for (boost::tie(i, end) = vertices(g); i != end; ++i) {

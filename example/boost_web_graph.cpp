@@ -158,10 +158,8 @@ main()
     Traits::vertex_descriptor src = vertices(g).first[i];
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     breadth_first_search(g, src, vis);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
 #else
-    breadth_first_search(g, src, boost::visitor(vis));
+    breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
 #endif
   }
 
@@ -193,15 +191,10 @@ main()
   Traits::vertex_descriptor src = vertices(g).first[0];
   breadth_first_search(
     g, src,
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    boost::visitor(
-#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
     make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-    )
-#endif
   );
 
   // Add all the search tree edges into a new graph

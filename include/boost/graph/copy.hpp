@@ -695,18 +695,12 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
       >::vertex_descriptor src_copy = vis.copy_one_vertex(src);
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
       breadth_first_search(g_in, src, vis, v_i_map);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else
       breadth_first_search(
         g_in,
         src,
         boost::graph::keywords::_visitor = vis,
         boost::graph::keywords::_vertex_index_map = v_i_map
-      );
-#else
-      breadth_first_search(
-        g_in,
-        src,
-        boost::visitor(vis).vertex_index_map(v_i_map)
       );
 #endif
       return src_copy;
@@ -729,13 +723,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, copy_graph)
         CopyVertex, CopyEdge> vis(g_out, orig2copy, copy_vertex, copy_edge);
       typename graph_traits<MutableGraph>::vertex_descriptor src_copy
         = vis.copy_one_vertex(src);
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-      breadth_first_search(g_in, src, vis);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-      breadth_first_search(g_in, src, boost::graph::keywords::_visitor = vis);
-#else
       breadth_first_search(g_in, src, params.visitor(vis));
-#endif
       return src_copy;
     }
 

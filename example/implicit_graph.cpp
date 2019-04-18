@@ -555,12 +555,8 @@ int main (int argc, char const *argv[]) {
     dijkstra_shortest_paths(
       g,
       source,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
       boost::graph::keywords::_predecessor_map = pred_pm,
       boost::graph::keywords::_distance_map = dist_pm
-#else
-      predecessor_map(pred_pm).distance_map(dist_pm) 
-#endif
     );
 
     std::cout << "Dijkstra search from vertex " << source << std::endl;

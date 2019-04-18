@@ -73,18 +73,12 @@ main()
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   breadth_first_search(g, vertex(s, g), get(&VertexProps::color, g), vis);
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else
   breadth_first_search(
     g,
     vertex(s, g),
     boost::graph::keywords::_color_map = get(&VertexProps::color, g),
     boost::graph::keywords::_visitor = vis
-  );
-#else
-  breadth_first_search(
-    g,
-    vertex(s, g),
-    boost::color_map(get(&VertexProps::color, g)).visitor(vis)
   );
 #endif
 

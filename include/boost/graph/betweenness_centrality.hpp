@@ -328,15 +328,9 @@ namespace boost { namespace graph { namespace detail {
       breadth_first_visit(
         g,
         s,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_visitor = visitor,
         boost::graph::keywords::_color_map =
         make_iterator_property_map(colors.begin(), vertex_index)
-#else
-        boost::visitor(visitor).color_map(
-          make_iterator_property_map(colors.begin(), vertex_index)
-        )
-#endif
       );
 #endif  // MSVC or MinGW or XCode 9-
     }

@@ -80,8 +80,13 @@ int main()
   bacon_number[src] = 0;
 
   // Perform a breadth first search to compute everyone' Bacon number.
-  breadth_first_search(g, src,
-                       visitor(bacon_number_recorder(&bacon_number[0])));
+  breadth_first_search(
+    g, src,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
+#endif
+    bacon_number_recorder(&bacon_number[0])
+  );
 
   for (boost::tie(i, end) = vertices(g); i != end; ++i)
     std::cout << g[*i].name << " has a Bacon number of "
