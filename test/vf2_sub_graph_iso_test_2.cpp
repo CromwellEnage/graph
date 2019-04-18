@@ -103,13 +103,8 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_graph_iso(
         gLarge, gLarge, callback,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_edges_equivalent = pred,
         boost::graph::keywords::_vertices_equivalent = pred
-#else
-        vertex_order_by_mult(gLarge),
-        boost::edges_equivalent(pred).vertices_equivalent(pred)
-#endif
       );
       BOOST_CHECK(!exists);
       BOOST_CHECK(!got_hit);
@@ -143,13 +138,8 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_subgraph_iso(
         gLarge, gLarge, callback,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_edges_equivalent = pred,
         boost::graph::keywords::_vertices_equivalent = pred
-#else
-        vertex_order_by_mult(gLarge),
-        boost::edges_equivalent(pred).vertices_equivalent(pred)
-#endif
       );
       BOOST_CHECK(!exists);
       BOOST_CHECK(!got_hit);
@@ -183,13 +173,8 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_subgraph_mono(
         gLarge, gLarge, callback,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
         boost::graph::keywords::_edges_equivalent = pred,
         boost::graph::keywords::_vertices_equivalent = pred
-#else
-        vertex_order_by_mult(gLarge),
-        boost::edges_equivalent(pred).vertices_equivalent(pred)
-#endif
       );
       BOOST_CHECK(!exists);
       BOOST_CHECK(!got_hit);

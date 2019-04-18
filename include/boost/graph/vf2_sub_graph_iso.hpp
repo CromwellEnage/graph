@@ -28,13 +28,14 @@
 #include <boost/concept_check.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/graph/mcgregor_common_subgraphs.hpp> // for always_equivalent
+#include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/functional_equivalent.hpp>
 #include <boost/type_traits/has_less.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/range/algorithm/sort.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <boost/core/enable_if.hpp>
 
 #ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
 #define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
@@ -908,7 +909,9 @@ namespace boost {
     detail::sort_vertices(graph, get(vertex_index, graph), vertex_order);
     return vertex_order;
   }
+} // namespace boost
 
+namespace boost { namespace graph {
 
   // Enumerates all graph sub-graph monomorphism mappings between graphs
   // graph_small and graph_large. Continues until user_callback returns true or the
@@ -927,7 +930,7 @@ namespace boost {
                          const VertexOrderSmall& vertex_order_small,
                          EdgeEquivalencePredicate edge_comp,
                          VertexEquivalencePredicate vertex_comp) {
-    return detail::vf2_subgraph_morphism<detail::subgraph_mono>
+    return boost::detail::vf2_subgraph_morphism<boost::detail::subgraph_mono>
                                         (graph_small, graph_large,
                                          user_callback,
                                          index_map_small, index_map_large,
@@ -935,16 +938,14 @@ namespace boost {
                                          edge_comp,
                                          vertex_comp);
   }
-} // namespace boost
+}} // namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/core/enable_if.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
   // Named parameter variant of vf2_subgraph_mono
   // with explicit user_callback
@@ -1011,50 +1012,7 @@ namespace boost {
       vertex_order_by_mult(graph_small), args
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
-namespace boost {
-
-  // All default interface for vf2_subgraph_iso
-  template <typename GraphSmall,
-            typename GraphLarge,
-            typename SubGraphIsoMapCallback>
-  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large, 
-                         SubGraphIsoMapCallback user_callback) {
-    return vf2_subgraph_mono(graph_small, graph_large, user_callback, 
-                             get(vertex_index, graph_small), get(vertex_index, graph_large),
-                             vertex_order_by_mult(graph_small),
-                             always_equivalent(), always_equivalent());
-  }
-
-
-  // Old-style named parameter interface of vf2_subgraph_iso
-  template <typename GraphSmall,
-            typename GraphLarge,
-            typename SubGraphIsoMapCallback,
-            typename VertexOrderSmall,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large,
-                         SubGraphIsoMapCallback user_callback,
-                         const VertexOrderSmall& vertex_order_small,
-                         const bgl_named_params<Param, Tag, Rest>& params) {
-    return vf2_subgraph_mono(graph_small, graph_large, user_callback,
-                             choose_const_pmap(get_param(params, vertex_index1),
-                                               graph_small, vertex_index),
-                             choose_const_pmap(get_param(params, vertex_index2),
-                                               graph_large, vertex_index),
-                             vertex_order_small,
-                             choose_param(get_param(params, edges_equivalent_t()),
-                                          always_equivalent()),
-                             choose_param(get_param(params, vertices_equivalent_t()),
-                                          always_equivalent())
-                             );
-  }
-  
-  
   // Enumerates all graph sub-graph isomorphism mappings between graphs
   // graph_small and graph_large. Continues until user_callback returns true or the
   // search space has been fully explored.
@@ -1072,7 +1030,7 @@ namespace boost {
                         const VertexOrderSmall& vertex_order_small,
                         EdgeEquivalencePredicate edge_comp,
                         VertexEquivalencePredicate vertex_comp) {
-    return detail::vf2_subgraph_morphism<detail::subgraph_iso>
+    return boost::detail::vf2_subgraph_morphism<boost::detail::subgraph_iso>
                                         (graph_small, graph_large,
                                          user_callback,
                                          index_map_small, index_map_large,
@@ -1080,10 +1038,6 @@ namespace boost {
                                          edge_comp,
                                          vertex_comp);
   }
-} // namespace boost
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
 
   // Named parameter variant of vf2_subgraph_iso
   // with explicit user_callback
@@ -1107,15 +1061,15 @@ namespace boost {
     const Args& args
   )
   {
-    return detail::vf2_subgraph_morphism<detail::subgraph_iso>(
+    return boost::detail::vf2_subgraph_morphism<boost::detail::subgraph_iso>(
       graph1, graph2, user_callback,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       vertex_order1,
       args[
@@ -1150,52 +1104,6 @@ namespace boost {
       vertex_order_by_mult(graph1), args
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-
-namespace boost {
-
-  // All default interface for vf2_subgraph_iso
-  template <typename GraphSmall,
-            typename GraphLarge,
-            typename SubGraphIsoMapCallback>
-  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large, 
-                        SubGraphIsoMapCallback user_callback) {
-
-    return vf2_subgraph_iso(graph_small, graph_large, user_callback, 
-                            get(vertex_index, graph_small), get(vertex_index, graph_large),
-                            vertex_order_by_mult(graph_small),
-                            always_equivalent(), always_equivalent());
-  }
-
-
-  // Old-style named parameter interface of vf2_subgraph_iso
-  template <typename GraphSmall,
-            typename GraphLarge,
-            typename SubGraphIsoMapCallback,
-            typename VertexOrderSmall,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
-                        SubGraphIsoMapCallback user_callback,
-                        const VertexOrderSmall& vertex_order_small,
-                        const bgl_named_params<Param, Tag, Rest>& params) {
-    
-    return vf2_subgraph_iso(graph_small, graph_large, user_callback,
-                            choose_const_pmap(get_param(params, vertex_index1),
-                                              graph_small, vertex_index),
-                            choose_const_pmap(get_param(params, vertex_index2),
-                                              graph_large, vertex_index),
-                            vertex_order_small,
-                            choose_param(get_param(params, edges_equivalent_t()),
-                                         always_equivalent()),
-                            choose_param(get_param(params, vertices_equivalent_t()),
-                                         always_equivalent())
-                            );
-
-  }
-
 
   // Enumerates all isomorphism mappings between graphs graph1_ and graph2_.
   // Continues until user_callback returns true or the search space has been
@@ -1271,17 +1179,13 @@ namespace boost {
     if (num_edges1 != num_edges2)
       return false;
 
-    detail::state<Graph1, Graph2, IndexMap1, IndexMap2,
-                  EdgeEquivalencePredicate, VertexEquivalencePredicate,
-                  GraphIsoMapCallback, detail::isomorphism> 
+    boost::detail::state<Graph1, Graph2, IndexMap1, IndexMap2,
+                         EdgeEquivalencePredicate, VertexEquivalencePredicate,
+                         GraphIsoMapCallback, detail::isomorphism> 
       s(graph1, graph2, index_map1, index_map2, edge_comp, vertex_comp);
 
-    return detail::match(graph1, graph2, user_callback, vertex_order1, s);
+    return boost::detail::match(graph1, graph2, user_callback, vertex_order1, s);
   }
-} // namespace boost
-
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-namespace boost {
 
   // Named parameter variant of vf2_graph_iso
   // with explicit user_callback
@@ -1309,11 +1213,11 @@ namespace boost {
       graph1, graph2, user_callback,
       args[
         boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
       ],
       args[
         boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
       ],
       vertex_order1,
       args[
@@ -1348,10 +1252,30 @@ namespace boost {
       vertex_order_by_mult(graph1), args
     );
   }
-} // namespace boost
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+}} // namespace boost::graph
 
-namespace boost {
+#include <boost/parameter/compose.hpp>
+
+namespace boost { namespace graph {
+
+  // All default interface for vf2_subgraph_mono
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large, 
+                         SubGraphIsoMapCallback user_callback) {
+    return vf2_subgraph_mono(graph_small, graph_large, user_callback, parameter::compose());
+  }
+
+  // All default interface for vf2_subgraph_iso
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large, 
+                        SubGraphIsoMapCallback user_callback) {
+
+    return vf2_subgraph_iso(graph_small, graph_large, user_callback, parameter::compose());
+  }
 
   // All default interface for vf2_graph_iso
   template <typename Graph1,
@@ -1360,40 +1284,11 @@ namespace boost {
   bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2, 
                      GraphIsoMapCallback user_callback) {
     
-    return vf2_graph_iso(graph1, graph2, user_callback, 
-                         get(vertex_index, graph1), get(vertex_index, graph2),
-                         vertex_order_by_mult(graph1),
-                         always_equivalent(), always_equivalent());
+    return vf2_graph_iso(graph1, graph2, user_callback, parameter::compose());
   }
+}} // namespace boost::graph
 
-
-  // Old-style named parameter interface of vf2_graph_iso
-  template <typename Graph1,
-            typename Graph2,
-            typename GraphIsoMapCallback,
-            typename VertexOrder1,
-            typename Param,
-            typename Tag,
-            typename Rest>
-  bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
-                     GraphIsoMapCallback user_callback,
-                     const VertexOrder1& vertex_order1,
-                     const bgl_named_params<Param, Tag, Rest>& params) {
-    
-    return vf2_graph_iso(graph1, graph2, user_callback,
-                         choose_const_pmap(get_param(params, vertex_index1),
-                                           graph1, vertex_index),
-                         choose_const_pmap(get_param(params, vertex_index2),
-                                           graph2, vertex_index),
-                         vertex_order1,
-                         choose_param(get_param(params, edges_equivalent_t()),
-                                always_equivalent()),
-                         choose_param(get_param(params, vertices_equivalent_t()),
-                                      always_equivalent())
-                         );
-
-  }
-
+namespace boost {
 
   // Verifies a graph (sub)graph isomorphism map 
   template<typename Graph1,
@@ -1444,12 +1339,9 @@ namespace boost {
   }
 } // namespace boost
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
-#include <boost/parameter/compose.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
@@ -1479,7 +1371,9 @@ namespace boost {
         ); \
     }
 
-namespace boost {
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
     1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_subgraph_mono
@@ -1490,7 +1384,7 @@ BOOST_PP_REPEAT_FROM_TO(
 BOOST_PP_REPEAT_FROM_TO(
     1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_graph_iso
 )
-} // namespace boost
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
@@ -1516,7 +1410,7 @@ BOOST_PP_REPEAT_FROM_TO(
         ); \
     }
 
-namespace boost {
+namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
     1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_subgraph_mono
@@ -1527,10 +1421,95 @@ BOOST_PP_REPEAT_FROM_TO(
 BOOST_PP_REPEAT_FROM_TO(
     1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, vf2_graph_iso
 )
-} // namespace boost
+}} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
+using ::boost::graph::vf2_subgraph_mono;
+using ::boost::graph::vf2_subgraph_iso;
+using ::boost::graph::vf2_graph_iso;
+
+  // Old-style named parameter interface of vf2_subgraph_iso
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphIsoMapCallback,
+            typename VertexOrderSmall,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                         SubGraphIsoMapCallback user_callback,
+                         const VertexOrderSmall& vertex_order_small,
+                         const bgl_named_params<Param, Tag, Rest>& params) {
+    return vf2_subgraph_mono(graph_small, graph_large, user_callback,
+                             choose_const_pmap(get_param(params, vertex_index1),
+                                               graph_small, vertex_index),
+                             choose_const_pmap(get_param(params, vertex_index2),
+                                               graph_large, vertex_index),
+                             vertex_order_small,
+                             choose_param(get_param(params, edges_equivalent_t()),
+                                          always_equivalent()),
+                             choose_param(get_param(params, vertices_equivalent_t()),
+                                          always_equivalent())
+                             );
+  }
+
+  // Old-style named parameter interface of vf2_subgraph_iso
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphIsoMapCallback,
+            typename VertexOrderSmall,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                        SubGraphIsoMapCallback user_callback,
+                        const VertexOrderSmall& vertex_order_small,
+                        const bgl_named_params<Param, Tag, Rest>& params) {
+    
+    return vf2_subgraph_iso(graph_small, graph_large, user_callback,
+                            choose_const_pmap(get_param(params, vertex_index1),
+                                              graph_small, vertex_index),
+                            choose_const_pmap(get_param(params, vertex_index2),
+                                              graph_large, vertex_index),
+                            vertex_order_small,
+                            choose_param(get_param(params, edges_equivalent_t()),
+                                         always_equivalent()),
+                            choose_param(get_param(params, vertices_equivalent_t()),
+                                         always_equivalent())
+                            );
+
+  }
+
+  // Old-style named parameter interface of vf2_graph_iso
+  template <typename Graph1,
+            typename Graph2,
+            typename GraphIsoMapCallback,
+            typename VertexOrder1,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
+                     GraphIsoMapCallback user_callback,
+                     const VertexOrder1& vertex_order1,
+                     const bgl_named_params<Param, Tag, Rest>& params) {
+    
+    return vf2_graph_iso(graph1, graph2, user_callback,
+                         choose_const_pmap(get_param(params, vertex_index1),
+                                           graph1, vertex_index),
+                         choose_const_pmap(get_param(params, vertex_index2),
+                                           graph2, vertex_index),
+                         vertex_order1,
+                         choose_param(get_param(params, edges_equivalent_t()),
+                                always_equivalent()),
+                         choose_param(get_param(params, vertices_equivalent_t()),
+                                      always_equivalent())
+                         );
+
+  }
+} // namespace boost
 
 #ifdef BOOST_ISO_INCLUDED_ITER_MACROS
 #undef BOOST_ISO_INCLUDED_ITER_MACROS

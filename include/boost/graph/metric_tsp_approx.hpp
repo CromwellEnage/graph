@@ -126,10 +126,10 @@ namespace boost {
 
     // Define a concept for the concept-checking library.
     template <typename Visitor, typename Graph>
-    struct TSPVertexVisitorConcept
+    class TSPVertexVisitorConcept
     {
-    private:
         Visitor vis_;
+
     public:
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
@@ -145,23 +145,40 @@ namespace boost {
     // Tree visitor that keeps track of a preorder traversal of a tree
     // TODO: Consider migrating this to the graph_as_tree header.
     // TODO: Parameterize the underlying stores so it doesn't have to be a vector.
-    template<typename Node, typename Tree> class PreorderTraverser
+    template <typename Node, typename Tree>
+    class PreorderTraverser
     {
-    private:
         std::vector<Node>& path_;
+
     public:
         typedef typename std::vector<Node>::const_iterator const_iterator;
 
-        PreorderTraverser(std::vector<Node>& p) : path_(p) {}
+        inline explicit PreorderTraverser(std::vector<Node>& p) : path_(p)
+        {
+        }
 
-        void preorder(Node n, const Tree&)
-        { path_.push_back(n); }
+        inline void preorder(Node n, const Tree&)
+        {
+            this->path_.push_back(n);
+        }
 
-        void inorder(Node, const Tree&) const {}
-        void postorder(Node, const Tree&) const {}
+        inline void inorder(Node, const Tree&) const
+        {
+        }
 
-        const_iterator begin() const { return path_.begin(); }
-        const_iterator end() const { return path_.end(); }
+        inline void postorder(Node, const Tree&) const
+        {
+        }
+
+        inline const_iterator begin() const
+        {
+            return this->path_.begin();
+        }
+
+        inline const_iterator end() const
+        {
+            return this->path_.end();
+        }
     };
 
     // Default tsp tour visitor that puts the tour in an OutputIterator
@@ -169,22 +186,24 @@ namespace boost {
     class tsp_tour_visitor
     {
         OutItr itr_;
-    public:
-        tsp_tour_visitor(OutItr itr)
-            : itr_(itr)
-        { }
 
-        template <typename Vertex, typename Graph>
-        void visit_vertex(Vertex v, const Graph&)
+    public:
+        inline explicit tsp_tour_visitor(OutItr itr) : itr_(itr)
         {
-            BOOST_CONCEPT_ASSERT((OutputIterator<OutItr, Vertex>));
-            *itr_++ = v;
         }
 
+        template <typename Vertex, typename Graph>
+        inline void visit_vertex(Vertex v, const Graph&)
+        {
+            BOOST_CONCEPT_ASSERT((OutputIterator<OutItr, Vertex>));
+            *this->itr_++ = v;
+        }
     };
 
     // Tsp tour visitor that adds the total tour length.
-    template<typename Graph, typename WeightMap, typename OutIter, typename Length>
+    template <
+        typename Graph, typename WeightMap, typename OutIter, typename Length
+    >
     class tsp_tour_len_visitor
     {
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -192,42 +211,47 @@ namespace boost {
 
         OutIter iter_;
         Length& tourlen_;
-        WeightMap& wmap_;
+        WeightMap const& wmap_;
         Vertex previous_;
 
         // Helper function for getting the null vertex.
-        Vertex null()
-        { return graph_traits<Graph>::null_vertex(); }
+        inline static Vertex null()
+        {
+            return graph_traits<Graph>::null_vertex();
+        }
 
     public:
-        tsp_tour_len_visitor(Graph const&, OutIter iter, Length& l, WeightMap& map)
-            : iter_(iter), tourlen_(l), wmap_(map), previous_(null())
-        { }
+        inline tsp_tour_len_visitor(
+            Graph const&, OutIter iter, Length& l, WeightMap const& map
+        ) : iter_(iter), tourlen_(l), wmap_(map), previous_(null())
+        {
+        }
 
         void visit_vertex(Vertex v, const Graph& g)
         {
             typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
-            // If it is not the start, then there is a
-            // previous vertex
-            if(previous_ != null())
+            // If it is not the start, then there is a previous vertex
+            if (this->previous_ != null())
             {
                 // NOTE: For non-adjacency matrix graphs g, this bit of code
-                // will be linear in the degree of previous_ or v. A better
+                // will be linear in the degree of previous_ or v.  A better
                 // solution would be to visit edges of the graph, but that
                 // would require revisiting the core algorithm.
                 Edge e;
                 bool found;
-                boost::tie(e, found) = lookup_edge(previous_, v, g);
-                if(!found) {
+                boost::tie(e, found) = lookup_edge(this->previous_, v, g);
+
+                if (!found)
+                {
                     BOOST_THROW_EXCEPTION(not_complete());
                 }
 
-                tourlen_ += wmap_[e];
+                this->tourlen_ += get(this->wmap_, e);
             }
 
-            previous_ = v;
-            *iter_++ = v;
+            this->previous_ = v;
+            *this->iter_++ = v;
         }
     };
 
@@ -235,12 +259,47 @@ namespace boost {
     template <typename OutIter>
     inline tsp_tour_visitor<OutIter>
     make_tsp_tour_visitor(OutIter iter)
-    { return tsp_tour_visitor<OutIter>(iter); }
+    {
+        return tsp_tour_visitor<OutIter>(iter);
+    }
 
-    template <typename Graph, typename WeightMap, typename OutIter, typename Length>
+    template <
+        typename Graph, typename WeightMap, typename OutIter, typename Length
+    >
     inline tsp_tour_len_visitor<Graph, WeightMap, OutIter, Length>
-    make_tsp_tour_len_visitor(Graph const& g, OutIter iter, Length& l, WeightMap map)
-    { return tsp_tour_len_visitor<Graph, WeightMap, OutIter, Length>(g, iter, l, map); }
+    make_tsp_tour_len_visitor(
+        Graph const& g, OutIter iter, Length& l, WeightMap const& map
+    )
+    {
+        return tsp_tour_len_visitor<Graph, WeightMap, OutIter, Length>(
+            g, iter, l, map
+        );
+    }
+
+    template <typename OutItr>
+    class tsp_tour_visitor_generator
+    {
+        OutItr itr_;
+
+    public:
+        typedef tsp_tour_visitor<OutItr> result_type;
+
+        inline explicit tsp_tour_visitor_generator(OutItr itr) : itr_(itr)
+        {
+        }
+
+        inline result_type operator()() const
+        {
+            return result_type(this->itr_);
+        }
+    };
+
+    template <typename OutIter>
+    inline tsp_tour_visitor_generator<OutIter>
+    make_tsp_tour_visitor_generator(OutIter iter)
+    {
+        return tsp_tour_visitor_generator<OutIter>(iter);
+    }
 } // end namespace boost
 
 #include <boost/graph/detail/dummy_output_iterator.hpp>
@@ -715,6 +774,11 @@ namespace boost { namespace graph {
         metric_tsp_approx_from_vertex(g, start, w, get(vertex_index, g),
             tsp_tour_visitor<OutputIterator>(o));
     }
+}} // namespace boost::graph
+
+#include <boost/functional/value_factory.hpp>
+
+namespace boost { namespace graph {
 
     template <typename VertexListGraph, typename Args>
     inline void metric_tsp_approx(
@@ -729,20 +793,26 @@ namespace boost { namespace graph {
         metric_tsp_approx_from_vertex(
             g,
             boost::detail::get_default_starting_vertex(g),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            ),
             args[
-                boost::graph::keywords::_weight_map |
-                boost::detail::edge_or_dummy_property_map(g, edge_weight)
-            ],
-            args[
-                boost::graph::keywords::_vertex_index_map |
-                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
-            ],
-            args[
-                boost::graph::keywords::_visitor |
-                make_tsp_tour_visitor(
+                boost::graph::keywords::_visitor ||
+                make_tsp_tour_visitor_generator(
                     args[
-                        boost::graph::keywords::_result |
-                        boost::graph_detail::dummy_output_iterator()
+                        boost::graph::keywords::_result ||
+                        boost::value_factory<
+                            boost::graph_detail::dummy_output_iterator
+                        >()
                     ]
                 )
             ]
@@ -762,18 +832,24 @@ namespace boost { namespace graph {
         metric_tsp_approx_from_vertex(
             g,
             boost::detail::get_default_starting_vertex(g),
-            args[
-                boost::graph::keywords::_weight_map |
-                boost::detail::edge_or_dummy_property_map(g, edge_weight)
-            ],
-            args[
-                boost::graph::keywords::_vertex_index_map |
-                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
-            ],
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            ),
             make_tsp_tour_visitor(
                 args[
-                    boost::graph::keywords::_result |
-                    boost::graph_detail::dummy_output_iterator()
+                    boost::graph::keywords::_result ||
+                    boost::value_factory<
+                        boost::graph_detail::dummy_output_iterator
+                    >()
                 ]
             )
         );
@@ -793,20 +869,26 @@ namespace boost { namespace graph {
         metric_tsp_approx_from_vertex(
             g,
             start,
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            ),
             args[
-                boost::graph::keywords::_weight_map |
-                boost::detail::edge_or_dummy_property_map(g, edge_weight)
-            ],
-            args[
-                boost::graph::keywords::_vertex_index_map |
-                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
-            ],
-            args[
-                boost::graph::keywords::_visitor |
-                make_tsp_tour_visitor(
+                boost::graph::keywords::_visitor ||
+                make_tsp_tour_visitor_generator(
                     args[
-                        boost::graph::keywords::_result |
-                        boost::graph_detail::dummy_output_iterator()
+                        boost::graph::keywords::_result ||
+                        boost::value_factory<
+                            boost::graph_detail::dummy_output_iterator
+                        >()
                     ]
                 )
             ]
@@ -827,18 +909,24 @@ namespace boost { namespace graph {
         metric_tsp_approx_from_vertex(
             g,
             start,
-            args[
-                boost::graph::keywords::_weight_map |
-                boost::detail::edge_or_dummy_property_map(g, edge_weight)
-            ],
-            args[
-                boost::graph::keywords::_vertex_index_map |
-                boost::detail::vertex_or_dummy_property_map(g, vertex_index)
-            ],
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index_map,
+                g,
+                vertex_index
+            ),
             make_tsp_tour_visitor(
                 args[
-                    boost::graph::keywords::_result |
-                    boost::graph_detail::dummy_output_iterator()
+                    boost::graph::keywords::_result ||
+                    boost::value_factory<
+                        boost::graph_detail::dummy_output_iterator
+                    >()
                 ]
             )
         );
