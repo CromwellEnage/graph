@@ -969,16 +969,20 @@ namespace boost { namespace graph {
     const Args& args
   )
   {
-    return detail::vf2_subgraph_morphism<detail::subgraph_mono>(
+    return boost::detail::vf2_subgraph_morphism<boost::detail::subgraph_mono>(
       graph_small, graph_large, user_callback,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        detail::vertex_or_dummy_property_map(graph_small, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        detail::vertex_or_dummy_property_map(graph_large, vertex_index)
-      ],
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index1_map,
+        graph_small,
+        vertex_index
+      ),
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index2_map,
+        graph_large,
+        vertex_index
+      ),
       vertex_order_small,
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -1063,14 +1067,18 @@ namespace boost { namespace graph {
   {
     return boost::detail::vf2_subgraph_morphism<boost::detail::subgraph_iso>(
       graph1, graph2, user_callback,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index1_map,
+        graph1,
+        vertex_index
+      ),
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index2_map,
+        graph2,
+        vertex_index
+      ),
       vertex_order1,
       args[
         boost::graph::keywords::_edges_equivalent |
@@ -1211,14 +1219,18 @@ namespace boost { namespace graph {
   {
     return vf2_graph_iso(
       graph1, graph2, user_callback,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index1_map,
+        graph1,
+        vertex_index
+      ),
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index2_map,
+        graph2,
+        vertex_index
+      ),
       vertex_order1,
       args[
         boost::graph::keywords::_edges_equivalent |
