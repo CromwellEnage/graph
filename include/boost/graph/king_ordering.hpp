@@ -361,6 +361,23 @@ namespace boost { namespace graph {
 
         return result;
     }
+
+    template <
+        typename Graph, typename OutputIterator, typename VertexIndexMap
+    >
+    inline typename boost::disable_if<
+        parameter::is_argument_pack<VertexIndexMap>,
+        OutputIterator
+    >::type
+    king_ordering(
+        const Graph& g, OutputIterator permutation, VertexIndexMap index_map
+    )
+    {
+        return king_ordering(
+            g, permutation,
+            boost::graph::keywords::_vertex_index_map = index_map
+        );
+    }
 }} // namespace boost::graph  
 
 #include <boost/parameter/compose.hpp>
@@ -376,6 +393,82 @@ namespace boost { namespace graph {
 }} // namespace boost::graph  
 
 #include <boost/parameter/are_tagged_arguments.hpp>
+
+namespace boost { namespace graph {
+
+    template <
+        typename Graph, typename OutputIterator, typename ColorMap,
+        typename DegreeMap, typename VertexIndexMap
+    >
+    inline typename boost::disable_if<
+        parameter::are_tagged_arguments<ColorMap,DegreeMap,VertexIndexMap>,
+        OutputIterator
+    >::type
+    king_ordering(
+        const Graph& g, OutputIterator permutation, ColorMap color,
+        DegreeMap degree, VertexIndexMap index_map
+    )
+    {
+        return king_ordering(
+            g, permutation,
+            boost::graph::keywords::_color_map = color,
+            boost::graph::keywords::_degree_map = degree,
+            boost::graph::keywords::_vertex_index_map = index_map
+        );
+    }
+
+    template <
+        typename Graph, typename OutputIterator, typename ColorMap,
+        typename DegreeMap, typename VertexIndexMap
+    >
+    inline typename boost::disable_if<
+        parameter::are_tagged_arguments<ColorMap,DegreeMap,VertexIndexMap>,
+        OutputIterator
+    >::type
+    king_ordering(
+        const Graph& g, typename graph_traits<Graph>::vertex_descriptor s,
+        OutputIterator permutation, ColorMap color, DegreeMap degree,
+        VertexIndexMap index_map
+    )
+    {
+        return king_ordering(
+            g, permutation,
+            boost::graph::keywords::_root_vertex = s,
+            boost::graph::keywords::_color_map = color,
+            boost::graph::keywords::_degree_map = degree,
+            boost::graph::keywords::_vertex_index_map = index_map
+        );
+    }
+
+    template <
+        typename Graph, typename OutputIterator, typename ColorMap,
+        typename DegreeMap, typename VertexIndexMap
+    >
+    inline typename boost::disable_if<
+        parameter::are_tagged_arguments<ColorMap,DegreeMap,VertexIndexMap>,
+        OutputIterator
+    >::type
+    king_ordering(
+        const Graph& g,
+        std::deque<
+            typename graph_traits<Graph>::vertex_descriptor
+        > vertex_queue,
+        OutputIterator permutation,
+        ColorMap color,
+        DegreeMap degree,
+        VertexIndexMap index_map
+    )
+    {
+        return king_ordering(
+            g, permutation,
+            boost::graph::keywords::_buffer = vertex_queue,
+            boost::graph::keywords::_color_map = color,
+            boost::graph::keywords::_degree_map = degree,
+            boost::graph::keywords::_vertex_index_map = index_map
+        );
+    }
+}} // namespace boost::graph
+
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
@@ -408,151 +501,7 @@ namespace boost { namespace graph {
 BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, king_ordering)
 }} // namespace boost::graph
 
-#include <boost/graph/detail/traits.hpp>
-
-namespace boost { namespace graph {
-
-    template <
-        typename Graph, typename OutputIterator, typename VertexIndexMap
-    >
-    inline typename boost::enable_if<
-        boost::detail::is_vertex_to_integer_map_of_graph<
-            VertexIndexMap,
-            Graph
-        >,
-        OutputIterator
-    >::type
-    king_ordering(
-        const Graph& g, OutputIterator permutation, VertexIndexMap index_map
-    )
-    {
-        return king_ordering(
-            g, permutation,
-            boost::graph::keywords::_vertex_index_map = index_map
-        );
-    }
-}} // namespace boost::graph
-
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/eval_if.hpp>
-
-namespace boost { namespace graph {
-
-    template <
-        typename Graph, typename OutputIterator, typename ColorMap,
-        typename DegreeMap, typename VertexIndexMap
-    >
-    inline typename boost::enable_if<
-        typename mpl::eval_if<
-            boost::detail::is_vertex_to_integer_map_of_graph<
-                VertexIndexMap,
-                Graph
-            >,
-            mpl::if_<
-                boost::detail::is_vertex_to_integer_map_of_graph<
-                    DegreeMap,
-                    Graph
-                >,
-                boost::detail::is_vertex_color_map_of_graph<ColorMap,Graph>,
-                mpl::false_
-            >,
-            mpl::false_
-        >::type,
-        OutputIterator
-    >::type
-    king_ordering(
-        const Graph& g, OutputIterator permutation, ColorMap color,
-        DegreeMap degree, VertexIndexMap index_map
-    )
-    {
-        return king_ordering(
-            g, permutation,
-            boost::graph::keywords::_color_map = color,
-            boost::graph::keywords::_degree_map = degree,
-            boost::graph::keywords::_vertex_index_map = index_map
-        );
-    }
-
-    template <
-        typename Graph, typename OutputIterator, typename ColorMap,
-        typename DegreeMap, typename VertexIndexMap
-    >
-    inline typename boost::enable_if<
-        typename mpl::eval_if<
-            boost::detail::is_vertex_to_integer_map_of_graph<
-                VertexIndexMap,
-                Graph
-            >,
-            mpl::if_<
-                boost::detail::is_vertex_to_integer_map_of_graph<
-                    DegreeMap,
-                    Graph
-                >,
-                boost::detail::is_vertex_color_map_of_graph<ColorMap,Graph>,
-                mpl::false_
-            >,
-            mpl::false_
-        >::type,
-        OutputIterator
-    >::type
-    king_ordering(
-        const Graph& g, typename graph_traits<Graph>::vertex_descriptor s,
-        OutputIterator permutation, ColorMap color, DegreeMap degree,
-        VertexIndexMap index_map
-    )
-    {
-        return king_ordering(
-            g, permutation,
-            boost::graph::keywords::_root_vertex = s,
-            boost::graph::keywords::_color_map = color,
-            boost::graph::keywords::_degree_map = degree,
-            boost::graph::keywords::_vertex_index_map = index_map
-        );
-    }
-
-    template <
-        typename Graph, typename OutputIterator, typename ColorMap,
-        typename DegreeMap, typename VertexIndexMap
-    >
-    inline typename boost::enable_if<
-        typename mpl::eval_if<
-            boost::detail::is_vertex_to_integer_map_of_graph<
-                VertexIndexMap,
-                Graph
-            >,
-            mpl::if_<
-                boost::detail::is_vertex_to_integer_map_of_graph<
-                    DegreeMap,
-                    Graph
-                >,
-                boost::detail::is_vertex_color_map_of_graph<ColorMap,Graph>,
-                mpl::false_
-            >,
-            mpl::false_
-        >::type,
-        OutputIterator
-    >::type
-    king_ordering(
-        const Graph& g,
-        std::deque<
-            typename graph_traits<Graph>::vertex_descriptor
-        > vertex_queue,
-        OutputIterator permutation,
-        ColorMap color,
-        DegreeMap degree,
-        VertexIndexMap index_map
-    )
-    {
-        return king_ordering(
-            g, permutation,
-            boost::graph::keywords::_buffer = vertex_queue,
-            boost::graph::keywords::_color_map = color,
-            boost::graph::keywords::_degree_map = degree,
-            boost::graph::keywords::_vertex_index_map = index_map
-        );
-    }
-}} // namespace boost::graph  
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
 namespace boost {
 
