@@ -1189,7 +1189,7 @@ namespace boost { namespace graph {
 
     boost::detail::state<Graph1, Graph2, IndexMap1, IndexMap2,
                          EdgeEquivalencePredicate, VertexEquivalencePredicate,
-                         GraphIsoMapCallback, detail::isomorphism> 
+                         GraphIsoMapCallback, boost::detail::isomorphism> 
       s(graph1, graph2, index_map1, index_map2, edge_comp, vertex_comp);
 
     return boost::detail::match(graph1, graph2, user_callback, vertex_order1, s);
