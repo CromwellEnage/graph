@@ -776,7 +776,9 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
+#include <boost/parameter/value_type.hpp>
 #include <boost/functional/value_factory.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 namespace boost { namespace graph {
 
@@ -790,6 +792,27 @@ namespace boost { namespace graph {
         >::type = mpl::true_()
     )
     {
+        typedef typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::result,
+                boost::graph_detail::dummy_output_iterator
+            >::type
+        >::type OutputIterator;
+        OutputIterator itr = args[
+            boost::graph::keywords::_result ||
+            boost::value_factory<boost::graph_detail::dummy_output_iterator>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::visitor,
+                tsp_tour_visitor<OutputIterator>
+            >::type
+        >::type vis = args[
+            boost::graph::keywords::_visitor ||
+            make_tsp_tour_visitor_generator(itr)
+        ];
         metric_tsp_approx_from_vertex(
             g,
             boost::detail::get_default_starting_vertex(g),
@@ -805,17 +828,7 @@ namespace boost { namespace graph {
                 g,
                 vertex_index
             ),
-            args[
-                boost::graph::keywords::_visitor ||
-                make_tsp_tour_visitor_generator(
-                    args[
-                        boost::graph::keywords::_result ||
-                        boost::value_factory<
-                            boost::graph_detail::dummy_output_iterator
-                        >()
-                    ]
-                )
-            ]
+            vis
         );
     }
 
@@ -829,6 +842,16 @@ namespace boost { namespace graph {
         >::type = mpl::true_()
     )
     {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::result,
+                boost::graph_detail::dummy_output_iterator
+            >::type
+        >::type itr = args[
+            boost::graph::keywords::_result ||
+            boost::value_factory<boost::graph_detail::dummy_output_iterator>()
+        ];
         metric_tsp_approx_from_vertex(
             g,
             boost::detail::get_default_starting_vertex(g),
@@ -844,14 +867,7 @@ namespace boost { namespace graph {
                 g,
                 vertex_index
             ),
-            make_tsp_tour_visitor(
-                args[
-                    boost::graph::keywords::_result ||
-                    boost::value_factory<
-                        boost::graph_detail::dummy_output_iterator
-                    >()
-                ]
-            )
+            make_tsp_tour_visitor(itr)
         );
     }
 
@@ -866,6 +882,27 @@ namespace boost { namespace graph {
         >::type = mpl::true_()
     )
     {
+        typedef typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::result,
+                boost::graph_detail::dummy_output_iterator
+            >::type
+        >::type OutputIterator;
+        OutputIterator itr = args[
+            boost::graph::keywords::_result ||
+            boost::value_factory<boost::graph_detail::dummy_output_iterator>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::visitor,
+                tsp_tour_visitor<OutputIterator>
+            >::type
+        >::type vis = args[
+            boost::graph::keywords::_visitor ||
+            make_tsp_tour_visitor_generator(itr)
+        ];
         metric_tsp_approx_from_vertex(
             g,
             start,
@@ -881,17 +918,7 @@ namespace boost { namespace graph {
                 g,
                 vertex_index
             ),
-            args[
-                boost::graph::keywords::_visitor ||
-                make_tsp_tour_visitor_generator(
-                    args[
-                        boost::graph::keywords::_result ||
-                        boost::value_factory<
-                            boost::graph_detail::dummy_output_iterator
-                        >()
-                    ]
-                )
-            ]
+            vis
         );
     }
 
@@ -906,6 +933,16 @@ namespace boost { namespace graph {
         >::type = mpl::true_()
     )
     {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::result,
+                boost::graph_detail::dummy_output_iterator
+            >::type
+        >::type itr = args[
+            boost::graph::keywords::_result ||
+            boost::value_factory<boost::graph_detail::dummy_output_iterator>()
+        ];
         metric_tsp_approx_from_vertex(
             g,
             start,
@@ -921,14 +958,7 @@ namespace boost { namespace graph {
                 g,
                 vertex_index
             ),
-            make_tsp_tour_visitor(
-                args[
-                    boost::graph::keywords::_result ||
-                    boost::value_factory<
-                        boost::graph_detail::dummy_output_iterator
-                    >()
-                ]
-            )
+            make_tsp_tour_visitor(itr)
         );
     }
 }} // namespace boost::graph

@@ -1065,14 +1065,18 @@ namespace boost { namespace graph {
   {
     mcgregor_common_subgraphs_maximum_unique(
       graph1, graph2,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index1_map,
+        graph1,
+        vertex_index
+      ),
+      boost::detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index2_map,
+        graph2,
+        vertex_index
+      ),
       args[
         boost::graph::keywords::_edges_equivalent |
         always_equivalent()

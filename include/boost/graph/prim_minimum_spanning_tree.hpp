@@ -81,15 +81,15 @@ namespace boost { namespace graph {
        parameter::is_argument_pack<Args>, mpl::true_
      >::type = mpl::true_())
   {
-    using namespace boost::graph::keywords;
-    typename boost::detail::override_const_property_result<
+    typedef typename boost::detail::override_const_property_result<
         Args,
         boost::graph::keywords::tag::vertex_index_map,
         vertex_index_t,
         VertexListGraph
-    >::type v_i_map = boost::detail::override_const_property(
+    >::type IndexMap;
+    IndexMap v_i_map = boost::detail::override_const_property(
         arg_pack,
-        _vertex_index_map,
+        boost::graph::keywords::_vertex_index_map,
         g,
         vertex_index
     );
@@ -113,36 +113,53 @@ namespace boost { namespace graph {
     >::map_type dist_map = dist_map_gen(g, arg_pack);
     weight_map_type w_map = boost::detail::override_const_property(
         arg_pack,
-        _weight_map,
+        boost::graph::keywords::_weight_map,
         g,
         edge_weight
     );
     std::less<W> compare;
     boost::detail::_project2nd<W,W> combine;
-    null_visitor null_vis;
-    dijkstra_visitor<null_visitor> default_visitor(null_vis);
-    typename boost::parameter::binding<
-        Args, 
-        boost::graph::keywords::tag::visitor,
-        dijkstra_visitor<null_visitor>&
-    >::type vis = arg_pack[_visitor | default_visitor];
+    typename boost::remove_const<
+        typename boost::parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::visitor,
+            default_dijkstra_visitor
+        >::type
+    >::type vis = arg_pack[
+        boost::graph::keywords::_visitor ||
+        boost::value_factory<default_dijkstra_visitor>()
+    ];
+    typename boost::remove_const<
+        typename boost::parameter::lazy_value_type<
+            Args,
+            boost::graph::keywords::tag::color_map,
+            boost::detail::two_bit_color_map_generator<
+                VertexListGraph,
+                IndexMap
+            >
+        >::type
+    >::type v_c_map = arg_pack[
+        boost::graph::keywords::_color_map ||
+        boost::detail::two_bit_color_map_generator<
+            VertexListGraph,
+            IndexMap
+        >(g, v_i_map)
+    ];
     dijkstra_shortest_paths(
       g,
       arg_pack[
-        _root_vertex ||
+        boost::graph::keywords::_root_vertex ||
         boost::detail::get_default_starting_vertex_t<VertexListGraph>(g)
       ],
-      _predecessor_map = p_map,
-      _distance_map = dist_map,
-      _weight_map = w_map,
-      _vertex_index_map = v_i_map,
-      _distance_compare = compare,
-      _distance_combine = combine,
-      _distance_inf = (std::numeric_limits<W>::max)(),
-      _visitor = vis,
-      _color_map = arg_pack[
-        _color_map | make_two_bit_color_map(num_vertices(g), v_i_map)
-      ]
+      boost::graph::keywords::_predecessor_map = p_map,
+      boost::graph::keywords::_distance_map = dist_map,
+      boost::graph::keywords::_weight_map = w_map,
+      boost::graph::keywords::_vertex_index_map = v_i_map,
+      boost::graph::keywords::_distance_compare = compare,
+      boost::graph::keywords::_distance_combine = combine,
+      boost::graph::keywords::_distance_inf = (std::numeric_limits<W>::max)(),
+      boost::graph::keywords::_visitor = vis,
+      boost::graph::keywords::_color_map = v_c_map
     );
   }
 
