@@ -424,49 +424,70 @@ namespace boost { namespace graph {
 
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/value_type.hpp>
+#include <boost/functional/value_factory.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
 
 namespace boost { namespace graph {
 
-  // Named parameter variant of mcgregor_common_subgraphs
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Args>
-  void mcgregor_common_subgraphs(
-    const GraphFirst& graph1,
-    const GraphSecond& graph2,
-    bool only_connected_subgraphs,
-    SubGraphCallback user_callback,
-    const Args& args,
-    typename boost::enable_if<
-      parameter::is_argument_pack<Args>,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
-    boost::detail::mcgregor_common_subgraphs_internal_init(
-      graph1, graph2,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_edges_equivalent |
-        always_equivalent()
-      ],
-      args[
-        boost::graph::keywords::_vertices_equivalent |
-        always_equivalent()
-      ],
-      only_connected_subgraphs, user_callback
-    );
-  }
+    // Named parameter variant of mcgregor_common_subgraphs
+    template <
+        typename GraphFirst,
+        typename GraphSecond,
+        typename SubGraphCallback,
+        typename Args
+    >
+    void mcgregor_common_subgraphs(
+        const GraphFirst& graph1,
+        const GraphSecond& graph2,
+        bool only_connected_subgraphs,
+        SubGraphCallback user_callback,
+        const Args& args,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::edges_equivalent,
+                always_equivalent
+            >::type
+        >::type edge_func = args[
+            boost::graph::keywords::_edges_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::vertices_equivalent,
+                always_equivalent
+            >::type
+        >::type vert_func = args[
+            boost::graph::keywords::_vertices_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        boost::detail::mcgregor_common_subgraphs_internal_init(
+            graph1, graph2,
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index1_map,
+                graph1,
+                vertex_index
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index2_map,
+                graph2,
+                vertex_index
+            ),
+            edge_func, vert_func, only_connected_subgraphs, user_callback
+        );
+    }
 
   // Variant of mcgregor_common_subgraphs with all default parameters
   template <typename GraphFirst,
@@ -629,44 +650,62 @@ namespace boost { namespace graph {
        only_connected_subgraphs, unique_callback);
   }
 
-  // Named parameter variant of mcgregor_common_subgraphs
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Args>
-  inline void mcgregor_common_subgraphs_unique(
-    const GraphFirst& graph1,
-    const GraphSecond& graph2,
-    bool only_connected_subgraphs,
-    SubGraphCallback user_callback,
-    const Args& args,
-    typename boost::enable_if<
-      parameter::is_argument_pack<Args>,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
-    mcgregor_common_subgraphs_unique(
-      graph1, graph2,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_edges_equivalent |
-        always_equivalent()
-      ],
-      args[
-        boost::graph::keywords::_vertices_equivalent |
-        always_equivalent()
-      ],
-      only_connected_subgraphs, user_callback
-    );
-  }
+    // Named parameter variant of mcgregor_common_subgraphs_unique
+    template <
+        typename GraphFirst,
+        typename GraphSecond,
+        typename SubGraphCallback,
+        typename Args
+    >
+    void mcgregor_common_subgraphs_unique(
+        const GraphFirst& graph1,
+        const GraphSecond& graph2,
+        bool only_connected_subgraphs,
+        SubGraphCallback user_callback,
+        const Args& args,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::edges_equivalent,
+                always_equivalent
+            >::type
+        >::type edge_func = args[
+            boost::graph::keywords::_edges_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::vertices_equivalent,
+                always_equivalent
+            >::type
+        >::type vert_func = args[
+            boost::graph::keywords::_vertices_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        mcgregor_common_subgraphs_unique(
+            graph1, graph2,
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index1_map,
+                graph1,
+                vertex_index
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index2_map,
+                graph2,
+                vertex_index
+            ),
+            edge_func, vert_func, only_connected_subgraphs, user_callback
+        );
+    }
 
   // Variant of mcgregor_common_subgraphs_unique with all default
   // parameters.
@@ -794,79 +833,101 @@ namespace boost { namespace detail {
 
 namespace boost { namespace graph {
 
-  // Enumerates the largest common subgraphs found between graph1
-  // and graph2.  Note that the ENTIRE search space is explored before
-  // user_callback is actually invoked.
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename VertexIndexMapFirst,
-            typename VertexIndexMapSecond,
-            typename EdgeEquivalencePredicate,
-            typename VertexEquivalencePredicate,
-            typename SubGraphCallback>
-  void mcgregor_common_subgraphs_maximum
-  (const GraphFirst& graph1,
-   const GraphSecond& graph2,
-   const VertexIndexMapFirst vindex_map1,
-   const VertexIndexMapSecond vindex_map2,
-   EdgeEquivalencePredicate edges_equivalent,
-   VertexEquivalencePredicate vertices_equivalent,
-   bool only_connected_subgraphs,
-   SubGraphCallback user_callback)
-  {
-    boost::detail::maximum_subgraph_interceptor<GraphFirst, GraphSecond,
-      VertexIndexMapFirst, VertexIndexMapSecond, SubGraphCallback>
-      max_interceptor
-      (graph1, graph2, vindex_map1, vindex_map2, user_callback);
-      
-    boost::detail::mcgregor_common_subgraphs_internal_init
-      (graph1, graph2,
-       vindex_map1, vindex_map2,
-       edges_equivalent, vertices_equivalent,
-       only_connected_subgraphs, max_interceptor);
+    // Enumerates the largest common subgraphs found between graph1
+    // and graph2.  Note that the ENTIRE search space is explored before
+    // user_callback is actually invoked.
+    template <
+        typename GraphFirst,
+        typename GraphSecond,
+        typename VertexIndexMapFirst,
+        typename VertexIndexMapSecond,
+        typename EdgeEquivalencePredicate,
+        typename VertexEquivalencePredicate,
+        typename SubGraphCallback
+    >
+    void mcgregor_common_subgraphs_maximum(
+        const GraphFirst& graph1,
+        const GraphSecond& graph2,
+        const VertexIndexMapFirst vindex_map1,
+        const VertexIndexMapSecond vindex_map2,
+        EdgeEquivalencePredicate edges_equivalent,
+        VertexEquivalencePredicate vertices_equivalent,
+        bool only_connected_subgraphs,
+        SubGraphCallback user_callback
+    )
+    {
+        boost::detail::maximum_subgraph_interceptor<
+            GraphFirst, GraphSecond, VertexIndexMapFirst,
+            VertexIndexMapSecond, SubGraphCallback
+        > max_interceptor(
+            graph1, graph2, vindex_map1, vindex_map2, user_callback
+        );
 
-    // Only output the largest subgraphs
-    max_interceptor.output_subgraphs();
-  }
+        boost::detail::mcgregor_common_subgraphs_internal_init(
+            graph1, graph2, vindex_map1, vindex_map2, edges_equivalent,
+            vertices_equivalent, only_connected_subgraphs, max_interceptor
+        );
 
-  // Named parameter variant of mcgregor_common_subgraphs
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Args>
-  inline void mcgregor_common_subgraphs_maximum(
-    const GraphFirst& graph1,
-    const GraphSecond& graph2,
-    bool only_connected_subgraphs,
-    SubGraphCallback user_callback,
-    const Args& args,
-    typename boost::enable_if<
-      parameter::is_argument_pack<Args>,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
-    mcgregor_common_subgraphs_maximum(
-      graph1, graph2,
-      args[
-        boost::graph::keywords::_vertex_index1_map |
-        boost::detail::vertex_or_dummy_property_map(graph1, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_vertex_index2_map |
-        boost::detail::vertex_or_dummy_property_map(graph2, vertex_index)
-      ],
-      args[
-        boost::graph::keywords::_edges_equivalent |
-        always_equivalent()
-      ],
-      args[
-        boost::graph::keywords::_vertices_equivalent |
-        always_equivalent()
-      ],
-      only_connected_subgraphs, user_callback
-    );
-  }
+        // Only output the largest subgraphs
+        max_interceptor.output_subgraphs();
+    }
+
+    // Named parameter variant of mcgregor_common_subgraphs_maximum
+    template <
+        typename GraphFirst,
+        typename GraphSecond,
+        typename SubGraphCallback,
+        typename Args
+    >
+    void mcgregor_common_subgraphs_maximum(
+        const GraphFirst& graph1,
+        const GraphSecond& graph2,
+        bool only_connected_subgraphs,
+        SubGraphCallback user_callback,
+        const Args& args,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::edges_equivalent,
+                always_equivalent
+            >::type
+        >::type edge_func = args[
+            boost::graph::keywords::_edges_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::vertices_equivalent,
+                always_equivalent
+            >::type
+        >::type vert_func = args[
+            boost::graph::keywords::_vertices_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        mcgregor_common_subgraphs_maximum(
+            graph1, graph2,
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index1_map,
+                graph1,
+                vertex_index
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index2_map,
+                graph2,
+                vertex_index
+            ),
+            edge_func, vert_func, only_connected_subgraphs, user_callback
+        );
+    }
 
   // Variant of mcgregor_common_subgraphs_maximum with all default
   // parameters.
@@ -1046,48 +1107,62 @@ namespace boost { namespace graph {
     unique_max_interceptor.output_subgraphs();
   }
 
-  // Named parameter variant of mcgregor_common_subgraphs
-  template <typename GraphFirst,
-            typename GraphSecond,
-            typename SubGraphCallback,
-            typename Args>
-  inline void mcgregor_common_subgraphs_maximum_unique(
-    const GraphFirst& graph1,
-    const GraphSecond& graph2,
-    bool only_connected_subgraphs,
-    SubGraphCallback user_callback,
-    const Args& args,
-    typename boost::enable_if<
-      parameter::is_argument_pack<Args>,
-      mpl::true_
-    >::type = mpl::true_()
-  )
-  {
-    mcgregor_common_subgraphs_maximum_unique(
-      graph1, graph2,
-      boost::detail::override_const_property(
-        args,
-        boost::graph::keywords::_vertex_index1_map,
-        graph1,
-        vertex_index
-      ),
-      boost::detail::override_const_property(
-        args,
-        boost::graph::keywords::_vertex_index2_map,
-        graph2,
-        vertex_index
-      ),
-      args[
-        boost::graph::keywords::_edges_equivalent |
-        always_equivalent()
-      ],
-      args[
-        boost::graph::keywords::_vertices_equivalent |
-        always_equivalent()
-      ],
-      only_connected_subgraphs, user_callback
-    );
-  }
+    // Named parameter variant of mcgregor_common_subgraphs_maximum_unique
+    template <
+        typename GraphFirst,
+        typename GraphSecond,
+        typename SubGraphCallback,
+        typename Args
+    >
+    void mcgregor_common_subgraphs_maximum_unique(
+        const GraphFirst& graph1,
+        const GraphSecond& graph2,
+        bool only_connected_subgraphs,
+        SubGraphCallback user_callback,
+        const Args& args,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::edges_equivalent,
+                always_equivalent
+            >::type
+        >::type edge_func = args[
+            boost::graph::keywords::_edges_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::vertices_equivalent,
+                always_equivalent
+            >::type
+        >::type vert_func = args[
+            boost::graph::keywords::_vertices_equivalent ||
+            boost::value_factory<always_equivalent>()
+        ];
+        mcgregor_common_subgraphs_maximum_unique(
+            graph1, graph2,
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index1_map,
+                graph1,
+                vertex_index
+            ),
+            boost::detail::override_const_property(
+                args,
+                boost::graph::keywords::_vertex_index2_map,
+                graph2,
+                vertex_index
+            ),
+            edge_func, vert_func, only_connected_subgraphs, user_callback
+        );
+    }
 
   // Variant of mcgregor_common_subgraphs_maximum_unique with all default parameters
   template <typename GraphFirst,
