@@ -15,11 +15,14 @@ namespace boost {
     // Binary function object that returns true if the values for item1
     // in property_map1 and item2 in property_map2 are equivalent.
     template <typename PropertyMapFirst, typename PropertyMapSecond>
-    class property_map_equivalent {
+    class property_map_equivalent
+    {
         const PropertyMapFirst m_property_map1;
         const PropertyMapSecond m_property_map2;
 
     public:
+        typedef bool result_type;
+
         inline property_map_equivalent(
             const PropertyMapFirst property_map1,
             const PropertyMapSecond property_map2
@@ -56,6 +59,8 @@ namespace boost {
     // vertices or edges are always equivalent (i.e. have no labels).
     struct always_equivalent
     {
+        typedef bool result_type;
+
         template <typename ItemFirst, typename ItemSecond>
         inline bool operator()(const ItemFirst&, const ItemSecond&) const
         {

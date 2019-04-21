@@ -124,101 +124,143 @@ namespace boost {
 
 namespace boost { namespace detail {
 
-    template <class UniformCostVisitor, class UpdatableQueue,
-      class WeightMap, class PredecessorMap, class DistanceMap,
-      class BinaryFunction, class BinaryPredicate>
-    struct dijkstra_bfs_visitor
+    template <
+        typename UniformCostVisitor, typename UpdatableQueue,
+        typename WeightMap, typename PredecessorMap, typename DistanceMap,
+        typename BinaryFunction, typename BinaryPredicate
+    >
+    class dijkstra_bfs_visitor
     {
-      typedef typename property_traits<DistanceMap>::value_type D;
-      typedef typename property_traits<WeightMap>::value_type W;
+        typedef typename property_traits<DistanceMap>::value_type D;
+        typedef typename property_traits<WeightMap>::value_type W;
 
-      dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
-                           WeightMap w, PredecessorMap p, DistanceMap d,
-                           BinaryFunction combine, BinaryPredicate compare,
-                           D zero)
-        : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d),
-          m_combine(combine), m_compare(compare), m_zero(zero)  { }
+        UniformCostVisitor m_vis;
+        UpdatableQueue& m_Q;
+        WeightMap m_weight;
+        PredecessorMap m_predecessor;
+        DistanceMap m_distance;
+        BinaryFunction m_combine;
+        BinaryPredicate m_compare;
+        D m_zero;
 
-      template <class Edge, class Graph>
-      void tree_edge(Edge e, Graph& g) {
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                               m_combine, m_compare);
-        if (decreased)
-          m_vis.edge_relaxed(e, g);
-        else
-          m_vis.edge_not_relaxed(e, g);
-      }
-      template <class Edge, class Graph>
-      void gray_target(Edge e, Graph& g) {
-        D old_distance = get(m_distance, target(e, g));
+    public:
+        dijkstra_bfs_visitor(
+            UniformCostVisitor vis, UpdatableQueue& Q, WeightMap w,
+            PredecessorMap p, DistanceMap d, BinaryFunction combine,
+            BinaryPredicate compare, D zero
+        ) : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d),
+            m_combine(combine), m_compare(compare), m_zero(zero)
+        {
+        }
 
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                               m_combine, m_compare);
-        if (decreased) {
-          dijkstra_queue_update(m_Q, target(e, g), old_distance);
-          m_vis.edge_relaxed(e, g);
-        } else
-          m_vis.edge_not_relaxed(e, g);
-      }
+        template <typename Edge, typename Graph>
+        inline void tree_edge(Edge e, Graph& g)
+        {
+            if (
+                relax(
+                    e, g, this->m_weight, this->m_predecessor,
+                    this->m_distance, this->m_combine, this->m_compare
+                )
+            )
+                this->m_vis.edge_relaxed(e, g);
+            else
+                this->m_vis.edge_not_relaxed(e, g);
+        }
 
-      template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g)
-        { m_vis.initialize_vertex(u, g); }
-      template <class Edge, class Graph>
-      void non_tree_edge(Edge, Graph&) { }
-      template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) { m_vis.discover_vertex(u, g); }
-      template <class Vertex, class Graph>
-      void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
-      template <class Edge, class Graph>
-      void examine_edge(Edge e, Graph& g) {
-        // Test for negative-weight edges:
-        //
-        // Reasons that other comparisons do not work:
-        //
-        // m_compare(e_weight, D(0)):
-        //    m_compare only needs to work on distances, not weights, and those
-        //    types do not need to be the same (bug 8398,
-        //    https://svn.boost.org/trac/boost/ticket/8398).
-        // m_compare(m_combine(source_dist, e_weight), source_dist):
-        //    if m_combine is project2nd (as in prim_minimum_spanning_tree),
-        //    this test will claim that the edge weight is negative whenever
-        //    the edge weight is less than source_dist, even if both of those
-        //    are positive (bug 9012,
-        //    https://svn.boost.org/trac/boost/ticket/9012).
-        // m_compare(m_combine(e_weight, source_dist), source_dist):
-        //    would fix project2nd issue, but documentation only requires that
-        //    m_combine be able to take a distance and a weight (in that order)
-        //    and return a distance.
+        template <typename Edge, typename Graph>
+        void gray_target(Edge e, Graph& g)
+        {
+            D old_distance = get(this->m_distance, target(e, g));
 
-        // W e_weight = get(m_weight, e);
-        // sd_plus_ew = source_dist + e_weight.
-        // D sd_plus_ew = m_combine(source_dist, e_weight);
-        // sd_plus_2ew = source_dist + 2 * e_weight.
-        // D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
-        // The test here is equivalent to e_weight < 0 if m_combine has a
-        // cancellation law, but always returns false when m_combine is a
-        // projection operator.
-        if (m_compare(m_combine(m_zero, get(m_weight, e)), m_zero))
-            boost::throw_exception(negative_edge());
-        // End of test for negative-weight edges.
+            if (
+                relax(
+                    e, g, this->m_weight, this->m_predecessor,
+                    this->m_distance, this->m_combine, this->m_compare
+                )
+            )
+            {
+                dijkstra_queue_update(this->m_Q, target(e, g), old_distance);
+                this->m_vis.edge_relaxed(e, g);
+            }
+            else
+                this->m_vis.edge_not_relaxed(e, g);
+        }
 
-        m_vis.examine_edge(e, g);
+        template <typename Vertex, typename Graph>
+        inline void initialize_vertex(Vertex u, Graph& g)
+        {
+            this->m_vis.initialize_vertex(u, g);
+        }
 
-      }
-      template <class Edge, class Graph>
-      void black_target(Edge, Graph&) { }
-      template <class Vertex, class Graph>
-      void finish_vertex(Vertex u, Graph& g) { m_vis.finish_vertex(u, g); }
+        template <typename Edge, typename Graph>
+        inline void non_tree_edge(Edge, Graph&)
+        {
+        }
 
-      UniformCostVisitor m_vis;
-      UpdatableQueue& m_Q;
-      WeightMap m_weight;
-      PredecessorMap m_predecessor;
-      DistanceMap m_distance;
-      BinaryFunction m_combine;
-      BinaryPredicate m_compare;
-      D m_zero;
+        template <typename Vertex, typename Graph>
+        inline void discover_vertex(Vertex u, Graph& g)
+        {
+            this->m_vis.discover_vertex(u, g);
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void examine_vertex(Vertex u, Graph& g)
+        {
+            this->m_vis.examine_vertex(u, g);
+        }
+
+        template <typename Edge, typename Graph>
+        inline void examine_edge(Edge e, Graph& g)
+        {
+            // Test for negative-weight edges:
+            //
+            // Reasons that other comparisons do not work:
+            //
+            // m_compare(e_weight, D(0)):
+            //    m_compare only needs to work on distances, not weights,
+            //    and those types do not need to be the same (bug 8398,
+            //    https://svn.boost.org/trac/boost/ticket/8398).
+            // m_compare(m_combine(source_dist, e_weight), source_dist):
+            //    if m_combine is project2nd (as in
+            //    prim_minimum_spanning_tree), this test will claim that the
+            //    edge weight is negative whenever the edge weight is less
+            //    than source_dist, even if both of those are positive
+            //    (bug 9012, https://svn.boost.org/trac/boost/ticket/9012).
+            // m_compare(m_combine(e_weight, source_dist), source_dist):
+            //    would fix project2nd issue, but documentation only requires
+            //    that m_combine be able to take a distance and a weight
+            //    (in that order) and return a distance.
+
+            // W e_weight = get(m_weight, e);
+            // sd_plus_ew = source_dist + e_weight.
+            // D sd_plus_ew = m_combine(source_dist, e_weight);
+            // sd_plus_2ew = source_dist + 2 * e_weight.
+            // D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
+            // The test here is equivalent to e_weight < 0 if m_combine has a
+            // cancellation law, but always returns false when m_combine is a
+            // projection operator.
+            if (
+                this->m_compare(
+                    this->m_combine(this->m_zero, get(this->m_weight, e)),
+                    this->m_zero
+                )
+            )
+                boost::throw_exception(negative_edge());
+            // End of test for negative-weight edges.
+
+            this->m_vis.examine_edge(e, g);
+        }
+
+        template <typename Edge, typename Graph>
+        inline void black_target(Edge, Graph&)
+        {
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void finish_vertex(Vertex u, Graph& g)
+        {
+            this->m_vis.finish_vertex(u, g);
+        }
     };
 }} // namespace boost::detail
 
