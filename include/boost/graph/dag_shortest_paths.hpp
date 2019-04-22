@@ -80,7 +80,7 @@ namespace boost { namespace graph {
 namespace boost { namespace graph {
 
     template <typename Graph, typename Args>
-    inline void dag_shortest_paths(
+    void dag_shortest_paths(
         const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
         const Args& arg_pack, typename boost::enable_if<
             parameter::is_argument_pack<Args>,
@@ -112,13 +112,25 @@ namespace boost { namespace graph {
             g,
             edge_weight
         );
-        typedef typename boost::property_traits<WeightMap>::value_type D;
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+        const Weight zero_weight = Weight();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        > v_d_map_gen(zero_weight);
+        typedef typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        >::map_type DistanceMap;
+        DistanceMap v_d_map = v_d_map_gen(g, arg_pack);
+        typedef typename boost::property_traits<DistanceMap>::value_type D;
         const D inf = arg_pack[
             boost::graph::keywords::_distance_inf ||
             boost::detail::get_max<D>()
         ];
-        const D zero_actual = D();
-        const D zero_d = arg_pack[
+        const D zero_distance = arg_pack[
             boost::graph::keywords::_distance_zero ||
             boost::value_factory<D>()
         ];
@@ -142,16 +154,6 @@ namespace boost { namespace graph {
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
-        boost::detail::make_property_map_from_arg_pack_gen<
-            boost::graph::keywords::tag::distance_map,
-            D
-        > v_d_map_gen(zero_actual);
-        typename boost::detail::map_maker<
-            Graph,
-            Args,
-            boost::graph::keywords::tag::distance_map,
-            D
-        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -190,7 +192,7 @@ namespace boost { namespace graph {
         ];
         dag_shortest_paths(
             g, s, v_d_map, e_w_map, v_c_map, v_p_map, vis,
-            dist_comp, dist_comb, inf, zero_d
+            dist_comp, dist_comb, inf, zero_distance
         );
     }
 }} // namespace boost::graph
@@ -239,13 +241,13 @@ namespace boost { namespace detail {
     // Handle Distance Compare, Combine, Inf and Zero defaults
     template <class VertexListGraph, class DijkstraVisitor, 
       class DistanceMap, class WeightMap, class ColorMap, 
-      class IndexMap, class Params>
+      class IndexMap, class Param, class Tag, class Rest>
     inline void
     dag_sp_dispatch2
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        DistanceMap distance, WeightMap weight, ColorMap color, IndexMap /*id*/,
-       DijkstraVisitor vis, const Params& params)
+       DijkstraVisitor vis, const bgl_named_params<Param,Tag,Rest>& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
       dummy_property_map p_map;
@@ -266,13 +268,13 @@ namespace boost { namespace detail {
     // Handle DistanceMap and ColorMap defaults
     template <class VertexListGraph, class DijkstraVisitor, 
               class DistanceMap, class WeightMap, class ColorMap,
-              class IndexMap, class Params>
+              class IndexMap, class Param, class Tag, class Rest>
     inline void
     dag_sp_dispatch1
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
-       DijkstraVisitor vis, const Params& params)
+       DijkstraVisitor vis, const bgl_named_params<Param,Tag,Rest>& params)
     {
       typedef typename property_traits<WeightMap>::value_type T;
       typename std::vector<T>::size_type n;

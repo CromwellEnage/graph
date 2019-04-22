@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //============================================================================
 
-#ifndef BOOST_GRAPH_DETAIL_FUNCTIONAL_EQUIVALENT_HPP
-#define BOOST_GRAPH_DETAIL_FUNCTIONAL_EQUIVALENT_HPP
+#ifndef BOOST_GRAPH_DETAIL_FUNCTIONAL_HPP
+#define BOOST_GRAPH_DETAIL_FUNCTIONAL_HPP
 
 namespace boost {
 

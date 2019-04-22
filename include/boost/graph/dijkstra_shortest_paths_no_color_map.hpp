@@ -168,86 +168,6 @@ namespace boost { namespace graph {
   }
 }} // namespace boost::graph
 
-namespace boost { namespace detail {
-
-    // Handle defaults for PredecessorMap, DistanceCompare,
-    // DistanceWeightCombine, DistanceInfinity and DistanceZero
-    template <typename Graph, typename DistanceMap, typename WeightMap,
-              typename VertexIndexMap, typename Params>
-    inline void
-    dijkstra_no_color_map_dispatch2
-      (const Graph& graph,
-       typename graph_traits<Graph>::vertex_descriptor start_vertex,
-       DistanceMap distance_map, WeightMap weight_map,
-       VertexIndexMap index_map, const Params& params)
-    {
-      // Default for predecessor map
-      dummy_property_map predecessor_map;
-
-      typedef typename property_traits<DistanceMap>::value_type DistanceType;
-      DistanceType inf =
-        choose_param(get_param(params, distance_inf_t()),
-                     (std::numeric_limits<DistanceType>::max)());
-      dijkstra_shortest_paths_no_color_map
-        (graph, start_vertex,
-         choose_param(get_param(params, vertex_predecessor), predecessor_map),
-         distance_map, weight_map, index_map,
-         choose_param(get_param(params, distance_compare_t()),
-                      std::less<DistanceType>()),
-         choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<DistanceType>(inf)),
-         inf,
-         choose_param(get_param(params, distance_zero_t()),
-                      DistanceType()),
-         choose_param(get_param(params, graph_visitor),
-                      make_dijkstra_visitor(null_visitor())));
-    }
-
-    template <typename Graph, typename DistanceMap, typename WeightMap,
-              typename IndexMap, typename Params>
-    inline void
-    dijkstra_no_color_map_dispatch1
-      (const Graph& graph,
-       typename graph_traits<Graph>::vertex_descriptor start_vertex,
-       DistanceMap distance_map, WeightMap weight_map,
-       IndexMap index_map, const Params& params)
-    {
-      // Default for distance map
-      typedef typename property_traits<WeightMap>::value_type DistanceType;
-      typename std::vector<DistanceType>::size_type
-        vertex_count = is_default_param(distance_map) ? num_vertices(graph) : 1;
-
-      std::vector<DistanceType> default_distance_map(vertex_count);
-
-      detail::dijkstra_no_color_map_dispatch2
-        (graph, start_vertex, choose_param(distance_map,
-         make_iterator_property_map(default_distance_map.begin(), index_map,
-                                    default_distance_map[0])),
-         weight_map, index_map, params);
-    }
-}} // namespace boost::detail
-
-namespace boost {
-
-  // Old-style named parameter version
-  template <typename Graph, typename Param, typename Tag, typename Rest>
-  inline void
-  dijkstra_shortest_paths_no_color_map
-    (const Graph& graph,
-     typename graph_traits<Graph>::vertex_descriptor start_vertex,
-     const bgl_named_params<Param, Tag, Rest>& params)
-  {
-    // Default for edge weight and vertex index map is to ask for them
-    // from the graph. Default for the visitor is null_visitor.
-    detail::dijkstra_no_color_map_dispatch1
-      (graph, start_vertex,
-       get_param(params, vertex_distance),
-       choose_const_pmap(get_param(params, edge_weight), graph, edge_weight),
-       choose_const_pmap(get_param(params, vertex_index), graph, vertex_index),
-       params);
-  }
-} // namespace boost
-
 namespace boost { namespace graph {
 
     template <typename Graph, typename Args>
@@ -282,13 +202,25 @@ namespace boost { namespace graph {
             g,
             edge_weight
         );
-        typedef typename boost::property_traits<WeightMap>::value_type D;
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+        const Weight zero_weight = Weight();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        > v_d_map_gen(zero_weight);
+        typedef typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        >::map_type DistanceMap;
+        DistanceMap v_d_map = v_d_map_gen(g, arg_pack);
+        typedef typename boost::property_traits<DistanceMap>::value_type D;
         const D inf = arg_pack[
             boost::graph::keywords::_distance_inf ||
             boost::detail::get_max<D>()
         ];
-        const D zero_actual = D();
-        const D zero_d = arg_pack[
+        const D zero_distance = arg_pack[
             boost::graph::keywords::_distance_zero ||
             boost::value_factory<D>()
         ];
@@ -312,16 +244,6 @@ namespace boost { namespace graph {
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
-        boost::detail::make_property_map_from_arg_pack_gen<
-            boost::graph::keywords::tag::distance_map,
-            D
-        > v_d_map_gen(zero_actual);
-        typename boost::detail::map_maker<
-            Graph,
-            Args,
-            boost::graph::keywords::tag::distance_map,
-            D
-        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -356,12 +278,12 @@ namespace boost { namespace graph {
         }
 
         // Set distance for start_vertex to zero
-        put(v_d_map, s, zero_d);
+        put(v_d_map, s, zero_distance);
 
         // Pass everything on to the no_init version
         dijkstra_shortest_paths_no_color_map_no_init(
             g, s, v_p_map, v_d_map, e_w_map, v_i_map,
-            dist_comp, dist_comb, inf, zero_d, vis
+            dist_comp, dist_comb, inf, zero_distance, vis
         );
     }
 }} // namespace boost::graph
@@ -403,6 +325,86 @@ namespace boost {
 
     using ::boost::graph::dijkstra_shortest_paths_no_color_map_no_init;
     using ::boost::graph::dijkstra_shortest_paths_no_color_map;
+} // namespace boost
+
+namespace boost { namespace detail {
+
+    // Handle defaults for PredecessorMap, DistanceCompare,
+    // DistanceWeightCombine, DistanceInfinity and DistanceZero
+    template <typename Graph, typename DistanceMap, typename WeightMap,
+              typename VertexIndexMap, typename Param, typename Tag, typename Rest>
+    inline void
+    dijkstra_no_color_map_dispatch2
+      (const Graph& graph,
+       typename graph_traits<Graph>::vertex_descriptor start_vertex,
+       DistanceMap distance_map, WeightMap weight_map,
+       VertexIndexMap index_map, const bgl_named_params<Param, Tag, Rest>& params)
+    {
+      // Default for predecessor map
+      dummy_property_map predecessor_map;
+
+      typedef typename property_traits<DistanceMap>::value_type DistanceType;
+      DistanceType inf =
+        choose_param(get_param(params, distance_inf_t()),
+                     (std::numeric_limits<DistanceType>::max)());
+      dijkstra_shortest_paths_no_color_map
+        (graph, start_vertex,
+         choose_param(get_param(params, vertex_predecessor), predecessor_map),
+         distance_map, weight_map, index_map,
+         choose_param(get_param(params, distance_compare_t()),
+                      std::less<DistanceType>()),
+         choose_param(get_param(params, distance_combine_t()),
+                      closed_plus<DistanceType>(inf)),
+         inf,
+         choose_param(get_param(params, distance_zero_t()),
+                      DistanceType()),
+         choose_param(get_param(params, graph_visitor),
+                      make_dijkstra_visitor(null_visitor())));
+    }
+
+    template <typename Graph, typename DistanceMap, typename WeightMap,
+              typename IndexMap, typename Param, typename Tag, typename Rest>
+    inline void
+    dijkstra_no_color_map_dispatch1
+      (const Graph& graph,
+       typename graph_traits<Graph>::vertex_descriptor start_vertex,
+       DistanceMap distance_map, WeightMap weight_map,
+       IndexMap index_map, const bgl_named_params<Param, Tag, Rest>& params)
+    {
+      // Default for distance map
+      typedef typename property_traits<WeightMap>::value_type DistanceType;
+      typename std::vector<DistanceType>::size_type
+        vertex_count = is_default_param(distance_map) ? num_vertices(graph) : 1;
+
+      std::vector<DistanceType> default_distance_map(vertex_count);
+
+      detail::dijkstra_no_color_map_dispatch2
+        (graph, start_vertex, choose_param(distance_map,
+         make_iterator_property_map(default_distance_map.begin(), index_map,
+                                    default_distance_map[0])),
+         weight_map, index_map, params);
+    }
+}} // namespace boost::detail
+
+namespace boost {
+
+  // Old-style named parameter version
+  template <typename Graph, typename Param, typename Tag, typename Rest>
+  inline void
+  dijkstra_shortest_paths_no_color_map
+    (const Graph& graph,
+     typename graph_traits<Graph>::vertex_descriptor start_vertex,
+     const bgl_named_params<Param, Tag, Rest>& params)
+  {
+    // Default for edge weight and vertex index map is to ask for them
+    // from the graph. Default for the visitor is null_visitor.
+    detail::dijkstra_no_color_map_dispatch1
+      (graph, start_vertex,
+       get_param(params, vertex_distance),
+       choose_const_pmap(get_param(params, edge_weight), graph, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), graph, vertex_index),
+       params);
+  }
 } // namespace boost
 
 #endif // BOOST_GRAPH_DIJKSTRA_NO_COLOR_MAP_HPP

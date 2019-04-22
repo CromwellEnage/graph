@@ -31,7 +31,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/detail/functional_equivalent.hpp>
+#include <boost/graph/detail/functional.hpp>
 #include <boost/type_traits/has_less.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/range/algorithm/sort.hpp>

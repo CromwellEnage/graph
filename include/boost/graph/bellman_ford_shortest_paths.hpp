@@ -266,12 +266,13 @@ namespace boost { namespace graph {
             g,
             edge_weight
         );
-        typename boost::detail::override_const_property_result<
+        typedef typename boost::detail::override_const_property_result<
             Args,
             boost::graph::keywords::tag::distance_map,
             vertex_distance_t,
             EdgeListGraph
-        >::type v_d_map = boost::detail::override_const_property(
+        >::type DistanceMap;
+        DistanceMap v_d_map = boost::detail::override_const_property(
             args,
             boost::graph::keywords::_distance_map,
             g,
@@ -287,7 +288,7 @@ namespace boost { namespace graph {
                 boost::graph::keywords::tag::root_vertex
             >::type()
         );
-        typedef typename boost::property_traits<WeightMap>::value_type D;
+        typedef typename boost::property_traits<DistanceMap>::value_type D;
         const D inf = args[
             boost::graph::keywords::_distance_inf ||
             boost::detail::get_max<D>()

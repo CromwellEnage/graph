@@ -60,26 +60,6 @@ make_mapReducedWeight(const Graph & g, Weight w, Distance d, Reversed r)  {
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/core/enable_if.hpp>
-#include <iostream>
-
-namespace boost { namespace detail {
-
-template <typename IndexMap>
-class edge_displayer
-{
-IndexMap _i_map;
-public:
-typedef on_edge_relaxed event_filter;
-edge_displayer(IndexMap i_map) : _i_map(i_map) {}
-template <typename Edge, typename Graph>
-void operator()(Edge e, const Graph& g)
-{
-std::cout << "  Relaxed: " << get(this->_i_map, source(e, g));
-std::cout << ", " << get(this->_i_map, target(e, g)) << std::endl;
-}
-};
-}} // namespace boost::detail
-
 #include <utility>
 
 namespace boost { namespace graph {
@@ -139,55 +119,23 @@ namespace boost { namespace graph {
                 GRes, Weight, Distance2, Reversed
             > mrw(gres, weight, distance_prev, rev);
             Recorder recorder(pred);
-#if 0
             dijkstra_visitor<Recorder> vis(recorder);
-#else
-typedef boost::detail::edge_displayer<VertexIndex> EdgeDis;
-EdgeDis edge_dis(index);
-std::pair<Recorder,EdgeDis> p(recorder, edge_dis);
-dijkstra_visitor<std::pair<Recorder,EdgeDis> > vis(p);
-#endif
 
             dijkstra_shortest_paths(
                 gres, s,
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
                 boost::graph::keywords::_weight_map = mrw,
                 boost::graph::keywords::_distance_map = distance,
                 boost::graph::keywords::_vertex_index_map = index,
                 boost::graph::keywords::_visitor = vis
-#else
-                weight_map(mrw)
-                .distance_map(distance)
-                .vertex_index_map(index)
-                .visitor(vis)
-#endif
             );
-
-#if 0
-            BGL_FORALL_EDGES_T(e, gres, GRes)
-            {
-std::cout << (get(mrw, e)) << std::endl;
-            }
-#endif
-
-#if 0
-            BGL_FORALL_VERTICES_T(v, g, Graph)
-            {
-std::cout << "  distance[" << get(index, v) << "] = ";
-std::cout << (get(distance, v)) << std::endl;
-            }
-#endif
 
             if (get(pred, t) == edge_descriptor())
             {
                 break;
             }
-else std::cout << "Next iteration." << std::endl;
 
             BGL_FORALL_VERTICES_T(v, g, Graph)
             {
-//std::cout << "  distance_prev[" << get(index, v) << "] = ";
-//std::cout << (get(distance_prev, v) + get(distance, v)) << std::endl;
                 put(
                     distance_prev, v,
                     get(distance_prev, v) + get(distance, v)
@@ -395,18 +343,16 @@ namespace boost { namespace graph {
             g,
             edge_weight
         );
-        typedef typename boost::property_traits<
-            WeightMap
-        >::value_type Distance;
-        const Distance zero_distance = Distance();
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+        const Weight zero_weight = Weight();
         boost::detail::make_property_map_from_arg_pack_gen<
             boost::graph::keywords::tag::distance_map,
-            Distance
-        > dist_map_gen(zero_distance);
+            Weight
+        > dist_map_gen(zero_weight);
         boost::detail::make_property_map_from_arg_pack_gen<
             boost::graph::keywords::tag::distance_map2,
-            Distance
-        > dist_map2_gen(zero_distance);
+            Weight
+        > dist_map2_gen(zero_weight);
         successive_shortest_path_nonnegative_weights(
             g, s, t,
             e_c_map,

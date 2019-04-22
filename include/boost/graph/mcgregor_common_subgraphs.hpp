@@ -49,7 +49,7 @@ namespace boost { namespace detail {
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 
-#include <boost/graph/detail/functional_equivalent.hpp>
+#include <boost/graph/detail/functional.hpp>
 
 namespace boost { namespace detail {
 

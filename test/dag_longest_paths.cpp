@@ -8,11 +8,10 @@
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
+#include <boost/limits.hpp>
+#include <functional>
 
 using namespace boost;
-
-#include <iostream>
-using namespace std;
 
 int main(int, char*[])
 {
@@ -47,12 +46,8 @@ int main(int, char*[])
       boost::graph::keywords::_distance_zero = 0
     );
 
-    cout << distance[2] << "\n";
-
     BOOST_TEST(distance[2] == 2);
 
     return boost::report_errors();
 }
-
-
 

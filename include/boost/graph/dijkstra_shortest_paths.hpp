@@ -144,7 +144,7 @@ namespace boost { namespace detail {
         D m_zero;
 
     public:
-        dijkstra_bfs_visitor(
+        inline dijkstra_bfs_visitor(
             UniformCostVisitor vis, UpdatableQueue& Q, WeightMap w,
             PredecessorMap p, DistanceMap d, BinaryFunction combine,
             BinaryPredicate compare, D zero
@@ -162,9 +162,13 @@ namespace boost { namespace detail {
                     this->m_distance, this->m_combine, this->m_compare
                 )
             )
+            {
                 this->m_vis.edge_relaxed(e, g);
+            }
             else
+            {
                 this->m_vis.edge_not_relaxed(e, g);
+            }
         }
 
         template <typename Edge, typename Graph>
@@ -183,7 +187,9 @@ namespace boost { namespace detail {
                 this->m_vis.edge_relaxed(e, g);
             }
             else
+            {
                 this->m_vis.edge_not_relaxed(e, g);
+            }
         }
 
         template <typename Vertex, typename Graph>
@@ -245,7 +251,9 @@ namespace boost { namespace detail {
                     this->m_zero
                 )
             )
+            {
                 boost::throw_exception(negative_edge());
+            }
             // End of test for negative-weight edges.
 
             this->m_vis.examine_edge(e, g);
@@ -559,13 +567,25 @@ namespace boost { namespace graph {
             g,
             edge_weight
         );
-        typedef typename boost::property_traits<WeightMap>::value_type D;
+        typedef typename boost::property_traits<WeightMap>::value_type Weight;
+        const Weight zero_weight = Weight();
+        boost::detail::make_property_map_from_arg_pack_gen<
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        > v_d_map_gen(zero_weight);
+        typedef typename boost::detail::map_maker<
+            Graph,
+            Args,
+            boost::graph::keywords::tag::distance_map,
+            Weight
+        >::map_type DistanceMap;
+        DistanceMap v_d_map = v_d_map_gen(g, arg_pack);
+        typedef typename boost::property_traits<DistanceMap>::value_type D;
         const D inf = arg_pack[
             boost::graph::keywords::_distance_inf ||
             boost::detail::get_max<D>()
         ];
-        const D zero_actual = D();
-        const D zero_d = arg_pack[
+        const D zero_distance = arg_pack[
             boost::graph::keywords::_distance_zero ||
             boost::value_factory<D>()
         ];
@@ -589,16 +609,6 @@ namespace boost { namespace graph {
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
-        boost::detail::make_property_map_from_arg_pack_gen<
-            boost::graph::keywords::tag::distance_map,
-            D
-        > v_d_map_gen(zero_actual);
-        typename boost::detail::map_maker<
-            Graph,
-            Args,
-            boost::graph::keywords::tag::distance_map,
-            D
-        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
@@ -637,7 +647,7 @@ namespace boost { namespace graph {
         ];
         dijkstra_shortest_paths(
             g, srcs, srcs + 1, v_p_map, v_d_map, e_w_map, v_i_map,
-            dist_comp, dist_comb, inf, zero_d, vis, v_c_map
+            dist_comp, dist_comb, inf, zero_distance, vis, v_c_map
         );
     }
 }} // namespace boost::graph
@@ -743,13 +753,13 @@ namespace boost { namespace detail {
     // Handle defaults for PredecessorMap and
     // Distance Compare, Combine, Inf and Zero
     template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
+              class IndexMap, class Param, class Tag, class Rest>
     inline void
     dijkstra_dispatch2
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params)
+       const bgl_named_params<Param, Tag, Rest>& params)
     {
       // Default for predecessor map
       dummy_property_map p_map;
@@ -780,13 +790,13 @@ namespace boost { namespace detail {
 namespace boost { namespace detail {
 
     template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
+              class IndexMap, class Param, class Tag, class Rest>
     inline void
     dijkstra_dispatch1
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params)
+       const bgl_named_params<Param, Tag, Rest>& params)
     {
       // Default for distance map
       typedef typename property_traits<WeightMap>::value_type D;
@@ -810,7 +820,7 @@ namespace boost {
   dijkstra_shortest_paths
     (const VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     const bgl_named_params<Param,Tag,Rest>& params)
+     const bgl_named_params<Param, Tag, Rest>& params)
   {
     // Default for edge weight and vertex index map is to ask for them
     // from the graph.  Default for the visitor is null_visitor.
