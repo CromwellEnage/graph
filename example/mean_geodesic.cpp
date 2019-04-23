@@ -65,7 +65,10 @@ main(int argc, char *argv[])
     DistanceMatrix distances(num_vertices(g));
     DistanceMatrixMap dm(distances, g);
     WeightMap wm(1);
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
 
     // Compute the mean geodesic distances for each vertex in
     // the graph and get the average mean geodesic distace (the

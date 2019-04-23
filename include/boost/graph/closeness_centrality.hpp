@@ -1,8 +1,8 @@
 // (C) Copyright 2007-2009 Andrew Sutton
 //
-// Use, modification and distribution are subject to the
-// Boost Software License, Version 1.0 (See accompanying file
-// LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_GRAPH_CLOSENESS_CENTRALITY_HPP
 #define BOOST_GRAPH_CLOSENESS_CENTRALITY_HPP
@@ -65,10 +65,6 @@ measure_closeness(const Graph&, DistanceMap)
     typedef typename property_traits<DistanceMap>::value_type Distance;
     return closeness_measure<Graph, Distance, T, Reciprocal>();
 }
-}} /* namespace boost::graph */
-
-
-namespace boost { namespace graph {
 
 template <typename Graph,
           typename DistanceMap,
@@ -110,10 +106,6 @@ inline double closeness_centrality(const Graph& g, DistanceMap dist)
 template <typename T, typename Graph, typename DistanceMap>
 inline T closeness_centrality(const Graph& g, DistanceMap dist)
 { return closeness_centrality(g, dist, measure_closeness<T>(g, dist)); }
-}} /* namespace boost::graph */
-
-
-namespace boost { namespace graph {
 
 template <typename Graph,
           typename DistanceMatrixMap,
@@ -159,7 +151,6 @@ all_closeness_centralities(const Graph& g,
     all_closeness_centralities(g, dist, cent, measure_closeness<Result>(g, DistanceMap()));
 }
 }} /* namespace boost::graph */
-
 
 namespace boost {
 

@@ -92,7 +92,10 @@ main(int argc, char *argv[])
     DistanceMatrix distances(num_vertices(g));
     DistanceMatrixMap dm(distances, g);
     WeightMap wm(1);
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
 
     // Create the scaled closeness measure.
     scaled_closeness_measure<Graph, int, float> m;

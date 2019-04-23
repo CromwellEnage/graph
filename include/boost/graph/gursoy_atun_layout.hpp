@@ -33,9 +33,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/topology.hpp>
 
-namespace boost { 
-
-namespace detail {
+namespace boost { namespace detail {
 
 struct over_distance_limit : public std::exception {};
 
@@ -132,8 +130,9 @@ struct gursoy_shortest<dummy_property_map>
     );
   }
 };
+}} // namespace boost::detail
 
-} // namespace detail
+namespace boost { namespace graph {
 
 template <typename VertexListAndIncidenceGraph,  typename Topology,
           typename PositionMap, typename Diameter, typename VertexIndexMap, 
@@ -196,10 +195,10 @@ gursoy_atun_step
                     exp(-1. / (2 * diameter * diameter)));
   std::fill(node_distance_map_vector.begin(), node_distance_map_vector.end(), 0);
   try {
-    typedef detail::gursoy_shortest<EdgeWeightMap> shortest;
+    typedef boost::detail::gursoy_shortest<EdgeWeightMap> shortest;
     shortest::run(graph, min_distance_loc, node_distance, update_position,
                   weight);    
-  } catch (const detail::over_distance_limit&) { 
+  } catch (const boost::detail::over_distance_limit&) { 
     /* Thrown to break out of BFS or Dijkstra early */ 
   }
 }
@@ -226,7 +225,7 @@ void gursoy_atun_refine(const VertexListAndIncidenceGraph& graph,
   typedef typename graph_traits<VertexListAndIncidenceGraph>::vertex_iterator
     vertex_iterator;
   vertex_iterator i, iend;
-  double diameter_ratio = (double)diameter_final / diameter_initial;
+  double diameter_ratio = diameter_final / diameter_initial;
   double learning_constant_ratio = 
     learning_constant_final / learning_constant_initial;
   std::vector<double> distance_from_input_vector(num_vertices(graph));
@@ -243,9 +242,9 @@ void gursoy_atun_refine(const VertexListAndIncidenceGraph& graph,
   NodeDistanceMap node_distance(node_distance_map_vector.begin(),
                                 vertex_index_map);
   for (int round = 0; round < nsteps; ++round) {
-    double part_done = (double)round / (nsteps - 1);
+    double part_done = static_cast<double>(round) / (nsteps - 1);
     // fprintf(stderr, "%2d%% done\n", int(rint(part_done * 100.)));
-    int diameter = (int)(diameter_initial * pow(diameter_ratio, part_done));
+    int diameter = static_cast<int>(diameter_initial * pow(diameter_ratio, part_done));
     double learning_constant = 
       learning_constant_initial * pow(learning_constant_ratio, part_done);
     gursoy_atun_step(graph, space, position, diameter, learning_constant, 
@@ -279,9 +278,6 @@ void gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
                      learning_constant_initial, learning_constant_final,
                      vertex_index_map, weight);
 }
-} // namespace boost
-
-namespace boost { namespace graph {
 
 template <typename VertexListAndIncidenceGraph,  typename Topology,
           typename PositionMap, typename VertexIndexMap>
@@ -356,7 +352,7 @@ gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
   using std::sqrt;
 #endif
 
-  std::pair<double, double> diam(sqrt(double(num_vertices(graph))), 1.0);
+  std::pair<double, double> diam(sqrt(static_cast<double>(num_vertices(graph))), 1.0);
   std::pair<double, double> learn(0.8, 0.2);
   gursoy_atun_layout(graph, space, position,
                      choose_param(get_param(params, iterations_t()),
@@ -411,8 +407,8 @@ gursoy_atun_layout(
         boost::graph::keywords::tag::diameter_range,
         std::pair<double, double>&
     >::type diam_range = args[
-        boost::graph::keywords::_diameter_range |
-        default_diam_range
+        boost::graph::keywords::_diameter_range ||
+        boost::detail::make_reference_generator(default_diam_range)
     ];
     std::pair<double, double> default_learn_range(0.8, 0.2);
     typename parameter::binding<
@@ -420,8 +416,8 @@ gursoy_atun_layout(
         boost::graph::keywords::tag::learning_constant_range,
         std::pair<double, double>&
     >::type learn_range = args[
-        boost::graph::keywords::_learning_constant_range |
-        default_learn_range
+        boost::graph::keywords::_learning_constant_range ||
+        boost::detail::make_reference_generator(default_learn_range)
     ];
     gursoy_atun_layout(
         graph,
@@ -488,6 +484,8 @@ BOOST_PP_REPEAT_FROM_TO(
 namespace boost {
 
 using ::boost::graph::gursoy_atun_layout;
+using ::boost::graph::gursoy_atun_step;
+using ::boost::graph::gursoy_atun_refine;
 } // end namespace boost
 
 #endif  // BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP

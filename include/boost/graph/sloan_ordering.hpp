@@ -38,8 +38,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-namespace boost {
-        
+namespace boost { namespace graph {
+
   /////////////////////////////////////////////////////////////////////////
   // Function that returns the maximum depth of 
   // a rooted level strucutre (RLS)
@@ -435,8 +435,14 @@ namespace boost {
   { 
     return sloan_ordering(G, permutation, color, degree, priority, WEIGHT1, WEIGHT2);
   }
-  
-  
+}} // namespace boost::graph
+
+namespace boost {
+
+    using ::boost::graph::RLS_depth;
+    using ::boost::graph::RLS_max_width;
+    using ::boost::graph::sloan_start_end_vertices;
+    using ::boost::graph::sloan_ordering;
 } // namespace boost
 
 

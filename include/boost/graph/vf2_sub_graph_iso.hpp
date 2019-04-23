@@ -42,7 +42,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #endif
 
-namespace boost {
+namespace boost { namespace graph {
 
     // Default print_callback
     template <typename Graph1, typename Graph2>
@@ -77,7 +77,7 @@ namespace boost {
             return true;
         }
     };
-}
+}} // namespace boost::graph
 
 namespace boost { namespace detail {
 
@@ -929,7 +929,7 @@ namespace boost { namespace detail {
     }
 }} // namespace boost::detail
 
-namespace boost {
+namespace boost { namespace graph {
 
     // Returns vertex order
     // (vertices sorted by multiplicity of in/out degrees)
@@ -945,7 +945,7 @@ namespace boost {
         detail::sort_vertices(graph, get(vertex_index, graph), result);
         return result;
     }
-} // namespace boost
+}} // namespace boost::graph
 
 namespace boost { namespace graph {
 
@@ -1541,9 +1541,11 @@ BOOST_PP_REPEAT_FROM_TO(
 
 namespace boost {
 
-using ::boost::graph::vf2_subgraph_mono;
-using ::boost::graph::vf2_subgraph_iso;
-using ::boost::graph::vf2_graph_iso;
+    using ::boost::graph::vf2_print_callback;
+    using ::boost::graph::vertex_order_by_mult;
+    using ::boost::graph::vf2_subgraph_mono;
+    using ::boost::graph::vf2_subgraph_iso;
+    using ::boost::graph::vf2_graph_iso;
 
   // Old-style named parameter interface of vf2_subgraph_iso
   template <typename GraphSmall,

@@ -102,7 +102,10 @@ main(int argc, char *argv[])
     // above so it could be populated when the graph was read in.
     DistanceMatrix distances(num_vertices(g));
     DistanceMatrixMap dm(distances, g);
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
 
     // Create the containers and the respective property maps that
     // will contain the mean geodesics averaged both including

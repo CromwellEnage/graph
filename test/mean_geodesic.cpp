@@ -73,7 +73,10 @@ void test_undirected()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
     double geo1 = all_mean_geodesics(g, dm, cm);
     double geo2 = small_world_distance(g, cm);
 
@@ -114,7 +117,10 @@ void test_directed()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
     double geo1 = all_mean_geodesics(g, dm, cm);
     double geo2 = small_world_distance(g, cm);
 

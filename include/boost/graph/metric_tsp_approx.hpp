@@ -141,6 +141,11 @@ namespace boost {
             vis.visit_vertex(v, g); // require visit_vertex
         }
     };
+} // end namespace boost
+
+#include <vector>
+
+namespace boost { namespace graph {
 
     // Tree visitor that keeps track of a preorder traversal of a tree
     // TODO: Consider migrating this to the graph_as_tree header.
@@ -300,7 +305,7 @@ namespace boost {
     {
         return tsp_tour_visitor_generator<OutIter>(iter);
     }
-} // end namespace boost
+}} // end namespace boost::graph
 
 #include <boost/graph/detail/dummy_output_iterator.hpp>
 #include <boost/core/enable_if.hpp>
@@ -1036,6 +1041,15 @@ BOOST_PP_REPEAT_FROM_TO(
 
 namespace boost {
 
+    using ::boost::graph::PreorderTraverser;
+    using ::boost::graph::tsp_tour_visitor;
+    using ::boost::graph::tsp_tour_len_visitor;
+    using ::boost::graph::make_tsp_tour_visitor;
+    using ::boost::graph::make_tsp_tour_len_visitor;
+    using ::boost::graph::tsp_tour_visitor_generator;
+    using ::boost::graph::tsp_tour_len_visitor_generator;
+    using ::boost::graph::make_tsp_tour_visitor_generator;
+    using ::boost::graph::make_tsp_tour_len_visitor_generator;
     using ::boost::graph::metric_tsp_approx;
     using ::boost::graph::metric_tsp_approx_tour;
     using ::boost::graph::metric_tsp_approx_from_vertex;

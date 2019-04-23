@@ -22,7 +22,7 @@
 #include <cmath> // for std::sqrt and std::fabs
 #include <functional>
 
-namespace boost {
+namespace boost { namespace graph {
 
 struct square_distance_attractive_force {
   template<typename Graph, typename T>
@@ -102,7 +102,9 @@ struct grid_force_pairs
                    PositionMap position, const Graph& g)
     : topology(topology), position(position)
   {
-    two_k = 2. * this->topology.volume(this->topology.extent()) / std::sqrt((double)num_vertices(g));
+    two_k = 2. * this->topology.volume(
+      this->topology.extent()
+    ) / std::sqrt(static_cast<double>(num_vertices(g)));
   }
 
   template<typename Graph, typename ApplyForce >
@@ -204,7 +206,7 @@ scale_graph(const Graph& g, PositionMap position, const Topology& topology,
     put(position, v, topology.adjust(new_origin, relative_loc));
   }
 }
-} // end namespace boost
+}} // end namespace boost::graph
 
 namespace boost { namespace detail {
 
@@ -304,7 +306,10 @@ fruchterman_reingold_force_directed_layout
   double volume = topology.volume(topology.extent());
 
   // assume positions are initialized randomly
-  double k = pow(volume / num_vertices(g), 1. / (double)(Topology::point_difference_type::dimensions));
+  double k = pow(
+    volume / num_vertices(g),
+    1. / static_cast<double>(Topology::point_difference_type::dimensions)
+  );
 
   boost::detail::fr_apply_force<Topology, PositionMap, DisplacementMap,
                                 RepulsiveForce, Graph>
@@ -352,65 +357,8 @@ fruchterman_reingold_force_directed_layout
 }
 }} // end namespace boost::graph
 
-namespace boost { namespace detail {
-
-  template<typename DisplacementMap>
-  struct fr_force_directed_layout
-  {
-    template<typename Topology, typename Graph, typename PositionMap, 
-             typename AttractiveForce, typename RepulsiveForce,
-             typename ForcePairs, typename Cooling,
-             typename Param, typename Tag, typename Rest>
-    static void
-    run(const Graph&    g,
-        PositionMap     position,
-        const Topology& topology,
-        AttractiveForce attractive_force,
-        RepulsiveForce  repulsive_force,
-        ForcePairs      force_pairs,
-        Cooling         cool,
-        DisplacementMap displacement,
-        const bgl_named_params<Param, Tag, Rest>&)
-    {
-      fruchterman_reingold_force_directed_layout
-        (g, position, topology, attractive_force, repulsive_force,
-         force_pairs, cool, displacement);
-    }
-  };
-
-  template<>
-  struct fr_force_directed_layout<param_not_found>
-  {
-    template<typename Topology, typename Graph, typename PositionMap, 
-             typename AttractiveForce, typename RepulsiveForce,
-             typename ForcePairs, typename Cooling,
-             typename Param, typename Tag, typename Rest>
-    static void
-    run(const Graph&    g,
-        PositionMap     position,
-        const Topology& topology,
-        AttractiveForce attractive_force,
-        RepulsiveForce  repulsive_force,
-        ForcePairs      force_pairs,
-        Cooling         cool,
-        param_not_found,
-        const bgl_named_params<Param, Tag, Rest>& params)
-    {
-      typedef typename Topology::point_difference_type PointDiff;
-      std::vector<PointDiff> displacements(num_vertices(g));
-      fruchterman_reingold_force_directed_layout
-        (g, position, topology, attractive_force, repulsive_force,
-         force_pairs, cool,
-         make_iterator_property_map
-         (displacements.begin(),
-          choose_const_pmap(get_param(params, vertex_index), g,
-                            vertex_index),
-          PointDiff()));
-    }
-  };
-}} // end namespace boost::detail
-
 #include <boost/parameter/is_argument_pack.hpp>
+#include <boost/functional/value_factory.hpp>
 
 namespace boost { namespace graph {
 
@@ -446,12 +394,12 @@ fruchterman_reingold_force_directed_layout(
         position,
         topology,
         args[
-            boost::graph::keywords::_attractive_force |
-            square_distance_attractive_force()
+            boost::graph::keywords::_attractive_force ||
+            boost::value_factory<square_distance_attractive_force>()
         ],
         args[
-            boost::graph::keywords::_repulsive_force |
-            square_distance_repulsive_force()
+            boost::graph::keywords::_repulsive_force ||
+            boost::value_factory<square_distance_repulsive_force>()
         ],
         args[
             boost::graph::keywords::_force_pairs |
@@ -520,7 +468,75 @@ BOOST_PP_REPEAT_FROM_TO(
 
 namespace boost {
 
+using ::boost::graph::square_distance_attractive_force;
+using ::boost::graph::square_distance_repulsive_force;
+using ::boost::graph::linear_cooling;
+using ::boost::graph::all_force_pairs;
+using ::boost::graph::grid_force_pairs;
+using ::boost::graph::make_grid_force_pairs;
+using ::boost::graph::scale_graph;
 using ::boost::graph::fruchterman_reingold_force_directed_layout;
+} // end namespace boost
+
+namespace boost { namespace detail {
+
+  template<typename DisplacementMap>
+  struct fr_force_directed_layout
+  {
+    template<typename Topology, typename Graph, typename PositionMap, 
+             typename AttractiveForce, typename RepulsiveForce,
+             typename ForcePairs, typename Cooling,
+             typename Param, typename Tag, typename Rest>
+    static void
+    run(const Graph&    g,
+        PositionMap     position,
+        const Topology& topology,
+        AttractiveForce attractive_force,
+        RepulsiveForce  repulsive_force,
+        ForcePairs      force_pairs,
+        Cooling         cool,
+        DisplacementMap displacement,
+        const bgl_named_params<Param, Tag, Rest>&)
+    {
+      fruchterman_reingold_force_directed_layout
+        (g, position, topology, attractive_force, repulsive_force,
+         force_pairs, cool, displacement);
+    }
+  };
+
+  template<>
+  struct fr_force_directed_layout<param_not_found>
+  {
+    template<typename Topology, typename Graph, typename PositionMap, 
+             typename AttractiveForce, typename RepulsiveForce,
+             typename ForcePairs, typename Cooling,
+             typename Param, typename Tag, typename Rest>
+    static void
+    run(const Graph&    g,
+        PositionMap     position,
+        const Topology& topology,
+        AttractiveForce attractive_force,
+        RepulsiveForce  repulsive_force,
+        ForcePairs      force_pairs,
+        Cooling         cool,
+        param_not_found,
+        const bgl_named_params<Param, Tag, Rest>& params)
+    {
+      typedef typename Topology::point_difference_type PointDiff;
+      std::vector<PointDiff> displacements(num_vertices(g));
+      fruchterman_reingold_force_directed_layout
+        (g, position, topology, attractive_force, repulsive_force,
+         force_pairs, cool,
+         make_iterator_property_map
+         (displacements.begin(),
+          choose_const_pmap(get_param(params, vertex_index), g,
+                            vertex_index),
+          PointDiff()));
+    }
+  };
+}} // end namespace boost::detail
+
+namespace boost {
 
 template<typename Topology, typename Graph, typename PositionMap, typename Param,
          typename Tag, typename Rest>

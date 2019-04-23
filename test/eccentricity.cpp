@@ -73,7 +73,10 @@ void test_undirected()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
     all_eccentricities(g, dm, em);
     int rad = radius(g, em);
     int dia = diameter(g, em);
@@ -115,7 +118,10 @@ void test_directed()
 
     WeightMap wm(1);
 
-    floyd_warshall_all_pairs_shortest_paths(g, dm, weight_map(wm));
+    floyd_warshall_all_pairs_shortest_paths(
+        g, dm,
+        boost::graph::keywords::_weight_map = wm
+    );
     all_eccentricities(g, dm, em);
     int rad = radius(g, em);
     int dia = diameter(g, em);

@@ -79,12 +79,15 @@ int test_main(int, char*[])
   graph_traits<Graph>::vertex_descriptor s = vertex(A, g);
   std::vector<int> parent2(numVertex);
   std::vector<int> distance2(numVertex, 17);
-  bool const r2 = bellman_ford_shortest_paths
-                    (g, 
-                     weight_map(weight_pmap).
-                     distance_map(boost::make_iterator_property_map(distance2.begin(), get(boost::vertex_index, g))).
-                     predecessor_map(boost::make_iterator_property_map(parent2.begin(), get(boost::vertex_index, g))).
-                     root_vertex(s));
+  bool const r2 = bellman_ford_shortest_paths(
+    g,
+    boost::graph::keywords::_weight_map = weight_pmap,
+    boost::graph::keywords::_distance_map =
+    boost::make_iterator_property_map(distance2.begin(), get(boost::vertex_index, g)),
+    boost::graph::keywords::_predecessor_map =
+    boost::make_iterator_property_map(parent2.begin(), get(boost::vertex_index, g)),
+    boost::graph::keywords::_root_vertex = s
+  );
   if (r2) {
     for(int i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";

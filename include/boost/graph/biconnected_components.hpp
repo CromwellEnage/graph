@@ -75,6 +75,11 @@ namespace boost { namespace detail {
         {
         }
 
+        inline OutputIterator get_out() const
+        {
+            return this->out;
+        }
+
         template <typename Vertex, typename Graph>
         inline void initialize_vertex(const Vertex& u, Graph& g)
         {
@@ -257,7 +262,7 @@ namespace boost { namespace detail {
       );
 #endif
 
-      return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
+      return std::pair<std::size_t, OutputIterator>(num_components, vis.get_out());
     }
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
