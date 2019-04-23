@@ -572,15 +572,16 @@ namespace boost { namespace detail {
 
     template <typename T, typename G>
     struct is_neighbor_bfs_visitor
-      : mpl::eval_if<
-        is_bgl_graph<G>,
-        is_neighbor_bfs_visitor_impl<T,G>,
-        mpl::false_
-      >::type
-    { };
+        : mpl::eval_if<
+            is_bgl_graph<G>,
+            is_neighbor_bfs_visitor_impl<T,G>,
+            mpl::false_
+        >::type
+    {
+    };
 
     typedef argument_with_graph_predicate<
-      is_neighbor_bfs_visitor
+        is_neighbor_bfs_visitor
     > neighbor_bfs_visitor_predicate;
 #else   // defined(BOOST_NO_CXX11_DECLTYPE) && !defined(BOOST_TYPEOF_KEYWORD)
     typedef visitor_predicate neighbor_bfs_visitor_predicate;
@@ -614,6 +615,9 @@ namespace boost {
     typename graph_traits<Graph>::vertex_descriptor u;
     typename graph_traits<Graph>::edge_descriptor e;
   };
+}
+
+namespace boost { namespace graph {
 
   template <class Visitors = null_visitor>
   class neighbor_bfs_visitor {
@@ -685,7 +689,7 @@ namespace boost {
   make_neighbor_bfs_visitor(Visitors vis) {
     return neighbor_bfs_visitor<Visitors>(vis);
   }
-}
+}}
 
 namespace boost { namespace detail {
 
@@ -1185,6 +1189,8 @@ namespace boost {
 
     using ::boost::graph::neighbor_breadth_first_visit;
     using ::boost::graph::neighbor_breadth_first_search;
+    using ::boost::graph::neighbor_bfs_visitor;
+    using ::boost::graph::make_neighbor_bfs_visitor;
 
   // Old-style named parameter variant
   template <class VertexListGraph, class P, class T, class R>

@@ -71,7 +71,7 @@ namespace boost {
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Visitors = null_visitor>
     class dijkstra_visitor : public bfs_visitor<Visitors>
@@ -112,7 +112,7 @@ namespace boost {
     }
 
     typedef dijkstra_visitor<> default_dijkstra_visitor;
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
@@ -694,6 +694,9 @@ namespace boost {
 
     using ::boost::graph::dijkstra_shortest_paths_no_init;
     using ::boost::graph::dijkstra_shortest_paths;
+    using ::boost::graph::dijkstra_visitor;
+    using ::boost::graph::make_dijkstra_visitor;
+    using ::boost::graph::default_dijkstra_visitor;
 } // namespace boost
 
 #include <boost/graph/overloading.hpp>

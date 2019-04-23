@@ -444,7 +444,7 @@ namespace boost { namespace detail {
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
   template <class Visitors = null_visitor>
   class bfs_visitor {
@@ -543,7 +543,7 @@ namespace boost {
     return bfs_visitor<Visitors>(vis);
   }
   typedef bfs_visitor<> default_bfs_visitor;
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/core/enable_if.hpp>
 
@@ -954,18 +954,21 @@ namespace boost {
         typename parameter::value_type<
             arg_pack_type,
             boost::graph::keywords::tag::visitor,
-            default_bfs_visitor
+            boost::graph::default_bfs_visitor
         >::type
     >::type vis = arg_pack[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<default_bfs_visitor>()
+        boost::value_factory<boost::graph::default_bfs_visitor>()
     ];
     typename boost::detail::map_maker<
         VertexListGraph,
         arg_pack_type,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     breadth_first_search(ng, s, Q, vis, c_map);
 #else
     typedef typename get_param_type< vertex_color_t, bgl_named_params<P,T,R> >::type C;
@@ -1006,18 +1009,21 @@ namespace boost {
         typename parameter::value_type<
             arg_pack_type,
             boost::graph::keywords::tag::visitor,
-            default_bfs_visitor
+            boost::graph::default_bfs_visitor
         >::type
     >::type vis = arg_pack[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<default_bfs_visitor>()
+        boost::value_factory<boost::graph::default_bfs_visitor>()
     ];
     typename boost::detail::map_maker<
         IncidenceGraph,
         arg_pack_type,
         boost::graph::keywords::tag::color_map,
         boost::default_color_type
-    >::map_type c_map = detail::make_color_map_from_arg_pack(g, arg_pack);
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(
+        g,
+        arg_pack
+    );
     breadth_first_visit(ng, s, Q, vis, c_map);
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
     typedef graph_traits<IncidenceGraph> Traits;
@@ -1116,6 +1122,9 @@ namespace boost {
 
     using ::boost::graph::breadth_first_visit;
     using ::boost::graph::breadth_first_search;
+    using ::boost::graph::bfs_visitor;
+    using ::boost::graph::make_bfs_visitor;
+    using ::boost::graph::default_bfs_visitor;
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)

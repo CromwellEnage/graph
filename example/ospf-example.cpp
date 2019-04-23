@@ -72,7 +72,13 @@ main()
      indexmap, std::less<int>(), closed_plus<int>(), 
      (std::numeric_limits<int>::max)(), 0, default_dijkstra_visitor());
 #else
-  dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
+  dijkstra_shortest_paths(
+    g, router_six,
+    boost::graph::keywords::_predecessor_map = make_iterator_property_map(
+      parent.begin(), get(vertex_index, g),
+      graph_traits < Graph >::null_vertex()
+    )
+  );
 #endif
 
   graph_traits < g_dot_type >::edge_descriptor e;

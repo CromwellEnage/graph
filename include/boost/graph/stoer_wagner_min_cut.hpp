@@ -30,7 +30,7 @@
 namespace boost { namespace detail {
 
     template < typename ParityMap, typename WeightMap, typename IndexMap >
-    class mas_min_cut_visitor : public boost::default_mas_visitor
+    class mas_min_cut_visitor : public boost::graph::default_mas_visitor
     {
         typedef one_bit_color_map<IndexMap> InternalParityMap;
         typedef typename boost::property_traits<WeightMap>::value_type Weight;
@@ -173,7 +173,7 @@ namespace boost { namespace detail {
       for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
         // run the MAS and find the min cut
         vis.clear();
-        boost::maximum_adjacency_search(
+        maximum_adjacency_search(
             g,
             boost::graph::keywords::_weight_map = weights,
             boost::graph::keywords::_visitor = vis,
@@ -190,7 +190,7 @@ namespace boost { namespace detail {
       // Run one more time, starting from the best start location, to
       // ensure the visitor has the best values.
       vis.clear();
-      boost::maximum_adjacency_search(
+      maximum_adjacency_search(
         g,
         boost::graph::keywords::_vertex_assignment_map = assignments,
         boost::graph::keywords::_weight_map = weights,

@@ -80,13 +80,27 @@ compute_loop_extent(typename graph_traits <
   std::vector < default_color_type >
     reachable_from_head(num_vertices(g), Color::white());
   default_color_type c;
-  depth_first_visit(g, loop_head, default_dfs_visitor(),
+  depth_first_visit(g,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                    boost::graph::keywords::_root_vertex =
+#endif
+                    loop_head,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                    boost::graph::keywords::_color_map =
+#endif
                     make_iterator_property_map(reachable_from_head.begin(),
                                                get(vertex_index, g), c));
 
   std::vector < default_color_type > reachable_to_tail(num_vertices(g));
   reverse_graph < Graph > reverse_g(g);
-  depth_first_visit(reverse_g, loop_tail, default_dfs_visitor(),
+  depth_first_visit(reverse_g,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                    boost::graph::keywords::_root_vertex =
+#endif
+                    loop_tail,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+                    boost::graph::keywords::_color_map =
+#endif
                     make_iterator_property_map(reachable_to_tail.begin(),
                                                get(vertex_index, g), c));
 

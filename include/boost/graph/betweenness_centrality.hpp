@@ -835,31 +835,6 @@ inline void brandes_betweenness_centrality(
         boost::graph::keywords::_edge_centrality_map = edge_centrality_map
     );
 }
-}} // end namespace boost::graph
-
-namespace boost {
-
-using ::boost::graph::brandes_betweenness_centrality;
-
-template <typename Graph, typename Param, typename Tag, typename Rest>
-inline void brandes_betweenness_centrality(
-    const Graph& g,
-    const bgl_named_params<Param,Tag,Rest>& params
-    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
-)
-{
-    typedef bgl_named_params<Param,Tag,Rest> named_params;
-    using namespace boost::graph::keywords;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
-    graph::detail::brandes_betweenness_centrality_dispatch(
-        g,
-        arg_pack,
-        typename mpl::has_key<
-            arg_pack_type,
-            boost::graph::keywords::tag::weight_map
-        >::type()
-    );
-}
 
 /**
  * Converts "absolute" betweenness centrality (as computed by the
@@ -909,7 +884,33 @@ central_point_dominance(const Graph& g, CentralityMap centrality
   }
   return sum/(n-1);
 }
+}} // end namespace boost::graph
 
+namespace boost {
+
+using ::boost::graph::brandes_betweenness_centrality;
+using ::boost::graph::relative_betweenness_centrality;
+using ::boost::graph::central_point_dominance;
+
+template <typename Graph, typename Param, typename Tag, typename Rest>
+inline void brandes_betweenness_centrality(
+    const Graph& g,
+    const bgl_named_params<Param,Tag,Rest>& params
+    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)
+)
+{
+    typedef bgl_named_params<Param,Tag,Rest> named_params;
+    using namespace boost::graph::keywords;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(named_params, params)
+    graph::detail::brandes_betweenness_centrality_dispatch(
+        g,
+        arg_pack,
+        typename mpl::has_key<
+            arg_pack_type,
+            boost::graph::keywords::tag::weight_map
+        >::type()
+    );
+}
 } // end namespace boost
 
 #endif // BOOST_GRAPH_BRANDES_BETWEENNESS_CENTRALITY_HPP

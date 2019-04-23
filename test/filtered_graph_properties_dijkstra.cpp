@@ -6,6 +6,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 
@@ -59,17 +60,38 @@ struct Evaluator : public boost::put_get_helper< int, Derived >
     explicit Evaluator( Graph const* pGraph );
 };
 
+template< typename Graph, typename Derived >
+Evaluator< Graph, Derived >::Evaluator( Graph const* pGraph )
+{
+}
 
 template< typename Graph >
-struct LengthEvaluator : public Evaluator< Graph, LengthEvaluator<Graph> >
+class LengthEvaluator : public Evaluator< Graph, LengthEvaluator<Graph> >
 {
+    typedef Evaluator< Graph, LengthEvaluator<Graph> > Base;
+
+public: 
     explicit LengthEvaluator( Graph const* pGraph );
 
     typedef typename Evaluator<Graph, LengthEvaluator<Graph> >::reference reference;
     typedef typename Evaluator<Graph, LengthEvaluator<Graph> >::key_type key_type;
 
-    virtual reference operator[] ( key_type const& edge ) const;
+    virtual reference operator[]( key_type const& edge ) const;
 };
+
+template< typename Graph >
+LengthEvaluator< Graph >::LengthEvaluator( Graph const* pGraph ) : Base( pGraph )
+{
+}
+
+int test_dummy;
+
+template< typename Graph >
+typename LengthEvaluator< Graph >::reference
+LengthEvaluator< Graph >::operator[]( key_type const& edge ) const
+{
+    return test_dummy;
+}
 
 template< class Graph >
 struct EdgeFilter
@@ -86,6 +108,17 @@ private:
     const Graph*    m_pGraph;
 };
 
+template< class Graph >
+EdgeFilter< Graph >::EdgeFilter()
+{
+}
+
+template< class Graph >
+bool
+EdgeFilter< Graph >::operator()( key_type const& ) const
+{
+    return true;
+}
 
 template< class Evaluator, class Filter >
 void
@@ -98,10 +131,14 @@ UndirectedGraph::dijkstra( Evaluator const& rEvaluator,
 
     boost::filtered_graph< tGraph, Filter > filteredGraph( m_Graph, rFilter );
 
-    boost::dijkstra_shortest_paths( filteredGraph,
-                                    nodeSource,
-                                    boost::predecessor_map( &predecessors[0] )
-                                    .weight_map( rEvaluator ) );
+    dijkstra_shortest_paths(
+        filteredGraph, nodeSource,
+        boost::graph::keywords::_predecessor_map = make_iterator_property_map(
+            predecessors.begin(), boost::typed_identity_property_map< std::size_t >(),
+            boost::graph_traits< tGraph >::null_vertex()
+        ),
+        boost::graph::keywords::_weight_map = rEvaluator
+    );
 }
 
 // explicit instantiation

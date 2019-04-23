@@ -32,7 +32,7 @@ namespace boost { namespace graph_detail {
 
 #include <boost/graph/graph_traits.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Graph, typename CostType>
     struct astar_heuristic
@@ -50,7 +50,7 @@ namespace boost {
             return static_cast<CostType>(0);
         }
     };
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/concept_check.hpp>
 #include <boost/concept/assert.hpp>
@@ -95,7 +95,7 @@ namespace boost {
 
 #include <boost/graph/breadth_first_search.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Visitors = null_visitor>
     class astar_visitor : public bfs_visitor<Visitors>
@@ -141,7 +141,7 @@ namespace boost {
     }
 
     typedef astar_visitor<> default_astar_visitor;
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
@@ -1013,6 +1013,10 @@ namespace boost {
     using ::boost::graph::astar_search_tree;
     using ::boost::graph::astar_search_no_init;
     using ::boost::graph::astar_search_no_init_tree;
+    using ::boost::graph::astar_heuristic;
+    using ::boost::graph::astar_visitor;
+    using ::boost::graph::make_astar_visitor;
+    using ::boost::graph::default_astar_visitor;
 
   template <typename VertexListGraph,
             typename AStarHeuristic,

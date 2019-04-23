@@ -65,7 +65,7 @@ namespace boost {
 
 #include <boost/graph/visitors.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Visitors = null_visitor>
     class mas_visitor
@@ -82,25 +82,27 @@ namespace boost {
         template <typename Vertex, typename Graph>
         inline void initialize_vertex(Vertex u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
+            invoke_visitors(
+                this->m_vis, u, g, ::boost::on_initialize_vertex()
+            );
         }
 
         template <typename Vertex, typename Graph>
         inline void start_vertex(Vertex u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, ::boost::on_start_vertex());
+            invoke_visitors(this->m_vis, u, g, ::boost::on_start_vertex());
         }
 
         template <typename Edge, typename Graph>
         inline void examine_edge(Edge e, Graph& g)
         {
-            invoke_visitors(m_vis, e, g, ::boost::on_examine_edge());
+            invoke_visitors(this->m_vis, e, g, ::boost::on_examine_edge());
         }
 
         template <typename Vertex, typename Graph>
         inline void finish_vertex(Vertex u, Graph& g)
         {
-            invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
+            invoke_visitors(this->m_vis, u, g, ::boost::on_finish_vertex());
         }
 
         BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,mas)
@@ -119,7 +121,7 @@ namespace boost {
     }
 
     typedef mas_visitor<> default_mas_visitor;
-}
+}}
 
 #include <boost/graph/buffer_concepts.hpp>
 #include <boost/graph/exception.hpp>
@@ -493,6 +495,9 @@ namespace boost { namespace graph {
 namespace boost {
 
     using ::boost::graph::maximum_adjacency_search;
+    using ::boost::graph::mas_visitor;
+    using ::boost::graph::make_mas_visitor;
+    using ::boost::graph::default_mas_visitor;
 
     // Old-style named parameter interface
     template <typename Graph, typename P, typename T, typename R>

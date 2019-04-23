@@ -42,17 +42,17 @@ namespace boost { namespace detail {
 
     template <typename ComponentMap, typename RootMap, typename DiscoverTime,
               typename Stack>
-    class tarjan_scc_visitor : public dfs_visitor<>
+    class tarjan_scc_visitor : public boost::graph::dfs_visitor<>
     {
         typedef typename property_traits<ComponentMap>::value_type comp_type;
         typedef typename property_traits<DiscoverTime>::value_type time_type;
 
     public:
-        tarjan_scc_visitor(
+        inline tarjan_scc_visitor(
             ComponentMap comp_map, RootMap r, DiscoverTime d,
             comp_type& c_, Stack& s_
-        ) : c(c_), comp(comp_map), root(r), discover_time(d),
-            dfs_time(time_type()), s(s_)
+        ) : boost::graph::dfs_visitor<>(), c(c_), comp(comp_map), root(r),
+            discover_time(d), dfs_time(time_type()), s(s_)
         {
         }
 

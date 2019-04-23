@@ -171,9 +171,7 @@ namespace boost { namespace detail {
 }}
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 
-#include <boost/graph/detail/d_ary_heap.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-#include <boost/iterator/reverse_iterator.hpp>
+#include <boost/concept_check.hpp>
 #include <boost/concept/assert.hpp>
 
 /*
@@ -203,7 +201,8 @@ namespace boost {
     // Decomposition of Networks."  Sept. 1 2002.
 
     template <typename Visitor, typename Graph>
-    struct CoreNumbersVisitorConcept {
+    struct CoreNumbersVisitorConcept
+    {
         void constraints()
         {
             BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
@@ -211,45 +210,70 @@ namespace boost {
             vis.finish_vertex(u,g);
             vis.examine_edge(e,g);
         }
+
         Visitor vis;
         Graph g;
         typename graph_traits<Graph>::vertex_descriptor u;
         typename graph_traits<Graph>::edge_descriptor e;
     };
+}
 
-    template <class Visitors = null_visitor>
-    class core_numbers_visitor : public bfs_visitor<Visitors> {
-        public:
-        core_numbers_visitor() {}
-        core_numbers_visitor(Visitors vis)
-            : bfs_visitor<Visitors>(vis) {}
+#include <boost/graph/breadth_first_search.hpp>
 
-        private:
-        template <class Vertex, class Graph>
-        void initialize_vertex(Vertex, Graph&) {}
+namespace boost { namespace graph {
 
-        template <class Vertex, class Graph>
-        void discover_vertex(Vertex , Graph&) {}
+    template <typename Visitors = null_visitor>
+    class core_numbers_visitor : public bfs_visitor<Visitors>
+    {
+    public:
+        inline core_numbers_visitor()
+        {
+        }
 
-        template <class Vertex, class Graph>
-        void gray_target(Vertex, Graph&) {}
+        inline core_numbers_visitor(Visitors vis) : bfs_visitor<Visitors>(vis)
+        {
+        }
 
-        template <class Vertex, class Graph>
-        void black_target(Vertex, Graph&) {}
+    private:
+        template <typename Vertex, typename Graph>
+        inline void initialize_vertex(Vertex, Graph&)
+        {
+        }
 
-        template <class Edge, class Graph>
-        void tree_edge(Edge, Graph&) {}
+        template <typename Vertex, typename Graph>
+        inline void discover_vertex(Vertex, Graph&)
+        {
+        }
 
-        template <class Edge, class Graph>
-        void non_tree_edge(Edge, Graph&) {}
+        template <typename Vertex, typename Graph>
+        inline void gray_target(Vertex, Graph&)
+        {
+        }
+
+        template <typename Vertex, typename Graph>
+        inline void black_target(Vertex, Graph&)
+        {
+        }
+
+        template <typename Edge, typename Graph>
+        inline void tree_edge(Edge, Graph&)
+        {
+        }
+
+        template <typename Edge, typename Graph>
+        inline void non_tree_edge(Edge, Graph&)
+        {
+        }
     };
 
-    template <class Visitors>
+    template <typename Visitors>
     core_numbers_visitor<Visitors> make_core_numbers_visitor(Visitors vis)
-    { return core_numbers_visitor<Visitors>(vis); }
+    {
+        return core_numbers_visitor<Visitors>(vis);
+    }
 
     typedef core_numbers_visitor<> default_core_numbers_visitor;
-}
+}}
 
 #include <boost/property_map/property_map.hpp>
 
@@ -319,6 +343,11 @@ namespace boost { namespace detail {
 
         return (v_cn);
     }
+}} // namespace boost::detail
+
+#include <boost/graph/detail/d_ary_heap.hpp>
+
+namespace boost { namespace detail {
 
     template <
         typename Graph, typename CoreMap, typename EdgeWeightMap,
@@ -354,6 +383,11 @@ namespace boost { namespace detail {
 
         return core_numbers_impl(g, c, wm, Q, vis);
     }
+}}
+
+#include <boost/iterator/reverse_iterator.hpp>
+
+namespace boost { namespace detail {
 
     // the version for the unweighted case
     // for this functions CoreMap must be initialized
@@ -773,6 +807,9 @@ namespace boost {
 
     using ::boost::graph::core_numbers;
     using ::boost::graph::weighted_core_numbers;
+    using ::boost::graph::core_numbers_visitor;
+    using ::boost::graph::make_core_numbers_visitor;
+    using ::boost::graph::default_core_numbers_visitor;
 } // namespace boost
 
 #endif // BOOST_GRAPH_CORE_NUMBERS_HPP

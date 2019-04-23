@@ -526,49 +526,63 @@ namespace boost { namespace detail {
 
 namespace boost { namespace detail {
 
-    template <class NewGraph, class Copy2OrigIndexMap, 
-      class CopyVertex, class CopyEdge>
-    struct graph_copy_visitor : public bfs_visitor<>
+    template <
+        typename NewGraph, typename Copy2OrigIndexMap,
+        typename CopyVertex, typename CopyEdge
+    >
+    class graph_copy_visitor : public boost::graph::bfs_visitor<>
     {
-      graph_copy_visitor(NewGraph& graph, Copy2OrigIndexMap c,
-                         CopyVertex cv, CopyEdge ce)
-        : g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
+        NewGraph& g_out;
+        Copy2OrigIndexMap orig2copy;
+        CopyVertex copy_vertex;
+        CopyEdge copy_edge;
 
-      template <class Vertex, class Graph>
-      typename graph_traits<NewGraph>::vertex_descriptor copy_one_vertex(Vertex u) const {
+    public:
+        graph_copy_visitor(
+            NewGraph& graph, Copy2OrigIndexMap c, CopyVertex cv, CopyEdge ce
+        ) : g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce)
+        {
+        }
+
+        template <typename Vertex, typename Graph>
         typename graph_traits<NewGraph>::vertex_descriptor
-          new_u = add_vertex(g_out);
-        put(orig2copy, u, new_u);
-        copy_vertex(u, new_u);
-        return new_u;
-      }
-      
-      template <class Edge, class Graph>
-      void tree_edge(Edge e, const Graph& g_in) const {
-        // For a tree edge, the target vertex has not been copied yet.
-        typename graph_traits<NewGraph>::edge_descriptor new_e;
-        bool inserted;
-        boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
-                                               this->copy_one_vertex(target(e, g_in)),
-                                               g_out);
-        copy_edge(e, new_e);
-      }
-      
-      template <class Edge, class Graph>
-      void non_tree_edge(Edge e, const Graph& g_in) const {
-        // For a non-tree edge, the target vertex has already been copied.
-        typename graph_traits<NewGraph>::edge_descriptor new_e;
-        bool inserted;
-        boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
-                                               get(orig2copy, target(e, g_in)),
-                                               g_out);
-        copy_edge(e, new_e);
-      }
-    private:
-      NewGraph& g_out;
-      Copy2OrigIndexMap orig2copy;
-      CopyVertex copy_vertex;
-      CopyEdge copy_edge;
+        copy_one_vertex(Vertex u) const
+        {
+            typename graph_traits<
+                NewGraph
+            >::vertex_descriptor new_u = add_vertex(this->g_out);
+            put(this->orig2copy, u, new_u);
+            this->copy_vertex(u, new_u);
+            return new_u;
+        }
+
+        template <typename Edge, typename Graph>
+        void tree_edge(Edge e, const Graph& g_in) const
+        {
+            // For a tree edge, the target vertex has not been copied yet.
+            typename graph_traits<NewGraph>::edge_descriptor new_e;
+            bool inserted;
+            boost::tie(new_e, inserted) = add_edge(
+                get(this->orig2copy, source(e, g_in)),
+                this->copy_one_vertex(target(e, g_in)),
+                this->g_out
+            );
+            if (inserted) this->copy_edge(e, new_e);
+        }
+
+        template <typename Edge, typename Graph>
+        void non_tree_edge(Edge e, const Graph& g_in) const
+        {
+            // For a non-tree edge, the target vertex has already been copied.
+            typename graph_traits<NewGraph>::edge_descriptor new_e;
+            bool inserted;
+            boost::tie(new_e, inserted) = add_edge(
+                get(this->orig2copy, source(e, g_in)),
+                get(this->orig2copy, target(e, g_in)),
+                this->g_out
+            );
+            if (inserted) this->copy_edge(e, new_e);
+        }
     };
 }} // namespace boost::detail
 

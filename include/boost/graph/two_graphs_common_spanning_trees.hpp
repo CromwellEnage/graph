@@ -42,7 +42,7 @@ namespace detail {
       typename LowMap,
       typename Buffer
     >
-  struct bridges_visitor: public default_dfs_visitor
+  struct bridges_visitor: public boost::graph::default_dfs_visitor
   {
     bridges_visitor(
         TreeMap tree,

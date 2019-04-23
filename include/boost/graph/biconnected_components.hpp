@@ -45,15 +45,29 @@ namespace boost { namespace detail {
              typename OutputIterator, typename Stack,
              typename ArticulationVector, typename IndexMap,
              typename DFSVisitor>
-    struct biconnected_components_visitor : public dfs_visitor<>
+    class biconnected_components_visitor : public boost::graph::dfs_visitor<>
     {
+        ComponentMap comp;
+        std::size_t& c;
+        std::size_t& children_of_root;
+        DiscoverTimeMap dtm;
+        std::size_t& dfs_time;
+        LowPointMap lowpt;
+        PredecessorMap pred;
+        OutputIterator out;
+        Stack& S;
+        ArticulationVector& is_articulation_point;
+        IndexMap index_map;
+        DFSVisitor vis;
+
+    public:
         biconnected_components_visitor(
             ComponentMap comp, std::size_t& c, std::size_t& children_of_root,
             DiscoverTimeMap dtm, std::size_t& dfs_time, LowPointMap lowpt,
             PredecessorMap pred, OutputIterator out, Stack& S,
             ArticulationVector& is_articulation_point, IndexMap index_map,
             DFSVisitor vis
-        ) : dfs_visitor<>(), comp(comp), c(c),
+        ) : boost::graph::dfs_visitor<>(), comp(comp), c(c),
             children_of_root(children_of_root), dtm(dtm), dfs_time(dfs_time),
             lowpt(lowpt), pred(pred), out(out), S(S),
             is_articulation_point(is_articulation_point),
@@ -200,19 +214,6 @@ namespace boost { namespace detail {
 
             this->vis.finish_vertex(u, g);
         }
-
-        ComponentMap comp;
-        std::size_t& c;
-        std::size_t& children_of_root;
-        DiscoverTimeMap dtm;
-        std::size_t& dfs_time;
-        LowPointMap lowpt;
-        PredecessorMap pred;
-        OutputIterator out;
-        Stack& S;
-        ArticulationVector& is_articulation_point;
-        IndexMap index_map;
-        DFSVisitor vis;
     };
 
     template<typename Graph, typename ComponentMap, typename OutputIterator,

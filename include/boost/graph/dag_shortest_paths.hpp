@@ -22,7 +22,7 @@ namespace boost { namespace graph {
             class DistanceMap, class WeightMap, class ColorMap,
             class PredecessorMap, class Compare, class Combine,
             class DistInf, class DistZero>
-  inline void
+  void
   dag_shortest_paths
     (const VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,

@@ -49,7 +49,7 @@ namespace boost {
 
 #include <boost/graph/visitors.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Visitors = null_visitor>
     class bellman_visitor
@@ -92,6 +92,7 @@ namespace boost {
         {
             invoke_visitors(this->m_vis, u, g, on_edge_not_minimized());
         }
+
     protected:
         Visitors m_vis;
     };
@@ -104,7 +105,7 @@ namespace boost {
     }
 
     typedef bellman_visitor<> default_bellman_visitor;
-}
+}}
 
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
@@ -248,7 +249,7 @@ namespace boost { namespace detail {
 namespace boost { namespace graph {
 
     template <typename EdgeListGraph, typename Args>
-    inline typename boost::enable_if<
+    typename boost::enable_if<
         parameter::is_argument_pack<Args>,
         bool
     >::type
@@ -401,6 +402,9 @@ BOOST_PP_REPEAT_FROM_TO(
 namespace boost {
 
     using ::boost::graph::bellman_ford_shortest_paths;
+    using ::boost::graph::bellman_visitor;
+    using ::boost::graph::make_bellman_visitor;
+    using ::boost::graph::default_bellman_visitor;
 }
 
 namespace boost { namespace detail {

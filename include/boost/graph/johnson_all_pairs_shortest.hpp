@@ -177,7 +177,7 @@ namespace boost { namespace graph {
         typename VertexAndEdgeListGraph, typename DistanceMatrix,
         typename Args
     >
-    inline typename boost::enable_if<
+    typename boost::enable_if<
         parameter::is_argument_pack<Args>,
         bool
     >::type

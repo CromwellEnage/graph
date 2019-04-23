@@ -281,20 +281,25 @@ namespace boost {
     {
       return property_put <PropertyMap, EventTag> (property_map, value);
     }
+} /* namespace boost */
 
 #define BOOST_GRAPH_EVENT_STUB(Event,Kind)                                 \
     typedef ::boost::Event Event##_type;                                   \
-    template<typename Visitor>                                             \
-    Kind##_visitor<std::pair<detail::functor_to_visitor<Event##_type,      \
-                                                     Visitor>, Visitors> > \
+    template <typename Visitor>                                            \
+    Kind##_visitor<                                                        \
+        std::pair<                                                         \
+            boost::detail::functor_to_visitor<Event##_type, Visitor>,      \
+            Visitors                                                       \
+        >                                                                  \
+    >                                                                      \
     do_##Event(Visitor visitor)                                            \
     {                                                                      \
-      typedef std::pair<detail::functor_to_visitor<Event##_type, Visitor>, \
-                        Visitors> visitor_list;                            \
-      typedef Kind##_visitor<visitor_list> result_type;                    \
-      return result_type(visitor_list(visitor, m_vis));                    \
+        typedef std::pair<                                                 \
+            boost::detail::functor_to_visitor<Event##_type, Visitor>,      \
+            Visitors                                                       \
+        > visitor_list;                                                    \
+        typedef Kind##_visitor<visitor_list> result_type;                  \
+        return result_type(visitor_list(visitor, m_vis));                  \
     }
-
-} /* namespace boost */
 
 #endif

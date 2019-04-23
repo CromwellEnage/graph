@@ -22,7 +22,7 @@
 #include <boost/parameter/preprocessor.hpp>
 #endif
 
-namespace boost {
+namespace boost { namespace graph {
 
 /** Threshold termination function for the betweenness centrality
  * clustering algorithm.
@@ -72,9 +72,6 @@ struct bc_clustering_threshold
   T threshold;
   T dividend;
 };
-}
-
-namespace boost { namespace graph {
 
 /** Graph clustering based on edge betweenness centrality.
  * 
@@ -248,6 +245,7 @@ betweenness_centrality_clustering(MutableGraph& g, Done done)
 namespace boost {
 
 using ::boost::graph::betweenness_centrality_clustering;
+using ::boost::graph::bc_clustering_threshold;
 } // end namespace boost
 
 #endif // BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP

@@ -460,8 +460,9 @@ namespace boost {
     typename graph_traits<Graph>::vertex_descriptor u;
     typename graph_traits<Graph>::edge_descriptor e;
   };
+} // namespace boost
 
-  namespace detail {
+namespace boost { namespace detail {
 
     struct nontruth2 {
       template<class T, class T2>
@@ -621,8 +622,9 @@ namespace boost {
     }
 
 #endif
+}} // namespace boost::detail
 
-  } // namespace detail
+namespace boost { namespace graph {
 
   template <class Visitors = null_visitor>
   class dfs_visitor {
@@ -686,7 +688,7 @@ namespace boost {
     return dfs_visitor<Visitors>(vis);
   }
   typedef dfs_visitor<> default_dfs_visitor;
-} // namespace boost
+}} // namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
@@ -1045,6 +1047,9 @@ namespace boost {
 
     using ::boost::graph::depth_first_search;
     using ::boost::graph::depth_first_visit;
+    using ::boost::graph::dfs_visitor;
+    using ::boost::graph::make_dfs_visitor;
+    using ::boost::graph::default_dfs_visitor;
 
     // Old-style named parameter variant
     template <typename Graph, typename P, typename T, typename R>

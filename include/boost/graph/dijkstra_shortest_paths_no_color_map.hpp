@@ -171,7 +171,7 @@ namespace boost { namespace graph {
 namespace boost { namespace graph {
 
     template <typename Graph, typename Args>
-    inline void dijkstra_shortest_paths_no_color_map(
+    void dijkstra_shortest_paths_no_color_map(
         const Graph& g, typename graph_traits<Graph>::vertex_descriptor s,
         const Args& arg_pack, typename boost::enable_if<
             parameter::is_argument_pack<Args>,

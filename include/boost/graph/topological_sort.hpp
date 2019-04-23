@@ -15,7 +15,7 @@
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
 
-namespace boost { 
+namespace boost { namespace graph {
 
     // Topological sort visitor
     //
@@ -47,18 +47,18 @@ namespace boost {
 
         OutputIterator m_iter;
     };
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/config.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/parameter/preprocessor.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/graph/detail/traits.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/preprocessor.hpp>
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/core/enable_if.hpp>
 #endif
@@ -214,6 +214,7 @@ namespace boost { namespace graph {
 namespace boost { 
 
     using ::boost::graph::topological_sort;
+    using ::boost::graph::topo_sort_visitor;
 
   template <typename VertexListGraph, typename OutputIterator,
     typename P, typename T, typename R>

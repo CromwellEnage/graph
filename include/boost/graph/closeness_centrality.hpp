@@ -11,12 +11,12 @@
 #include <boost/graph/exterior_property.hpp>
 #include <boost/concept/assert.hpp>
 
-namespace boost
-{
+namespace boost { namespace graph {
+
 template <typename Graph,
           typename DistanceType,
           typename ResultType,
-          typename Reciprocal = detail::reciprocal<ResultType> >
+          typename Reciprocal = boost::detail::reciprocal<ResultType> >
 struct closeness_measure
     : public geodesic_measure<Graph, DistanceType, ResultType>
 {
@@ -39,21 +39,21 @@ struct closeness_measure
 template <typename Graph, typename DistanceMap>
 inline closeness_measure<
         Graph, typename property_traits<DistanceMap>::value_type, double,
-        detail::reciprocal<double> >
+        boost::detail::reciprocal<double> >
 measure_closeness(const Graph&, DistanceMap)
 {
     typedef typename property_traits<DistanceMap>::value_type Distance;
-    return closeness_measure<Graph, Distance, double, detail::reciprocal<double> >();
+    return closeness_measure<Graph, Distance, double, boost::detail::reciprocal<double> >();
 }
 
 template <typename T, typename Graph, typename DistanceMap>
 inline closeness_measure<
         Graph, typename property_traits<DistanceMap>::value_type, T,
-        detail::reciprocal<T> >
+        boost::detail::reciprocal<T> >
 measure_closeness(const Graph&, DistanceMap)
 {
     typedef typename property_traits<DistanceMap>::value_type Distance;
-    return closeness_measure<Graph, Distance, T, detail::reciprocal<T> >();
+    return closeness_measure<Graph, Distance, T, boost::detail::reciprocal<T> >();
 }
 
 template <typename T, typename Graph, typename DistanceMap, typename Reciprocal>
@@ -65,6 +65,10 @@ measure_closeness(const Graph&, DistanceMap)
     typedef typename property_traits<DistanceMap>::value_type Distance;
     return closeness_measure<Graph, Distance, T, Reciprocal>();
 }
+}} /* namespace boost::graph */
+
+
+namespace boost { namespace graph {
 
 template <typename Graph,
           typename DistanceMap,
@@ -83,7 +87,7 @@ closeness_centrality(const Graph& g,
     BOOST_CONCEPT_ASSERT(( NumericValueConcept<Distance> ));
     BOOST_CONCEPT_ASSERT(( DistanceMeasureConcept<Measure,Graph> ));
 
-    Distance n = detail::combine_distances(g, dist, combine, Distance(0));
+    Distance n = boost::detail::combine_distances(g, dist, combine, Distance(0));
     return measure(n, g);
 }
 
@@ -106,6 +110,10 @@ inline double closeness_centrality(const Graph& g, DistanceMap dist)
 template <typename T, typename Graph, typename DistanceMap>
 inline T closeness_centrality(const Graph& g, DistanceMap dist)
 { return closeness_centrality(g, dist, measure_closeness<T>(g, dist)); }
+}} /* namespace boost::graph */
+
+
+namespace boost { namespace graph {
 
 template <typename Graph,
           typename DistanceMatrixMap,
@@ -150,7 +158,15 @@ all_closeness_centralities(const Graph& g,
 
     all_closeness_centralities(g, dist, cent, measure_closeness<Result>(g, DistanceMap()));
 }
+}} /* namespace boost::graph */
 
+
+namespace boost {
+
+using ::boost::graph::closeness_measure;
+using ::boost::graph::measure_closeness;
+using ::boost::graph::closeness_centrality;
+using ::boost::graph::all_closeness_centralities;
 } /* namespace boost */
 
 #endif
