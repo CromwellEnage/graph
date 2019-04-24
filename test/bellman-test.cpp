@@ -18,18 +18,18 @@ B: 2147483647 B
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/cstdlib.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   using namespace boost;
 
   enum { A, B, Z };
   char const name[] = "ABZ";
-  int const numVertex = static_cast<int>(Z) + 1;
-  typedef std::pair<int,int> Edge;
+  std::size_t const numVertex = static_cast<std::size_t>(Z) + 1;
+  typedef std::pair<std::size_t,std::size_t> Edge;
   Edge edge_array[] = {Edge(B,A)};
-  int const numEdges = sizeof(edge_array) / sizeof(Edge);
+  std::size_t const numEdges = sizeof(edge_array) / sizeof(Edge);
   int const weight[numEdges] = {11};
 
   typedef adjacency_list<vecS,vecS,undirectedS,
@@ -41,7 +41,7 @@ int test_main(int, char*[])
   property_map<Graph,edge_weight_t>::type
     weight_pmap = get(edge_weight, g);
 
-  int i = 0;
+  std::size_t i = 0;
   for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
 
@@ -54,7 +54,7 @@ int test_main(int, char*[])
   distance[A] = 0; // Set source distance to zero
 
   bool const r = bellman_ford_shortest_paths
-    (g, int (numVertex),
+    (g, static_cast<std::size_t>(numVertex),
      weight_pmap, 
      boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g)),
      boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g)),
@@ -63,7 +63,7 @@ int test_main(int, char*[])
      default_bellman_visitor());
 
   if (r) {
-    for(int i = 0; i < numVertex; ++i) {
+    for(std::size_t i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";
       if (distance[i] == inf)
         std::cout  << std::setw(3) << "inf";
@@ -89,7 +89,7 @@ int test_main(int, char*[])
     boost::graph::keywords::_root_vertex = s
   );
   if (r2) {
-    for(int i = 0; i < numVertex; ++i) {
+    for(std::size_t i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";
       if (distance2[i] == inf)
         std::cout  << std::setw(3) << "inf";
@@ -101,12 +101,12 @@ int test_main(int, char*[])
     std::cout << "negative cycle" << std::endl;
   }
 
-  BOOST_CHECK(r == r2);
+  BOOST_TEST_EQ(r, r2);
   if (r && r2) {
-    BOOST_CHECK(parent == parent2);
-    BOOST_CHECK(distance == distance2);
+    BOOST_TEST(parent == parent2);
+    BOOST_TEST(distance == distance2);
   }
 #endif
 
-  return boost::exit_success;
+  return boost::report_errors();
 }

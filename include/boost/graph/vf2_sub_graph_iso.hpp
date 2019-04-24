@@ -942,7 +942,7 @@ namespace boost { namespace graph {
             vertices(graph).first, vertices(graph).second,
             std::back_inserter(result)
         );
-        detail::sort_vertices(graph, get(vertex_index, graph), result);
+        boost::detail::sort_vertices(graph, get(vertex_index, graph), result);
         return result;
     }
 }} // namespace boost::graph

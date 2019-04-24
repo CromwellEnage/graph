@@ -304,6 +304,13 @@ namespace boost { namespace graph {
             boost::graph::keywords::_predecessor_map ||
             boost::value_factory<dummy_property_map>()
         ];
+        typename graph_traits<EdgeListGraph>::vertex_iterator vi, vi_end;
+
+        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+        {
+            put(v_p_map, *vi, *vi);
+        }
+
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,

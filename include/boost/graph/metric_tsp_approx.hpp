@@ -1047,9 +1047,7 @@ namespace boost {
     using ::boost::graph::make_tsp_tour_visitor;
     using ::boost::graph::make_tsp_tour_len_visitor;
     using ::boost::graph::tsp_tour_visitor_generator;
-    using ::boost::graph::tsp_tour_len_visitor_generator;
     using ::boost::graph::make_tsp_tour_visitor_generator;
-    using ::boost::graph::make_tsp_tour_len_visitor_generator;
     using ::boost::graph::metric_tsp_approx;
     using ::boost::graph::metric_tsp_approx_tour;
     using ::boost::graph::metric_tsp_approx_from_vertex;
