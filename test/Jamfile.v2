@@ -176,9 +176,76 @@ alias graph_test_with_filesystem :
         : $(PLANAR_INPUT_FILES) ]
     ;
 
+alias graph_test_vendor_specific_failures ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc08 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>8.0
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc09 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>9.0
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc10 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>10.0
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc11 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>11.0
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc12 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>12.0
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_msvc14 ]
+    :
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
+
+alias graph_test_vendor_specific_failures :
+    [ run-fail finish_edge_bug.cpp
+        : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
+        : finish_edge_bug_fail_mingw ]
+    :
+        <target-os>windows
+        <toolset>gcc
+    ;
+
 test-suite graph_test :
     graph_test_regular
     graph_test_with_filesystem
+    graph_test_vendor_specific_failures
     ;
 
 # Run SDB tests only when -sSDB= is set.

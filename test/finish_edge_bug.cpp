@@ -80,8 +80,10 @@ int main(int, char*[])
 
   depth_first_search(G, boost::graph::keywords::_visitor = TalkativeVisitor<Graph>());
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
-        !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+#if defined(LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE) || ( \
+        defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && ( \
+            !defined(BOOST_NO_CXX11_DECLTYPE) || defined(BOOST_TYPEOF_KEYWORD) \
+        ) \
     )
   BOOST_TEST(is_called);
 #endif
