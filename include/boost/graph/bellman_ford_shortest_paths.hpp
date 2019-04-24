@@ -205,34 +205,36 @@ namespace boost { namespace detail {
 
     template <
         typename Graph, typename WeightMap, typename DistanceMap,
-        typename Args
+        typename PredecessorMap, typename Args
     >
-    void bellman_initialize_distance_map(
-        Graph& g, WeightMap, DistanceMap distance, const Args& arg_pack,
-        mpl::true_
+    void bellman_initialize_distance_and_predecessor_maps(
+        Graph& g, WeightMap, DistanceMap distance, PredecessorMap pred,
+        const Args& arg_pack, mpl::true_
     )
     {
-        typedef typename property_traits<WeightMap>::value_type weight_type;
+        typedef typename property_traits<WeightMap>::value_type Weight;
         typename graph_traits<Graph>::vertex_iterator v, v_end;
 
         for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v)
         {
-            put(distance, *v, (std::numeric_limits<weight_type>::max)());
+            put(distance, *v, (std::numeric_limits<Weight>::max)());
+            put(pred, *v, *v);
         }
 
         put(
             distance,
             arg_pack[boost::graph::keywords::_root_vertex],
-            weight_type(0)
+            Weight(0)
         );
     }
 
     template <
         typename Graph, typename WeightMap, typename DistanceMap,
-        typename Args
+        typename PredecessorMap, typename Args
     >
-    inline void bellman_initialize_distance_map(
-        Graph&, WeightMap, DistanceMap, const Args&, mpl::false_
+    inline void bellman_initialize_distance_and_predecessor_maps(
+        Graph&, WeightMap, DistanceMap, PredecessorMap, const Args&,
+        mpl::false_
     )
     {
     }
@@ -279,10 +281,21 @@ namespace boost { namespace graph {
             g,
             vertex_distance
         );
-        boost::detail::bellman_initialize_distance_map(
+        typename boost::remove_const<
+            typename boost::parameter::value_type<
+                Args,
+                boost::graph::keywords::tag::predecessor_map,
+                dummy_property_map
+            >::type
+        >::type v_p_map = args[
+            boost::graph::keywords::_predecessor_map ||
+            boost::value_factory<dummy_property_map>()
+        ];
+        boost::detail::bellman_initialize_distance_and_predecessor_maps(
             g,
             e_w_map,
             v_d_map,
+            v_p_map,
             args,
             typename mpl::has_key<
                 Args,
@@ -294,23 +307,6 @@ namespace boost { namespace graph {
             boost::graph::keywords::_distance_inf ||
             boost::detail::get_max<D>()
         ];
-        typename boost::remove_const<
-            typename boost::parameter::value_type<
-                Args,
-                boost::graph::keywords::tag::predecessor_map,
-                dummy_property_map
-            >::type
-        >::type v_p_map = args[
-            boost::graph::keywords::_predecessor_map ||
-            boost::value_factory<dummy_property_map>()
-        ];
-        typename graph_traits<EdgeListGraph>::vertex_iterator vi, vi_end;
-
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-        {
-            put(v_p_map, *vi, *vi);
-        }
-
         typename boost::remove_const<
             typename boost::parameter::value_type<
                 Args,
