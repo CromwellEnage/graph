@@ -291,7 +291,10 @@ namespace boost { namespace graph {
     }
 }} // end namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -418,7 +421,7 @@ namespace boost { namespace graph {
     }
 }} // end namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 
@@ -456,7 +459,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(stoer_wagner_min_cut,2,4)
 }} // end namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph {
 

@@ -1041,7 +1041,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_visit, 1, 6)
 }} // namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 
 namespace boost {
 

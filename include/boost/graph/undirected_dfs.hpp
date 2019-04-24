@@ -24,8 +24,10 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) && !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -183,7 +185,10 @@ namespace boost { namespace detail {
 
 #include <boost/functional/value_factory.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -530,7 +535,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph {
 
@@ -774,7 +779,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(undirected_depth_first_visit, 1, 5)
 }} // namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

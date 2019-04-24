@@ -145,7 +145,10 @@ namespace boost {
       cg_vertex&
     > component_number(component_number_vec.begin(), vertex_index_map);
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     size_type num_scc = strong_components(graph, component_number, vertex_index_map);
 #else
     size_type num_scc = strong_components(
@@ -187,7 +190,10 @@ namespace boost {
     topological_sort(
       CG,
       std::back_inserter(topo_order),
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
       boost::graph::keywords::_vertex_index_map =
 #endif
       identity_property_map()

@@ -610,7 +610,10 @@ namespace boost { namespace graph {
 
 #include <boost/functional/value_factory.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/parameter/value_type.hpp>
@@ -865,7 +868,10 @@ namespace boost { namespace detail {
        boost::mpl::true_);
 #endif // BOOST_GRAPH_USE_MPI
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     //-------------------------------------------------------------------------
     // Choose between default color and color parameters. Using
     // function dispatching so that we don't require vertex index if
@@ -918,7 +924,7 @@ namespace boost { namespace detail {
                typename graph_traits<VertexListGraph>::traversal_category>::value>());
       }
     };
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // MSVC-14.0 w/64-bit addressing
 }} // namespace boost::detail
 
 namespace boost {
@@ -935,7 +941,10 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     VertexListGraph& ng = const_cast<VertexListGraph&>(g);
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     typedef typename graph_traits<
@@ -974,7 +983,7 @@ namespace boost {
     typedef typename get_param_type< vertex_color_t, bgl_named_params<P,T,R> >::type C;
     detail::bfs_dispatch<C>::apply(ng, s, params,
                                    get_param(params, vertex_color));
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
   }
 
   // This version does not initialize colors, user has to.
@@ -990,7 +999,10 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     IncidenceGraph& ng = const_cast<IncidenceGraph&>(g);
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     typedef typename graph_traits<
@@ -1025,7 +1037,7 @@ namespace boost {
         arg_pack
     );
     breadth_first_visit(ng, s, Q, vis, c_map);
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
     typedef graph_traits<IncidenceGraph> Traits;
     // Buffer default
     typedef typename Traits::vertex_descriptor vertex_descriptor;
@@ -1039,7 +1051,7 @@ namespace boost {
                     make_bfs_visitor(null_visitor())),
        choose_pmap(get_param(params, vertex_color), ng, vertex_color)
        );
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
   }
 } // namespace boost
 

@@ -22,7 +22,10 @@
 #include <boost/concept/assert.hpp>
 #include <boost/static_assert.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/core/enable_if.hpp>
 #include <boost/mpl/has_key.hpp>
@@ -161,7 +164,10 @@ namespace boost { namespace detail {
         return total;
     }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     template <class Graph, class ComponentMap, class RootMap,
               class DiscoverTime, class P, class T, class R>
     typename property_traits<ComponentMap>::value_type
@@ -294,10 +300,13 @@ namespace boost { namespace detail {
       return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
                                                            r_map);
     }
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // MSVC-14.0 w/64-bit addressing
 }} // namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -445,7 +454,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 
@@ -515,7 +524,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(strong_components, 2, 6)
 }} // namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 
@@ -530,7 +539,10 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((boost::is_convertible<DirCat*, directed_tag*>::value));
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     return detail::strong_components_impl(

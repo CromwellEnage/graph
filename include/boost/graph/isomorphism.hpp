@@ -558,7 +558,10 @@ namespace boost { namespace graph { namespace detail {
     };
 }}} // namespace boost::graph::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/compose.hpp>
 #include <boost/core/enable_if.hpp>
@@ -633,7 +636,7 @@ namespace boost {
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
 }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

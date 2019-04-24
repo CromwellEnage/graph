@@ -91,7 +91,10 @@ namespace boost { namespace detail {
 #include <boost/graph/named_function_params.hpp>
 
     // Named parameter variants
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/preprocessor.hpp>
@@ -215,7 +218,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/mpl/bool.hpp>
@@ -324,7 +327,7 @@ BOOST_PP_REPEAT_FROM_TO(
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

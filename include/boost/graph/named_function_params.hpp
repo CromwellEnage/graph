@@ -34,23 +34,12 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
 
-#if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && \
-    !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && ( \
-        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
-        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
-    )
-// Unless this macro is defined for these compilers:
-// Tests built by MSVC-14.0 with address model set to 64 bits, such as
-// dag_shortest_paths, dijkstra_no_color_map_compare, gursoy_atun_layout_test,
-// floyed_warshall_test, max_flow_test, metric_tsp_approx, stoer_wagner_test,
-// and cycle_canceling_test, emit access violations. -- Cromwell D. Enage
-#define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
-#endif
-
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
-        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || \
-        defined(__MINGW32__) || BOOST_WORKAROUND(BOOST_MSVC, < 1900) \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1900) || ( \
+            BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+            BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+        ) || defined(__MINGW32__) \
     )
 // Unless this macro is defined for these compilers:
 // MSVC-12.0 and below emit compiler errors such as top() not being a member
@@ -60,17 +49,14 @@
 #define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
 #endif
 
-#if defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#undef BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-#endif
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 #endif
-#else   // !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
-#define BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
-#endif
+#else   // not MSVC-14.0 w/64-bit addressing
 #if defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS)
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
@@ -78,7 +64,7 @@
 #elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 #define BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 #endif
-#endif  // BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
+#endif  // MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

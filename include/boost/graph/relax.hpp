@@ -14,7 +14,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 
-namespace boost {
+namespace boost { namespace graph {
 
     // The following version of the plus functor prevents
     // problems due to overflow at positive infinity.
@@ -103,7 +103,13 @@ namespace boost {
       typedef std::less<D> Compare;
       return relax(e, g, w, p, d, Combine(), Compare());
     }
+}} // namespace boost::graph
 
+namespace boost {
+
+    using ::boost::graph::closed_plus;
+    using ::boost::graph::closed_plus_gen;
+    using ::boost::graph::relax;
 } // namespace boost
 
 #endif /* BOOST_GRAPH_RELAX_HPP */

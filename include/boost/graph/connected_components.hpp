@@ -26,7 +26,10 @@
 #include <boost/static_assert.hpp>
 #include <boost/concept/assert.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/mpl/has_key.hpp>
 
@@ -71,7 +74,10 @@ namespace boost { namespace detail {
     };
 }} // namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -210,7 +216,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 
@@ -267,7 +273,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(connected_components, 2, 4)
 }} // namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

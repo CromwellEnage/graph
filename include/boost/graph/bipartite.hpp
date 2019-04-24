@@ -25,7 +25,10 @@
 #include <boost/bind.hpp>
 #include <boost/core/enable_if.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -259,7 +262,10 @@ namespace boost { namespace graph {
             )
         )
     )
-#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#elif !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     BOOST_PARAMETER_FUNCTION(
         (bool), is_bipartite, ::boost::graph::keywords::tag,
         (required
@@ -279,7 +285,7 @@ namespace boost { namespace graph {
             )
         )
     )
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
     template <
         typename graph_type, typename IndexMap, typename partition_map_type
     >
@@ -585,7 +591,10 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph { namespace detail {
 
@@ -651,7 +660,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 

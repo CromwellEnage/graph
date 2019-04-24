@@ -25,8 +25,10 @@
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) && !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/eval_if.hpp>
@@ -265,8 +267,10 @@ namespace boost { namespace detail {
       return std::pair<std::size_t, OutputIterator>(num_components, vis.get_out());
     }
 
-#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) || \
-    (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) || (defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
     template <typename PredecessorMap>
     struct bicomp_dispatch3
     {
@@ -393,11 +397,13 @@ namespace boost { namespace detail {
              params, get_param(params, vertex_lowpoint));
       }
     };
-#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#endif  // MSVC-14.0 w/64-bit addressing, or MinGW w/GCC-5 or less
 }} // end namespace boost::detail
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) && !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 
 namespace boost { namespace graph {
 
@@ -715,12 +721,14 @@ namespace boost { namespace graph {
   }
 }} // end namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // neither MSVC-14.0 w/64-bit addressing nor MinGW w/GCC-5 or less
 
 #include <boost/graph/detail/dummy_output_iterator.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) && !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
 
 namespace boost { namespace graph {
 
@@ -1286,7 +1294,7 @@ namespace boost { namespace graph {
   }
 }} // end namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing, or MinGW w/GCC-5 or less
 
 #include <boost/functional/value_factory.hpp>
 
@@ -1486,7 +1494,7 @@ namespace boost { namespace graph {
     }
 }} // end namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // neither MSVC-14.0 w/64-bit addressing nor MinGW w/GCC-5 or less
 
 namespace boost {
 
@@ -1499,8 +1507,10 @@ namespace boost {
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS) && \
-    !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    ) && !(defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000))
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     return detail::biconnected_components_impl(
@@ -1552,7 +1562,7 @@ namespace boost {
     return detail::bicomp_dispatch1<dispatch_type>::apply(g, comp, out, 
         choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
         params, get_param(params, vertex_discover_time));
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // neither MSVC-14.0 w/64-bit addressing nor MinGW w/GCC-5 or less
   }
 
   template <typename Graph, typename ComponentMap,

@@ -155,14 +155,20 @@ namespace boost { namespace detail {
     void
     maximum_adjacency_search_impl(
       const Graph& g, WeightMap weights,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
       MASVisitor& vis,
 #else
       MASVisitor vis,
 #endif
       const typename boost::graph_traits<Graph>::vertex_descriptor start,
       VertexAssignmentMap assignments,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
       KeyedUpdatablePriorityQueue& pq
 #else
       KeyedUpdatablePriorityQueue pq
@@ -257,7 +263,10 @@ namespace boost { namespace detail {
       }
     }
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     template <
       typename Graph, typename WeightMap, typename MASVisitor,
       typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
@@ -274,7 +283,7 @@ namespace boost { namespace detail {
       MASVisitor mas_vis = vis;
       maximum_adjacency_search_impl(g, weights, mas_vis, start, vam, pq);
     }
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 }} // end namespace boost::detail
 
 namespace boost { namespace graph {
@@ -285,7 +294,10 @@ namespace boost { namespace graph {
     >
     inline void maximum_adjacency_search(
         const Graph& g, WeightMap weights,
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
         MASVisitor& vis,
 #else
         MASVisitor vis,
@@ -300,7 +312,10 @@ namespace boost { namespace graph {
     }
 }} // end namespace boost::graph
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -416,7 +431,7 @@ BOOST_PP_REPEAT_FROM_TO(
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 
@@ -490,7 +505,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search, 1, 9)
 }} // end namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost {
 

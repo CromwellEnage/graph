@@ -56,7 +56,10 @@ namespace boost { namespace graph {
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
 
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/preprocessor.hpp>
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
@@ -75,7 +78,10 @@ namespace boost { namespace graph {
 // be a directed acyclic graph (DAG).  The implementation
 // consists mainly of a call to depth-first search.
 //
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
 
 namespace boost { namespace graph {
 
@@ -175,7 +181,7 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#else   // MSVC-14.0 w/64-bit addressing
 
 namespace boost { namespace graph { namespace detail {
 
@@ -209,7 +215,7 @@ namespace boost { namespace graph {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(topological_sort, 2, 4)
 }} // namespace boost::graph
 
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // not MSVC-14.0 w/64-bit addressing
 
 namespace boost { 
 
@@ -221,7 +227,10 @@ namespace boost {
   void topological_sort(VertexListGraph& g, OutputIterator result,
                         const bgl_named_params<P, T, R>& params)
   {
-#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if !( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     depth_first_search(
