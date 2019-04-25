@@ -44,13 +44,25 @@ int main(int argc, char** argv)
     component(num_vertices(g));
   
   std::cout << "Before calling make_connected, the graph has "
-            << connected_components(g, &component[0])
+            << connected_components(
+                g,
+                make_iterator_property_map(
+                    component.begin(),
+                    get(vertex_index, g)
+                )
+            )
             << " connected components" << std::endl;
 
   make_connected(g);
 
   std::cout << "After calling make_connected, the graph has "
-            << connected_components(g, &component[0])
+            << connected_components(
+                g,
+                make_iterator_property_map(
+                    component.begin(),
+                    get(vertex_index, g)
+                )
+            )
             << " connected components" << std::endl;
 
   return 0;
