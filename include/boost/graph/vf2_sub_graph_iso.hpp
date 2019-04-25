@@ -1,16 +1,15 @@
-//============================================================================
+//=======================================================================
 // Copyright (C) 2012 Flavio De Lorenzi (fdlorenzi@gmail.com)
-// Copyright (C) 2013 Jakob Lykke Andersen, University of Southern Denmark
-// (jlandersen@imada.sdu.dk)
+// Copyright (C) 2013 Jakob Lykke Andersen, University of Southern Denmark (jlandersen@imada.sdu.dk)
 //
 // The algorithm implemented here is derived from original ideas by 
 // Pasquale Foggia and colaborators. For further information see 
 // e.g. Cordella et al. 2001, 2004.
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================
 
 // Revision History:
 //   8 April 2013: Fixed a typo in vf2_print_callback. (Flavio De Lorenzi) 

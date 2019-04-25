@@ -46,12 +46,12 @@ void using_bundled_properties_with_find_max_flow_test()
 
   boost::SampleGraph::getSampleGraph(g,s,t,capacity,residual_capacity,cost,rev);
 
-  boost::successive_shortest_path_nonnegative_weights(g,s,t,
+  boost::graph::successive_shortest_path_nonnegative_weights(g,s,t,
       capacity,residual_capacity,cost,rev,vertex_indices,
       pred,dist,dist_prev);
 
   // The "bundled properties" version (producing errors)
-  long flow_cost = boost::find_flow_cost(g,capacity,residual_capacity,cost);
+  long flow_cost = boost::graph::find_flow_cost(g,capacity,residual_capacity,cost);
   BOOST_TEST_EQ(flow_cost, 29);
 }
 
@@ -73,12 +73,12 @@ void using_named_params_and_bundled_properties_with_find_max_flow_test()
 
   boost::SampleGraph::getSampleGraph(g,s,t,capacity,residual_capacity,cost,rev);
 
-  boost::successive_shortest_path_nonnegative_weights(g,s,t,
+  boost::graph::successive_shortest_path_nonnegative_weights(g,s,t,
     capacity,residual_capacity,cost,rev,vertex_indices,
     pred,dist,dist_prev);
 
   // The  "named parameters" version (with "bundled properties"; producing errors)
-  long flow_cost = boost::find_flow_cost(
+  long flow_cost = boost::graph::find_flow_cost(
     g,
     (boost::graph::keywords::_capacity_map = capacity,
     boost::graph::keywords::_residual_capacity_map = residual_capacity,

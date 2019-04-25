@@ -1,30 +1,21 @@
 //
-//============================================================================
+//=======================================================================
 // Copyright 1997-2001 University of Notre Dame.
 // Authors: Jeremy G. Siek, Lie-Quan Lee, Andrew Lumsdaine
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================
 //
 
 /*
     This file implements the following functions:
 
-    template <typename VertexListGraph, typename MutableGraph>
-    void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out)
-
     template <typename VertexListGraph, typename MutableGraph,
               typename P, typename T, typename R>
     void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out,
                     const bgl_named_params<P, T, R>& params)
-
-    template <typename IncidenceGraph, typename MutableGraph>
-    typename graph_traits<MutableGraph>::vertex_descriptor
-    copy_component(IncidenceGraph& g_in,
-                   typename graph_traits<IncidenceGraph>::vertex_descriptor s,
-                   MutableGraph& g_out)
 
     template <typename IncidenceGraph, typename MutableGraph,
               typename P, typename T, typename R>
@@ -33,6 +24,121 @@
                    typename graph_traits<IncidenceGraph>::vertex_descriptor s,
                    MutableGraph& g_out,
                    const bgl_named_params<P, T, R>& params)
+
+    If BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS is defined and
+    if BOOST_NO_CXX11_DECLTYPE is not defined,
+    then this file also implements the following functions:
+
+    BOOST_PARAMETER_FUNCTION(
+        (bool), copy_graph, ::boost::graph::keywords::tag,
+        (required
+            (graph, *(boost::detail::argument_predicate<is_bgl_graph>))
+        )
+        (deduced
+            (required
+                (result, *(boost::detail::argument_predicate<is_bgl_graph>))
+            )
+            (optional
+                (vertex_copy
+                  , *(boost::detail::binary_function_vertex_predicate<>)
+                  , boost::detail::make_vertex_copier(graph, result)
+                )
+                (edge_copy
+                  , *(boost::detail::binary_function_edge_predicate<>)
+                  , boost::detail::make_edge_copier(graph, result)
+                )
+                (vertex_index_map
+                  , *(
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_to_integer_map_of_graph
+                        >
+                    )
+                  , boost::detail::vertex_or_dummy_property_map(
+                        graph,
+                        vertex_index
+                    )
+                )
+                (orig_to_copy
+                  , *(boost::detail::orig_to_copy_vertex_map_predicate)
+                  , make_shared_array_property_map(
+                        num_vertices(graph),
+                        boost::detail::get_null_vertex(result),
+                        vertex_index_map
+                    )
+                )
+            )
+        )
+    )
+
+    BOOST_PARAMETER_FUNCTION(
+        (
+            boost::lazy_enable_if<
+                typename mpl::has_key<
+                    Args,
+                    boost::graph::keywords::tag::result
+                >::type,
+                boost::detail::graph_vertex<
+                    Args,
+                    boost::graph::keywords::tag::result
+                >
+            >
+        ), copy_component, ::boost::graph::keywords::tag,
+        (required
+            (graph, *(boost::detail::argument_predicate<is_bgl_graph>))
+        )
+        (deduced
+            (required
+                (root_vertex
+                  , *(
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_of_graph
+                        >
+                    )
+                )
+                (result, *(boost::detail::argument_predicate<is_bgl_graph>))
+            )
+            (optional
+                (vertex_copy
+                  , *(boost::detail::binary_function_vertex_predicate<>)
+                  , boost::detail::make_vertex_copier(graph, result)
+                )
+                (edge_copy
+                  , *(boost::detail::binary_function_edge_predicate<>)
+                  , boost::detail::make_edge_copier(graph, result)
+                )
+                (vertex_index_map
+                  , *(
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_to_integer_map_of_graph
+                        >
+                    )
+                  , boost::detail::vertex_or_dummy_property_map(
+                        graph,
+                        vertex_index
+                    )
+                )
+                (orig_to_copy
+                  , *(boost::detail::orig_to_copy_vertex_map_predicate)
+                  , make_shared_array_property_map(
+                        num_vertices(graph),
+                        boost::detail::get_null_vertex(result),
+                        vertex_index_map
+                    )
+                )
+            )
+        )
+    )
+
+    Otherwise, this file also implements the following functions:
+
+    template <typename VertexListGraph, typename MutableGraph>
+    void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out)
+
+    template <typename IncidenceGraph, typename MutableGraph>
+    typename graph_traits<MutableGraph>::vertex_descriptor
+    copy_component(IncidenceGraph& g_in,
+                   typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+                   MutableGraph& g_out)
 */
 
 #ifndef BOOST_GRAPH_COPY_HPP

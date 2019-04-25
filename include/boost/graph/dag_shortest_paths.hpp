@@ -168,11 +168,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                std::plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
-            closed_plus_gen<D>(inf)
+            boost::value_factory<std::plus<D> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::lazy_value_type<
@@ -259,7 +259,7 @@ namespace boost { namespace detail {
          choose_param(get_param(params, vertex_predecessor), p_map),
          vis, 
          choose_param(get_param(params, distance_compare_t()), std::less<D>()),
-         choose_param(get_param(params, distance_combine_t()), closed_plus<D>(inf)),
+         choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
          inf,
          choose_param(get_param(params, distance_zero_t()), 
                       D()));

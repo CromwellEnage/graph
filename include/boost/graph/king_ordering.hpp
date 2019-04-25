@@ -1,13 +1,13 @@
-//============================================================================
+//=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Copyright 2004, 2005 Trustees of Indiana University
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek,
 //          Doug Gregor, D. Kevin McGrath
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================//
 #ifndef BOOST_GRAPH_KING_HPP
 #define BOOST_GRAPH_KING_HPP
 

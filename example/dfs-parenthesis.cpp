@@ -5,12 +5,20 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+/*
+   IMPORTANT!!!
+   ~~~~~~~~~~~~
+   This example uses interfaces that have been deprecated and removed from Boost.Grpah.
+   Someone needs to update it, as it does NOT compile.
+*/
+
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/depth_first_search.hpp>
 
 char name[] = "abcdefghij";
 
-struct parenthesis_visitor : public boost::default_dfs_visitor
+struct parenthesis_visitor : public boost::graph::default_dfs_visitor
 {
   template <class Vertex, class Graph> void
   start_vertex(Vertex v, const Graph &)

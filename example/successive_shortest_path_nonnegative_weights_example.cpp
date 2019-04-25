@@ -2,8 +2,8 @@
 // Copyright 2013 University of Warsaw.
 // Authors: Piotr Wygocki 
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
@@ -18,9 +18,9 @@ int main()
     boost::SampleGraph::Graph g; 
     boost::SampleGraph::getSampleGraph(g, s, t);
 
-    boost::successive_shortest_path_nonnegative_weights(g, s, t);
+    boost::graph::successive_shortest_path_nonnegative_weights(g, s, t);
 
-    int cost =  boost::find_flow_cost(g);
+    int cost = boost::graph::find_flow_cost(g);
     BOOST_TEST_EQ(cost, 29);
 
     return boost::report_errors();

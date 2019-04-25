@@ -1,11 +1,11 @@
-//============================================================================
+//=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================
 //
 //
 // Revision History:
@@ -157,7 +157,7 @@ namespace boost { namespace detail {
         inline void tree_edge(Edge e, Graph& g)
         {
             if (
-                relax(
+                relax_target(
                     e, g, this->m_weight, this->m_predecessor,
                     this->m_distance, this->m_combine, this->m_compare
                 )
@@ -177,7 +177,7 @@ namespace boost { namespace detail {
             D old_distance = get(this->m_distance, target(e, g));
 
             if (
-                relax(
+                relax_target(
                     e, g, this->m_weight, this->m_predecessor,
                     this->m_distance, this->m_combine, this->m_compare
                 )
@@ -623,11 +623,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                std::plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
-            closed_plus_gen<D>(inf)
+            boost::value_factory<std::plus<D> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::lazy_value_type<
@@ -778,7 +778,7 @@ namespace boost { namespace detail {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<D>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<D>(inf)),
+                      std::plus<D>()),
          inf,
          choose_param(get_param(params, distance_zero_t()),
                       D()),

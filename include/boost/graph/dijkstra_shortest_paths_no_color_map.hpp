@@ -258,11 +258,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::distance_combine,
-                closed_plus<D>
+                std::plus<D>
             >::type
         >::type dist_comb = arg_pack[
             boost::graph::keywords::_distance_combine ||
-            closed_plus_gen<D>(inf)
+            boost::value_factory<std::plus<D> >()
         ];
 
         // Initialize vertices
@@ -354,7 +354,7 @@ namespace boost { namespace detail {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<DistanceType>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<DistanceType>(inf)),
+                      std::plus<DistanceType>()),
          inf,
          choose_param(get_param(params, distance_zero_t()),
                       DistanceType()),

@@ -1,11 +1,11 @@
-//============================================================================
+//=======================================================================
 // Copyright 2013 University of Warsaw.
 // Authors: Piotr Wygocki 
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================
 #ifndef BOOST_GRAPH_FIND_FLOW_COST_HPP
 #define BOOST_GRAPH_FIND_FLOW_COST_HPP
 

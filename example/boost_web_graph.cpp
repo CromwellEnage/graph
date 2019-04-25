@@ -21,7 +21,7 @@
 
 
 template <class Distance>
-class calc_distance_visitor : public boost::bfs_visitor<>
+class calc_distance_visitor : public boost::graph::bfs_visitor<>
 {
 public:
   calc_distance_visitor(Distance d) : distance(d) { }
@@ -41,7 +41,7 @@ private:
 
 
 template <class VertexNameMap, class DistanceMap>
-class print_tree_visitor : public boost::dfs_visitor<>
+class print_tree_visitor : public boost::graph::dfs_visitor<>
 {
 public:
   print_tree_visitor(VertexNameMap n, DistanceMap d) : name(n), distance(d) { }
@@ -70,11 +70,11 @@ private:
 };
 
 int
-main()
+main(int argc, const char** argv)
 {
   using namespace boost;
 
-  std::ifstream datafile("./boost_web.dat");
+  std::ifstream datafile(argc >= 2 ? argv[1] : "./boost_web.dat");
   if (!datafile) {
     std::cerr << "No ./boost_web.dat file" << std::endl;
     return -1;

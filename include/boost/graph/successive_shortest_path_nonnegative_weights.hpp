@@ -1,14 +1,13 @@
-//============================================================================
+//=======================================================================
 // Copyright 2013 University of Warsaw.
 // Authors: Piotr Wygocki
 //
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//============================================================================
+//=======================================================================
 //
-// This algorithm is described in
-// "Network Flows: Theory, Algorithms, and Applications"
+//This algorithm is described in "Network Flows: Theory, Algorithms, and Applications"
 // by Ahuja, Magnanti, Orlin.
 
 #ifndef BOOST_GRAPH_SUCCESSIVE_SHORTEST_PATH_HPP
