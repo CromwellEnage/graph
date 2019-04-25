@@ -81,9 +81,10 @@ main(int , char* [])
      default_dijkstra_visitor());
 #else
   dijkstra_shortest_paths
-    (G, s, distance_map(&d[0]).
-     predecessor_map(&p[0]).
-     distance_compare(std::greater<int>()));
+    (G, s,
+     boost::graph::keywords::_distance_map = &d[0],
+     boost::graph::keywords::_predecessor_map = &p[0],
+     boost::graph::keywords::_distance_compare = std::greater<int>());
 #endif
 
   std::cout << "distances from start vertex:" << std::endl;
