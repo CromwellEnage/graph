@@ -19,79 +19,106 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
 alias graph_test_regular :
-    # test_graphs will eventually defined a framework for testing the structure
-    # and implementation of graph data structures and adaptors.
-    [ run test_graphs.cpp ]
-    [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
-    [ run labeled_graph.cpp ]
-    [ run finish_edge_bug.cpp ]
+    # test_graphs will eventually defined a framework for testing the
+    # structure and implementation of graph data structures and adaptors.
+    [ run test_graphs.cpp : : : : : <preserve-target-tests>off ]
 
-    [ run transitive_closure_test.cpp ]
-    [ run transitive_closure_test2.cpp ]
+    # TODO: Make this part of the test_graphs framework
+    [ run index_graph.cpp : : : : : <preserve-target-tests>off ]
+
+    [ run labeled_graph.cpp : : : : : <preserve-target-tests>off ]
+    [ run finish_edge_bug.cpp : : : : : <preserve-target-tests>off ]
+
+    [ run transitive_closure_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run transitive_closure_test2.cpp : : : : : <preserve-target-tests>off ]
     [ compile adj_list_cc.cpp ]
 
-    #[ run adj_list_invalidation.cpp ]
-    [ run adj_list_edge_list_set.cpp ]
-    [ run adj_list_loops.cpp ]
+    #[ run adj_list_invalidation.cpp : : : : : <preserve-target-tests>off ]
+    [ run adj_list_edge_list_set.cpp : : : : : <preserve-target-tests>off ]
+    [ run adj_list_loops.cpp : : : : : <preserve-target-tests>off ]
     [ compile adj_matrix_cc.cpp ]
-    [ run bfs.cpp ]
+    [ run bfs.cpp : : : : : <preserve-target-tests>off ]
     [ compile bfs_cc.cpp ]
-    [ run bellman-test.cpp ]
-    [ run betweenness_centrality_test.cpp : 100 ]
-    [ run bidir_remove_edge.cpp ]
-    [ run bipartite_test.cpp ]
-    [ run csr_graph_test.cpp : : : : : <variant>release ]
-    [ run dag_longest_paths.cpp ]
-    [ run dfs.cpp ]
-    [ run undirected_dfs.cpp ]
+    [ run bellman-test.cpp : : : : : <preserve-target-tests>off ]
+    [ run betweenness_centrality_test.cpp
+        : 100 : : : : <preserve-target-tests>off ]
+    [ run bidir_remove_edge.cpp : : : : : <preserve-target-tests>off ]
+    [ run bipartite_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run csr_graph_test.cpp
+        : : : : : <variant>release <preserve-target-tests>off ]
+    [ run dag_longest_paths.cpp : : : : : <preserve-target-tests>off ]
+    [ run dfs.cpp : : : : : <preserve-target-tests>off ]
+    [ run undirected_dfs.cpp : : : : : <preserve-target-tests>off ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
-    [ run dijkstra_heap_performance.cpp : 10000 ]
-    [ run dijkstra_no_color_map_compare.cpp : 10000 ]
-    [ run dominator_tree_test.cpp ]
+    [ run dijkstra_heap_performance.cpp
+        : 10000 : : : : <preserve-target-tests>off ]
+    [ run dijkstra_no_color_map_compare.cpp
+        : 10000 : : : : <preserve-target-tests>off ]
+    [ run dominator_tree_test.cpp : : : : : <preserve-target-tests>off ]
 
     # Unused and deprecated.
-    #[ run relaxed_heap_test.cpp : 5000 15000 ]
+    #[ run relaxed_heap_test.cpp
+    #    : 5000 15000 : : : : <preserve-target-tests>off ]
 
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
-    [ run filter_graph_vp_test.cpp ]
-    [ run generator_test.cpp ]
-    [ run graph.cpp : : : <define>TEST=1 : graph_1 ]
-    [ run graph.cpp : : : <define>TEST=2 : graph_2 ]
-    [ run graph.cpp : : : <define>TEST=3 : graph_3 ]
-    [ run graph.cpp : : : <define>TEST=4 : graph_4 ]
-    [ run graph.cpp : : : <define>TEST=5 : graph_5 ]
-    [ run graph.cpp : : : <define>TEST=6 : graph_6 ]
-    [ run graph.cpp : : : <define>TEST=7 : graph_7 ]
-    [ run graph.cpp : : : <define>TEST=8 : graph_8 ]
-    [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
+    [ run filter_graph_vp_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run generator_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=1 : graph_1 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=2 : graph_2 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=3 : graph_3 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=4 : graph_4 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=5 : graph_5 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=6 : graph_6 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=7 : graph_7 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=8 : graph_8 : <preserve-target-tests>off ]
+    [ run graph.cpp
+        : : : <define>TEST=9 : graph_9 : <preserve-target-tests>off ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph
-            ../../regex/build//boost_regex : --log_level=all ]
-    [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
-    [ run gursoy_atun_layout_test.cpp ]
-    [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
+            ../../regex/build//boost_regex
+        : --log_level=all : : : : <preserve-target-tests>off ]
+    [ run metis_test.cpp
+        : $(METIS_INPUT_FILE) : : : : <preserve-target-tests>off ]
+    [ run gursoy_atun_layout_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run layout_test.cpp
+        : :
+        : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off
+        : : <preserve-target-tests>off ]
 
     [ run serialize.cpp
-          ../../serialization/build//boost_serialization
-      : : : ]
+            ../../serialization/build//boost_serialization
+        : : : : : <preserve-target-tests>off ]
 
     [ compile reverse_graph_cc.cpp ]
-    [ run sequential_vertex_coloring.cpp ]
+    [ run sequential_vertex_coloring.cpp
+        : : : : : <preserve-target-tests>off ]
 
     # TODO: Merge these into a single test framework.
-    [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
-    [ run subgraph_bundled.cpp ]
-    [ run subgraph_add.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    [ run subgraph_props.cpp ]
+    [ run subgraph.cpp ../../test/build//boost_test_exec_monitor
+        : : : : : <preserve-target-tests>off ]
+    [ run subgraph_bundled.cpp : : : : : <preserve-target-tests>off ]
+    [ run subgraph_add.cpp
+            ../../test/build//boost_unit_test_framework/<link>static
+        : $(TEST_DIR) : : : : <preserve-target-tests>off ]
+    [ run subgraph_props.cpp : : : : : <preserve-target-tests>off ]
 
-    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
-    [ run adjacency_matrix_test.cpp ]
+    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor
+        : : : : : <preserve-target-tests>off ]
+    [ run adjacency_matrix_test.cpp : : : : : <preserve-target-tests>off ]
     [ compile vector_graph_cc.cpp ]
-    [ run copy.cpp ]
+    [ run copy.cpp : : : : : <preserve-target-tests>off ]
     [ compile swap.cpp ]
     [ compile property_iter.cpp : <define>TEST=1 : property_iter_1 ]
     [ compile property_iter.cpp : <define>TEST=2 : property_iter_2 ]
@@ -102,60 +129,78 @@ alias graph_test_regular :
     [ compile property_iter.cpp : <define>TEST=7 : property_iter_7 ]
     [ compile property_iter.cpp : <define>TEST=8 : property_iter_8 ]
     [ compile property_iter.cpp : <define>TEST=9 : property_iter_9 ]
-    [ run bundled_properties.cpp ]
-    [ run floyd_warshall_test.cpp ]
-    [ run astar_search_test.cpp ]
-    [ run biconnected_components_test.cpp ]
-    [ run min_degree_empty.cpp ]
-    [ run cuthill_mckee_ordering.cpp ]
-    [ run king_ordering.cpp ]
-    [ run matching_test.cpp ]
-    [ run weighted_matching_test.cpp ]
-    [ run max_flow_test.cpp ]
-    [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
-    [ run basic_planarity_test.cpp ]
-    [ run make_connected_test.cpp ]
-    [ run make_bicon_planar_test.cpp ]
-    [ run make_maximal_planar_test.cpp ]
-    [ run named_vertices_test.cpp ]
-    [ run r_c_shortest_paths_test.cpp ]
-    [ run rcsp_custom_vertex_id.cpp ]
-    [ run is_straight_line_draw_test.cpp ]
-    [ run metric_tsp_approx.cpp : metric_tsp_approx.graph ]
-    [ run metric_tsp_approx_tufts2002.cpp ]
+    [ run bundled_properties.cpp : : : : : <preserve-target-tests>off ]
+    [ run floyd_warshall_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run astar_search_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run biconnected_components_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run min_degree_empty.cpp : : : : : <preserve-target-tests>off ]
+    [ run cuthill_mckee_ordering.cpp : : : : : <preserve-target-tests>off ]
+    [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
+    [ run matching_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run weighted_matching_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run max_flow_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run boykov_kolmogorov_max_flow_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run cycle_ratio_tests.cpp
+            ../build//boost_graph ../../regex/build//boost_regex
+        : $(CYCLE_RATIO_INPUT_FILE) : : : : <preserve-target-tests>off ]
+    [ run basic_planarity_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run make_connected_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run make_bicon_planar_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run make_maximal_planar_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run named_vertices_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run r_c_shortest_paths_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run rcsp_custom_vertex_id.cpp : : : : : <preserve-target-tests>off ]
+    [ run is_straight_line_draw_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run metric_tsp_approx.cpp
+        : metric_tsp_approx.graph : : : : <preserve-target-tests>off ]
+    [ run metric_tsp_approx_tufts2002.cpp
+        : : : : : <preserve-target-tests>off ]
     [ compile dimacs.cpp ]
-    [ run bron_kerbosch_all_cliques.cpp ]
-    [ run tiernan_all_cycles.cpp ]
-    [ run closeness_centrality.cpp ]
-    [ run degree_centrality.cpp ]
-    [ run mean_geodesic.cpp ]
-    [ run eccentricity.cpp ]
-    [ run clustering_coefficient.cpp ]
-    [ run core_numbers_test.cpp ]
-    [ run read_propmap.cpp ]
-    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph ]
+    [ run bron_kerbosch_all_cliques.cpp : : : : : <preserve-target-tests>off ]
+    [ run tiernan_all_cycles.cpp : : : : : <preserve-target-tests>off ]
+    [ run closeness_centrality.cpp : : : : : <preserve-target-tests>off ]
+    [ run degree_centrality.cpp : : : : : <preserve-target-tests>off ]
+    [ run mean_geodesic.cpp : : : : : <preserve-target-tests>off ]
+    [ run eccentricity.cpp : : : : : <preserve-target-tests>off ]
+    [ run clustering_coefficient.cpp : : : : : <preserve-target-tests>off ]
+    [ run core_numbers_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run read_propmap.cpp : : : : : <preserve-target-tests>off ]
+    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph
+        : : : : : <preserve-target-tests>off ]
     [ compile grid_graph_cc.cpp ]
-    [ run grid_graph_test.cpp ]
-    [ run incremental_components_test.cpp ]
-    [ run two_graphs_common_spanning_trees_test.cpp ]
-    [ run random_spanning_tree_test.cpp ]
-    [ run random_matching_test.cpp : 1000 1020 ]
+    [ run grid_graph_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run incremental_components_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run two_graphs_common_spanning_trees_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run random_spanning_tree_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run random_matching_test.cpp
+        : 1000 1020 : : : : <preserve-target-tests>off ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
-    [ run mas_test.cpp : $(TEST_DIR) ]
-    [ run stoer_wagner_test.cpp : $(TEST_DIR) ]
+    [ run mas_test.cpp : $(TEST_DIR) : : : : <preserve-target-tests>off ]
+    [ run stoer_wagner_test.cpp
+        : $(TEST_DIR) : : : : <preserve-target-tests>off ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
-    [ run vf2_sub_graph_iso_test.cpp ]
-    [ run vf2_sub_graph_iso_test_2.cpp ]
-    [ run hawick_circuits.cpp ]
-    [ run successive_shortest_path_nonnegative_weights_test.cpp ]
-    [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run strong_components_test.cpp ]
-    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ]
-    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run delete_edge.cpp ]
-    [ run johnson-test.cpp ]
-    [ run lvalue_pmap.cpp ]
+    [ run vf2_sub_graph_iso_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run vf2_sub_graph_iso_test_2.cpp : : : : : <preserve-target-tests>off ]
+    [ run hawick_circuits.cpp : : : : : <preserve-target-tests>off ]
+    [ run successive_shortest_path_nonnegative_weights_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run cycle_canceling_test.cpp
+            ../../test/build//boost_unit_test_framework/<link>static
+        : : : : : <preserve-target-tests>off ]
+    [ run strong_components_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp
+        : : : : : <preserve-target-tests>off ]
+    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp
+            ../../test/build//boost_unit_test_framework/<link>static
+        : : : : : <preserve-target-tests>off ]
+    [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
+    [ run johnson-test.cpp : : : : : <preserve-target-tests>off ]
+    [ run lvalue_pmap.cpp : : : : : <preserve-target-tests>off ]
     ;
 
 alias graph_test_with_filesystem : :
@@ -167,13 +212,11 @@ alias graph_test_with_filesystem : :
 
 alias graph_test_with_filesystem :
     [ run all_planar_input_files_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) ]
+            ../../filesystem/build ../../system/build
+        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off ]
     [ run parallel_edges_loops_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) ]
+            ../../filesystem/build ../../system/build
+        : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off ]
     ;
 
 alias graph_test_vendor_specific_failures ;
@@ -181,7 +224,7 @@ alias graph_test_vendor_specific_failures ;
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc08 ]
+        : finish_edge_bug_fail_msvc08 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>8.0
@@ -190,7 +233,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc09 ]
+        : finish_edge_bug_fail_msvc09 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>9.0
@@ -199,7 +242,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc10 ]
+        : finish_edge_bug_fail_msvc10 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>10.0
@@ -208,7 +251,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc11 ]
+        : finish_edge_bug_fail_msvc11 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>11.0
@@ -217,7 +260,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc12 ]
+        : finish_edge_bug_fail_msvc12 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>12.0
@@ -226,7 +269,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_msvc14 ]
+        : finish_edge_bug_fail_msvc14 : <preserve-target-tests>off ]
     :
         <toolset>msvc
         <toolset-msvc:version>14.0
@@ -236,7 +279,7 @@ alias graph_test_vendor_specific_failures :
 alias graph_test_vendor_specific_failures :
     [ run-fail finish_edge_bug.cpp
         : : : <define>LIBS_GRAPH_TEST_VENDOR_SPECIFIC_FAILURE
-        : finish_edge_bug_fail_mingw ]
+        : finish_edge_bug_fail_mingw : <preserve-target-tests>off ]
     :
         <target-os>windows
         <toolset>gcc
