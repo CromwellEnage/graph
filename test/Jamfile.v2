@@ -135,8 +135,6 @@ alias graph_test_regular :
     [ run biconnected_components_test.cpp
         : : : : : <preserve-target-tests>off ]
     [ run min_degree_empty.cpp : : : : : <preserve-target-tests>off ]
-    [ run cuthill_mckee_ordering.cpp : : : : : <preserve-target-tests>off ]
-    [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
     [ run matching_test.cpp : : : : : <preserve-target-tests>off ]
     [ run weighted_matching_test.cpp : : : : : <preserve-target-tests>off ]
     [ run max_flow_test.cpp : : : : : <preserve-target-tests>off ]
@@ -203,10 +201,18 @@ alias graph_test_regular :
     [ run lvalue_pmap.cpp : : : : : <preserve-target-tests>off ]
     ;
 
-alias graph_test_with_filesystem : :
-        # The tests below started failing to compile for xcode with cxxstd=11
-        # due to issues with constexpr ctors in Boost.Filesystem
-        <target-os>darwin
+alias graph_test_ordering_algorithms :
+    [ run cuthill_mckee_ordering.cpp : : : : : <preserve-target-tests>off ]
+    [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
+    ;
+
+alias graph_test_ordering_algorithms : :
+        # The tests above started causing virtual memory to run out for
+        # gcc-4.8 on linux with cxxstd=11.  They were previously duplicates
+        # of the corresponding programs in the example directory.
+        <target-os>linux
+        <toolset>gcc
+        <toolset-gcc:version>4.8
         <cxxstd>11
     ;
 
@@ -217,6 +223,13 @@ alias graph_test_with_filesystem :
     [ run parallel_edges_loops_test.cpp
             ../../filesystem/build ../../system/build
         : $(PLANAR_INPUT_FILES) : : : : <preserve-target-tests>off ]
+    ;
+
+alias graph_test_with_filesystem : :
+        # The tests above started failing to compile for xcode with cxxstd=11
+        # due to issues with constexpr ctors in Boost.Filesystem.
+        <target-os>darwin
+        <cxxstd>11
     ;
 
 alias graph_test_vendor_specific_failures ;
@@ -287,6 +300,7 @@ alias graph_test_vendor_specific_failures :
 
 test-suite graph_test :
     graph_test_regular
+    graph_test_ordering_algorithms
     graph_test_with_filesystem
     graph_test_vendor_specific_failures
     ;
