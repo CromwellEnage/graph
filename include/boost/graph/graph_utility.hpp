@@ -334,8 +334,15 @@ namespace boost {
      VertexColorMap color) // should start out white for every vertex
   {
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
-    dfs_visitor<> vis;
-    depth_first_visit(g, x, vis, color);
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    depth_first_visit(g, x, color);
+#else
+    depth_first_visit(
+      g,
+      boost::graph::keywords::_root_vertex = x,
+      boost::graph::keywords::_color_map = color
+    );
+#endif
     return get(color, y) != color_traits<ColorValue>::white();
   }
 

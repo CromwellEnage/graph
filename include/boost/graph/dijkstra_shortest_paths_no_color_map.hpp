@@ -96,7 +96,7 @@ namespace boost { namespace graph {
           !distance_compare(neighbor_vertex_distance, distance_infinity);
 
         // Attempt to relax the edge
-        bool was_edge_relaxed = relax(current_edge, graph, weight_map,
+        bool was_edge_relaxed = relax_target(current_edge, graph, weight_map,
           predecessor_map, distance_map,
           distance_weight_combine, distance_compare);
 

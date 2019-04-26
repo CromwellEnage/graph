@@ -88,7 +88,7 @@ bool operator!=(const edge_stream_iterator& x,
   return !(x == y);
 }
 
-
+#include <boost/core/lightweight_test.hpp>
 
 int
 main(int argc, const char** argv)
@@ -115,5 +115,5 @@ main(int argc, const char** argv)
 #endif
   boost::print_graph(G);
 
-  return 0;
+  return boost::report_errors();
 }
