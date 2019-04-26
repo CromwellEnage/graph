@@ -804,24 +804,42 @@ namespace boost { namespace graph {
             (graph, *(boost::detail::argument_predicate<is_incidence_graph>))
         )
         (deduced
-            (required
-                (root_vertex
+            (optional
+                (vertex_index_map
                   , *(
                         boost::detail::argument_with_graph_predicate<
-                            boost::detail::is_vertex_of_graph
+                            boost::detail::is_vertex_to_integer_map_of_graph
                         >
                     )
+                  , boost::detail::vertex_or_dummy_property_map(
+                        graph,
+                        vertex_index
+                    )
                 )
-                (visitor, *(boost::detail::dfs_visitor_predicate))
                 (color_map
                   , *(
                         boost::detail::argument_with_graph_predicate<
                             boost::detail::is_vertex_color_map_of_graph
                         >
                     )
+                  , make_shared_array_property_map(
+                        num_vertices(graph),
+                        white_color,
+                        vertex_index_map
+                    )
                 )
-            )
-            (optional
+                (visitor
+                  , *(boost::detail::dfs_visitor_predicate)
+                  , default_dfs_visitor()
+                )
+                (root_vertex
+                  , *(
+                        boost::detail::argument_with_graph_predicate<
+                            boost::detail::is_vertex_of_graph
+                        >
+                    )
+                  , boost::detail::get_default_starting_vertex(graph)
+                )
                 (terminator_function
                   , *(boost::detail::binary_function_graph_predicate)
                   , boost::detail::nontruth2()
