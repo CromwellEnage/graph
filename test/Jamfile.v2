@@ -206,15 +206,15 @@ alias graph_test_ordering_algorithms :
     [ run king_ordering.cpp : : : : : <preserve-target-tests>off ]
     ;
 
-alias graph_test_ordering_algorithms : :
+#alias graph_test_ordering_algorithms : :
         # The tests above started causing virtual memory to run out for
         # gcc-4.8 on linux with cxxstd=11.  They were previously duplicates
         # of the corresponding programs in the example directory.
-        <target-os>linux
-        <toolset>gcc
-        <toolset-gcc:version>4.8
-        <cxxstd>11
-    ;
+#        <target-os>linux
+#        <toolset>gcc
+#        <toolset-gcc:version>4.8
+#        <cxxstd>11
+#    ;
 
 alias graph_test_with_filesystem :
     [ run all_planar_input_files_test.cpp

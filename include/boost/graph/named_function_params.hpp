@@ -36,12 +36,17 @@
 
 #if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
     !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
-        BOOST_WORKAROUND(BOOST_MSVC, < 1900) || ( \
+        ( \
+            BOOST_WORKAROUND(BOOST_GCC, >= 40800) && \
+            BOOST_WORKAROUND(BOOST_GCC, < 40900) && \
+            defined(__cplusplus) && (__cplusplus == 201103L) \
+        ) || BOOST_WORKAROUND(BOOST_MSVC, < 1900) || ( \
             BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
             BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
         ) || defined(__MINGW32__) \
     )
 // Unless this macro is defined for these compilers:
+// GCC-4.8 with cxxstd=11 runs out of virtual memory.
 // MSVC-12.0 and below emit compiler errors such as top() not being a member
 // of shared_array_property_map.  Tests built by MinGW, such as
 // betweenness_centrality_test, emit access violations and/or assertion
