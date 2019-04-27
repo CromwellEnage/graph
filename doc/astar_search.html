@@ -30,18 +30,7 @@ void
 astar_search
   (const VertexListGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
-
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename ArgumentPack&gt;
-void
-astar_search
-  (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -50,18 +39,7 @@ void
 astar_search_no_init
   (const IncidenceGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
-
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename ArgumentPack&gt;
-void
-astar_search_no_init
-  (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -70,18 +48,7 @@ void
 astar_search_tree
   (const VertexListGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
-
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename ArgumentPack&gt;
-void
-astar_search_tree
-  (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -90,18 +57,7 @@ void
 astar_search_no_init_tree
   (const IncidenceGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
-
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename ArgumentPack&gt;
-void
-astar_search_no_init_tree
-  (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h,
-   const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// Non-named parameter interface</i>
 template &lt;typename VertexListGraph, typename AStarHeuristic,
@@ -374,8 +330,7 @@ IN: <tt>AStarHeuristic h</tt>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_weight_map = w_map</tt>
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
    The weight or ``length'' of each edge in the graph.  The weights
    must all be non-negative; the algorithm will throw a <a
@@ -387,11 +342,10 @@ Alternative usage: <tt>boost::graph::keywords::_weight_map = w_map</tt>
    to be usable as the key type for the weight map.  The value type
    for this map must be the same as the value type of the distance
    map.<br>
-   <b>Default:</b> <tt>get(edge_weight, g)</tt>
+   <b>Default:</b> <tt>get(edge\_weight, g)</tt>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_vertex_index_map = i_map</tt>
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
   num_vertices(g))</tt>.  This is necessary in non-tree versions of the
@@ -410,8 +364,7 @@ Alternative usage: <tt>boost::graph::keywords::_vertex_index_map = i_map</tt>
    not have an internal <tt>vertex_index</tt> property.
 </blockquote>
 
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_predecessor_map = p_map</tt>
+OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
 <blockquote>
 
   The predecessor map records the edges in the minimum spanning tree.
@@ -427,8 +380,7 @@ Alternative usage: <tt>boost::graph::keywords::_predecessor_map = p_map</tt>
   <b>Default:</b> <tt>dummy_property_map</tt>
 </blockquote>
 
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_distance_map = d_map</tt>
+UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
 <blockquote>
 
   The shortest path weight from the start vertex <tt>s</tt> to each
@@ -454,8 +406,7 @@ Alternative usage: <tt>boost::graph::keywords::_distance_map = d_map</tt>
   the <tt>i_map</tt> for the index map.
 </blockquote>
 
-UTIL/OUT: <tt>rank_map(CostMap c_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_rank_map = c_map</tt>
+UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
 <blockquote>
 
   The <i>f</i>-value for each vertex.  The <i>f</i>-value is defined
@@ -485,8 +436,7 @@ Alternative usage: <tt>boost::graph::keywords::_rank_map = c_map</tt>
   the <tt>i_map</tt> for the index map.
 </blockquote>
 
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_color_map = c_map</tt>
+UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
 <blockquote>
 
   This is used during the execution of non-tree versions of the algorithm to
@@ -509,8 +459,7 @@ Alternative usage: <tt>boost::graph::keywords::_color_map = c_map</tt>
   the <tt>i_map</tt> for the index map.
 </blockquote>
 
-IN: <tt>distance_compare(CompareFunction cmp)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_distance_compare = cmp</tt>
+IN: <tt>distance_compare(CompareFunction cmp)</tt>
 <blockquote>
 
   This function is use to compare distances to determine which vertex
@@ -525,8 +474,7 @@ Alternative usage: <tt>boost::graph::keywords::_distance_compare = cmp</tt>
   property_traits&lt;DistanceMap&gt;::value_type</tt>.
 </blockquote>
 
-IN: <tt>distance_combine(CombineFunction cmb)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_distance_combine = cmb</tt>
+IN: <tt>distance_combine(CombineFunction cmb)</tt>
 <blockquote>
 
   This function is used to combine distances to compute the distance
@@ -544,8 +492,7 @@ Alternative usage: <tt>boost::graph::keywords::_distance_combine = cmb</tt>
   property_traits&lt;DistanceMap&gt;::value_type</tt>.
 </blockquote>
 
-IN: <tt>distance_inf(D inf)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_distance_inf = inf</tt>
+IN: <tt>distance_inf(D inf)</tt>
 <blockquote>
 
   The <tt>inf</tt> object must be the greatest value of any <tt>D</tt>
@@ -556,8 +503,7 @@ Alternative usage: <tt>boost::graph::keywords::_distance_inf = inf</tt>
   <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt>
 </blockquote>
 
-IN: <tt>distance_zero(D zero)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_distance_zero = zero</tt>
+IN: <tt>distance_zero(D zero)</tt>
 <blockquote>
 
   The <tt>zero</tt> value must be the identity element for the <a
@@ -569,8 +515,7 @@ Alternative usage: <tt>boost::graph::keywords::_distance_zero = zero</tt>
   property_traits&lt;DistanceMap&gt;::value_type</tt>.
 </blockquote>
 
-OUT: <tt>visitor(AStarVisitor v)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_visitor = v</tt>
+OUT: <tt>visitor(AStarVisitor v)</tt>
 <blockquote>
 
   Use this to specify actions that you would like to happen during
@@ -635,7 +580,7 @@ this state by pointer or reference.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://www.cs.rpi.edu/~beevek/">Kristopher Beevers</A>,
+<A HREF="http://cs.krisbeevers.com/">Kristopher Beevers</A>,
 Rensselaer Polytechnic Institute (<A
 HREF="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</A>)
 </TD></TR></TABLE>
