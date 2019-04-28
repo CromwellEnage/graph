@@ -553,8 +553,6 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       >::value_type type;
     };
 
-// need parameter::result_of::compose
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
     template <typename Tag, typename Prop, typename Graph, typename ...TaggedArgs>
     struct tagged_property_map_value
@@ -603,7 +601,6 @@ BOOST_PP_REPEAT(
 )
 #undef BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION
 #endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
     template <typename F> struct make_arg_pack_type;
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};

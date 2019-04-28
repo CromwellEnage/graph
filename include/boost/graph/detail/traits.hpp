@@ -1557,7 +1557,6 @@ namespace boost { namespace detail {
     };
 }}
 
-#if 0 // need parameter::result_of::compose
 #if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
 namespace boost { namespace detail {
 
@@ -1623,7 +1622,6 @@ BOOST_PP_REPEAT_FROM_TO(
 
 #undef BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION
 #endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
-#endif  // need parameter::result_of::compose
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 namespace boost { namespace detail {

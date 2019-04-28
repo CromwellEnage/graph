@@ -42,11 +42,11 @@ BOOST_AUTO_TEST_CASE(using_named_parameters_and_bundled_params_on_edmonds_karp_m
     g,
     s,
     t,
-    (boost::graph::keywords::_capacity_map = capacity,
+    boost::graph::keywords::_capacity_map = capacity,
     boost::graph::keywords::_residual_capacity_map = residual_capacity,
     boost::graph::keywords::_reverse_edge_map = rev,
     boost::graph::keywords::_color_map = col,
-    boost::graph::keywords::_predecessor_map = pred)
+    boost::graph::keywords::_predecessor_map = pred
   );
 
   BOOST_CHECK_EQUAL(flow_value,4);

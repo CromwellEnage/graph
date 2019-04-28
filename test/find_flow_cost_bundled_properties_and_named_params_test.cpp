@@ -80,9 +80,9 @@ void using_named_params_and_bundled_properties_with_find_max_flow_test()
   // The  "named parameters" version (with "bundled properties"; producing errors)
   long flow_cost = boost::graph::find_flow_cost(
     g,
-    (boost::graph::keywords::_capacity_map = capacity,
+    boost::graph::keywords::_capacity_map = capacity,
     boost::graph::keywords::_residual_capacity_map = residual_capacity,
-    boost::graph::keywords::_weight_map = cost)
+    boost::graph::keywords::_weight_map = cost
   );
   BOOST_TEST_EQ(flow_cost, 29);
 }

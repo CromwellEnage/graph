@@ -782,14 +782,11 @@ namespace boost { namespace graph {
   }
 }} // namespace boost::graph
 
-#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
 // Boost.Parameter-enabled tagged-argument overloads
-// TODO: return the same type as the argument-pack overload
-// need parameter::result_of::compose
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
 template <typename Graph, typename TA \
           BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
@@ -817,7 +814,6 @@ BOOST_PP_REPEAT_FROM_TO(1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, push_relabel_max
 }} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 namespace boost {
 

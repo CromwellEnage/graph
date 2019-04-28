@@ -10,7 +10,6 @@
 #define BOOST_GRAPH_FIND_FLOW_COST_HPP
 
 #include <boost/graph/iteration_macros.hpp>
-#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/parameter/are_tagged_arguments.hpp>
@@ -49,6 +48,7 @@ find_flow_cost(
 }
 }} // namespace boost::graph
 
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/detail/traits.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
 
@@ -103,7 +103,6 @@ find_flow_cost(const Graph& g)
 }
 }} // namespace boost::graph
 
-#if 0 // need parameter::result_of::compose
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 
@@ -142,7 +141,6 @@ BOOST_PP_REPEAT_FROM_TO(
 }} // namespace boost::graph
 
 #undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
-#endif  // need parameter::result_of::compose
 
 namespace boost {
 
