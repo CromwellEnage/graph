@@ -324,7 +324,7 @@ inline typename boost::lazy_enable_if< \
     TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   >, \
   boost::detail::tagged_property_map_value< \
-    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
+    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph, TA \
     BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
   > \
 >::type \

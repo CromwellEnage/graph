@@ -196,7 +196,6 @@ alias graph_test_regular :
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp
         : : : : : <preserve-target-tests>off ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp
-            ../../test/build//boost_unit_test_framework/<link>static
         : : : : : <preserve-target-tests>off ]
     [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
     [ run johnson-test.cpp : : : : : <preserve-target-tests>off ]

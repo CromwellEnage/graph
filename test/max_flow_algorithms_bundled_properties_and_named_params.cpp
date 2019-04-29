@@ -1,9 +1,15 @@
-#define BOOST_TEST_MODULE max_flow_algorithms_named_parameters_and_bundled_params_test
+//============================================================================
+// Copyright 2013 University of Warsaw.
+// Authors: Piotr Wygocki 
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//============================================================================
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/test/unit_test.hpp>
 #include <boost/graph/edmonds_karp_max_flow.hpp>
-
+#include <boost/core/lightweight_test.hpp>
 #include "min_cost_max_flow_utils.hpp"
 
 typedef boost::adjacency_list_traits<boost::vecS,boost::vecS,boost::directedS> traits;
@@ -22,7 +28,7 @@ struct node_t {
 };
 typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, node_t, edge_t > Graph;
 
-BOOST_AUTO_TEST_CASE(using_named_parameters_and_bundled_params_on_edmonds_karp_max_flow_test)
+int main()
 {
   Graph g;
   traits::vertex_descriptor s,t;
@@ -49,5 +55,6 @@ BOOST_AUTO_TEST_CASE(using_named_parameters_and_bundled_params_on_edmonds_karp_m
     boost::graph::keywords::_predecessor_map = pred
   );
 
-  BOOST_CHECK_EQUAL(flow_value,4);
+  BOOST_TEST_EQ(flow_value,4);
+  return boost::report_errors();
 }
