@@ -1590,7 +1590,7 @@ namespace boost { namespace detail { \
             G, \
             T, \
             typename parameter::result_of::compose< \
-                BOOST_PP_ENUM_PARAMS_Z(z, n, prefix) \
+                BOOST_PP_ENUM_PARAMS_Z(z, n, A) \
             >::type, \
             K \
         > \
