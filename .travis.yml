@@ -1,5 +1,5 @@
 # Copyright 2016, 2017 Peter Dimov
-# Copyright 2018 Joh Maddock
+# Copyright 2018 John Maddock
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
 
@@ -140,7 +140,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03
       addons:
         apt:
           packages:
@@ -149,7 +149,25 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=14,1z
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=1z
+      addons:
+        apt:
+          packages:
+            - g++-6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=1z
       addons:
         apt:
           packages:
@@ -160,7 +178,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03
       addons:
         apt:
           packages:
@@ -171,7 +189,29 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,17
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      dist: trusty
+      compiler: g++-7
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14
+      addons:
+        apt:
+          packages:
+            - g++-7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      dist: trusty
+      compiler: g++-7
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=17
       addons:
         apt:
           packages:
@@ -182,7 +222,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03
       addons:
         apt:
           packages:
@@ -193,7 +233,29 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,17
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      dist: trusty
+      compiler: g++-8
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14
+      addons:
+        apt:
+          packages:
+            - g++-8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      dist: trusty
+      compiler: g++-8
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=17
       addons:
         apt:
           packages:

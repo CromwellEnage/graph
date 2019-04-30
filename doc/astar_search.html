@@ -22,15 +22,110 @@
 
 <P>
 <PRE>
-<i>// Named parameter interfaces</i>
+<i>// Boost.Parameter-enabled interfaces</i>
+template &lt;
+    typename VertexListGraph, typename AStarHeuristic,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg11
+&gt;
+void astar_search(
+    const VertexListGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg11&amp; a11 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg11
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+template &lt;
+    typename IncidenceGraph, typename AStarHeuristic,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
+&gt;
+void astar_search_no_init(
+    const IncidenceGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg11&amp; a9 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg9
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+template &lt;
+    typename VertexListGraph, typename AStarHeuristic,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg11
+&gt;
+void astar_search_tree(
+    const VertexListGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg11&amp; a11 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg11
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+template &lt;
+    typename IncidenceGraph, typename AStarHeuristic,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
+&gt;
+void astar_search_no_init_tree(
+    const IncidenceGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg11&amp; a9 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg9
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// Old-style named parameter interfaces</i>
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
           typename P, typename T, typename R&gt;
 void
 astar_search
   (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a
+> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -38,8 +133,10 @@ template &lt;typename VertexListGraph,
 void
 astar_search_no_init
   (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a
+> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -47,8 +144,10 @@ template &lt;typename VertexListGraph,
 void
 astar_search_tree
   (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a
+> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
@@ -56,21 +155,27 @@ template &lt;typename VertexListGraph,
 void
 astar_search_no_init_tree
   (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a
+> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// Non-named parameter interface</i>
 template &lt;typename VertexListGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename <a href="AStarVisitor.html">AStarVisitor</a
+>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap, typename VertexIndexMap,
 	  typename ColorMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>CompareFunction</a>, typename <a
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search
   (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
    DistanceMap distance, WeightMap weight,
@@ -79,33 +184,43 @@ astar_search
    CostInf inf, CostZero zero);
 
 template &lt;typename VertexListGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename <a href="AStarVisitor.html">AStarVisitor</a
+>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>CompareFunction</a>, typename <a
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_tree
   (const VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
    DistanceMap distance, WeightMap weight,
    CompareFunction compare, CombineFunction combine,
    CostInf inf, CostZero zero);
 
-<i>// Versions that do not initialize property maps (used for implicit graphs)</i>
+<i>// Versions that do not initialize property maps
+// (used for implicit graphs)</i>
 template &lt;typename IncidenceGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename <a href="AStarVisitor.html">AStarVisitor</a
+>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap, typename ColorMap,
           typename VertexIndexMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>CompareFunction</a>, typename <a
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init
   (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
    DistanceMap distance, WeightMap weight,
@@ -118,15 +233,20 @@ astar_search_no_init() relative to astar_search(); the named parameter
 interfaces are not affected.</b>
 
 template &lt;typename IncidenceGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename <a href="AStarVisitor.html">AStarVisitor</a
+        >, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a
+>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init_tree
   (const IncidenceGraph &amp;g,
-   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
    DistanceMap distance, WeightMap weight,
@@ -297,235 +417,442 @@ finish vertex <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>const VertexListGraph&amp; g</tt>
-<blockquote>
-  The graph object on which the algorithm will be applied for <tt>astar_search()</tt>.  The type
-  <tt>VertexListGraph</tt> must be a model of the <a
-  href="VertexListGraph.html">
-  Vertex List Graph</a> and <a href="IncidenceGraph.html">Incidence Graph</a>
-  concepts.
-</blockquote>
-
-IN: <tt>const IncidenceGraph&amp; g</tt>
-<blockquote>
-  The graph object on which the algorithm will be applied for <tt>astar_search_no_init()</tt>.  The type
-  <tt>IncidenceGraph</tt> must be a model of the 
-  <a href="IncidenceGraph.html">Incidence Graph</a>
-  concept.
-</blockquote>
-
-IN: <tt>vertex_descriptor s</tt>
-<blockquote>
-  The start vertex for the search.  All distances will be calculated
-  from this vertex, and the shortest paths tree (recorded in the
-  predecessor map) will be rooted at this vertex.
-</blockquote>
-
-IN: <tt>AStarHeuristic h</tt>
-<blockquote>
-  The heuristic function that guides the search.  The type
-  <tt>AStarHeuristic</tt> must be a model of the <a href="AStarHeuristic.html">AStarHeuristic</a>
-  concept.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const VertexListGraph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The graph object on which the algorithm will be applied for
+<tt>astar_search()</tt>.  The type <tt>VertexListGraph</tt> must be a model of
+the <a href="VertexListGraph.html"><b>Vertex List Graph</b></a> and
+<a href="IncidenceGraph.html"><b>Incidence Graph</b></a> concepts.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const IncidenceGraph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The graph object on which the algorithm will be applied for
+<tt>astar_search_no_init()</tt>.  The type <tt>IncidenceGraph</tt> must be a
+model of the <a href="IncidenceGraph.html"><b>Incidence Graph</b></a>
+concept.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph <i>or</i> IncidenceGraph&gt;::vertex_descriptor
+s</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The start vertex for the search.  All distances will be calculated from
+this vertex, and the shortest paths tree (recorded in the predecessor map)
+will be rooted at this vertex.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>AStarHeuristic h</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The heuristic function that guides the search.  The type
+<tt>AStarHeuristic</tt> must be a model of the <a href="AStarHeuristic.html"
+><b>AStarHeuristic</b></a> concept.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>
-<blockquote>
-   The weight or ``length'' of each edge in the graph.  The weights
-   must all be non-negative; the algorithm will throw a <a
-   href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
-   exception if one of the edges is negative.  The type
-   <tt>WeightMap</tt> must be a model of <a
-   href="../../property_map/doc/ReadablePropertyMap.html"><tt>Readable
-   Property Map</tt></a>.  The edge descriptor type of the graph needs
-   to be usable as the key type for the weight map.  The value type
-   for this map must be the same as the value type of the distance
-   map.<br>
-   <b>Default:</b> <tt>get(edge\_weight, g)</tt>
-</blockquote>
-
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-  num_vertices(g))</tt>.  This is necessary in non-tree versions of the
-  algorithm for efficient updates of
-  the heap data structure when an edge is relaxed.  The type
-  <tt>VertexIndexMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html"><tt>Readable
-  Property Map</tt></a>.  The value type of the map must be an integer
-  type.  The vertex descriptor type of the graph needs to be usable as
-  the key type of the map.<br>
-
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>.
-   Note: if you use this default, make sure your graph has
-   an internal <tt>vertex_index</tt> property. For example,
-   <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-   not have an internal <tt>vertex_index</tt> property.
-</blockquote>
-
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
-<blockquote>
-
-  The predecessor map records the edges in the minimum spanning tree.
-  Upon completion of the algorithm, the edges <tt>(p[u],u)</tt> for
-  all <tt>u</tt> in <tt>V</tt> are in the minimum spanning tree.  If
-  <tt>p[u] = u</tt> then <tt>u</tt> is either the start vertex or a
-  vertex that is not reachable from the start.  The
-  <tt>PredecessorMap</tt> type must be a <a
-  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
-  Property Map</tt></a> with key and vertex types the same as the
-  vertex descriptor type of the graph.<br>
-
-  <b>Default:</b> <tt>dummy_property_map</tt>
-</blockquote>
-
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
-<blockquote>
-
-  The shortest path weight from the start vertex <tt>s</tt> to each
-  vertex in the graph <tt>g</tt> is recorded in this property map.
-  The shortest path weight is the sum of the edge weights along the
-  shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
-  Property Map</tt></a>.  The vertex descriptor type of the graph
-  needs to be usable as the key type of the distance map.  The value
-  type of the distance map is the element type of a <a
-  href="./Monoid.html"><tt>Monoid</tt></a> formed with the
-  <tt>combine</tt> function object and the zero object for the
-  identity element.  Also the distance value type must have a <a
-  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
-  provided by the <tt>compare</tt> function object.  A
-  <tt>constant_writable_property_map</tt> returning the infinity value can be
-  used for this parameter in tree versions of the algorithm when the graph does
-  not contain a directed cycle.<br>
-
-  <b>Default:</b> <tt>shared_array_property_map</tt>
-  with the same value type as the
-  <tt>WeightMap</tt>, and of size <tt>num_vertices(g)</tt>, and using
-  the <tt>i_map</tt> for the index map.
-</blockquote>
-
-UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
-<blockquote>
-
-  The <i>f</i>-value for each vertex.  The <i>f</i>-value is defined
-  as the sum of the cost to get to a vertex from the start vertex, and
-  the estimated cost (as returned by the heuristic function
-  <tt>h</tt>) from the vertex to a goal.  The type <tt>CostMap</tt>
-  must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
-  Property Map</tt></a> in non-tree versions of the algorithm, and <a
-  href="../../property_map/doc/WritablePropertyMap.html"><tt>Writable Property
-  Map</tt></a> in tree versions of the algorithm.  The vertex descriptor type
-  of the graph
-  needs to be usable as the key type of the distance map.  The value
-  type of the distance map is the element type of a <a
-  href="./Monoid.html"><tt>Monoid</tt></a> formed with the
-  <tt>combine</tt> function object and the zero object for the
-  identity element.  Also the distance value type must have a <a
-  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
-  provided by the <tt>compare</tt> function object.  The value type
-  for this map must be the same as the value type for the distance
-  map.  In tree versions of the algorithm, <tt>null_property_map</tt> can be
-  used for this parameter.<br>
-
-  <b>Default:</b> <tt>shared_array_property_map</tt>
-  with the same value type as the
-  <tt>DistanceMap</tt>, and of size <tt>num_vertices(g)</tt>, and using
-  the <tt>i_map</tt> for the index map.
-</blockquote>
-
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
-<blockquote>
-
-  This is used during the execution of non-tree versions of the algorithm to
-  mark the
-  vertices, indicating whether they are on the OPEN or CLOSED lists.
-  The vertices start out white and become gray when they are inserted
-  into the OPEN list.  They then turn black when they are examined and
-  placed on the CLOSED list.  At the end of the algorithm, vertices
-  reachable from the source vertex will have been colored black.  All
-  other vertices will still be white.  The type <tt>ColorMap</tt> must
-  be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
-  Property Map</tt></a>.  A vertex descriptor must be usable as the
-  key type of the map, and the value type of the map must be a model
-  of <a href="./ColorValue.html"><tt>Color Value</tt></a>.<br>
-
-  <b>Default:</b> <tt>shared_array_property_map</tt>
-  of value type <tt>default_color_type</tt>, with size
-  <tt>num_vertices(g)</tt>, and using
-  the <tt>i_map</tt> for the index map.
-</blockquote>
-
-IN: <tt>distance_compare(CompareFunction cmp)</tt>
-<blockquote>
-
-  This function is use to compare distances to determine which vertex
-  is closer to the start vertex, and to compare <i>f</i>-values to
-  determine which vertex on the OPEN list to examine next.  The
-  <tt>CompareFunction</tt> type must be a model of <a
-  href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><tt>Binary
-  Predicate</tt></a> and have argument types that match the value type
-  of the <tt>DistanceMap</tt> property map.<br>
-
-  <b>Default:</b> <tt>std::less&lt;D&gt;</tt> with <tt>D = typename
-  property_traits&lt;DistanceMap&gt;::value_type</tt>.
-</blockquote>
-
-IN: <tt>distance_combine(CombineFunction cmb)</tt>
-<blockquote>
-
-  This function is used to combine distances to compute the distance
-  of a path, and to combine distance and heuristic values to compute
-  the <i>f</i>-value of a vertex.  The <tt>CombineFunction</tt> type
-  must be a model of <a
-  href="http://www.boost.org/sgi/stl/BinaryFunction.html"><tt>Binary
-  Function</tt></a>.  Both argument types of the binary function must
-  match the value type of the <tt>DistanceMap</tt> property map (which
-  is the same as that of the <tt>WeightMap</tt> and <tt>CostMap</tt>
-  property maps).  The result type must be the same type as the
-  distance value type.<br>
-
-  <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with <tt>D = typename
-  property_traits&lt;DistanceMap&gt;::value_type</tt>.
-</blockquote>
-
-IN: <tt>distance_inf(D inf)</tt>
-<blockquote>
-
-  The <tt>inf</tt> object must be the greatest value of any <tt>D</tt>
-  object.  That is, <tt>compare(d, inf) == true</tt> for any <tt>d !=
-  inf</tt>.  The type <tt>D</tt> is the value type of the
-  <tt>DistanceMap</tt>.<br>
-
-  <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt>
-</blockquote>
-
-IN: <tt>distance_zero(D zero)</tt>
-<blockquote>
-
-  The <tt>zero</tt> value must be the identity element for the <a
-  href="./Monoid.html"><tt>Monoid</tt></a> formed by the distance
-  values and the <tt>combine</tt> function object.  The type
-  <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
-
-  <b>Default</b>: <tt>D()</tt> with <tt>D = typename
-  property_traits&lt;DistanceMap&gt;::value_type</tt>.
-</blockquote>
-
-OUT: <tt>visitor(AStarVisitor v)</tt>
-<blockquote>
-
-  Use this to specify actions that you would like to happen during
-  certain event points within the algorithm.  The type
-  <tt>AStarVisitor</tt> must be a model of the <a
-  href="AStarVisitor.html"><tt>AStarVisitor</tt></a> concept. The
-  visitor object is passed by value <a href="#1">[1]</a>.<br>
-
-  <b>Default:</b> <tt>astar_visitor&lt;null_visitor&gt;</tt>
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The weight or ``length'' of each edge in the graph.  The weights must all
+be non-negative; the algorithm will throw a <a
+href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
+one of the edges is negative.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
+key type for the weight map.  The value type for this map must be the same as
+the value type of the distance map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(g))</tt>.  This is necessary in non-tree versions of the
+algorithm for efficient updates of the heap data structure when an edge is
+relaxed.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The predecessor map records the edges in the minimum spanning tree.  Upon
+completion of the algorithm, the edges <tt>(p[u],u)</tt> for all <tt>u</tt> in
+<tt>V</tt> are in the minimum spanning tree.  If <tt>p[u] = u</tt> then
+<tt>u</tt> is either the start vertex or a vertex that is not reachable from
+the start.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write
+Property Map</b></a> with key and vertex types the same as the vertex
+descriptor type of the graph.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>dummy_property_map</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The shortest path weight from the start vertex <tt>s</tt> to each vertex
+in the graph <tt>g</tt> is recorded in this property map.  The shortest path
+weight is the sum of the edge weights along the shortest path.  The argument
+type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
+the key type of the distance map.  The value type of the distance map is the
+element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
+<tt>combine</tt> function object and the zero object for the identity
+element.  Also the distance value type must have a <a
+href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
+><b>StrictWeakOrdering</b></a> provided by the <tt>compare</tt> function
+object.  A <tt>constant_writable_property_map</tt> returning the infinity
+value can be used for this parameter in tree versions of the algorithm when
+the graph does not contain a directed cycle.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> with the same value
+type as the weight map argument type, and of size <tt>num_vertices(g)</tt>,
+and using the index map argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_rank_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>rank_map(CostMap c_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The <i>f</i>-value for each vertex.  The <i>f</i>-value is defined as the
+sum of the cost to get to a vertex from the start vertex, and the estimated
+cost (as returned by the heuristic function <tt>h</tt>) from the vertex to a
+goal.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a> in non-tree versions of the algorithm, and <a
+href="../../property_map/doc/WritablePropertyMap.html"><b>Writable Property
+Map</b></a> in tree versions of the algorithm.  The vertex descriptor type of
+the graph needs to be usable as the key type of the distance map.  The value
+type of the distance map is the element type of a <a href="./Monoid.html"
+><b>Monoid</b></a> formed with the <tt>combine</tt> function object and the
+zero object for the identity element.  Also the distance value type must have
+a <a href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
+><b>StrictWeakOrdering</b></a> provided by the <tt>compare</tt> function
+object.  The value type for this map must be the same as the value type for
+the distance map.  In tree versions of the algorithm,
+<tt>null_property_map</tt> can be used for this parameter.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> with the same value
+type as the distance map argument type, and of size <tt>num_vertices(g)</tt>,
+and using the index map argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This is used during the execution of non-tree versions of the algorithm to
+mark the vertices, indicating whether they are on the OPEN or CLOSED
+lists.  The vertices start out white and become gray when they are inserted
+into the OPEN list.  They then turn black when they are examined and placed on
+the CLOSED list.  At the end of the algorithm, vertices reachable from the
+source vertex will have been colored black.  All other vertices will still be
+white.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  A vertex descriptor must be usable as the key type of the map,
+and the value type of the map must be a model of <a href="./ColorValue.html"
+><b>Color Value</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> of value type
+<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
+the index map argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is use to compare distances to determine which vertex is
+closer to the start vertex, and to compare <i>f</i>-values to determine which
+vertex on the OPEN list to examine next.  The argument type type must be a
+model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> and have argument types that match the value type of the
+distance map argument type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is used to combine distances to compute the distance of a
+path, and to combine distance and heuristic values to compute the
+<i>f</i>-value of a vertex.  The argument type type must be a model of <a
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
+Function</b></a>.  Both argument types of the binary function must match the
+value type of the distance map argument type (which is the same as that of the
+weight map and cost map argument types).  The result type must be the same
+type as the distance value type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::plus&lt;D&gt;</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument value must be the greatest value of any instance of the
+argument type.  That is, for any value <tt>d</tt> not equal to the argument
+value <tt>inf</tt>, <tt>compare(d, inf) == true</tt>.  The type <tt>D</tt> is
+the value type of the distance map argument type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
+<tt>D = typename property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument value must be the identity element for the <a
+href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
+<tt>combine</tt> function object.  The type <tt>D</tt> is the value type of
+the distance map argument type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>D()</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>visitor(AStarVisitor vis)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>Use this to specify actions that you would like to happen during certain
+event points within the algorithm.  The argument type must be a model of the
+<a href="AStarVisitor.html"><b>AStarVisitor</b></a> concept.  The visitor
+object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>astar_visitor&lt;null_visitor&gt;</tt></td>
+</tr>
+</table>
 
 <H3>Complexity</H3>
 
