@@ -424,31 +424,17 @@ finish vertex <i>u</i>
 </tr>
 <tr valign="top">
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const VertexListGraph&amp; g</tt></td>
+<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
 </tr>
 <tr valign="top">
 <th>Description:</th>
-<td>The graph object on which the algorithm will be applied for
-<tt>astar_search()</tt>.  The type <tt>VertexListGraph</tt> must be a model of
-the <a href="VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="IncidenceGraph.html"><b>Incidence Graph</b></a> concepts.</td>
-</tr>
-<tr>
-<td colspan="2"><hr /></td>
-</tr>
-<tr valign="top">
-<th>Category:</th>
-<td>IN</td>
-</tr>
-<tr valign="top">
-<th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const IncidenceGraph&amp; g</tt></td>
-</tr>
-<tr valign="top">
-<th>Description:</th>
-<td>The graph object on which the algorithm will be applied for
-<tt>astar_search_no_init()</tt>.  The type <tt>IncidenceGraph</tt> must be a
-model of the <a href="IncidenceGraph.html"><b>Incidence Graph</b></a>
+<td>The graph object on which the algorithm will be applied.  If the algorithm
+is <tt>astar_search()</tt> or <tt>astar_search_tree()</tt>, then the type
+<tt>Graph</tt> must be a model of the <a href="VertexListGraph.html"><b>Vertex
+List Graph</b></a> and <a href="IncidenceGraph.html"><b>Incidence
+Graph</b></a> concepts.  If the algorithm is <tt>astar_search_no_init()</tt>
+or <tt>astar_search_no_init_tree()</tt>, then the type <tt>Graph</tt> must be
+a model of the <a href="IncidenceGraph.html"><b>Incidence Graph</b></a>
 concept.</td>
 </tr>
 <tr>
@@ -461,8 +447,7 @@ concept.</td>
 <tr valign="top">
 <th>Signature:</th>
 <td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;VertexListGraph <i>or</i> IncidenceGraph&gt;::vertex_descriptor
-s</tt></td>
+>&lt;Graph&gt;::vertex_descriptor s</tt></td>
 </tr>
 <tr valign="top">
 <th>Description:</th>
