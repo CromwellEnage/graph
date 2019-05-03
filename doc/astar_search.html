@@ -342,8 +342,8 @@ labels on the right.
 </P>
 
 <table>
-<tr>
-<td valign="top">
+<tr valign="top">
+<td>
 <pre>
 A*(<i>G</i>, <i>s</i>, <i>h</i>)
   <b>for</b> each vertex <i>u in V</i>
@@ -376,7 +376,7 @@ A*(<i>G</i>, <i>s</i>, <i>h</i>)
   <b>end while</b>
 </pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 
 initialize vertex <i>u</i>
@@ -410,6 +410,48 @@ finish vertex <i>u</i>
 </td>
 </tr>
 </table>
+
+<P>
+The A* algorithms can take in named parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.
+</P>
+
+<pre>
+struct location { float x, y; };
+
+typedef boost::adjacency_list&lt;
+    boost::listS, boost::vecS, boost::undirectedS, boost::no_property,
+    boost::property&lt;boost::edge_weight_t, float&gt;
+&gt; mygraph_t;
+
+class distance_heuristic :
+    public boost::graph::astar_heuristic&lt;mygraph_t, float&gt;
+{
+    typedef boost::graph_traits&lt;mygraph_t&gt;::vertex_descriptor Vertex;
+    location* m_location;
+    Vertex m_goal;
+public:
+    distance_heuristic(LocMap l, Vertex goal) : m_location(l), m_goal(goal) {}
+    float operator()(Vertex u)
+    {
+        float dx = m_location[m_goal].x - m_location[u].x;
+        float dy = m_location[m_goal].y - m_location[u].y;
+        return ::sqrt(dx * dx + dy * dy);
+    }
+};
+
+location locations = { {42.73, 73.68}, {44.28, 73.99} };
+mygraph_t g(2);
+std::vector&lt;boost::graph_traits&lt;mygraph_t&gt;::vertex_descriptor&gt; d;
+std::vector&lt;float&gt; d;
+
+astar_search_tree(
+    g, vertex(0, g), distance_heuristic(locations, vertex(1, g)),
+    <b>boost::graph::keywords::_predecessor_map =</b> make_iterator_property_map(p.begin(), get(vertex_index, g)),
+    <b>boost::graph::keywords::_distance_map =</b> make_iterator_property_map(d.begin(), get(vertex_index, g))
+);
+</pre>
 
 <h3>Where Defined</h3>
 
@@ -600,15 +642,20 @@ element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
 element.  Also the distance value type must have a <a
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
 ><b>StrictWeakOrdering</b></a> provided by the <tt>compare</tt> function
-object.  A <tt>constant_writable_property_map</tt> returning the infinity
-value can be used for this parameter in tree versions of the algorithm when
-the graph does not contain a directed cycle.</td>
+object.  A <a
+href="../../property_map/doc/static_property_map.html"><tt
+>static_property_map</tt></a> returning the infinity value can be used for
+this parameter in <tt>astar_search_tree()</tt> or
+<tt>astar_search_no_init_tree()</tt> when the graph does not contain a
+directed cycle.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> with the same value
-type as the weight map argument type, and of size <tt>num_vertices(g)</tt>,
-and using the index map argument for the index map.</td>
+<td bgcolor="#dfdfdf">A <a
+href="../../property_map/doc/shared_array_property_map.html"><tt
+>shared_array_property_map</tt></a> with the same value type as the weight map
+argument type, and of size <tt>num_vertices(g)</tt>, and using the index map
+argument for the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -648,9 +695,11 @@ the distance map.  In tree versions of the algorithm,
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> with the same value
-type as the distance map argument type, and of size <tt>num_vertices(g)</tt>,
-and using the index map argument for the index map.</td>
+<td bgcolor="#dfdfdf">A <a
+href="../../property_map/doc/shared_array_property_map.html"><tt
+>shared_array_property_map</tt></a> with the same value type as the distance
+map argument type, and of size <tt>num_vertices(g)</tt>, and using the index
+map argument for the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -684,9 +733,11 @@ and the value type of the map must be a model of <a href="./ColorValue.html"
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>shared_array_property_map</tt> of value type
-<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
-the index map argument for the index map.</td>
+<td bgcolor="#dfdfdf">A <a
+href="../../property_map/doc/shared_array_property_map.html"><tt
+>shared_array_property_map</tt></a> of value type <tt>default_color_type</tt>,
+and of size <tt>num_vertices(g)</tt>, and using the index map argument for the
+index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>

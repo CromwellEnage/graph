@@ -153,124 +153,166 @@ namespace boost { namespace graph {
 
 namespace boost { namespace detail {
 
-    template <class AStarHeuristic, class UniformCostVisitor,
-              class UpdatableQueue, class PredecessorMap,
-              class CostMap, class DistanceMap, class WeightMap,
-              class ColorMap, class BinaryFunction,
-              class BinaryPredicate>
-    struct astar_bfs_visitor
+    template <
+        typename AStarHeuristic, typename UniformCostVisitor,
+        typename UpdatableQueue, typename PredecessorMap, typename CostMap,
+        typename DistanceMap, typename WeightMap, typename ColorMap,
+        typename BinaryFunction, typename BinaryPredicate
+    >
+    class astar_bfs_visitor
     {
+        typedef typename property_traits<CostMap>::value_type C;
+        typedef typename property_traits<ColorMap>::value_type ColorValue;
+        typedef color_traits<ColorValue> Color;
+        typedef typename property_traits<
+            DistanceMap
+        >::value_type distance_type;
 
-      typedef typename property_traits<CostMap>::value_type C;
-      typedef typename property_traits<ColorMap>::value_type ColorValue;
-      typedef color_traits<ColorValue> Color;
-      typedef typename property_traits<DistanceMap>::value_type distance_type;
+        AStarHeuristic m_h;
+        UniformCostVisitor m_vis;
+        UpdatableQueue& m_Q;
+        PredecessorMap m_predecessor;
+        CostMap m_cost;
+        DistanceMap m_distance;
+        WeightMap m_weight;
+        ColorMap m_color;
+        BinaryFunction m_combine;
+        BinaryPredicate m_compare;
+        C m_zero;
 
-      astar_bfs_visitor(AStarHeuristic h, UniformCostVisitor vis,
-                        UpdatableQueue& Q, PredecessorMap p,
-                        CostMap c, DistanceMap d, WeightMap w,
-                        ColorMap col, BinaryFunction combine,
-                        BinaryPredicate compare, C zero)
-        : m_h(h), m_vis(vis), m_Q(Q), m_predecessor(p), m_cost(c),
-          m_distance(d), m_weight(w), m_color(col),
-          m_combine(combine), m_compare(compare), m_zero(zero) {}
+    public:
+        inline astar_bfs_visitor(
+            AStarHeuristic h, UniformCostVisitor vis, UpdatableQueue& Q,
+            PredecessorMap p, CostMap c, DistanceMap d, WeightMap w,
+            ColorMap col, BinaryFunction combine, BinaryPredicate compare,
+            C zero
+        ) : m_h(h), m_vis(vis), m_Q(Q), m_predecessor(p), m_cost(c),
+            m_distance(d), m_weight(w), m_color(col), m_combine(combine),
+            m_compare(compare), m_zero(zero)
+        {
+        }
 
+        template <typename Vertex, typename Graph>
+        inline void initialize_vertex(Vertex u, const Graph& g)
+        {
+            this->m_vis.initialize_vertex(u, g);
+        }
 
-      template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, const Graph& g) {
-        m_vis.initialize_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, const Graph& g) {
-        m_vis.discover_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void examine_vertex(Vertex u, const Graph& g) {
-        m_vis.examine_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void finish_vertex(Vertex u, const Graph& g) {
-        m_vis.finish_vertex(u, g);
-      }
-      template <class Edge, class Graph>
-      void examine_edge(Edge e, const Graph& g) {
-        if (m_compare(get(m_weight, e), m_zero))
-          BOOST_THROW_EXCEPTION(negative_edge());
-        m_vis.examine_edge(e, g);
-      }
-      template <class Edge, class Graph>
-      void non_tree_edge(Edge, const Graph&) {}
+        template <typename Vertex, typename Graph>
+        inline void discover_vertex(Vertex u, const Graph& g)
+        {
+            this->m_vis.discover_vertex(u, g);
+        }
 
+        template <typename Vertex, typename Graph>
+        inline void examine_vertex(Vertex u, const Graph& g)
+        {
+            this->m_vis.examine_vertex(u, g);
+        }
 
+        template <typename Vertex, typename Graph>
+        inline void finish_vertex(Vertex u, const Graph& g)
+        {
+            this->m_vis.finish_vertex(u, g);
+        }
 
-      template <class Edge, class Graph>
-      void tree_edge(Edge e, const Graph& g) {
-        using boost::get;
-        bool m_decreased =
-          relax(e, g, m_weight, m_predecessor, m_distance,
-                m_combine, m_compare);
+        template <typename Edge, typename Graph>
+        void examine_edge(Edge e, const Graph& g)
+        {
+            if (this->m_compare(get(this->m_weight, e), this->m_zero))
+                BOOST_THROW_EXCEPTION(negative_edge());
+            this->m_vis.examine_edge(e, g);
+        }
 
-        if(m_decreased) {
-          m_vis.edge_relaxed(e, g);
-          put(m_cost, target(e, g),
-              m_combine(get(m_distance, target(e, g)),
-                        m_h(target(e, g))));
-        } else
-          m_vis.edge_not_relaxed(e, g);
-      }
+        template <typename Edge, typename Graph>
+        inline void non_tree_edge(Edge, const Graph&)
+        {
+        }
 
+        template <typename Edge, typename Graph>
+        inline void tree_edge(Edge e, const Graph& g)
+        {
+            using boost::get;
 
-      template <class Edge, class Graph>
-      void gray_target(Edge e, const Graph& g) {
-        using boost::get;
-        bool m_decreased =
-          relax(e, g, m_weight, m_predecessor, m_distance,
-                m_combine, m_compare);
+            if (
+                relax(
+                    e, g, this->m_weight, this->m_predecessor,
+                    this->m_distance, this->m_combine, this->m_compare
+                )
+            )
+            {
+                this->m_vis.edge_relaxed(e, g);
+                put(
+                    this->m_cost, target(e, g),
+                    this->m_combine(
+                        get(this->m_distance, target(e, g)),
+                        this->m_h(target(e, g))
+                    )
+                );
+            }
+            else
+            {
+                this->m_vis.edge_not_relaxed(e, g);
+            }
+        }
 
-        if(m_decreased) {
-          put(m_cost, target(e, g),
-              m_combine(get(m_distance, target(e, g)),
-                        m_h(target(e, g))));
-          m_Q.update(target(e, g));
-          m_vis.edge_relaxed(e, g);
-        } else
-          m_vis.edge_not_relaxed(e, g);
-      }
+        template <typename Edge, typename Graph>
+        inline void gray_target(Edge e, const Graph& g)
+        {
+            using boost::get;
 
+            if (
+                relax(
+                    e, g, this->m_weight, this->m_predecessor,
+                    this->m_distance, this->m_combine, this->m_compare
+                )
+            )
+            {
+                put(
+                    this->m_cost, target(e, g),
+                    this->m_combine(
+                        get(this->m_distance, target(e, g)),
+                        this->m_h(target(e, g))
+                    )
+                );
+                this->m_Q.update(target(e, g));
+                this->m_vis.edge_relaxed(e, g);
+            }
+            else
+            {
+                this->m_vis.edge_not_relaxed(e, g);
+            }
+        }
 
-      template <class Edge, class Graph>
-      void black_target(Edge e, const Graph& g) {
-        using boost::get;
-        bool m_decreased =
-          relax(e, g, m_weight, m_predecessor, m_distance,
-                m_combine, m_compare);
+        template <typename Edge, typename Graph>
+        inline void black_target(Edge e, const Graph& g)
+        {
+            using boost::get;
 
-        if(m_decreased) {
-          m_vis.edge_relaxed(e, g);
-          put(m_cost, target(e, g),
-              m_combine(get(m_distance, target(e, g)),
-                        m_h(target(e, g))));
-          m_Q.push(target(e, g));
-          put(m_color, target(e, g), Color::gray());
-          m_vis.black_target(e, g);
-        } else
-          m_vis.edge_not_relaxed(e, g);
-      }
-
-
-
-      AStarHeuristic m_h;
-      UniformCostVisitor m_vis;
-      UpdatableQueue& m_Q;
-      PredecessorMap m_predecessor;
-      CostMap m_cost;
-      DistanceMap m_distance;
-      WeightMap m_weight;
-      ColorMap m_color;
-      BinaryFunction m_combine;
-      BinaryPredicate m_compare;
-      C m_zero;
-
+            if (
+                relax(
+                    e, g, this->m_weight, this->m_predecessor,
+                    this->m_distance, this->m_combine, this->m_compare
+                )
+            )
+            {
+                this->m_vis.edge_relaxed(e, g);
+                put(
+                    this->m_cost, target(e, g),
+                    this->m_combine(
+                        get(this->m_distance, target(e, g)),
+                        this->m_h(target(e, g))
+                    )
+                );
+                this->m_Q.push(target(e, g));
+                put(this->m_color, target(e, g), Color::gray());
+                this->m_vis.black_target(e, g);
+            }
+            else
+            {
+                this->m_vis.edge_not_relaxed(e, g);
+            }
+        }
     };
 }} // namespace boost::detail
 

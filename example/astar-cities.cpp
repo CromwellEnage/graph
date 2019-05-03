@@ -24,8 +24,6 @@
 #include <math.h>    // for sqrt
 
 using namespace boost;
-using namespace std;
-
 
 // auxiliary types
 struct location
@@ -43,7 +41,7 @@ public:
     : name(n), loc(l), minx(_minx), maxx(_maxx), miny(_miny),
       maxy(_maxy), ptx(_ptx), pty(_pty) {}
   template <class Vertex>
-  void operator()(ostream& out, const Vertex& v) const {
+  void operator()(std::ostream& out, const Vertex& v) const {
     float px = 1 - (loc[v].x - minx) / (maxx - minx);
     float py = (loc[v].y - miny) / (maxy - miny);
     out << "[label=\"" << name[v] << "\", pos=\""
@@ -63,17 +61,16 @@ class time_writer {
 public:
   time_writer(WeightMap w) : wm(w) {}
   template <class Edge>
-  void operator()(ostream &out, const Edge& e) const {
+  void operator()(std::ostream &out, const Edge& e) const {
     out << "[label=\"" << wm[e] << "\", fontsize=\"11\"]";
   }
 private:
   WeightMap wm;
 };
 
-
 // euclidean distance heuristic
 template <class Graph, class CostType, class LocMap>
-class distance_heuristic : public astar_heuristic<Graph, CostType>
+class distance_heuristic : public boost::graph::astar_heuristic<Graph, CostType>
 {
 public:
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -90,12 +87,11 @@ private:
   Vertex m_goal;
 };
 
-
 struct found_goal {}; // exception for termination
 
 // visitor that terminates when we find the goal
 template <class Vertex>
-class astar_goal_visitor : public boost::default_astar_visitor
+class astar_goal_visitor : public boost::graph::default_astar_visitor
 {
 public:
   astar_goal_visitor(Vertex goal) : m_goal(goal) {}
@@ -111,15 +107,14 @@ private:
 
 int main(int argc, char **argv)
 {
-  
   // specify some types
   typedef adjacency_list<listS, vecS, undirectedS, no_property,
     property<edge_weight_t, cost> > mygraph_t;
   typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
-  typedef mygraph_t::vertex_descriptor vertex;
-  typedef mygraph_t::edge_descriptor edge_descriptor;
+  typedef graph_traits<mygraph_t>::vertex_descriptor vertex;
+  typedef graph_traits<mygraph_t>::edge_descriptor edge_descriptor;
   typedef std::pair<int, int> edge;
-  
+
   // specify data
   enum nodes {
     Troy, LakePlacid, Plattsburgh, Massena, Watertown, Utica,
@@ -172,10 +167,10 @@ int main(int argc, char **argv)
   vertex start = random_vertex(g, gen);
   vertex goal = random_vertex(g, gen);
 
-  cout << "Start vertex: " << name[start] << endl;
-  cout << "Goal vertex: " << name[goal] << endl;
+  std::cout << "Start vertex: " << name[start] << std::endl;
+  std::cout << "Goal vertex: " << name[goal] << std::endl;
 
-  ofstream dotfile;
+  std::ofstream dotfile;
   dotfile.open("test-astar-cities.dot");
   write_graphviz(dotfile, g,
                  city_writer<const char **, location*>
@@ -183,38 +178,38 @@ int main(int argc, char **argv)
                    480, 400),
                  time_writer<WeightMap>(weightmap));
 
-  vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-  vector<cost> d(num_vertices(g));
+  std::vector<vertex> p(num_vertices(g));
+  std::vector<cost> d(num_vertices(g));
   try {
     // call astar named parameter interface
-    using namespace boost::graph::keywords;
-    astar_search_tree
-      (g, start,
-       distance_heuristic<mygraph_t, cost, location*>
-        (locations, goal),
-       _predecessor_map = make_iterator_property_map(p.begin(), get(vertex_index, g)),
-       _distance_map = make_iterator_property_map(d.begin(), get(vertex_index, g)),
-       _visitor = astar_goal_visitor<vertex>(goal)
-       );
+    astar_search_tree(
+      g, start,
+      distance_heuristic<mygraph_t, cost, location*>(locations, goal),
+      boost::graph::keywords::_predecessor_map =
+      make_iterator_property_map(p.begin(), get(vertex_index, g)),
+      boost::graph::keywords::_distance_map =
+      make_iterator_property_map(d.begin(), get(vertex_index, g)),
+      boost::graph::keywords::_visitor =
+      astar_goal_visitor<vertex>(goal)
+    );
   } catch(found_goal fg) { // found a path to the goal
-    list<vertex> shortest_path;
+    std::list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
       shortest_path.push_front(v);
       if(p[v] == v)
         break;
     }
-    cout << "Shortest path from " << name[start] << " to "
+    std::cout << "Shortest path from " << name[start] << " to "
          << name[goal] << ": ";
-    list<vertex>::iterator spi = shortest_path.begin();
-    cout << name[start];
+    std::list<vertex>::iterator spi = shortest_path.begin();
+    std::cout << name[start];
     for(++spi; spi != shortest_path.end(); ++spi)
-      cout << " -> " << name[*spi];
-    cout << endl << "Total travel time: " << d[goal] << endl;
+      std::cout << " -> " << name[*spi];
+    std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
     return 0;
   }
-  
-  cout << "Didn't find a path from " << name[start] << "to"
-       << name[goal] << "!" << endl;
+
+  std::cout << "Didn't find a path from " << name[start] << "to"
+       << name[goal] << "!" << std::endl;
   return 0;
-  
 }

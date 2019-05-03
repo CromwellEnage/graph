@@ -56,7 +56,7 @@ href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
 <h3>Where Defined:</h3>
 <a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
 
-<h3>Named Parameters</h3>
+<h3>Parameters</h3>
 
 <table>
 <tr valign="top">
@@ -69,9 +69,8 @@ keyword:</th>
 <td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_graph</tt></td>
 </tr>
 <tr valign="top">
-<th>Deducible?</th>
-<td bgcolor="#dfdfdf">Yes, if
-<tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined.</td>
+<th>Passing options</th>
+<td bgcolor="#dfdfff">By name or by position.</td>
 </tr>
 <tr valign="top">
 <th>Old-style signature:</th>
@@ -107,8 +106,8 @@ keyword:</th>
 <td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_result</tt></td>
 </tr>
 <tr valign="top">
-<th>Deducible?</th>
-<td bgcolor="#dfdfdf">Yes, if
+<th>Passing options</th>
+<td bgcolor="#dfffdf">By position, by name, or if the preprocessor token
 <tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined.</td>
 </tr>
 <tr valign="top">
@@ -145,7 +144,7 @@ keyword:</th>
 </tr>
 <tr valign="top">
 <th>Deducible?</th>
-<td bgcolor="#dfdfdf">Yes, if
+<td bgcolor="#dfffdf">Yes, if the preprocessor token
 <tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined.</td>
 </tr>
 <tr valign="top">
@@ -154,13 +153,13 @@ keyword:</th>
 </tr>
 <tr valign="top">
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This parameter is only necessary when the default
-color property map is used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map.</td>
+<td>This maps each vertex to an integer in the half-open range from zero to
+the number of vertices in the graph argument.  This parameter is only
+necessary when the default color property map is used.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b
+>Readable Property Map</b></a>.  The value type of the map must be an integer
+type.  The vertex descriptor type of the graph needs to be usable as the key
+type of the map.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
@@ -187,7 +186,7 @@ keyword:</th>
 </tr>
 <tr valign="top">
 <th>Deducible?</th>
-<td bgcolor="#dfdfdf">Yes, if
+<td bgcolor="#dfffdf">Yes, if the preprocessor token
 <tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined.</td>
 </tr>
 <tr valign="top">
@@ -205,10 +204,10 @@ the value type of the color map must model <a href="./ColorValue.html"><b
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"></tt
->iterator_property_map</tt></a> created from a <tt>std::vector</tt> of
-<tt>default_color_type</tt> of size equal to the number of vertices in the
+<td bgcolor="#dfdfdf">A <a
+href="../../property_map/doc/shared_array_property_map.html"><tt
+>shared_array_property_map</tt></a> created from a shared array of
+<tt>white_color</tt> values of size equal to the number of vertices in the
 graph argument and using the index map argument for the index map.</td>
 </tr>
 <tr valign="top">
