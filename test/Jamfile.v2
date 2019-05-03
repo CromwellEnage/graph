@@ -55,6 +55,7 @@ alias graph_test_regular :
         : 10000 : : : : <preserve-target-tests>off ]
     [ run dijkstra_no_color_map_compare.cpp
         : 10000 : : : : <preserve-target-tests>off ]
+    [ run disjoint_set_test.cpp : : : : : <preserve-target-tests>off ]
     [ run dominator_tree_test.cpp : : : : : <preserve-target-tests>off ]
 
     # Unused and deprecated.
