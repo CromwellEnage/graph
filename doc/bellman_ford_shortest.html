@@ -214,7 +214,7 @@ std::vector&lt;int&gt; distance;
 Graph g(6);
 bool r = bellman_ford_shortest_paths(
     g,
-    boost::graph::keywords::_weight_map = get(&EdgeProperties::weight, g),
+    <b>boost::graph::keywords::_weight_map =</b> get(&EdgeProperties::weight, g),
     <b>boost::graph::keywords::_distance_map =</b> boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g)),
     <b>boost::graph::keywords::_predecessor_map =</b> boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g))
 );
@@ -347,7 +347,7 @@ descriptor type of the graph.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map</tt></td>
+<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
 </tr>
 <tr valign="top">
 <th>Python:</th>
@@ -439,7 +439,7 @@ object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>bellman_visitor&lt;null_visitor&gt;</tt></td>
+<td bgcolor="#dfdfdf"><tt>boost::graph::default_bellman_visitor()</tt></td>
 </tr>
 <tr valign="top">
 <th>Python:</th>
@@ -474,7 +474,8 @@ result type must be the same as the distance map's value type.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::plus&lt;D&gt;</tt> with <tt>D = typename
+<td bgcolor="#dfdfdf"><tt>boost::graph::closed_plus&lt;D&gt;(<i>infinite
+distance argument</i>)</tt> with <tt>D = typename
 property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
 </tr>

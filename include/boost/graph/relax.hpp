@@ -19,36 +19,47 @@ namespace boost { namespace graph {
     // The following version of the plus functor prevents
     // problems due to overflow at positive infinity.
 
-    template <class T>
-    struct closed_plus
+    template <typename T>
+    class closed_plus
     {
-      typedef T result_type;
+        const T inf;
 
-      const T inf;
+    public:
+        typedef T result_type;
 
-      closed_plus() : inf((std::numeric_limits<T>::max)()) { }
-      closed_plus(T inf) : inf(inf) { }
+        inline closed_plus() : inf((std::numeric_limits<T>::max)())
+        {
+        }
 
-      T operator()(const T& a, const T& b) const {
-        using namespace std;
-       if (a == inf) return inf;
-       if (b == inf) return inf;
-       return a + b;
-      }
+        inline closed_plus(T inf) : inf(inf)
+        {
+        }
+
+        inline T operator()(const T& a, const T& b) const
+        {
+            using namespace std;
+            if (a == inf) return inf;
+            if (b == inf) return inf;
+            return a + b;
+        }
     };
 
-    template <class T>
-    struct closed_plus_gen
+    template <typename T>
+    class closed_plus_gen
     {
-      typedef closed_plus<T> result_type;
+        const T inf;
 
-      const T inf;
+    public:
+        typedef closed_plus<T> result_type;
 
-      closed_plus_gen(T inf) : inf(inf) { }
+        inline closed_plus_gen(T inf) : inf(inf)
+        {
+        }
 
-      closed_plus<T> operator()() const {
-        return closed_plus<T>(inf);
-      }
+        inline closed_plus<T> operator()() const
+        {
+            return closed_plus<T>(inf);
+        }
     };
 
     template <class Graph, class WeightMap, 
