@@ -204,14 +204,14 @@ following example illustrates the syntax for passing arguments by name.
 <pre>
 struct EdgeProperties { int weight; };
 
-typedef boost::adjacency_list&lt;
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::directedS, boost::no_property,
     EdgeProperties
 &gt; Graph;
-std::vector&lt;boost::graph_traits&lt;Graph&gt;::vertex_descriptor&gt; parent;
-std::vector&lt;int&gt; distance;
 
 Graph g(6);
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::vertex_descriptor&gt; parent(num_vertices(g));
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;int&gt; distance(num_vertices(g));
 bool r = bellman_ford_shortest_paths(
     g,
     <b>boost::graph::keywords::_weight_map =</b> get(&EdgeProperties::weight, g),

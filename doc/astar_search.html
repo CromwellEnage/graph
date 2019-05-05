@@ -422,15 +422,15 @@ following example illustrates the syntax for passing arguments by name.
 <pre>
 struct location { float x, y; };
 
-typedef boost::adjacency_list&lt;
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::vecS, boost::undirectedS, boost::no_property,
-    boost::property&lt;boost::edge_weight_t, float&gt;
+    boost::<a href="property.html">property</a>&lt;boost::edge_weight_t, float&gt;
 &gt; mygraph_t;
 
 class distance_heuristic :
-    public boost::graph::astar_heuristic&lt;mygraph_t, float&gt;
+    public boost::graph::<a href="astar_heuristic.html">astar_heuristic</a>&lt;mygraph_t, float&gt;
 {
-    typedef boost::graph_traits&lt;mygraph_t&gt;::vertex_descriptor Vertex;
+    typedef boost::<a href="graph_traits.html">graph_traits</a>&lt;mygraph_t&gt;::vertex_descriptor Vertex;
     location* m_location;
     Vertex m_goal;
 public:
@@ -445,8 +445,8 @@ public:
 
 location locations = { {42.73, 73.68}, {44.28, 73.99} };
 mygraph_t g(2);
-std::vector&lt;boost::graph_traits&lt;mygraph_t&gt;::vertex_descriptor&gt; d;
-std::vector&lt;float&gt; d;
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;mygraph_t&gt;::vertex_descriptor&gt; p(num_vertices(g));
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;float&gt; d(num_vertices(g));
 
 astar_search_tree(
     g, vertex(0, g), distance_heuristic(locations, vertex(1, g)),
@@ -645,12 +645,11 @@ href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
 Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
 the key type of the distance map.  The value type of the distance map is the
 element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
-<tt>combine</tt> function object and the zero object for the identity
-element.  Also the distance value type must have a <a
+distance combine argument and the distance zero argument for the identity
+element.  Also, the distance value type must have a <a
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
-><b>StrictWeakOrdering</b></a> provided by the <tt>compare</tt> function
-object.  A <a
-href="../../property_map/doc/static_property_map.html"><tt
+><b>StrictWeakOrdering</b></a> provided by the distance compare argument.  A
+<a href="../../property_map/doc/static_property_map.html"><tt
 >static_property_map</tt></a> returning the infinity value can be used for
 this parameter in <tt>astar_search_tree()</tt> or
 <tt>astar_search_no_init_tree()</tt> when the graph does not contain a
@@ -769,7 +768,7 @@ closer to the start vertex, and to compare <i>f</i>-values to determine which
 vertex on the OPEN list to examine next.  The argument type type must be a
 model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
 Predicate</b></a> and have argument types that match the value type of the
-distance map argument type.</td>
+distance map argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
@@ -800,9 +799,9 @@ path, and to combine distance and heuristic values to compute the
 <i>f</i>-value of a vertex.  The argument type type must be a model of <a
 href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
 Function</b></a>.  Both argument types of the binary function must match the
-value type of the distance map argument type (which is the same as that of the
+value type of the distance map argument (which is the same as that of the
 weight map and cost map argument types).  The result type must be the same
-type as the distance value type.</td>
+type as the value type of the distance map argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
@@ -860,8 +859,8 @@ keyword:</th>
 <th>Description:</th>
 <td>The argument value must be the identity element for the <a
 href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
-<tt>combine</tt> function object.  The type <tt>D</tt> is the value type of
-the distance map argument type.</td>
+distance combine argument.  The type <tt>D</tt> is the value type of the
+distance map argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>

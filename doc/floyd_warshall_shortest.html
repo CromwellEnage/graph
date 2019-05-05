@@ -117,19 +117,19 @@ following example illustrates the syntax for passing arguments by name.
 </P>
 
 <pre>
-typedef boost::adjacency_list&lt;
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::listS, boost::directedS,
-    boost::property&lt;
+    boost::<a href="property.html">property</a>&lt;
         boost::vertex_distance_t, int,
-        boost::property&lt;boost::vertex_name_t, int&gt;
+        boost::<a href="property.html">property</a>&lt;boost::vertex_name_t, int&gt;
     &gt;,
-    boost::property&lt;boost::edge_weight_t, int&gt;
+    boost::<a href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
 &gt; Digraph;
 
 Digraph g(6);
 int int_inf = std::numeric_limits&lt;int&gt;::max BOOST_PREVENT_MACRO_SUBSTITUTION();
-typedef boost::graph_traits&lt;Digraph&gt;::vertex_descriptor Vertex;
-std::map&lt;Vertex, std::map&lt;Vertex, int&gt; &gt; matrix;
+typedef boost::<a href="graph_traits.html">graph_traits</a>&lt;Digraph&gt;::vertex_descriptor Vertex;
+std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;Vertex, std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;Vertex, int&gt; &gt; matrix;
 
 bool floyd1 = floyd_warshall_initialized_all_pairs_shortest_paths(
     g,

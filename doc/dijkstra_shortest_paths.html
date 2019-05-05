@@ -21,7 +21,30 @@
 
 <P>
 <PRE>
-<i>// named parameter version</i>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
+&gt;
+void dijkstra_shortest_paths(
+    const Graph& g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg10&amp; a10 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg10
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// Old-style named parameter version</i>
 template &lt;typename Graph, typename P, typename T, typename R&gt;
 void
 dijkstra_shortest_paths(Graph&amp; g,
@@ -182,212 +205,437 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
+<h3>Example</h3>
+
+<P>
+Dijkstra's shortest-path algorithms can take in named parameter arguments,
+courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.
+</P>
+
+<pre>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::listS, boost::vecS, boost::directedS, boost::no_property,
+    boost::<a href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
+&gt; graph_t;
+
+graph_t g(5);
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;graph_t&gt;::vertex_descriptor&gt; p(num_vertices(g));
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;int&gt; d(num_vertices(g));
+dijkstra_shortest_paths(
+    g, vertex(0, g),
+    <b>boost::graph::keywords::_predecessor_map =</b> boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g)),
+    <b>boost::graph::keywords::_distance_map =</b> boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
+);
+</pre>
+
+<P>
+The full program is in <a href="../example/dijkstra-example.cpp"
+><tt>example/dijkstra-example.cpp</tt></a>
+</P>
+
 <h3>Where Defined</h3>
 
 <a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
-<blockquote>
-  The graph object on which the algorithm will be applied.
-  The type <tt>Graph</tt> must be a model of 
-  <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
-
-  <b>Python</b>: The parameter is named <tt>graph</tt>.
-</blockquote>
-
-IN: <tt>vertex_descriptor s</tt> 
-<blockquote>
-  The source vertex. All distance will be calculated from this vertex,
-  and the shortest paths tree will be rooted at this vertex.<br>
-
-  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The graph object on which the algorithm will be applied.  Its type must be
+a model of <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
+<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The parameter is named <tt>graph</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The source vertex. All distance will be calculated from this vertex, and
+the shortest paths tree will be rooted at this vertex.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The parameter is named <tt>root_vertex</tt>.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
-<blockquote>
-  The weight or ``length'' of each edge in the graph. The weights
-  must all be non-negative, and the algorithm will throw a
-  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
-  exception is one of the edges is negative.
-  The type <tt>WeightMap</tt> must be a model of
-  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
-  the graph needs to be usable as the key type for the weight
-  map. The value type for this map must be
-  the same as the value type of the distance map.<br>
-  <b>Default:</b>  <tt>get(edge_weight, g)</tt><br>
-
-  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
-  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
-</blockquote>
-
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. This is necessary for efficient updates of the
-  heap data structure&nbsp;[<A
-  HREF="bibliography.html#driscoll88">61</A>] when an edge is relaxed.
-  The type 
-  <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
-  integer type. The vertex descriptor type of the graph needs to be
-  usable as the key type of the map.<br>
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>.
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-   <br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
-<blockquote>
-  The predecessor map records the edges in the shortest path tree, the tree computed
-  by the traversal of the graph. Upon completion of the algorithm, the edges 
-  <i>(p[u],u)</i> for all <i>u in V</i> are in the tree.  The shortest path
-  from vertex <i>s</i> to each vertex <i>v</i> in the graph consists of the
-  vertices <i>v</i>, <i>p[v]</i>, <i>p[p[v]]</i>, and so on until <i>s</i> is
-  reached, in reverse order.  The
-  tree is not guaranteed to be a minimum spanning tree. If <i>p[u] =
-  u</i> then <i>u</i> is either the source vertex or a vertex that is
-  not reachable from the source.  The <tt>PredecessorMap</tt> type
-  must be a <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> whose key and value types are the same as the vertex
-  descriptor type of the graph.<br>
-  <b>Default:</b> <tt>dummy_property_map</tt><br>
-
-  <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
-</blockquote>
-
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
-<blockquote>
-  The shortest path weight from the source vertex <tt>s</tt> to each
-  vertex in the graph <tt>g</tt> is recorded in this property map. The
-  shortest path weight is the sum of the edge weights along the
-  shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>. The vertex descriptor type of the graph needs to
-  be usable as the key type of the distance map. 
-
-  The value type of the distance map is the element type of a <a
-  href="./Monoid.html">Monoid</a> formed with the <tt>combine</tt>
-  function object and the <tt>zero</tt> object for the identity
-  element. Also the distance value type must have a <a
-  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html">
-  StrictWeakOrdering</a> provided by the <tt>compare</tt> function
-  object.<br>
-  <b>Default:</b> <a
-  href="../../property_map/doc/iterator_property_map.html">
-  <tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.<br>
-
-  <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>
-</blockquote>
-
-IN: <tt>distance_compare(CompareFunction cmp)</tt> 
-<blockquote>
-  This function is use to compare distances to determine which vertex
-  is closer to the source vertex.  The <tt>CompareFunction</tt> type
-  must be a model of <a
-  href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
-  Predicate</a> and have argument types that match the value type of
-  the <tt>DistanceMap</tt> property map.<br>
-
-  <b>Default:</b>
-  <tt>std::less&lt;D&gt;</tt> with <tt>D=typename
-  property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>distance_combine(CombineFunction cmb)</tt> 
-<blockquote>
-  This function is used to combine distances to compute the distance
-  of a path. The <tt>CombineFunction</tt> type must be a model of <a
-  href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
-  Function</a>. The first argument type of the binary function must
-  match the value type of the <tt>DistanceMap</tt> property map and
-  the second argument type must match the value type of the
-  <tt>WeightMap</tt> property map.  The result type must be the same
-  type as the distance value type.<br>
-
-  <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
-   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>distance_inf(D inf)</tt> 
-<blockquote>
-  The <tt>inf</tt> object must be the greatest value of any <tt>D</tt> object.
-  That is, <tt>compare(d, inf) == true</tt> for any <tt>d != inf</tt>.
-  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.  Edges
-  are assumed to have a weight less than (using <tt>distance_compare</tt> for
-  comparison) this value.<br>
-  <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>distance_zero(D zero)</tt> 
-<blockquote>
-  The <tt>zero</tt> value must be the identity element for the
-  <a href="./Monoid.html">Monoid</a> formed by the distance values
-  and the <tt>combine</tt> function object.
-  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
-  <b>Default:</b> <tt>D()</tt>with
-   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
-<blockquote>
-  This is used during the execution of the algorithm to mark the
-  vertices. The vertices start out white and become gray when they are
-  inserted in the queue. They then turn black when they are removed
-  from the queue. At the end of the algorithm, vertices reachable from
-  the source vertex will have been colored black. All other vertices
-  will still be white. The type <tt>ColorMap</tt> must be a model of
-  <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>. A vertex descriptor must be usable as the key type
-  of the map, and the value type of the map must be a model of
-  <a href="./ColorValue.html">Color Value</a>.<br>
-  <b>Default:</b> an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  <tt>iterator_property_map</tt></a> created from a <tt>std::vector</tt>
-  of <tt>default_color_type</tt> of size <tt>num_vertices(g)</tt> and
-  using the <tt>i_map</tt> for the index map.<br>
-
-  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
-  the graph.
-</blockquote>
-  
-OUT: <tt>visitor(DijkstraVisitor v)</tt>  
-<blockquote>
-  Use this to specify actions that you would like to happen
-  during certain event points within the algorithm.
-  The type <tt>DijkstraVisitor</tt> must be a model of the
-  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept. 
- The visitor object is passed by value <a
-  href="#2">[2]</a>.<br>
-  <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt><br>
-
-  <b>Python</b>: The parameter should be an object that derives from
-  the <a
-  href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type
-  of the graph.
-</blockquote>
-
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The weight or ``length'' of each edge in the graph.  The weights must all
+be non-negative, and the algorithm will throw a <a
+href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception is
+one of the edges is negative.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
+key type for the weight map.  The value type for this map must be the same as
+the value type of the distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Must be an <tt>edge_double_map</tt> for the graph.</td>
+</tr>
+<tr valign="top">
+<th>Python default:</th>
+<td bgcolor="#dfdfdf"><tt>graph.get_edge_double_map("weight")</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(g))</tt>.  This is necessary for efficient updates of the heap
+data structure&nbsp;[<A HREF="bibliography.html#driscoll88">61</A>] when an
+edge is relaxed.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The predecessor map records the edges in the shortest path tree, the tree
+computed by the traversal of the graph.  Upon completion of the algorithm, the
+edges <i>(p[u],u)</i> for all <i>u in V</i> are in the tree.  The shortest
+path from vertex <i>s</i> to each vertex <i>v</i> in the graph consists of the
+vertices <i>v</i>, <i>p[v]</i>, <i>p[p[v]]</i>, and so on until <i>s</i> is
+reached, in reverse order.  The tree is not guaranteed to be a minimum
+spanning tree.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex
+or a vertex that is not reachable from the source.  The argument type must be
+a <a href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write
+Property Map</b></a> whose key and value types are the same as the vertex
+descriptor type of the graph.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Must be a <tt>vertex_vertex_map</tt> for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The shortest path weight from the source vertex <tt>s</tt> to each vertex
+in the graph <tt>g</tt> is recorded in this property map.  The shortest path
+weight is the sum of the edge weights along the shortest path.  The argument
+type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
+the key type of the distance map.  The value type of the distance map is the
+element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
+distance combine argument and the distance zero argument for the identity
+element.  Also, the distance value type must have a <a
+href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
+><b>StrictWeakOrdering</b></a> provided by the distance compare argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::vector</tt> of the
+value type of the weight map argument type, and of size
+<tt>num_vertices(g)</tt>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Must be an <tt>vertex_double_map</tt> for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is use to compare distances to determine which vertex is
+closer to the source vertex.  The argument type type must be a model of
+<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> and have argument types that match the value type of the
+distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;()</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is used to combine distances to compute the distance of a
+path.  The argument type type must be a model of <a
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
+Function</b></a>.  The first argument type of the binary function must match
+the value type of the distance map argument and the second argument type must
+match the value type of the weight map argument.  The result type must be the
+same type as the value type of the distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::plus&lt;D&gt;</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument value must be the greatest value of any instance of the
+argument type.  That is, for any value <tt>d</tt> not equal to the argument
+value <tt>inf</tt>, <tt>compare(d, inf) == true</tt>.  The type <tt>D</tt> is
+the value type of the distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
+<tt>D = typename property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument value must be the identity element for the <a
+href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
+distance combine argument.  The type <tt>D</tt> is the value type of the
+distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>D()</tt> with <tt>D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This is used during the execution of the algorithm to mark the
+vertices.  The vertices start out white and become gray when they are inserted
+in the queue.  They then turn black when they are removed from the queue.  At
+the end of the algorithm, vertices reachable from the source vertex will have
+been colored black.  All other vertices will still be white.  The argument
+type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  A vertex descriptor must be usable as the key type of the map,
+and the value type of the map must be a model of <a href="./ColorValue.html"
+><b>Color Value</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::vector</tt> of
+<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
+the index map argument for the index map.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The color map must be a <tt>vertex_color_map</tt> for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>visitor(DijkstraVisitor vis)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>Use this to specify actions that you would like to happen during certain
+event points within the algorithm.  The argument type must be a model of the
+<a href="DijkstraVisitor.html"><b>Dijkstra Visitor</b></a> concept.  The
+visitor object is passed by value <a href="#2">[2]</a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::default_dijkstra_visitor()</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The parameter should be an object that derives from the <a
+href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type of the
+graph.</td>
+</tr>
+</table>
 
 <H3>Complexity</H3>
 
@@ -427,13 +675,6 @@ The time complexity is <i>O(V log V + E)</i>.
    is invoked on a vertex after all of its out edges have
   been examined.
 </ul>
-
-<H3>Example</H3>
-
-<P>
-See <a href="../example/dijkstra-example.cpp">
-<TT>example/dijkstra-example.cpp</TT></a> for an example of using Dijkstra's
-algorithm.
 
 <H3>See also</H3> <a href="dijkstra_shortest_paths_no_color_map.html">dijkstra_shortest_paths_no_color_map</a> for a version of Dijkstra's shortest path that does not use a color map.
 
