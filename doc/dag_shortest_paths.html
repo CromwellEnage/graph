@@ -26,27 +26,27 @@
 <i>// Boost.Parameter-enabled version</i>
 template &lt;
     typename Graph,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
 &gt;
 void dag_shortest_paths(
-    const Graph& g,
+    const Graph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg10&amp; a10 = <i>unspecified</i>,
+    const TaggedArg9&amp; a9 = <i>unspecified</i>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg10
+            TaggedArg0, TaggedArg1, ..., TaggedArg9
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
 );
 
-<i>// Old-style named parameter version</i>
+<i>// old-style named parameter version</i>
 template &lt;class VertexListGraph, class Param, class Tag, class Rest&gt;
 void dag_shortest_paths(const VertexListGraph&amp; g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,

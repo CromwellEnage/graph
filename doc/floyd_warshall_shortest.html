@@ -23,13 +23,13 @@
 <i>// Boost.Parameter-enabled versions</i>
 template &lt;
     typename VertexListGraph, typename DistanceMatrix,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg6
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 typename boost::enable_if&lt;
     parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-        TaggedArg0, TaggedArg1, ..., TaggedArg6
+        TaggedArg0, TaggedArg1, ..., TaggedArg4
     &gt;,
     bool
 &gt;::type
@@ -39,18 +39,18 @@ floyd_warshall_initialized_all_pairs_shortest_paths(
     const TaggedArg0&amp; a0 = <i>unspecified</i>,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg6&amp; a6 = <i>unspecified</i>
+    const TaggedArg4&amp; a4 = <i>unspecified</i>
 );
 
 template &lt;
     typename VertexListGraph, typename DistanceMatrix,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 typename boost::enable_if&lt;
     parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-        TaggedArg0, TaggedArg1, ..., TaggedArg7
+        TaggedArg0, TaggedArg1, ..., TaggedArg4
     &gt;,
     bool
 &gt;::type
@@ -60,10 +60,10 @@ floyd_warshall_all_pairs_shortest_paths(
     const TaggedArg0&amp; a0 = <i>unspecified</i>,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg7&amp; a7 = <i>unspecified</i>
+    const TaggedArg4&amp; a4 = <i>unspecified</i>
 );
 
-<i>// Old-style named paramter versions</i>
+<i>// old-style named paramter versions</i>
 template &lt;class VertexListGraph, class DistanceMatrix,
     class P, class T, class R&gt;
 bool floyd_warshall_initialized_all_pairs_shortest_paths(
@@ -76,7 +76,7 @@ bool floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph&amp; g, DistanceMatrix&amp; d,
     const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
-<em>// Positional parameter versions</em>
+<em>// positional parameter versions</em>
 \begin{verbatim}
 template &lt;typename VertexListGraph, typename DistanceMatrix,
     typename BinaryPredicate, typename BinaryFunction,

@@ -24,26 +24,26 @@
 <PRE>
 <i>// Boost.Parameter-enabled interface</i>
 template &lt;
-    typename EdgeListGraph,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
+    typename <a href="./EdgeListGraph.html">EdgeListGraph</a>,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
 &gt;
 typename boost::enable_if&lt;
     parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-        TaggedArg0, TaggedArg1, ..., TaggedArg8
+        TaggedArg0, TaggedArg1, ..., TaggedArg7
     &gt;,
     bool
 &gt;::type
 bellman_ford_shortest_paths(
-    const EdgeListGraph&amp; g,
+    EdgeListGraph&amp; g,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg8&amp; a8 = <i>unspecified</i>
+    const TaggedArg7&amp; a7 = <i>unspecified</i>
 );
 
-<i>// Old-style named paramter interfaces</i>
+<i>// old-style named paramter interfaces</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
@@ -52,14 +52,24 @@ template &lt;class <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGrap
 bool bellman_ford_shortest_paths(const VertexAndEdgeListGraph&amp; g,
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 
-<i>// non-named parameter version</i>
+<i>// non-named parameter interfaces</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap,
 	  class PredecessorMap, class DistanceMap,
 	  class <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>,
 	  class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
   WeightMap weight, PredecessorMap pred, DistanceMap distance, 
-  BinaryFunction combine, BinaryPredicate compare, BellmanFordVisitor v)
+  BinaryFunction combine, BinaryPredicate compare, BellmanFordVisitor v);
+
+template &lt;typename <a href="./EdgeListGraph.html"
+>EdgeListGraph</a>, typename Size&gt;
+typename boost::disable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#is-argument-pack"
+>is_argument_pack</a>&lt;Size&gt;,
+    bool
+&gt;::type
+bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N);
 </PRE>
 
 <P>

@@ -347,7 +347,7 @@ namespace boost { namespace graph {
 namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
-    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+    1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
     floyd_warshall_initialized_all_pairs_shortest_paths
 )
 BOOST_PP_REPEAT_FROM_TO(

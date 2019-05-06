@@ -25,7 +25,7 @@
 <i>// Boost.Parameter-enabled interfaces</i>
 template &lt;
     typename VertexListGraph, typename AStarHeuristic,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg11
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
 &gt;
 void astar_search(
     const VertexListGraph&amp; g,
@@ -35,12 +35,12 @@ void astar_search(
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg11&amp; a11 = <i>unspecified</i>,
+    const TaggedArg10&amp; a10 = <i>unspecified</i>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg11
+            TaggedArg0, TaggedArg1, ..., TaggedArg10
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
@@ -48,7 +48,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 
 template &lt;
     typename IncidenceGraph, typename AStarHeuristic,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
 &gt;
 void astar_search_no_init(
     const IncidenceGraph&amp; g,
@@ -58,12 +58,12 @@ void astar_search_no_init(
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg11&amp; a9 = <i>unspecified</i>,
+    const TaggedArg8&amp; a8 = <i>unspecified</i>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg9
+            TaggedArg0, TaggedArg1, ..., TaggedArg8
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
@@ -71,7 +71,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 
 template &lt;
     typename VertexListGraph, typename AStarHeuristic,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg11
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
 &gt;
 void astar_search_tree(
     const VertexListGraph&amp; g,
@@ -81,12 +81,12 @@ void astar_search_tree(
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg11&amp; a11 = <i>unspecified</i>,
+    const TaggedArg10&amp; a10 = <i>unspecified</i>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg11
+            TaggedArg0, TaggedArg1, ..., TaggedArg10
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
@@ -94,7 +94,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 
 template &lt;
     typename IncidenceGraph, typename AStarHeuristic,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
 &gt;
 void astar_search_no_init_tree(
     const IncidenceGraph&amp; g,
@@ -104,18 +104,18 @@ void astar_search_no_init_tree(
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg11&amp; a9 = <i>unspecified</i>,
+    const TaggedArg8&amp; a8 = <i>unspecified</i>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg9
+            TaggedArg0, TaggedArg1, ..., TaggedArg8
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
 );
 
-<i>// Old-style named parameter interfaces</i>
+<i>// old-style named parameter interfaces</i>
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
           typename P, typename T, typename R&gt;
@@ -160,7 +160,7 @@ astar_search_no_init_tree
    <a href="AStarHeuristic.html">AStarHeuristic</a
 > h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<i>// Non-named parameter interface</i>
+<i>// non-named parameter interface</i>
 template &lt;typename VertexListGraph, typename AStarHeuristic,
           typename <a href="AStarVisitor.html">AStarVisitor</a
 >, typename PredecessorMap,
