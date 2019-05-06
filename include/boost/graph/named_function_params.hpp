@@ -624,6 +624,25 @@ BOOST_PP_REPEAT(
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(name, nfixed, nnamed_max) \
   /* Entry point for conversion from BGL-style named parameters */ \
+  template < \
+    typename Graph \
+    BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_DEC(nfixed), typename Param), \
+    typename ArgPack \
+  > \
+  typename boost::result_of< \
+    detail::BOOST_PP_CAT(name, _impl)< \
+      Graph BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_DEC(nfixed), Param) \
+    >(Graph& BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_DEC(nfixed), Param), const ArgPack&) \
+  >::type \
+  BOOST_PP_CAT(name, _with_named_params)( \
+    Graph& g \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(BOOST_PP_DEC(nfixed), const Param, & param), \
+    const ArgPack& arg_pack \
+  ) { \
+    return detail::BOOST_PP_CAT(name, _impl)< \
+      Graph BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_DEC(nfixed), Param) \
+    >()(g BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_DEC(nfixed), param), arg_pack); \
+  } \
   template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) typename ArgPack> \
   typename boost::result_of< \
              detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param)>(BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) const ArgPack&) \
@@ -644,6 +663,34 @@ BOOST_PP_REPEAT(
   boost::lazy_enable_if<boost::parameter::is_argument_pack<
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
+  template < \
+    typename Graph \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, BOOST_PP_DEC(nfixed), typename Param) \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename TaggedArg) \
+  > \
+  typename \
+  BOOST_PP_CAT(BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX_PREFIX_, BOOST_PP_EQUAL(nnamed, 1))(nnamed) \
+  BOOST_PP_ENUM_PARAMS_Z(z, nnamed, TaggedArg) \
+  BOOST_PP_EXPR_IF(nnamed, >) \
+  BOOST_PP_COMMA_IF(nnamed) \
+    ::boost::graph::detail::BOOST_PP_CAT(name, _impl)< \
+      Graph BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, BOOST_PP_DEC(nfixed), Param) \
+    > \
+  BOOST_PP_EXPR_IF(nnamed, >)::type \
+  name( \
+    Graph& g \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, BOOST_PP_DEC(nfixed), Param, const& param) \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, nnamed, TaggedArg, const& tagged_arg) \
+  ) \
+  { \
+    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)( \
+      g BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, BOOST_PP_DEC(nfixed), param), \
+      BOOST_PP_EXPR_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1)), ::boost::parameter::compose) \
+      BOOST_PP_LPAREN_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1))) \
+      BOOST_PP_ENUM_PARAMS_Z(z, nnamed, tagged_arg) \
+      BOOST_PP_RPAREN_IF(BOOST_PP_NOT(BOOST_PP_EQUAL(nnamed, 1))) \
+    ); \
+  } \
   template < \
     BOOST_PP_ENUM_PARAMS_Z(z, nfixed, typename Param) \
     BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, nnamed, typename TaggedArg) \

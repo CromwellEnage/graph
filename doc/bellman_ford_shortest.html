@@ -215,14 +215,14 @@ std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;i
 bool r = bellman_ford_shortest_paths(
     g,
     <b>boost::graph::keywords::_weight_map =</b> get(&EdgeProperties::weight, g),
-    <b>boost::graph::keywords::_distance_map =</b> boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g)),
-    <b>boost::graph::keywords::_predecessor_map =</b> boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g))
+    <b>boost::graph::keywords::_distance_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(distance.begin(), get(boost::vertex_index, g)),
+    <b>boost::graph::keywords::_predecessor_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(parent.begin(), get(boost::vertex_index, g))
 );
 </pre>
 
 <P>
-The full program is in <a
-href="../example/bellman-example.cpp"><TT>examples/bellman-example.cpp</TT></a>.
+The full program is in <a href="../example/bellman-example.cpp"
+><tt>examples/bellman-example.cpp</tt></a>.
 </P>
 
 <h3>Parameters</h3>
@@ -401,7 +401,7 @@ keyword:</th>
 </tr>
 <tr valign="top">
 <th>Old-style signature:</th>
-<td><tt>root_vertex(Vertex s)</tt></td>
+<td bgcolor="#dfdfdf"><tt>root_vertex(Vertex s)</tt></td>
 </tr>
 <tr valign="top">
 <th>Description:</th>
@@ -505,7 +505,7 @@ distance map argument type.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;</tt> with <tt>D = typename
+<td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;()</tt> with <tt>D = typename
 property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
 </tr>

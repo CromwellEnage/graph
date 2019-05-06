@@ -434,7 +434,7 @@ class distance_heuristic :
     location* m_location;
     Vertex m_goal;
 public:
-    distance_heuristic(LocMap l, Vertex goal) : m_location(l), m_goal(goal) {}
+    distance_heuristic(location* l, Vertex goal) : m_location(l), m_goal(goal) {}
     float operator()(Vertex u)
     {
         float dx = m_location[m_goal].x - m_location[u].x;
@@ -450,8 +450,8 @@ std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;f
 
 astar_search_tree(
     g, vertex(0, g), distance_heuristic(locations, vertex(1, g)),
-    <b>boost::graph::keywords::_predecessor_map =</b> make_iterator_property_map(p.begin(), get(vertex_index, g)),
-    <b>boost::graph::keywords::_distance_map =</b> make_iterator_property_map(d.begin(), get(vertex_index, g))
+    <b>boost::graph::keywords::_predecessor_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(p.begin(), get(vertex_index, g)),
+    <b>boost::graph::keywords::_distance_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(d.begin(), get(vertex_index, g))
 );
 </pre>
 

@@ -133,120 +133,85 @@ namespace boost { namespace graph {
     }
 }} // namespace boost::graph
 
-#include <boost/parameter/is_argument_pack.hpp>
-
-namespace boost { namespace graph {
-
-    template <typename Graph, typename Args>
-    void cycle_canceling(
-        Graph& g, const Args& arg_pack, typename boost::enable_if<
-            parameter::is_argument_pack<Args>,
-            mpl::true_
-        >::type = mpl::true_()
-    )
-    {
-        typename boost::detail::override_property_result<
-            Args,
-            boost::graph::keywords::tag::residual_capacity_map,
-            edge_residual_capacity_t,
-            Graph
-        >::type e_rc_map = boost::detail::override_property(
-            arg_pack,
-            boost::graph::keywords::_residual_capacity_map,
-            g,
-            edge_residual_capacity
-        );
-        typename boost::detail::override_const_property_result<
-            Args,
-            boost::graph::keywords::tag::reverse_edge_map,
-            edge_reverse_t,
-            Graph
-        >::type e_rv_map = boost::detail::override_const_property(
-            arg_pack,
-            boost::graph::keywords::_reverse_edge_map,
-            g,
-            edge_reverse
-        );
-        typedef typename boost::detail::override_const_property_result<
-            Args,
-            boost::graph::keywords::tag::weight_map,
-            edge_weight_t,
-            Graph
-        >::type WeightMap;
-        WeightMap e_w_map = boost::detail::override_const_property(
-            arg_pack,
-            boost::graph::keywords::_weight_map,
-            g,
-            edge_weight
-        );
-        typedef typename boost::property_traits<WeightMap>::value_type D;
-        const D zero_distance = D();
-        boost::detail::make_property_map_from_arg_pack_gen<
-            boost::graph::keywords::tag::distance_map,
-            D
-        > v_d_map_gen(zero_distance);
-        typename boost::detail::map_maker<
-            Graph,
-            Args,
-            boost::graph::keywords::tag::distance_map,
-            D
-        >::map_type v_d_map = v_d_map_gen(g, arg_pack);
-        typedef typename graph_traits<Graph>::edge_descriptor Edge;
-        const Edge no_edge = Edge();
-        boost::detail::make_property_map_from_arg_pack_gen<
-            boost::graph::keywords::tag::predecessor_map,
-            Edge
-        > v_p_map_gen(no_edge);
-        typename boost::detail::map_maker<
-            Graph,
-            Args,
-            boost::graph::keywords::tag::predecessor_map,
-            Edge
-        >::map_type v_p_map = v_p_map_gen(g, arg_pack);
-        cycle_canceling(g, e_w_map, e_rv_map, e_rc_map, v_p_map, v_d_map);
-    }
-}} // namespace boost::graph
-
-#include <boost/parameter/compose.hpp>
-
-namespace boost { namespace graph {
+namespace boost { namespace graph { namespace detail {
 
     template <typename Graph>
-    inline void cycle_canceling(Graph& g)
+    struct cycle_canceling_impl
     {
-        cycle_canceling(g, parameter::compose());
-    }
-}} // namespace boost::graph
+        typedef void result_type;
+        typedef result_type type;
 
-#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-
-#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
-    template < \
-        typename Graph, typename TA \
-        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
-    > \
-    inline void name( \
-        Graph& g, const TA& ta \
-        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
-    ) \
-    { \
-        name( \
-            g, \
-            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
-        ); \
-    }
-
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+        template <typename Args>
+        void operator()(Graph& g, const Args& arg_pack)
+        {
+            typename boost::detail::override_property_result<
+                Args,
+                boost::graph::keywords::tag::residual_capacity_map,
+                edge_residual_capacity_t,
+                Graph
+            >::type e_rc_map = boost::detail::override_property(
+                arg_pack,
+                boost::graph::keywords::_residual_capacity_map,
+                g,
+                edge_residual_capacity
+            );
+            typename boost::detail::override_const_property_result<
+                Args,
+                boost::graph::keywords::tag::reverse_edge_map,
+                edge_reverse_t,
+                Graph
+            >::type e_rv_map = boost::detail::override_const_property(
+                arg_pack,
+                boost::graph::keywords::_reverse_edge_map,
+                g,
+                edge_reverse
+            );
+            typedef typename boost::detail::override_const_property_result<
+                Args,
+                boost::graph::keywords::tag::weight_map,
+                edge_weight_t,
+                Graph
+            >::type WeightMap;
+            WeightMap e_w_map = boost::detail::override_const_property(
+                arg_pack,
+                boost::graph::keywords::_weight_map,
+                g,
+                edge_weight
+            );
+            typedef typename boost::property_traits<WeightMap>::value_type D;
+            const D zero_distance = D();
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::distance_map,
+                D
+            > v_d_map_gen(zero_distance);
+            typename boost::detail::map_maker<
+                Graph,
+                Args,
+                boost::graph::keywords::tag::distance_map,
+                D
+            >::map_type v_d_map = v_d_map_gen(g, arg_pack);
+            typedef typename graph_traits<Graph>::edge_descriptor Edge;
+            const Edge no_edge = Edge();
+            boost::detail::make_property_map_from_arg_pack_gen<
+                boost::graph::keywords::tag::predecessor_map,
+                Edge
+            > v_p_map_gen(no_edge);
+            typename boost::detail::map_maker<
+                Graph,
+                Args,
+                boost::graph::keywords::tag::predecessor_map,
+                Edge
+            >::map_type v_p_map = v_p_map_gen(g, arg_pack);
+            cycle_canceling(g, e_w_map, e_rv_map, e_rc_map, v_p_map, v_d_map);
+        }
+    };
+}}} // namespace boost::graph::detail
 
 namespace boost { namespace graph {
 
-BOOST_PP_REPEAT_FROM_TO(
-    1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, cycle_canceling
-)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(cycle_canceling, 1, 4)
 }} // namespace boost::graph
 
-#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
 #include <boost/graph/find_flow_cost.hpp>
 #include <vector>
 #include <numeric>

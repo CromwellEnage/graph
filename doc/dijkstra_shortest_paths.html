@@ -208,8 +208,8 @@ finish vertex <i>u</i>
 <h3>Example</h3>
 
 <P>
-Dijkstra's shortest-path algorithms can take in named parameter arguments,
-courtesy of <a href="../../parameter/doc/html/index.html"
+One overload of <tt>dijkstra_shortest_paths()</tt> can take in named parameter
+arguments, courtesy of <a href="../../parameter/doc/html/index.html"
 >Boost.Parameter</a>.  The following example illustrates the syntax for
 passing arguments by name.
 </P>
@@ -225,8 +225,8 @@ std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;b
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;int&gt; d(num_vertices(g));
 dijkstra_shortest_paths(
     g, vertex(0, g),
-    <b>boost::graph::keywords::_predecessor_map =</b> boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g)),
-    <b>boost::graph::keywords::_distance_map =</b> boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))
+    <b>boost::graph::keywords::_predecessor_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(p.begin(), get(boost::vertex_index, g)),
+    <b>boost::graph::keywords::_distance_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(d.begin(), get(boost::vertex_index, g))
 );
 </pre>
 
@@ -303,7 +303,7 @@ keyword:</th>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
 be non-negative, and the algorithm will throw a <a
-href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception is
+href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
 one of the edges is negative.  The argument type must be a model of <a
 href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
 Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
@@ -346,7 +346,8 @@ data structure&nbsp;[<A HREF="bibliography.html#driscoll88">61</A>] when an
 edge is relaxed.  The argument type must be a model of <a
 href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
 Map</b></a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the map.</td>
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
@@ -424,7 +425,7 @@ Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
 the key type of the distance map.  The value type of the distance map is the
 element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
 distance combine argument and the distance zero argument for the identity
-element.  Also, the distance value type must have a <a
+element.  Also, the value type of the distance map must have a <a
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
 ><b>StrictWeakOrdering</b></a> provided by the distance compare argument.</td>
 </tr>
@@ -439,7 +440,7 @@ map.</td>
 </tr>
 <tr valign="top">
 <th>Python:</th>
-<td>Must be an <tt>vertex_double_map</tt> for the graph.</td>
+<td>Must be a <tt>vertex_double_map</tt> for the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -470,6 +471,10 @@ distance map argument.</td>
 <td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;()</tt> with <tt>D = typename
 property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -503,6 +508,10 @@ same type as the value type of the distance map argument.</td>
 property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
 </tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
@@ -522,15 +531,19 @@ keyword:</th>
 <tr valign="top">
 <th>Description:</th>
 <td>The argument value must be the greatest value of any instance of the
-argument type.  That is, for any value <tt>d</tt> not equal to the argument
-value <tt>inf</tt>, <tt>compare(d, inf) == true</tt>.  The type <tt>D</tt> is
-the value type of the distance map argument.</td>
+argument type.  That is, given the distance compare argument <tt>compare</tt>,
+for any value <tt>d</tt> not equal to the argument value <tt>inf</tt>,
+<tt>compare(d, inf) == true</tt>.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
 <td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
 <tt>D = typename property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -552,14 +565,17 @@ keyword:</th>
 <th>Description:</th>
 <td>The argument value must be the identity element for the <a
 href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
-distance combine argument.  The type <tt>D</tt> is the value type of the
-distance map argument.</td>
+distance combine argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
 <td bgcolor="#dfdfdf"><tt>D()</tt> with <tt>D = typename
 property_traits&lt;<i>distance map argument
 type</i>&gt;::value_type</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -641,7 +657,7 @@ graph.</td>
 
 <P>
 The time complexity is <i>O(V log V + E)</i>.
-
+</P>
 
 <h3>Visitor Event Points</h3>
 
