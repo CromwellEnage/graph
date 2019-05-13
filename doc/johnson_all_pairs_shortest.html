@@ -5,7 +5,7 @@
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-  -->
+-->
 <Head>
 <Title>Johnson All Pairs Shortest Paths</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
@@ -20,6 +20,7 @@
 </H1>
 
 <PRE>
+<i>// Boost.Parameter-enabled version</i>
 template &lt;
     typename VertexAndEdgeListGraph, typename DistanceMatrix,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
@@ -95,7 +96,7 @@ typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
 Graph g(6);
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;int&gt; d(num_vertices(g), (std::numeric_limits&lt;int&gt;::max)());
 int D[6][6];
-johnson_all_pairs_shortest_paths(
+bool found_no_negative_weight_cycle = johnson_all_pairs_shortest_paths(
     g,
     D,
     <b>boost::graph::keywords::_distance_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(d.begin(), get(boost::vertex_index, g))
