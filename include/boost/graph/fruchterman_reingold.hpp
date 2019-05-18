@@ -278,7 +278,7 @@ namespace boost { namespace detail {
 
 namespace boost { namespace graph {
 
-template<typename Topology, typename Graph, typename PositionMap, 
+template<typename Graph, typename PositionMap, typename Topology,
          typename AttractiveForce, typename RepulsiveForce,
          typename ForcePairs, typename Cooling, typename DisplacementMap>
 void
@@ -363,7 +363,7 @@ fruchterman_reingold_force_directed_layout
 namespace boost { namespace graph {
 
 template <
-    typename Topology, typename Graph, typename PositionMap, typename Args
+    typename Graph, typename PositionMap, typename Topology, typename Args
 >
 void
 fruchterman_reingold_force_directed_layout(
@@ -413,7 +413,7 @@ fruchterman_reingold_force_directed_layout(
     );
 }
 
-template <typename Topology, typename Graph, typename PositionMap>
+template <typename Graph, typename PositionMap, typename Topology>
 inline void
 fruchterman_reingold_force_directed_layout(
     const Graph&    g,
@@ -436,7 +436,7 @@ fruchterman_reingold_force_directed_layout(
 
 #define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
     template < \
-        typename Topology, typename Graph, typename PositionMap, typename TA \
+        typename Graph, typename PositionMap, typename Topology, typename TA \
         BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
     > \
     inline void name( \
@@ -459,7 +459,7 @@ fruchterman_reingold_force_directed_layout(
 namespace boost { namespace graph {
 
 BOOST_PP_REPEAT_FROM_TO(
-    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+    1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
     fruchterman_reingold_force_directed_layout
 )
 }} // end namespace boost::graph

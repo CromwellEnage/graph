@@ -5,7 +5,7 @@
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-  -->
+-->
 
 <Head>
 <Title>Boost Graph Library: Fruchterman-Reingold Force-Directed Layout</Title>
@@ -22,7 +22,30 @@
 
 <P>
 <PRE>
-<i>// named parameter version</i>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph, typename PositionMap, typename Topology,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+void fruchterman_reingold_force_directed_layout(
+    const Graph&amp; g,
+    PositionMap position,
+    const Topology&amp; space,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg4&amp; a4 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg4
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// old-style named parameter version</i>
 template&lt;typename Graph, typename PositionMap, typename Topology, typename Param,
 	 typename Tag, typename Rest&gt;
 void
@@ -75,143 +98,364 @@ attractive forces, and repulsive forces can be provided by the user.
 
 <p> The vertices are often placed randomly prior to execution of this algorithm via <a href="random_layout.html"><tt>random_graph_layout</tt></a>.
 
+<h3>Example</h3>
+
+<P>
+One overload of <tt>fruchterman_reingold_force_directed_layout()</tt> can take
+in named parameter arguments, courtesy of <a
+href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
+example illustrates the syntax for passing arguments by name.
+</P>
+
+<pre>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::listS, boost::vecS, boost::undirectedS,
+    boost::<a href="property.html">property</a>&lt;boost::vertex_name_t,
+	std::<a href="http://en.cppreference.com/w/cpp/string/basic_string">string</a>&gt;
+&gt; Graph;
+
+Graph g;
+double width = 0;
+double height = 0;
+
+<i>// ...</i>
+
+typedef std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::rectangle_topology&lt;&gt;::point_type&gt; PositionVec;
+PositionVec position_vec(num_vertices(g));
+boost::<a href="../../property_map/doc/iterator_property_map.html">iterator_property_map</a>&lt;
+    PositionVec::iterator,
+    boost::property_map&lt;Graph,boost::vertex_index_t&gt;::type
+&gt; position(position_vec.begin(), get(boost::vertex_index, g));
+boost::minstd_rand gen;
+boost::rectangle_topology&lt;&gt; topo(gen, -width/2, -height/2, width/2, height/2);
+fruchterman_reingold_force_directed_layout(
+    g, position, topo,
+    <b>boost::graph::keywords::_cooling =</b> boost::linear_cooling&lt;double&gt;(100)
+);
+</pre>
+
+<P>
+The full program is in <a href="../example/fr_layout.cpp"
+><tt>example/fr_layout.cpp</tt></a>
+</P>
+
 <h3>Where Defined</h3>
 
 <a href="../../../boost/graph/fruchterman_reingold.hpp"><tt>boost/graph/fruchterman_reingold.hpp</tt></a>
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
-<blockquote>
-  The graph object on which the algorithm will be applied.
-  The type <tt>Graph</tt> must be a model of 
-  <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a>.<br>
-  <b>Python</b>: This parameter is named <tt>graph</tt> in Python.
-</blockquote>
-
-IN/OUT: <tt>PositionMap position</tt>
-<blockquote>
-  The property map that stores the position of each vertex. It should
-  typically be initialized with the vertices at random locations (use
-  <a href="random_layout.html"><tt>random_graph_layout</tt></a>). The
-  type <tt>PositionMap</tt> must be a model of <a
-  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
-  Map</a> such that the vertex descriptor type of <tt>Graph</tt> is
-  convertible to its key type. Its value type must be
-  <tt>Topology::point_type</tt>, representing the coordinates
-  of the vertex.<br>
-  <b>Python</b>: The position map must be a <tt>vertex_point2d_map</tt> for
-  the graph.<br>
-  <b>Python default</b>: <tt>graph.get_vertex_point2d_map("position")</tt>
-</blockquote>
-
-IN: <tt>const Topology&amp; space</tt>
-<blockquote>
-  The topology used to lay out the vertices.  This parameter describes both the
-  size and shape of the layout area.  Topologies are described in more detail
-  (with a list of BGL-provided topologies) <a href="topology.html">in separate
-  documentation</a>.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The graph object on which the algorithm will be applied.  Its type must be
+a model of <a href="./VertexAndEdgeListGraph.html"><b>Vertex And Edge List
+Graph</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The parameter is named <tt>graph</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN/OUT</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>PositionMap position</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The property map that stores the position of each vertex.  It should
+typically be initialized with the vertices at random locations (use <a
+href="random_layout.html"><tt>random_graph_layout</tt></a>).  Its type must be
+a model of <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
+Property Map</b></a> such that the vertex descriptor type of <tt>Graph</tt> is
+convertible to its key type.  Its value type must be <tt
+>Topology::point_type</tt>, representing the coordinates of the vertex.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>The position map must be a <tt>vertex_point2d_map</tt> for the graph.</td>
+</tr>
+<tr valign="top">
+<th>Python default:</th>
+<td bgcolor="#dfdfdf"><tt>graph.get_vertex_point2d_map("position")</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Topology&amp; space</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The topology used to lay out the vertices.  This parameter describes both
+the size and shape of the layout area.  Topologies are described in more
+detail (with a list of BGL-provided topologies) <a href="topology.html">in
+separate documentation</a>.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>attractive_force(AttractiveForce fa)</tt>
-<blockquote>
-Computes the magnitude of the attractive force between two adjacent
-vertices. The function object <tt>fa</tt> must accept four
-parameters: the edge descriptor, <tt>k</tt>, the distance between the
-vertices, and the graph. <tt>k</tt> is the square root of the ratio
-of the display area to the number of vertices. <br>
-<b>Default:</b> <tt>square_distance_attractive_force()</tt>, which
-computes the attractive force as <code>dist<sup>2</sup>/k</code>.<br>
-<b>Python</b>: Any callable Python object that matches the signature will suffice.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_attractive_force</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>attractive_force(AttractiveForce fa)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This argument computes the magnitude of the attractive force between two
+adjacent vertices.  This function object must accept four parameters: the edge
+descriptor, the square root of the ratio of the display area to the total
+number of vertices, the distance between the adjacent vertices, and the
+graph.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>square_distance_attractive_force()</tt>, which
+computes the attractive force as <tt>d<sup>2</sup>/k</tt>, where <tt>d</tt> is
+the distance between the edge vertices and <tt>k</tt> is the square root of
+the ratio of the display area to the total number of vertices.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Any callable Python object that matches the signature will suffice.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_repulsive_force</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>repulsive_force(RepulsiveForce fr)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This argument computes the magnitude of the repulsive force between any
+two vertices.  This function object must accept five parameters: the two
+vertex descriptors, the square root of the ratio of the display area to the
+total number of vertices, the distance between the two vertices, and the
+graph.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>square_distance_repsulsive_force()</tt>, which
+computes the repulsive force as <tt>k<sup>2</sup>/d</tt>, where <tt>d</tt> is
+the distance between the two vertices and <tt>k</tt> is the square root of the
+ratio of the display area to the total number of vertices.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Any callable Python object that matches the signature will suffice.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_force_pairs</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>force_pairs(ForcePairs fp)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This argument enumerates the pairs of vertices on which the repulsive
+force should be applied.  This function object takes two parameters: the graph
+<tt>g</tt>, and a binary function object that should be passed each pair of
+vertices to be considered.  The basic formulation of the Fruchterman-Reingold
+algorithm computes repulsive forces between all pairs of vertices (pass
+<tt>all_force_pairs()</tt> for this parameter), which is functional for
+disconnected graphs but tends to push the connected components toward the
+edges of the display area.  The grid variant of the algorithm places a grid
+over the display area and only computes repulsive forces among vertices within
+each rectangle in the grid.  The grid variant can be more efficient than the
+basic formulation and tends to produce better layouts for disconnected graphs,
+but is not better overall: pass <tt>make_grid_force_pairs(width, height,
+position, g)</tt> as this parameter to use the grid variant.  Other
+enumeration strategies may yield better results for particular graphs.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>make_grid_force_pairs(width, height, position,
+g)</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_cooling</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>cooling(Cooling cool)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This argument determines the cooling schedule for the algorithm, which
+affects the rate of movement of vertices and termination of the
+algorithm.  This nullary function object (one that takes no arguments) returns
+the temperature for the current iteration.  When the returned temperature is
+zero, the algorithm terminates.  Cooling schedules should begin with some
+initial temperature and gradually reduce the temperature to zero.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>linear_cooling&lt;double&gt;(100)</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Any callable Python object that matches the signature will suffice.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_displacement_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>displacement_map(DisplacementMap
+displacement)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This argument is used to compute the amount by which each vertex will move
+in each step.  Its type must be a property map whose key type is the graph's
+vertex type and whose value type is
+<tt>Topology::point_difference_type</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> with the specified value type, and of size
+<tt>num_vertices(g)</tt>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(g))</tt>.  This is only necessary when no displacement map is
+provided.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+</table>
 
-IN: <tt>repulsive_force(RepulsiveForce fr)</tt>
-<blockquote>
-Computes the magnitude of the repulsive force between any two
-vertices. The function object <tt>fr</tt> must accept five
-parameters: the two vertex descriptors, <tt>k</tt>, the distance between the
-vertices, and the graph. <tt>k</tt> is the square root of the ratio
-of the display area to the number of vertices. <br>
-<b>Default:</b> <tt>square_distance_repsulsive_force()</tt>, which
-computes the repulsive force as <code>k<sup>2</sup>/dist</code>.<br>
-<b>Python</b>: Any callable Python object that matches the signature will suffice.
-</blockquote>
+<h3>Additional Python Parameters</h3>
 
-IN: <tt>force_pairs(ForcePairs fp)</tt>
-<blockquote>
-Enumerates the pairs of vertices on which the repulsive force should
-be applied. <tt>fp</tt> is a function object taking two parameters:
-the graph <tt>g</tt> and a binary function object that should be
-passed each pair of vertices to be considered. The basic formulation
-of the Fruchterman-Reingold algorithm computes repulsive forces
-between all pairs of vertices (pass <tt>all_force_pairs()</tt> for
-this parameter), which is functional for disconnected graphs but
-tends to push the connected components toward the edges of the
-display area. The grid variant of the algorithm places a grid over
-the display area and only computes repulsive forces among vertices
-within each rectangle in the grid. The grid variant can be more
-efficient than the basic formulation and tends to produce better
-layouts for disconnected graphs, but is not better overall: pass
-<tt>make_grid_force_pairs(width, height, position, g)</tt> as this
-parameter to use the grid variant. Other enumeration strategies may
-yield better results for particular graphs. <br>
-<b>Default:</b> <tt>make_grid_force_pairs(width, height, position, g)</tt><br>
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>cooling(Cooling cool)</tt>
-<blockquote>
-Determines the cooling schedule for the algorithm, which affects the
-rate of movement of vertices and termination of the algorithm. The
-<tt>cool</tt> parameter is a nullary function object (i.e., one that
-takes no arguments) and returns the temperature for the current
-iteration. When the returned temperature is zero, the algorithm
-terminates. Cooling schedules should begin with some initial
-temperature and gradually reduce the temperature to zero.<br>
-<b>Default:</b> <tt>linear_cooling&lt;double&gt;(100)</tt><br>
-<b>Python</b>: Any callable Python object that matches the signature will suffice.
-</blockquote>
-
-UTIL: <tt>displacement_map(DisplacementMap displacement)</tt>
-<blockquote>
-The displacement map is used to compute the amount by which each
-vertex will move in each step. The <tt>DisplacementMap</tt> type must be a
-property map whose key type is the graph's vertex type and whose value type is
-<tt>Topology::point_difference_type</tt>.<br>
-<b>Default:</b> An <tt>iterator_property_map</tt> with the specified value type
-and using the given vertex index map.<br>
-<b>Python:</b> Unsupported parameter.
-</blockquote>
-
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. This is only necessary when no
-    displacement map is provided. 
-  The type <tt>VertexIndexMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  vertex descriptor type of the graph needs to be usable as the key
-  type of the map.<br>
-<b>Default:</b> <tt>get(vertex_index, g)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-   <br>
-<b>Python:</b> Unsupported parameter.
-</blockquote>
-
-<b>Python</b> IN: <tt>bool progressive</tt>
-<blockquote>
-  When <tt>false</tt>, performs a random layout of the graph before
-  running the Fruchterman-Reingold algorithm. If <tt>true</tt>, the
-  algorithm is executing starting with the vertex configuration in
-  the <tt>position</tt> map.<br>
-  <b>Default</b>: <tt>False</tt>.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>bool progressive</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>When <tt>false</tt>, performs a random layout of the graph before running
+the Fruchterman-Reingold algorithm.  If <tt>true</tt>, the algorithm is
+executing starting with the vertex configuration in the <tt>position</tt>
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>False</tt></td>
+</tr>
+</table>
 
 <H3>Complexity</H3>
 
@@ -219,9 +463,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 iteration of the algorithm in the worst case. The average case for the
 grid variant is <i>O(|V| + |E|)</i>. The number of iterations is
 determined by the cooling schedule.
-
-<H3>Example</H3>
-<a href="../example/fr_layout.cpp">libs/graph/example/fr_layout.cpp</a>
+</P>
 
 <br>
 <HR>

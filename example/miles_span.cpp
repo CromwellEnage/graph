@@ -22,17 +22,24 @@
 // A visitor class for accumulating the total length of the minimum
 // spanning tree. The Distance template parameter is for a
 // PropertyMap.
-template <class Distance>
-struct total_length_visitor : public boost::dijkstra_visitor<> {
-  typedef typename boost::property_traits<Distance>::value_type D;
-  total_length_visitor(D& len, Distance d)
-    : _total_length(len), _distance(d) { }
-  template <class Vertex, class Graph>
-  inline void finish_vertex(Vertex s, Graph& g) {
-    _total_length += boost::get(_distance, s); 
-  }
-  D& _total_length;
-  Distance _distance;
+template <typename Distance>
+class total_length_visitor : public boost::graph::dijkstra_visitor<>
+{
+    typedef typename boost::property_traits<Distance>::value_type D;
+    D& _total_length;
+    Distance _distance;
+
+public:
+    total_length_visitor(D& len, Distance d)
+      : _total_length(len), _distance(d)
+    {
+    }
+
+    template <typename Vertex, typename Graph>
+    inline void finish_vertex(Vertex s, Graph& g)
+    {
+        this->_total_length += boost::get(this->_distance, s);
+    }
 };
 
 int main(int argc, char* argv[])
@@ -94,7 +101,7 @@ int main(int argc, char* argv[])
 
     prim_minimum_spanning_tree(
       g, p,
-      boost::graph::keywords::_distance_map = get(z_property<long>(), g),
+      boost::graph::keywords::_distance_map = d,
       boost::graph::keywords::_weight_map = get(edge_length_t(), g),
       // Use the "y" utility field for color
       boost::graph::keywords::_color_map = get(y_property<long>(), g),

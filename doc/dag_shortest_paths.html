@@ -315,8 +315,9 @@ href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
 <th>Default:</th>
 <td bgcolor="#dfdfdf">An <a
 href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::vector</tt> of the
-value type of the weight map argument type, and of size
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the value type of the weight map argument type, and of size
 <tt>num_vertices(g)</tt>, and using the index map argument for the index
 map.</td>
 </tr>
@@ -350,9 +351,10 @@ distance map argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::less&lt;D&gt;()</tt> with <tt>D = typename
-property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+<td bgcolor="#dfdfdf"><tt>std::<a
+href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
+>&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
+argument type</i>&gt;::value_type</tt>.</td>
 </tr>
 <tr valign="top">
 <th>Python:</th>
@@ -386,9 +388,10 @@ same type as the value type of the distance map argument.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::plus&lt;D&gt;</tt> with <tt>D = typename
-property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+<td bgcolor="#dfdfdf"><tt>std::<a
+href="http://en.cppreference.com/w/cpp/utility/functional/plus"
+>plus</a>&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance
+map argument type</i>&gt;::value_type</tt>.</td>
 </tr>
 <tr valign="top">
 <th>Python:</th>
@@ -492,7 +495,8 @@ and the value type of the map must be a model of <a href="./ColorValue.html"
 <th>Default:</th>
 <td bgcolor="#dfdfdf">An <a
 href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::vector</tt> of
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
 <tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
 the index map argument for the index map.</td>
 </tr>
