@@ -5,7 +5,7 @@
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-  -->
+-->
 <Head>
 <Title>Boost Graph Library: Find Flow Cost</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
@@ -20,7 +20,28 @@
 </H1>
 
 <PRE>
-<i>// named parameter version</i>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, typename TaggedArg2
+&gt;
+typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
+find_flow_cost(
+    const Graph&amp; g,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg2&amp; a2 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, TaggedArg2
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// old-style named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g,
@@ -39,71 +60,175 @@ Flow Algorithms</a> for a description of maximum flow.
 The function  calculates the cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in
 <i>E</i>, which are passed in the form of the residual capacity
 <i>r(u,v) = c(u,v) - f(u,v)</i>. 
+</P>
 
-<p>
+<P>
 In order to compute the min cost max flow use : 
 <a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a>  or
 <a href="./cycle_canceling.html"><tt>cycle_canceling()</tt></a>.
-
-<H3>Where Defined</H3>
-
-<P>
-<a href="../../../boost/graph/successive_shortest_path_nonnegative_weights.hpp"><TT>boost/graph/successive_shortest_path_nonnegative_weights.hpp</TT></a>
-
-<P>
-
-<h3>Parameters</h3>
-
-IN: <tt>const Graph&amp; g</tt>
-<blockquote>
-  A directed graph. The
-  graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a> and <a href="./IncidenceGraph.html">IncidenceGraph</a> For each edge
-  <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also
-  be in the graph.
-</blockquote>
-<h3>Named Parameters</h3>
-
-
-IN: <tt>capacity_map(CapacityEdgeMap cap)</tt>
-<blockquote>
-  The edge capacity property map. The type must be a model of a
-  constant <a
-  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>. The
-  key type of the map must be the graph's edge descriptor type.<br>
-  <b>Default:</b> <tt>get(edge_capacity, g)</tt>
-</blockquote>
-  
-IN: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
-<blockquote>
-  This maps edges to their residual capacity. The type must be a model
-  of a mutable <a
-  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
-  Map</a>. The key type of the map must be the graph's edge descriptor
-  type.<br>
-  <b>Default:</b> <tt>get(edge_residual_capacity, g)</tt>
-</blockquote>
-
-
-IN: <tt>weight_map(WeightMap w_map)</tt>   
-<blockquote>
-  The weight or ``cost'' of each edge in the graph.
-  The type <tt>WeightMap</tt> must be a model of
-  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
-  the graph needs to be usable as the key type for the weight
-  map. The value type for this map must be
-  the same as the value type of the distance map.<br>
-  <b>Default:</b>  <tt>get(edge_weight, g)</tt><br>
-
-</blockquote>
-
-<h3>Complexity</h3>
-The complexity is <i> O(|E|)</i>, 
+</P>
 
 <h3>Example</h3>
 
-The function is used in the successive_shortest_path_nonnegative_weights example. The program in <a
-href="../example/successive_shortest_path_nonnegative_weights_example.cpp"><tt>example/successive_shortest_path_nonnegative_weights_example.cpp</tt></a>.
+<P>
+One overload of <tt>find_flow_cost()</tt> can take in named parameter
+arguments, courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.
+</P>
+
+<pre>
+typedef boost::<a href="adjacency_list_traits.html">adjacency_list_traits</a>&lt;boost::vecS,boost::vecS,boost::directedS&gt; traits;
+struct edge_t
+{
+    double capacity;
+    float cost;
+    float residual_capacity;
+    traits::edge_descriptor reversed_edge;
+};
+struct node_t
+{
+    traits::edge_descriptor predecessor;
+    int dist;
+    int dist_prev;
+    boost::vertex_index_t id;
+};
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;boost::listS, boost::vecS, boost::directedS, node_t, edge_t &gt; Graph;
+
+Graph g;
+boost::property_map&lt;Graph,double edge_t::* &gt;::type capacity = get(&amp;edge_t::capacity, g);
+boost::property_map&lt;Graph,float edge_t::* &gt;::type cost = get(&amp;edge_t::cost, g);
+boost::property_map&lt;Graph,float edge_t::* &gt;::type residual_capacity = get(&amp;edge_t::residual_capacity, g);
+<i>// ...</i>
+long flow_cost = find_flow_cost(
+    g,
+    <b>boost::graph::keywords::_capacity_map =</b> capacity,
+    <b>boost::graph::keywords::_residual_capacity_map =</b> residual_capacity,
+    <b>boost::graph::keywords::_weight_map =</b> cost
+);
+</pre>
+
+<P>
+The full program is in
+<a href="../test/find_flow_cost_bundled_properties_and_named_params_test.cpp"
+><tt>test/find_flow_cost_bundled_properties_and_named_params_test.cpp</tt></a>
+</P>
+
+<h3>Where Defined</h3>
+
+<P>
+<a href="../../../boost/graph/find_flow_cost.hpp"
+><tt>boost/graph/find_flow_cost.hpp</tt></a>
+</P>
+
+<h3>Parameters</h3>
+
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A directed graph.  Its type must be a model of <a
+href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
+<i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
+graph.</td>
+</tr>
+</table>
+
+<h3>Named Parameters</h3>
+
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The edge capacity property map.  Its type must be a model of a constant <a
+href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type of the map must be the graph's edge descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
+res)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps edges to their residual capacity.  Its type must be a model of a
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
+Property Map</b></a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The weight or ``cost'' of each edge in the graph.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b
+>Readable Property Map</b></a>.  The edge descriptor type of the graph needs
+to be usable as the key type for the weight map.  The value type for this map
+must be the same as the value type of the distance map argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+</tr>
+</table>
+
+<h3>Complexity</h3>
+The complexity is <i> O(|E|)</i>, 
 
 <h3>See Also</h3>
 

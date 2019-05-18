@@ -48,7 +48,8 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 template &lt;typename Graph, typename P, typename T, typename R&gt;
 void
 dijkstra_shortest_paths(Graph&amp; g,
-  typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+  typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
@@ -58,7 +59,8 @@ template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVis
 	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
 void dijkstra_shortest_paths
   (const Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s, 
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
    VertexIndexMap index_map,
    CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
@@ -72,7 +74,8 @@ template &lt;class Graph, class DijkstraVisitor,
 void
 dijkstra_shortest_paths_no_init
   (const Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s,
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
    IndexMap index_map,
    Compare compare, Combine combine, DistZero zero,

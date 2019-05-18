@@ -52,7 +52,7 @@ void
 fruchterman_reingold_force_directed_layout
   (const Graph&amp;    g,
    PositionMap     position,
-   const Topology&amp;     space,
+   const Topology&amp; space,
    const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params);
 
 <i>// non-named parameter version</i>
@@ -110,8 +110,7 @@ example illustrates the syntax for passing arguments by name.
 <pre>
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::vecS, boost::undirectedS,
-    boost::<a href="property.html">property</a>&lt;boost::vertex_name_t,
-	std::<a href="http://en.cppreference.com/w/cpp/string/basic_string">string</a>&gt;
+    boost::<a href="property.html">property</a>&lt;boost::vertex_name_t, std::<a href="http://en.cppreference.com/w/cpp/string/basic_string">string</a>&gt;
 &gt; Graph;
 
 Graph g;

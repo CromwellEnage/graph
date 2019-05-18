@@ -57,15 +57,43 @@
 </P>
 <H1><A NAME="sec:boykov_kolmogorov_max_flow"></A><TT>boykov_kolmogorov_max_flow</TT>
 </H1>
-<PRE><I>// named parameter version</I>
+<PRE><i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg6
+&gt;
+typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
+boykov_kolmogorov_max_flow(
+    Graph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg6&amp; a6 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg6
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// old-style named parameter version</i>
 template &lt;class Graph, class P, class T, class R&gt;
 typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
 boykov_kolmogorov_max_flow(Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>)
 
-<I>// non-named parameter version</I>
+<i>// non-named parameter version</i>
 template &lt;class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap,
           class PredecessorMap, class ColorMap, class DistanceMap, class IndexMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
@@ -213,81 +241,261 @@ The following changes are made to improve performance:</P>
 <P><TT><A HREF="../../../boost/graph/boykov_kolmogorov_max_flow.hpp">boost/graph/boykov_kolmogorov_max_flow.hpp</A></TT>
 </P>
 <H3>Parameters</H3>
-<P>IN: <TT>Graph&amp; g</TT>
-</P>
-<BLOCKQUOTE>A directed graph. The graph's type must be a model of
-<A HREF="VertexListGraph.html">Vertex List Graph</A>, <A HREF="EdgeListGraph.html">Edge
-List Graph</A> and <A HREF="IncidenceGraph.html">Incidence Graph</A>.
-For each edge <I>(u,v)</I> in the graph, the reverse edge <I>(v,u)</I>
-must also be in the graph.  Performance of the algorithm will be slightly
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>Graph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A directed graph.  Its type must be a model of <a
+href="./EdgeListGraph.html"><b>Edge List Graph</b></a> and <a
+href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
+<i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
+graph.  Performance of the algorithm will be slightly
 improved if the graph type also models <a href="AdjacencyMatrix.html">Adjacency
-Matrix</a>.
-</BLOCKQUOTE>
-<P>IN: <TT>vertex_descriptor src</TT>
-</P>
-<BLOCKQUOTE>The source vertex for the flow network graph.
-</BLOCKQUOTE>
-<P>IN: <TT>vertex_descriptor sink</TT>
-</P>
-<BLOCKQUOTE>The sink vertex for the flow network graph.
-</BLOCKQUOTE>
+Matrix</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The source vertex for the flow network graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The sink vertex for the flow network graph.</td>
+</tr>
+</table>
 <H3>Named Parameters</H3>
-<P>IN: <TT>edge_capacity(EdgeCapacityMap cap)</TT>
-</P>
-<BLOCKQUOTE>The edge capacity property map. The type must be a model
-of a constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
-Property Map</A>. The key type of the map must be the graph's edge
-descriptor type.<BR><B>Default:</B> <TT>get(edge_capacity, g)</TT>
-</BLOCKQUOTE>
-<P>OUT: <TT>edge_residual_capacity(ResidualCapacityEdgeMap res)</TT>
-</P>
-<BLOCKQUOTE>The edge residual capacity property map. The type must be
-a model of a mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
-Property Map</A>. The key type of the map must be the graph's edge
-descriptor type.<BR><B>Default:</B> <TT>get(edge_residual_capacity,
-g)</TT>
-</BLOCKQUOTE>
-<P>IN: <TT>edge_reverse(ReverseEdgeMap rev)</TT>
-</P>
-<BLOCKQUOTE>An edge property map that maps every edge <I>(u,v)</I> in
-the graph to the reverse edge <I>(v,u)</I>. The map must be a model
-of constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
-Property Map</A>. The key type of the map must be the graph's edge
-descriptor type.<BR><B>Default:</B> <TT>get(edge_reverse, g)</TT>
-</BLOCKQUOTE>
-<P>UTIL: <TT>vertex_predecessor(PredecessorMap pre_map)</TT>
-</P>
-<BLOCKQUOTE>A vertex property map that stores the edge to the vertex'
-predecessor. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
-Property Map</A>. The key type of the map must be the graph's vertex
-descriptor type.<BR><B>Default:</B> <TT>get(vertex_predecessor, g)</TT>
-</BLOCKQUOTE>
-<P>OUT/UTIL: <TT>vertex_color(ColorMap color)</TT>
-</P>
-<BLOCKQUOTE>A vertex property map that stores a color for edge
-vertex. If the color of a vertex after running the algorithm is black
-the vertex belongs to the source tree else it belongs to the
-sink-tree (used for minimum cuts). The map must be a model of mutable
-<A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
-Map</A>. The key type of the map must be the graph's vertex
-descriptor type.<BR><B>Default:</B> <TT>get(vertex_color, g)</TT>
-</BLOCKQUOTE>
-<P>UTIL: <TT>vertex_distance(DistanceMap dist)</TT>
-</P>
-<BLOCKQUOTE>A vertex property map that stores the distance to the
-corresponding terminal. It's a utility-map for speeding up the
-algorithm. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
-Property Map</A>. The key type of the map must be the graph's vertex
-descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT>
-</BLOCKQUOTE>
-<P>IN: <TT>vertex_index(VertexIndexMap index_map)</TT>
-</P>
-<BLOCKQUOTE>Maps each vertex of the graph to a unique integer in the
-range <TT>[0, num_vertices(g))</TT>. The map must be a model of
-constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
-The key type of the map must be the graph's vertex descriptor
-type.<BR><B>Default:</B> <TT>get(vertex_index, g)</TT>
-</BLOCKQUOTE>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The edge capacity property map.  Its type must be a model of a constant <a
+href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type of the map must be the graph's edge descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
+res)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The edge residual capacity property map.  Its type must be a model of a
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
+Property Map</b></a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_reverse_edge_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>reverse_edge_map(ReverseEdgeMap rev)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>An edge property map that maps every edge <i>(u,v)</i> in the graph to the
+reverse edge <i>(v,u)</i>.  Its type must be a model of a constant <a
+href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type of the map must be the graph's edge descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_reverse, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A vertex property map that stores the edge to the predecessor of the key
+vertex.  The argument type must be a mutable
+<a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type must be the graph's vertex descriptor type
+and the value type must be the graph's edge descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_predecessor, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A vertex property map that stores a color for edge vertex.  If the color
+of a vertex after running the algorithm is black the vertex belongs to the
+source tree else it belongs to the sink-tree (used for minimum cuts).  The
+argument type must be a mutable <a
+href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type of the map must be the graph's vertex descriptor
+type, and the value type of the map must be a model of
+<a href="./ColorValue.html"><b>Color Value</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_color, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A vertex property map that stores the distance to the corresponding
+terminal.  It's a utility-map for speeding up the algorithm.  The argument
+type must be a mutable <a
+href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
+Map</b></a>.  The key type of the map must be the graph's vertex descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_distance, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to a unique integer in the range <tt>[0,
+num_vertices(g))</tt>.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The key type of the map must be the graph's vertex descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+</table>
 <H3>Example</H3>
 <P>This reads an example maximum flow problem (a graph with edge
 capacities) from a file in the DIMACS format (<TT><A HREF="../example/max_flow.dat">example/max_flow.dat</A></TT>).

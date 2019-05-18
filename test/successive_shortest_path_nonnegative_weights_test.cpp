@@ -17,8 +17,8 @@ void path_augmentation_def_test()
     boost::SampleGraph::vertex_descriptor s,t;
     boost::SampleGraph::Graph g; 
     boost::SampleGraph::getSampleGraph(g, s, t);
-    boost::successive_shortest_path_nonnegative_weights(g, s, t);
-    long cost = boost::find_flow_cost(g);
+    successive_shortest_path_nonnegative_weights(g, s, t);
+    long cost = find_flow_cost(g);
     BOOST_TEST_EQ(cost, 29);
 }
 
@@ -28,7 +28,7 @@ void path_augmentation_def_test2()
     boost::SampleGraph::Graph g; 
     boost::SampleGraph::getSampleGraph2(g, s, t);
     boost::successive_shortest_path_nonnegative_weights(g, s, t);
-    long cost = boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_TEST_EQ(cost, 7);
 }
 
@@ -48,7 +48,7 @@ void path_augmentation_test()
     boost::property_map<Graph, boost::vertex_index_t>::const_type
       idx = get(boost::vertex_index, g);
 
-    boost::successive_shortest_path_nonnegative_weights(
+    successive_shortest_path_nonnegative_weights(
         g, s, t,
         boost::graph::keywords::_distance_map =
         boost::make_iterator_property_map(dist.begin(), idx),
@@ -59,7 +59,7 @@ void path_augmentation_test()
         boost::graph::keywords::_vertex_index_map = idx
     );
 
-    long cost = boost::find_flow_cost(g);
+    long cost = find_flow_cost(g);
     BOOST_TEST_EQ(cost, 29);
 }
 

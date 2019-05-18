@@ -49,7 +49,8 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 <i>// old-style named parameter version</i>
 template &lt;class VertexListGraph, class Param, class Tag, class Rest&gt;
 void dag_shortest_paths(const VertexListGraph&amp; g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
    const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params)
 
 <i>// non-named parameter version</i>
@@ -59,7 +60,8 @@ template &lt;class VertexListGraph, class DijkstraVisitor,
 	  class Compare, class Combine, 
 	  class DistInf, class DistZero&gt;
 void dag_shortest_paths(const VertexListGraph&amp; g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+   typename <a href="graph_traits.html">graph_traits</a
+>&lt;VertexListGraph&gt;::vertex_descriptor s, 
    DistanceMap distance, WeightMap weight, ColorMap color,
    PredecessorMap pred, DijkstraVisitor vis, 
    Compare compare, Combine combine, DistInf inf, DistZero zero)
