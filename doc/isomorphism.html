@@ -22,10 +22,31 @@
 
 
 <PRE>
-<i>// named parameter version</i>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph1, typename Graph2,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
+&gt;
+typename boost::enable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+        TaggedArg0, TaggedArg1, ..., TaggedArg5
+    &gt;,
+    bool
+&gt;::type
+isomorphism(
+    const Graph1&amp; g1, const Graph2&amp; g2,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg5&amp; a5 = <i>unspecified</i>
+);
+
+<i>// old-style named parameter version</i>
 template &lt;class Graph1, class Graph2, class P, class T, class R&gt;
 bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
-                 const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>)
+                 const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>);
 
 <i>// non-named parameter version</i>
 template &lt;typename Graph1, typename Graph2, typename IsoMap, 
@@ -33,7 +54,7 @@ template &lt;typename Graph1, typename Graph2, typename IsoMap,
           typename V1Map, typename V2Map&gt;
 bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
 		 IsoMap f, VertexInvariant1 invariant2, VertexInvariant2 invariant2,
-		 std::size_t max_invariant, VertexIndex1Map i1_map, VertexIndex2Map i2_map)
+		 std::size_t max_invariant, VertexIndex1Map i1_map, VertexIndex2Map i2_map);
 </pre>
 
 <p>
@@ -68,118 +89,302 @@ if) a version of this algorithm is ported to the BGL interface it
 should replace the current algorithm.
 </p>
 
-<H3>Where Defined</H3>
+<h3>Example</h3>
 
+<p>
+One overload of <tt>isomorphism()</tt> can take in named parameter arguments,
+courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.
+</p>
+
+<pre>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::vecS, boost::listS, boost::undirectedS,
+    boost::<a href="property.html">property</a>&lt;boost::vertex_index_t, int&gt;
+&gt; graph_t;
+
+const int n = 12;
+graph_t g1(n), g2(n);
+<i>// ...</i>
+std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt; boost::<a href="graph_traits.html">graph_traits</a>&lt;graph_t&gt;::vertex_descriptor&gt; f(n);
+bool ret = isomorphism(
+    g1, g2,
+    <b>boost::graph::keywords::_isomorphism_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(f.begin(), get(boost::vertex_index, g1), f[0])
+);
+</pre>
+
+<p>
+The full program is in <a href="../example/isomorphism.cpp"
+><tt>example/isomorphism.cpp</tt></a>
+</p>
+
+<h3>Where Defined</h3>
+
+<p>
 <a href="../../../boost/graph/isomorphism.hpp"><TT>boost/graph/isomorphism.hpp</TT></a>
+</p>
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph1&amp; g1</tt>
-<blockquote>
-A directed or undirected graph. The graph type must model of <a
-href="./VertexListGraph.html">Vertex List Graph</a> and <a
-href="./EdgeListGraph.html">Edge List Graph</a>.
-</blockquote>
-
-IN: <tt>const Graph2&amp; g2</tt>
-<blockquote>
-A directed or undirected graph. The graph type must model <a
-href="./BidirectionalGraph.html">Bidirectional Graph</a> and <a
-href="./VertexListGraph.html">Vertex List Graph</a>.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Graph1&amp; g1</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A directed or undirected graph.  Its type must be a model of <a
+href="./EdgeListGraph.html"><b>Edge List Graph</b></a> and <a
+href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const Graph2&amp; g2</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A directed or undirected graph.  Its type must be a model of <a
+href="./BidirectionalGraph.html"><b>Bidirectional Graph</b></a> and <a
+href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-OUT: <tt>isomorphism_map(IsoMap f)</tt>
-<blockquote>
-The mapping from vertices in graph 1 to vertices in graph 2. This must
-be a <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-Property Map</a>.<br> <b>Default:</b> an <a
-href="../../property_map/doc/iterator_property_map.html"><tt>iterator_property_map</tt></a>
-constructed from a <tt>std::vector</tt> of graph 2's vertex
-descriptor type and the vertex index map for graph 1.<br>
-<b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the first graph.
-</blockquote>
-
-IN: <tt>vertex_invariant1(VertexInvariant1 i1)</tt>
-IN: <tt>vertex_invariant2(VertexInvariant2 i2)</tt>
-<blockquote>
-Mappings from vertices to integers which restrict which vertices may be
-considered isomorphic. If a candidate isomorphism maps <i>v1</i> to <i>v2</i>
-but <i>i1</i>(<i>v1</i>) != <i>i2</i>(<i>v2</i>), that candidate is rejected.
-This mapping can be used either to speed up the search (as is done by the
-default value, which requires that the degrees of <i>v1</i> and <i>v2</i> are
-equal) or to impose extra conditions on the result.  The
-<tt>VertexInvariant1</tt> and <tt>VertexInvariant2</tt> types must model <a
-href="http://www.sgi.com/tech/stl/UnaryFunction.html">UnaryFunction</a>, with
-the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
-descriptor type, the argument type of <tt>vertex_invariant2</tt> being
-<tt>Graph2</tt>'s vertex descriptor type, and both functions having integral
-result types.  The values returned by these two functions must be in the range
-[0, <tt>vertex_max_invariant</tt>).
-<br>
-<b>Default:</b> <tt>degree_vertex_invariant</tt> for both arguments<br>
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>vertex_max_invariant(std::size_t max_invariant)</tt>
-<blockquote>
-An upper bound on the possible values returned from either 
-vertex_invariant1 or vertex_invariant2.
-<br>
-<b>Default:</b> <tt>vertex_invariant2.max()</tt>. The default
-<tt>vertex_invariant2</tt> parameter, an instance of 
-<tt>degree_vertex_invariant</tt>, defines this function to
-return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br> 
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>vertex_index1_map(VertexIndex1Map i1_map)</tt>
-<blockquote>
-This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>. This is necessary for efficient updates of the
-heap data structure when an edge is relaxed. The type
-<tt>VertexIndex1Map</tt> must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a>. The value type of the map must be an integer type. The vertex
-descriptor type of graph 1 needs to be usable as the key type of the
-map.<br>
-<b>Default:</b> <tt>get(vertex_index, g1)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-   <br>
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>vertex_index2_map(VertexIndex2Map i2_map)</tt>
-<blockquote>
-This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>. This is necessary for efficient updates of the
-heap data structure when an edge is relaxed. The type
-<tt>VertexIndex2Map</tt> must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a>. The value type of the map must be an integer type. The vertex
-descriptor type of graph 2 needs to be usable as the key type of the
-map.<br>
-<b>Default:</b> <tt>get(vertex_index, g2)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-   <br>
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_isomorphism_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>isomorphism_map(IsoMap f)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The mapping from vertices in graph 1 to vertices in graph 2.  The argument
+type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the vertex descriptor type of <tt>g2</tt>, and of size
+<tt>num_vertices(g1)</tt>, and using the <tt>_index_map1</tt> argument for the
+index map of <tt>g1</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Must be a <tt>vertex_vertex_map</tt> for the first graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_invariant1</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_invariant1(VertexInvariant1 i1)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This unary function object takes in a vertex in <tt>g1</tt> and returns an
+integer in the range [0, vertex max invariant argument).  If a candidate
+isomorphism maps a vertex <tt>v1</tt> in <tt>g1</tt> to a vertex <tt>v2</tt>
+in <tt>g2</tt>, but a call to this function object that passes in <tt>v1</tt>
+returns a different value from a call to the <tt>_vertex_invariant2</tt>
+function object that passes in <tt>v2</tt>, then that candidate is
+rejected.  This mapping can be used either to speed up the search (as is done
+by the default value, which requires that the degrees of <tt>v1</tt> and
+<tt>v2</tt> are equal) or to impose extra conditions on the result.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>degree_vertex_invariant()</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_invariant2</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_invariant2(VertexInvariant2 i2)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This unary function object takes in a vertex in <tt>g2</tt> and returns an
+integer in the range [0, vertex max invariant argument).  If a candidate
+isomorphism maps a vertex <tt>v2</tt> in <tt>g2</tt> to a vertex <tt>v1</tt>
+in <tt>g1</tt>, but a call to this function object that passes in <tt>v2</tt>
+returns a different value from a call to the <tt>_vertex_invariant1</tt>
+function object that passes in <tt>v1</tt>, then that candidate is
+rejected.  This mapping can be used either to speed up the search (as is done
+by the default value, which requires that the degrees of <tt>v2</tt> and
+<tt>v1</tt> are equal) or to impose extra conditions on the result.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>degree_vertex_invariant()</tt></td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_vertex_max_invariant</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_max_invariant(std::size_t
+max_invariant)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>An upper bound on the possible values returned from either the
+<tt>_vertex_invariant1</tt> function object argument or the
+<tt>_vertex_invariant2</tt> function object argument.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">The return value of the <tt>max()</tt> member function
+of the <tt>_vertex_invariant2</tt> argument.  The default
+<tt>_vertex_invariant2</tt> argument, an instance of
+<tt>degree_vertex_invariant</tt>, defines this function to return
+<tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index1_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index1_map(VertexIndex1Map i1_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(g1))</tt>.  This is necessary for efficient updates of
+the heap data structure when an edge is relaxed.  The argument type must be a
+model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
+Property Map</b></a>.  The value type of the map must be an integer type.  The
+vertex descriptor type of <tt>g1</tt> needs to be usable as the key type of
+the map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g1)</tt><br />Note: if you use this
+default, make sure that <tt>g1</tt> has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index2_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index2_map(VertexIndex2Map i2_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(g2))</tt>.  This is necessary for efficient updates of
+the heap data structure when an edge is relaxed.  The argument type must be a
+model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
+Property Map</b></a>.  The value type of the map must be an integer type.  The
+vertex descriptor type of <tt>g2</tt> needs to be usable as the key type of
+the map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g2)</tt><br />Note: if you use this
+default, make sure that <tt>g2</tt> has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr valign="top">
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+</table>
 
 <h3>Complexity</h3>
 
 The worst-case time complexity is <i>O(|V|!)</i>.
-
-<h3>Example</h3>
-
-See <a href="../example/isomorphism.cpp"><tt>libs/graph/example/isomorphism.cpp</tt></a>.
 
 <br>
 <HR>

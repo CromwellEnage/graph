@@ -619,7 +619,7 @@ namespace boost { namespace graph {
 
 namespace boost { namespace graph {
 
-BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, isomorphism)
+BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, isomorphism)
 }} // namespace boost::graph
 
 namespace boost {
@@ -631,7 +631,7 @@ using ::boost::graph::isomorphism;
 #else
 namespace boost {
   namespace graph {
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 8)
   }
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)

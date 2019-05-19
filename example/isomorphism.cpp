@@ -68,8 +68,8 @@ main()
      degree_vertex_invariant(), get(vertex_index, g1), get(vertex_index, g2));
 #else
   bool ret = isomorphism
-    (g1, g2, isomorphism_map
-     (make_iterator_property_map(f.begin(), v1_index_map, f[0])));
+    (g1, g2, boost::graph::keywords::_isomorphism_map =
+     make_iterator_property_map(f.begin(), v1_index_map, f[0]));
 #endif
   std::cout << "isomorphic? " << ret << std::endl;
 
