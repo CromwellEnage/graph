@@ -1185,7 +1185,7 @@ namespace boost { namespace graph {
 
   // ==========================================================================
 
-namespace boost {
+namespace boost { namespace graph {
 
   // Fills a membership map (vertex -> bool) using the information
   // present in correspondence_map_1_to_2. Every vertex in a
@@ -1233,7 +1233,7 @@ namespace boost {
     return (MembershipFilteredGraph(graph, keep_all(), v_filter));
     
   }
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/parameter/compose.hpp>
@@ -1291,6 +1291,9 @@ namespace boost {
     using ::boost::graph::mcgregor_common_subgraphs_unique;
     using ::boost::graph::mcgregor_common_subgraphs_maximum;
     using ::boost::graph::mcgregor_common_subgraphs_maximum_unique;
+    using ::boost::graph::fill_membership_map;
+    using ::boost::graph::membership_filtered_graph_traits;
+    using ::boost::graph::make_membership_filtered_graph;
 
   // Old-style named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,

@@ -37,7 +37,36 @@
       <tt>mcgregor_common_subgraphs</tt>
     </h1>
     <pre>
-<em class="comment">// named parameter version</em>
+<em class="comment">// Boost.Parameter-enabled version</em>
+template &lt;
+    typename GraphFirst,
+    typename GraphSecond,
+    typename SubGraphCallback,
+    typename TaggedArg0,
+    typename TaggedArg1,
+    typename TaggedArg2,
+    typename TaggedArg3
+&gt;
+void mcgregor_common_subgraphs(
+    const GraphFirst&amp; graph1,
+    const GraphSecond&amp; graph2,
+    SubGraphCallback user_callback,
+    bool only_connected_subgraphs,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg2&amp; a2 = <i>unspecified</i>,
+    const TaggedArg3&amp; a3 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<em class="comment">// old-style named parameter version</em>
 template &lt;typename GraphFirst,
           typename GraphSecond,
           typename SubGraphCallback,
@@ -49,7 +78,7 @@ template &lt;typename GraphFirst,
    const GraphSecond&amp; graph2,
    SubGraphCallback user_callback,
    bool only_connected_subgraphs,
-   const bgl_named_params<Param, Tag, Rest>& params);
+   const bgl_named_params&lt;Param, Tag, Rest&gt;& params);
 
 <em class="comment">// non-named parameter version</em>
 template &lt;typename GraphFirst,
@@ -118,125 +147,257 @@ template &lt;typename GraphFirst,
     <h3>Where Defined</h3>
     <a href="../../../boost/graph/mcgregor_common_subgraphs.hpp"><tt>boost/graph/mcgregor_common_subgraphs.hpp</tt></a>
     <p>
-      All functions are defined in the boost namespace.
+      The overloads that accept old-style named parameters are defined only in
+      the <tt>boost</tt> namespace.  All other functions are defined in the
+      <tt>boost::graph</tt> namespace and then injected into the
+      <tt>boost</tt> namespace.
     </p>
 
     <h3>Parameters</h3>
 
-    IN: <tt>const GraphFirst&amp; graph1</tt> 
-    <blockquote>
-      The first graph of the pair to be searched.  The
-      type <tt>GraphFirst</tt> must be a model of
-      <a href="./VertexListGraph.html">Vertex List Graph</a>
-      and <a href="./IncidenceGraph.html">Incidence Graph</a>.  All
-      parameters with a "<tt>1</tt>"
-      (i.e. <tt>vindex_map1</tt>, <tt>correspondence_map_1_to_2</tt>)
-      use this graph's vertices as keys.
-    </blockquote>
-
-    IN: <tt>const GraphSecond&amp; graph2</tt> 
-    <blockquote>
-      The second graph of the pair to be searched.  The
-      type <tt>Graphsecond</tt> must be a model of
-      <a href="./VertexListGraph.html">Vertex List Graph</a>
-      and <a href="./IncidenceGraph.html">Incidence Graph</a>.  All
-      parameters with a "<tt>2</tt>"
-      (i.e. <tt>vindex_map2</tt>, <tt>correspondence_map_2_to_1</tt>)
-      use this graph's vertices as keys.
-    </blockquote>
-
-    IN: <tt>bool only_connected_subgraphs</tt>
-    <blockquote>
-      If <tt>true</tt>, subgraphs are expanded only when matching vertices
-      have at least one edge connecting them to the existing subgraph.
-    </blockquote>
-
-    OUT: <tt>SubGraphCallback user_callback</tt> 
-    <blockquote>
-      A function object that will be invoked when a subgraph has been discovered.  The operator() must have the following form:
-      <pre>
-template &lt;typename CorrespondenceMapFirstToSecond,
-          typename CorrespondenceMapSecondToFirst&gt;
-bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
-                CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
-                typename graph_traits&lt;GraphFirst&gt;::vertices_size_type subgraph_size);
-      </pre>
-      Both the <tt>CorrespondenceMapFirstToSecond</tt>
-      and <tt>CorresondenceMapSecondToFirst</tt> types are models
-      of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
-      Property Map</a> and map equivalent vertices across the two
-      graphs given to <tt>mcgregor_common_subgraphs</tt>.  For
-      example, if <tt>vertex1</tt> is
-      from <tt>graph1</tt>, <tt>vertex2</tt> is from <tt>graph2</tt>,
-      and the vertices can be considered equivalent in the subgraph,
-      then <tt>get(correspondence_map_1_to_2, vertex1)</tt> will
-      be <tt>vertex2</tt> and <tt>get(correspondence_map_2_to_1,
-      vertex2)</tt> will be <tt>vertex1</tt>.  If any vertex,
-      say <tt>vertex1</tt> in <tt>graph1</tt>, doesn't match a vertex
-      in the other graph (<tt>graph2</tt> in this example),
-      then <tt>get(correspondence_map_1_to_2, vertex1)</tt> will
-      be <tt>graph_traits&lt;GraphSecond&gt;::null_vertex()</tt>.
-      Likewise for any un-matched vertices from <tt>graph2</tt>,
-      <tt>get(correspondence_map_2_to_1, vertex2)</tt> will
-      be <tt>graph_traits&lt;GraphFirst&gt;::null_vertex()</tt>.
-      <br /><br /> The <tt>subgraph_size</tt> parameter is the number
-      of vertices in the subgraph, or the number of matched vertex
-      pairs contained in the correspondence maps.  This can be used to
-      quickly filter out subgraphs whose sizes do not fall within the
-      desired range.<br /><br />Returning <tt>false</tt> from the
-      callback will abort the search immediately. Otherwise, the
-      entire search space will be explored [<a href="#1">1</a>].
-    </blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const GraphFirst&amp; graph1</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The first graph of the pair to be searched.  Its type must be a model of
+<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and <a
+href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const GraphSecond&amp; graph2</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The second graph of the pair to be searched.  Its type must be a model of
+<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and <a
+href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>bool only_connected_subgraphs</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>If <tt>true</tt>, subgraphs are expanded only when matching vertices have
+at least one edge connecting them to the existing subgraph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>SubGraphCallback user_callback</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>
+<p>A function object that will be invoked when a subgraph has been
+discovered.  The function call operator must have the following form:</p>
+<pre>
+template &lt;
+    typename CorrespondenceMapFirstToSecond,
+    typename CorrespondenceMapSecondToFirst
+&gt;
+bool operator()(
+    CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
+    CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;GraphFirst&gt;::vertices_size_type subgraph_size
+);
+</pre>
+<p>The <tt>correspondence_map_1_to_2</tt> map uses the vertices of
+<tt>graph1</tt> as keys.  The <tt>correspondence_map_2_to_1</tt> map uses the
+vertices of <tt>graph2</tt> as keys.  Both the
+<tt>CorrespondenceMapFirstToSecond</tt> and
+<tt>CorresondenceMapSecondToFirst</tt> types are models of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a> and map equivalent vertices across the two graphs given to
+<tt>mcgregor_common_subgraphs()</tt>.  For example, if <tt>vertex1</tt> is
+from <tt>graph1</tt>, <tt>vertex2</tt> is from <tt>graph2</tt>, and the
+vertices can be considered equivalent in the subgraph, then
+<tt>get(correspondence_map_1_to_2, vertex1)</tt> will be <tt>vertex2</tt> and
+<tt>get(correspondence_map_2_to_1, vertex2)</tt> will be <tt>vertex1</tt>.  If
+any vertex, say <tt>vertex1</tt> in <tt>graph1</tt>, doesn't match a vertex in
+the other graph (<tt>graph2</tt> in this example), then
+<tt>get(correspondence_map_1_to_2, vertex1)</tt> will be <tt><a
+href="graph_traits.html">graph_traits</a
+>&lt;GraphSecond&gt;::null_vertex()</tt>.  Likewise, for any un-matched
+vertices from <tt>graph2</tt>, <tt>get(correspondence_map_2_to_1,
+vertex2)</tt> will be <tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphFirst&gt;::null_vertex()</tt>.</p>
+<p>The <tt>subgraph_size</tt> parameter is the number of vertices in the
+subgraph, or the number of matched vertex pairs contained in the
+correspondence maps.  This can be used to quickly filter out subgraphs whose
+sizes do not fall within the desired range.</p>
+<p>Returning <tt>false</tt> from the callback will abort the search
+immediately.  Otherwise, the entire search space will be explored
+[<a href="#1">1</a>].</p>
+</td>
+</tr>
+</table>
 
     <h3>Named Parameters</h3>
 
-    IN: <tt>vertex_index1(VertexIndexMapFirst vindex_map1)</tt>   
-    <blockquote>
-      This maps each vertex to an integer in the range <tt>[0,
-        num_vertices(graph1)]</tt>.  This is necessary for efficient storage
-      of the subgraphs.  The type VertexIndexMapFirst must be a model of
-      <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
-      <br />
-      <b>Default:</b> <tt>get(vertex_index, graph1)</tt>
-    </blockquote>
-
-    IN: <tt>vertex_index2(VertexIndexMapsecond vindex_map2)</tt>   
-    <blockquote>
-      This maps each vertex to an integer in the range <tt>[0,
-        num_vertices(graph2)]</tt>.  This is necessary for efficient storage
-      of the subgraphs.  The type VertexIndexMapFirst must be a model of
-      <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
-      <br />
-      <b>Default:</b> <tt>get(vertex_index, graph2)</tt>
-    </blockquote>
-
-    IN: <tt>edges_equivalent(EdgeEquivalencePredicate edges_equivalent)</tt> 
-    <blockquote>
-      This function is used to determine if edges
-      between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
-      The <tt>EdgeEquivalencePredicate</tt> type must be a model
-      of <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
-      Predicate</a> and have argument types
-      of <tt>graph_traits&lt;GraphFirst&gt;::edge_descriptor</tt>
-      and <tt>graph_traits&lt;GraphSecond&gt;::edge_descriptor</tt>.
-      A return value of <tt>true</tt> indicates that the edges are
-      equivalent.  <br />
-      <b>Default:</b> <tt><a href="#always_equivalent">always_equivalent</a></tt>
-    </blockquote>
-
-    IN: <tt>vertices_equivalent(VertexEquivalencePredicate vertices_equivalent)</tt> 
-    <blockquote>
-      This function is used to determine if vertices
-      between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
-      The <tt>VertexEquivalencePredicate</tt> type must be a model
-      of <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
-      Predicate</a> and have argument types
-      of <tt>graph_traits&lt;GraphFirst&gt;::vertex_descriptor</tt>
-      and <tt>graph_traits&lt;GraphSecond&gt;::vertex_descriptor</tt>.
-      A return value of <tt>true</tt> indicates that the vertices are
-      equivalent.<br />
-      <b>Default:</b> <tt><a href="#always_equivalent">always_equivalent</a></tt>
-    </blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index1_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index1_map(VertexIndex1Map i1_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(graph1))</tt>.  This is necessary for efficient storage
+of the subgraphs.  The argument type must be a model of
+<a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of <tt>graph1</tt> needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph1)</tt><br />Note: if you use
+this default, make sure that <tt>graph1</tt> has an internal
+<tt>vertex_index</tt> property.  For example, <tt>adjacency_list</tt> with
+<tt>VertexList=listS</tt> does not have an internal <tt>vertex_index</tt>
+property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index2_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index2_map(VertexIndex2Map i2_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(graph2))</tt>.  This is necessary for efficient storage
+of the subgraphs.  The argument type must be a model of
+<a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of <tt>graph2</tt> needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph2)</tt><br />Note: if you use
+this default, make sure that <tt>graph2</tt> has an internal
+<tt>vertex_index</tt> property.  For example, <tt>adjacency_list</tt> with
+<tt>VertexList=listS</tt> does not have an internal <tt>vertex_index</tt>
+property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_edges_equivalent</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>edges_equivalent(EdgeEquivalencePredicate
+edges_equivalent)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is used to determine if edges between <tt>graph1</tt> and
+<tt>graph2</tt> are equivalent.  Its type must be a model of
+<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> that accepts <tt><a href="graph_traits.html"
+>graph_traits</a>&lt;GraphFirst&gt;::edge_descriptor</tt> as its first
+argument type and accepts <tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphSecond&gt;::edge_descriptor</tt> as its second argument type.  A
+return value of <tt>true</tt> indicates that the edges are equivalent.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt><a
+href="#always_equivalent">always_equivalent</a>()</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_vertices_equivalent</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertices_equivalent(VertexEquivalencePredicate
+vertices_equivalent)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function is used to determine if vertices between <tt>graph1</tt> and
+<tt>graph2</tt> are equivalent.  Its type must be a model of
+<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> that accepts <tt><a href="graph_traits.html"
+>graph_traits</a>&lt;GraphFirst&gt;::vertex_descriptor</tt> as its first
+argument type and accepts <tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphSecond&gt;::vertex_descriptor</tt> as its second argument type.  A
+return value of <tt>true</tt> indicates that the vertices are equivalent.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt><a
+href="#always_equivalent">always_equivalent</a>()</tt></td>
+</tr>
+</table>
 
     <h3>Related Functions</h3>
     <p>
@@ -402,8 +563,8 @@ property_map&lt;GraphSecond, edge_name_t&gt; ename_map1 = get(edge_name, graph2)
 
 <em class="comment">// Print out all connected common subgraphs between graph1 and graph2.</em>
 mcgregor_common_subgraphs(graph1, graph2, true, my_callback,
-  edges_equivalent(make_property_map_equivalent(ename_map1, ename_map2)).
-  vertices_equivalent(make_property_map_equivalent(vname_map1, vname_map2)));
+  boost::graph::keywords::_edges_equivalent = make_property_map_equivalent(ename_map1, ename_map2),
+  boost::graph::keywords::_vertices_equivalent = make_property_map_equivalent(vname_map1, vname_map2));
     </pre>
 
     <h4>Example 3</h4>
@@ -417,7 +578,7 @@ mcgregor_common_subgraphs(graph1, graph2, true, my_callback,
 // ...</em>
 
 <em class="comment">// Step 1: Transform a correspondence map into a membership map. Any vertex -> bool property map will work</em>
-typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;      
+typedef shared_array_property_map&lt;bool, VertexIndexMap&gt; MembershipMap;      
 MembershipMap membership_map1(num_vertices(m_graph1), get(vertex_index, m_graph1));
 
 <em class="comment">// Fill the membership map for m_graph1. GraphSecond is the type of the second graph given to mcgregor_common_subgraphs.</em>
