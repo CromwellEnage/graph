@@ -683,12 +683,20 @@ namespace boost { namespace detail {
     };
 }} // namespace boost::detail
 
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/core/enable_if.hpp>
+
 namespace boost { namespace graph {
 
   template <class Graph, 
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
             class ReverseEdgeMap, class VertexIndexMap>
-  typename property_traits<CapacityEdgeMap>::value_type
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      CapacityEdgeMap, ResidualCapacityEdgeMap, ReverseEdgeMap, VertexIndexMap
+    >,
+    typename property_traits<CapacityEdgeMap>::value_type
+  >::type
   push_relabel_max_flow
     (Graph& g, 
      typename graph_traits<Graph>::vertex_descriptor src,
@@ -715,7 +723,6 @@ namespace boost { namespace graph {
 
 #include <boost/graph/named_function_params.hpp>
 #include <boost/parameter/is_argument_pack.hpp>
-#include <boost/core/enable_if.hpp>
 
 namespace boost { namespace graph {
 
@@ -782,7 +789,6 @@ namespace boost { namespace graph {
   }
 }} // namespace boost::graph
 
-#include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 

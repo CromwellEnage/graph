@@ -25,32 +25,32 @@ template &lt;
     typename Graph,
     typename TaggedArg0, typename TaggedArg1, typename TaggedArg2
 &gt;
-typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
+typename boost::lazy_enable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;TaggedArg0, TaggedArg1, TaggedArg2&gt;,
+    boost::detail::graph_or_tagged_args_property_map_value&lt;
+        Graph, boost::edge_weight_t, boost::graph::keywords::tag::weight_map,
+        TaggedArg0, TaggedArg1, TaggedArg2
+    &gt;
+&gt;::type
 find_flow_cost(
     const Graph&amp; g,
     const TaggedArg0&amp; a0 = <i>unspecified</i>,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
-    const TaggedArg2&amp; a2 = <i>unspecified</i>,
-    typename boost::enable_if&lt;
-        parameter::<a
-href="../../parameter/doc/html/reference.html#are-tagged-arguments"
->are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, TaggedArg2
-        &gt;,
-        mpl::true_
-    &gt;::type = mpl::true_()
+    const TaggedArg2&amp; a2 = <i>unspecified</i>
 );
 
 <i>// old-style named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g,
-        const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>)
+        const bgl_named_params&lt;P, T, R&gt; &amp; params = <i>all defaults</i>);
 
 <i>// non-named parameter version</i>
 template&lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
-find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight) 
+find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight);
 </PRE>
 
 <P>

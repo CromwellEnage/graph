@@ -62,7 +62,17 @@ template &lt;
     typename Graph,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg6
 &gt;
-typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
+typename boost::lazy_enable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+        TaggedArg0, TaggedArg1, ..., TaggedArg6
+    &gt;,
+    boost::detail::tagged_property_map_value&lt;
+        boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph,
+        TaggedArg0, TaggedArg1, ..., TaggedArg6
+    &gt;
+&gt;::type
 boykov_kolmogorov_max_flow(
     Graph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
@@ -72,15 +82,7 @@ boykov_kolmogorov_max_flow(
     const TaggedArg0&amp; a0 = <i>unspecified</i>,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
-    const TaggedArg6&amp; a6 = <i>unspecified</i>,
-    typename boost::enable_if&lt;
-        parameter::<a
-href="../../parameter/doc/html/reference.html#are-tagged-arguments"
->are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg6
-        &gt;,
-        mpl::true_
-    &gt;::type = mpl::true_()
+    const TaggedArg6&amp; a6 = <i>unspecified</i>
 );
 
 <i>// old-style named parameter version</i>
@@ -91,7 +93,7 @@ boykov_kolmogorov_max_flow(Graph&amp; g,
 >&lt;Graph&gt;::vertex_descriptor src,
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
-   const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>)
+   const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>);
 
 <i>// non-named parameter version</i>
 template &lt;class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap,
@@ -105,8 +107,10 @@ boykov_kolmogorov_max_flow(Graph&amp; g,
        ColorMap color,
        DistanceMap dist,
        IndexMap idx,
-       typename graph_traits &lt;Graph&gt;::vertex_descriptor src,
-       typename graph_traits &lt;Graph &gt;::vertex_descriptor sink)</PRE><P>
+       typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src,
+       typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph &gt;::vertex_descriptor sink);</PRE><P>
 <FONT SIZE=3>Additional overloaded versions for non-named parameters
 are provided (without DistanceMap/ColorMap/DistanceMap; for those
 iterator_property_maps with the provided index map are used)</FONT></P>
@@ -256,9 +260,9 @@ The following changes are made to improve performance:</P>
 href="./EdgeListGraph.html"><b>Edge List Graph</b></a> and <a
 href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
 <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
-graph.  Performance of the algorithm will be slightly
-improved if the graph type also models <a href="AdjacencyMatrix.html">Adjacency
-Matrix</a>.</td>
+graph.  Performance of the algorithm will be slightly improved if the graph
+type also models <a href="AdjacencyMatrix.html"><b>Adjacency
+Matrix</b></a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>

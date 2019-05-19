@@ -53,7 +53,7 @@ void successive_shortest_path_nonnegative_weights(
 >&lt;Graph&gt;::vertex_descriptor s, 
         typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor t,
-        const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>)
+        const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>);
 
 <i>// non-named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex&gt;
@@ -70,7 +70,7 @@ void successive_shortest_path_nonnegative_weights(
         VertexIndex index,
         Pred pred, 
         Distance distance,
-        Distance2 distance_prev) 
+        Distance2 distance_prev);
 </PRE>
 
 <P>
@@ -343,7 +343,7 @@ keyword:</th>
 </tr>
 <tr valign="top">
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+<td bgcolor="#dfdfdf"><tt>predecessor_map(PredEdgeMap p_map)</tt></td>
 </tr>
 <tr valign="top">
 <th>Description:</th>
