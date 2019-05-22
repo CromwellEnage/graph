@@ -35,53 +35,66 @@ std::string test_dir;
 
 struct edge_t
 {
-  unsigned long first;
-  unsigned long second;
+    unsigned long first;
+    unsigned long second;
 };
 
 template <typename Graph, typename KeyedUpdatablePriorityQueue>
-class mas_edge_connectivity_visitor : public boost::default_mas_visitor {
-  public:
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+class mas_edge_connectivity_visitor : public boost::graph::default_mas_visitor
+{
+    typedef typename boost::graph_traits<
+        Graph
+    >::vertex_descriptor vertex_descriptor;
     typedef typename KeyedUpdatablePriorityQueue::key_type weight_type;
-#if 0
-    mas_edge_connectivity_visitor(const mas_edge_connectivity_visitor<Graph, KeyedUpdatablePriorityQueue>& r)
-      : m_pq(r.m_pq), m_curr(r.m_curr), m_prev(r.m_prev), 
-        m_reach_weight(r.m_reach_weight) {
-      //    BOOST_TEST_MESSAGE( "COPY CTOR" );
-        }
-#endif
-    explicit mas_edge_connectivity_visitor(KeyedUpdatablePriorityQueue& pq)
-      : m_pq(pq),
-        m_curr(new vertex_descriptor(0)), m_prev(new vertex_descriptor(0)),
-        m_reach_weight(new weight_type(0)) {
-      //    BOOST_TEST_MESSAGE( "CTOR" );
-        }
-
-  void clear() {
-    *m_curr = 0;
-    *m_prev = 0;
-    *m_reach_weight = 0;
-  }
-
-  //template <typename Vertex> //, typename Graph>
-  //void start_vertex(Vertex u, const Graph& g) {
-  void start_vertex(vertex_descriptor u, const Graph& g) {
-    *m_prev = *m_curr;
-    *m_curr = u;
-    //BOOST_TEST_MESSAGE( "Initializing Vertex(weight): " << u << "(" << *m_reach_weight << ")" );
-    *m_reach_weight = get(m_pq.keys(), u);
-  }
-
-  vertex_descriptor curr() const { return *m_curr; }
-  vertex_descriptor prev() const { return *m_prev; }
-  weight_type reach_weight() const { return *m_reach_weight; }
-
-  private:
 
     const KeyedUpdatablePriorityQueue& m_pq;
     boost::shared_ptr<vertex_descriptor> m_curr, m_prev;
     boost::shared_ptr<weight_type> m_reach_weight;
+
+public:
+#if 0
+    mas_edge_connectivity_visitor(
+        const mas_edge_connectivity_visitor<
+            Graph, KeyedUpdatablePriorityQueue
+        >& r
+    ) : m_pq(r.m_pq), m_curr(r.m_curr), m_prev(r.m_prev), 
+        m_reach_weight(r.m_reach_weight)
+    {
+        //BOOST_TEST_MESSAGE( "COPY CTOR" );
+    }
+#endif
+
+    explicit mas_edge_connectivity_visitor(KeyedUpdatablePriorityQueue& pq)
+      : m_pq(pq),
+        m_curr(new vertex_descriptor(0)), m_prev(new vertex_descriptor(0)),
+        m_reach_weight(new weight_type(0))
+    {
+        //BOOST_TEST_MESSAGE( "CTOR" );
+    }
+
+    void clear()
+    {
+        *this->m_curr = 0;
+        *this->m_prev = 0;
+        *this->m_reach_weight = 0;
+    }
+
+    //template <typename Vertex> //, typename Graph>
+    //void start_vertex(Vertex u, const Graph& g) {
+    void start_vertex(vertex_descriptor u, const Graph& g)
+    {
+        *this->m_prev = *m_curr;
+        *this->m_curr = u;
+        //BOOST_TEST_MESSAGE(
+        //    "Initializing Vertex(weight): " << u << "("
+        //    << *this->m_reach_weight << ")"
+        //);
+        *this->m_reach_weight = get(this->m_pq.keys(), u);
+    }
+
+    vertex_descriptor curr() const { return *this->m_curr; }
+    vertex_descriptor prev() const { return *this->m_prev; }
+    weight_type reach_weight() const { return *this->m_reach_weight; }
 };
 
 // the example from Stoer & Wagner (1997)
