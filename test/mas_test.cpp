@@ -125,7 +125,7 @@ void test0()
 
   mas_edge_connectivity_visitor<undirected_graph,boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > >  test_vis(pq);
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
@@ -139,7 +139,7 @@ void test0()
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
   test_vis.clear();
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
@@ -152,7 +152,7 @@ void test0()
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
   test_vis.clear();
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor = test_vis,
@@ -163,25 +163,25 @@ void test0()
   BOOST_TEST_EQ(test_vis.prev(), vertex_descriptor(6));
   BOOST_TEST_EQ(test_vis.reach_weight(), 5);
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = weights,
     boost::graph::keywords::_visitor =
     boost::make_mas_visitor(boost::null_visitor())
   );
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = weights
   );
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_root_vertex = *vertices(g).first
   );
 
   test_vis.clear();
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map =
     boost::make_constant_property<edge_descriptor>(weight_type(1)),
@@ -217,7 +217,7 @@ void test1()
 
   mas_edge_connectivity_visitor<undirected_unweighted_graph,boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > >  test_vis(pq);
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map =
     boost::make_constant_property<edge_descriptor>(weight_type(1)),
@@ -239,7 +239,7 @@ void test1()
   }
   boost::associative_property_map<std::map<edge_descriptor, weight_type> > ws_map(wm);
 
-  boost::maximum_adjacency_search(
+  maximum_adjacency_search(
     g,
     boost::graph::keywords::_weight_map = ws_map,
     boost::graph::keywords::_visitor = test_vis,

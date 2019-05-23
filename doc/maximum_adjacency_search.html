@@ -9,7 +9,7 @@
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
-  -->
+-->
 <head>
 <title>Boost Graph Library: Maximum Adjacency Search</Title>
 <body>
@@ -21,7 +21,28 @@
 
 <p>
 <pre>
-<em>// named parameter versions</em>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
+&gt;
+void maximum_adjacency_search(
+    const Graph&amp; g,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg7&amp; a7 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg7
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// old-style named parameter version</i>
 template &lt;class Graph, class class P, class T, class R&gt;
 void
 maximum_adjacency_search(const Graph&amp; g,
@@ -101,6 +122,35 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
+<h3>Example</h3>
+
+<p>
+One overload of <tt>maximum_adjacency_search()</tt> can take in named
+parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.
+</p>
+
+<pre>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::vecS, boost::vecS, boost::undirectedS, boost::no_property,
+    boost::<a
+href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
+&gt; undirected_graph;
+<i>// ...</i>
+undirected_graph g;
+<i>// ...</i>
+maximum_adjacency_search(
+    g,
+    <b>boost::graph::keywords::_weight_map =</b> get(boost::edge_weight, g)
+);
+</pre>
+
+<p>
+The full program is in <a href="../test/mas_test.cpp"
+><tt>test/mas_test.cpp</tt></a>
+</p>
+
 <h3>Where Defined</h3>
 
 <p>
@@ -108,129 +158,300 @@ finish vertex <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>const UndirectedGraph&amp; g</tt></p>
-<blockquote>
-  A connected, directed graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>
-  and <a href="./VertexListGraph.html">Vertex List Graph</a>.<br>
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const UndirectedGraph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A connected, directed graph.  Its type must be a model of
+<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
+<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-<p>IN: <tt>WeightMap weights</tt></p>
-<blockquote>
-  The weight or length of each edge in the graph. The
-  <tt>WeightMap</tt> type must be a model of
-  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
-  Property Map</a> and its value type must be <a class="external"
-  href="http://www.sgi.com/tech/stl/LessThanComparable.html">
-  Less Than Comparable</a> and summable. The key type of this map
-  needs to be the graph's edge descriptor type.
-  <b>Default:</b> <tt>get(edge_weight, g)</tt><br>
-</blockquote>
-
-IN: <tt>visitor(MASVisitor vis)</tt></p>
-<blockquote>
-  A visitor object that is invoked inside the algorithm at the
-  event-points specified by the MAS Visitor concept. The visitor
-  object is passed by value <a href="#1">[1]</a>. <br>
-  <b>Default:</b> <tt>mas_visitor&lt;null_visitor&gt;</tt><br>
-</blockquote>
-
-IN: <tt>root_vertex(typename
-graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)</tt></p>
-<blockquote>
-  This specifies the vertex that the depth-first search should
-  originate from. The type is the type of a vertex descriptor for the
-  given graph.<br>
-  <b>Default:</b> <tt>*vertices(g).first</tt><br>
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The weight or ``length'' of each edge in the graph.  The argument type
+must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type must be <a
+href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
+Comparable</b></a> and summable.  The key type of this map needs to be the
+graph's edge descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>visitor(MASVisitor vis)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A visitor object that is invoked inside the algorithm at the event-points
+specified by the <a href="#concept"><b>MAS Visitor</b></a> concept.  The
+visitor object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::default_mas_visitor()</tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_root_vertex</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>root_vertex(typename <a href="graph_traits.html"
+>graph_traits</a>&lt;UndirectedGraph&gt;::vertex_descriptor start)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This specifies the vertex that the depth-first search should originate
+from.  The type is the type of a vertex descriptor for the given graph.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>(0 &lt; num_vertices(g)) ? *vertices(g).first :
+<a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::null_vertex()</tt></td>
+</tr>
+</table>
 
 <h4>Expert Parameters</h4>
 
-<p>IN: <tt>vertex_index_map(VertexIndexMap vertexIndices)</tt> </p>
-<blockquote>
-  This maps each vertex to an integer in the range
-  [0, <tt>num_vertices(g)</tt>). This is only necessary if the default is
-  used for the assignment, index-in-heap, or distance maps.
-  <tt>VertexIndexMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  key type must be the graph's vertex descriptor type.<br>
-  <b>Default:</b> <tt>get(boost::vertex_index, g)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-</blockquote>
-
-<p>UTIL: <tt>vertex_assignment_map(AssignmentMap assignments)</tt></p>
-<blockquote>
-  <tt>AssignmentMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key and value types must be the graph's vertex descriptor
-  type.<br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a
-  <tt>std::vector</tt> of <tt>num_vertices(g)</tt> vertex descriptors and
-  <tt>vertexIndices</tt> for the index map.
-</blockquote>
-
-<p>UTIL: <tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt></p>
-<blockquote>
-  <tt>MaxPriorityQueue</tt> must be a model of <a
-  href="./KeyedUpdatableQueue.html">Keyed Updatable Queue</a> and a
-  max-<a href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue">
-  Updatable Priority Queue</a>. The value type must be the graph's vertex
-  descriptor and the key type must be the weight type.
-  <b>Default:</b> A <tt>boost::d_ary_heap_indirect</tt> using a default
-  index-in-heap and distance map.
-</blockquote>
-
-<p>UTIL: <tt>index_in_heap_map(IndexInHeapMap indicesInHeap)</tt></p>
-<blockquote>
-  This parameter only has an effect when the default max-priority queue is used.<br>
-  <tt>IndexInHeapMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key type must be the graph's vertex descriptor type. The
-  value type must be a size type
-  (<tt>typename&nbsp;std::vector&lt;vertex_descriptor&gt;::size_type</tt>).<br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a
-  <tt>std::vector</tt> of <tt>num_vertices(g)</tt> size type objects and
-  <tt>vertexIndices</tt> for the index map.
-</blockquote>
-
-<p>UTIL: <tt>distance_map(DistanceMap wAs)</tt></p>
-<blockquote>
-  This parameter only has an effect when the default max-priority queue is used.<br>
-  <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key type must be the graph's vertex descriptor type. The
-  value type must be the weight type
-  (<tt>typename&nbsp;boost::property_traits&lt;WeightMap&gt;::value_type</tt>).
-  <br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a
-  <tt>std::vector</tt> of <tt>num_vertices(g)</tt> weight type objects
-  and <tt>vertexIndices</tt> for the index map.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(g))</tt>.  This is necessary if the default is used for the
+assignment, index-in-heap, or distance maps.  The argument type must be a
+model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
+Property Map</b></a>.  The value type of the map must be an integer type.  The
+key type must be the graph's vertex descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_vertex_assignment_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_assignment_map(AssignmentMap
+assignments)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key and value types must be the graph's vertex descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the graph's vertex descriptor type, and of size <tt>num_vertices(g)</tt>, and
+using the index map argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_max_priority_queue</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"
+><tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"><b
+>Keyed Updatable Queue</b></a> and max-<a
+href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue"><b>Updatable
+Priority Queue</b></a>.  The value type must be the graph's vertex descriptor
+and the key type must be the weight type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">A <tt>boost::d_ary_heap_indirect</tt> using the
+index-in-heap and distance map arguments.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_index_in_heap_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>index_in_heap_map(IndexInHeapMap
+indicesInHeap)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This parameter only has an effect when the default max-priority queue is
+used.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the index-in-heap map must be a size type (<tt>typename std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a
+>&lt;typename <a href="graph_traits.html">graph_traits</a
+>&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the size type, and of size <tt>num_vertices(g)</tt>, and using the index map
+argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This parameter only has an effect when the default max-priority queue is
+used.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the distance map must be a size type (<tt>typename std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a
+>&lt;typename <a href="graph_traits.html">graph_traits</a
+>&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the value type of the weight map argument type, and of size
+<tt>num_vertices(g)</tt>, and using the index map argument for the index
+map.</td>
+</tr>
+</table>
 
 <h3>Returns</h3>
 <p>void</p>
 
 <h3>Throws</h3>
 
-<p><tt>bad_graph</tt>
-<blockquote>
-  If <tt>num_vertices(g)</tt> is less than 2
-</blockquote></p>
+<table>
+<tr valign="top">
+<td bgcolor="#dfdfdf"><tt>bad_graph</tt></td>
+<td>If <tt>num_vertices(g)</tt> is less than 2.</td>
+</tr>
+<tr valign="top">
+<td bgcolor="#dfdfdf"><tt>std::invalid_argument</tt></td>
+<td>If a max-priority queue argument is specified, and if it is not
+empty.</td>
+</tr>
+</table>
 
-<p><tt>std::invalid_argument</tt>
-<blockquote>
-  If a max-priority queue is given as an argument and it is not empty
-</blockquote>.
-
-<h3><a name="SECTION001340300000000000000">
-Complexity</a>
-</h3>
+<h3><a name="SECTION001340300000000000000">Complexity</a></h3>
 
 <p>
 The time complexity is <i>O(E + V)</i>.
@@ -244,10 +465,9 @@ The time complexity is <i>O(E + V)</i>.
 Partitioning by maximum adjacency search of graphs. 
 Partitioning Data Sets: Dimacs Workshop, April 19-21, 1993. 
 Vol 19. Page 55. 1995. Amer Mathematical Society</li>
-}
 </ul>
 
-<h3>Visitor Event Points</h3>
+<h3><a name="concept">Visitor Event Points</a></h3>
 
 <ul>
 <li><b><tt>vis.initialize_vertex(s, g)</tt></b> is invoked on every
