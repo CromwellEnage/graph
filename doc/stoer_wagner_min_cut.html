@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!--
-            Copyright Daniel Trebbien 2010.
- Distributed under the Boost Software License, Version 1.0.
-   (See accompanying file LICENSE_1_0.txt or the copy at
-         http://www.boost.org/LICENSE_1_0.txt)
+    Copyright Daniel Trebbien 2010.
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or the copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
 <html>
 <head>
@@ -18,8 +18,39 @@
 <tr><td style="border: #666 1px solid"><img src="stoer_wagner_imgs/stoer_wagner-example-min-cut.gif" width="376"></td></tr>
 </table>
 <pre>
+<i>// Boost.Parameter-enabled version</i>
+template &lt;
+    typename Graph, typename WeightMap,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
+&gt;
+typename boost::enable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+        TaggedArg0, TaggedArg1, ..., TaggedArg4
+    &gt;,
+    typename property_traits&lt;WeightMap&gt;::value_type
+&gt;::type
+stoer_wagner_min_cut(
+    const Graph&amp; g,
+    WeightMap weights,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg5&amp; a5 = <i>unspecified</i>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg5
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<i>// old-style named parameter version</i>
 template &lt;class UndirectedGraph, class WeightMap, class P, class T, class R&gt;
-weight_type
+typename property_traits&lt;WeightMap&gt;::value_type
 stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </pre>
@@ -127,23 +158,21 @@ stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
 
 <h3>Throws</h3>
 
-<p><tt>bad_graph</tt>
-<blockquote>
-  If <tt>num_vertices(g)</tt> is less than 2
-</blockquote>
-
-<p><tt>std::invalid_argument</tt>
-<blockquote>
-  If a max-priority queue is given as an argument and it is not empty
-</blockquote>
+<table>
+<tr valign="top">
+<td bgcolor="#dfdfdf"><tt>bad_graph</tt></td>
+<td>If <tt>num_vertices(g)</tt> is less than 2.</td>
+</tr>
+<tr valign="top">
+<td bgcolor="#dfdfdf"><tt>std::invalid_argument</tt></td>
+<td>If a max-priority queue argument is specified, and if it is not
+empty.</td>
+</tr>
+</table>
 
 <h3>Complexity</h3>
 
-<p>The time complexity is <i>O</i>(<i>V</i>&#xb7;<i>E</i> + <i>V</i><sup>2</sup> log <i>V</i>).
-
-<h3>Example</h3>
-
-<p>The file <a href="../example/stoer_wagner.cpp"><tt>examples/stoer_wagner.cpp</tt></a> contains an example of calculating a min-cut of a weighted, undirected graph and its min-cut weight.
+<p>The time complexity is <i>O</i>(<i>V</i>&#xb7;<i>E</i> + <i>V</i><sup>2</sup> log <i>V</i>).</p>
 
 <h3>References</h3>
 <ul>

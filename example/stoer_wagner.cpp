@@ -47,7 +47,7 @@ int main()
   BOOST_AUTO(parities, boost::make_one_bit_color_map(num_vertices(g), get(boost::vertex_index, g)));
 
   // run the Stoer-Wagner algorithm to obtain the min-cut weight. `parities` is also filled in.
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
     boost::graph::keywords::_parity_map = parities

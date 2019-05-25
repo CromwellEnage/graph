@@ -18,7 +18,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/stoer_wagner_min_cut.hpp>
-#include <boost/graph/property_maps/constant_property_map.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -46,7 +45,7 @@ void test0()
   weight_map_type weights = get(boost::edge_weight, g);
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
     weights,
     boost::graph::keywords::_parity_map = parities
@@ -82,7 +81,7 @@ void test1()
     boost::associative_property_map<std::map<int, bool> > parities(parity);
     std::map<vertex_descriptor, vertex_descriptor> assignment;
     boost::associative_property_map<std::map<vertex_descriptor, vertex_descriptor> > assignments(assignment);
-    int w = boost::stoer_wagner_min_cut(
+    int w = stoer_wagner_min_cut(
       g,
       weights,
       boost::graph::keywords::_parity_map = parities,
@@ -106,7 +105,7 @@ void test2()
 
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
     boost::graph::keywords::_parity_map = parities
@@ -133,7 +132,7 @@ void test3()
   weight_map_type weights = get(boost::edge_weight, g);
   std::map<int, bool> parity;
   boost::associative_property_map<std::map<int, bool> > parities(parity);
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
     weights,
     boost::graph::keywords::_parity_map = parities
@@ -164,9 +163,9 @@ void test4()
   boost::associative_property_map<std::map<vertex_descriptor, bool> > parities(parity);
   std::map<vertex_descriptor, vertex_descriptor> assignment;
   boost::associative_property_map<std::map<vertex_descriptor, vertex_descriptor> > assignments(assignment);
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
-    boost::make_constant_property<edge_descriptor>(weight_type(1)),
+    boost::make_static_property_map<edge_descriptor>(weight_type(1)),
     boost::graph::keywords::_vertex_assignment_map = assignments,
     boost::graph::keywords::_parity_map = parities
   );
@@ -214,7 +213,7 @@ void test_prgen_20_70_2(std::string test_dir)
   indicesInHeap_type indicesInHeap = boost::make_shared_array_property_map(num_vertices(g), index_in_heap_type(-1), get(boost::vertex_index, g));
   boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > pq(distances, indicesInHeap);
 
-  int w = boost::stoer_wagner_min_cut(
+  int w = stoer_wagner_min_cut(
     g,
     get(boost::edge_weight, g),
     boost::graph::keywords::_max_priority_queue = pq
@@ -235,7 +234,7 @@ void test_prgen_50_40_2(std::string test_dir)
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_TEST(boost::connected_components(g, components) == 1U); // verify the connectedness assumption
 
-  int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
+  int w = stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 10056);
 }
 
@@ -252,7 +251,7 @@ void test_prgen_50_70_2(std::string test_dir)
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_TEST(boost::connected_components(g, components) == 1U); // verify the connectedness assumption
 
-  int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g));
+  int w = stoer_wagner_min_cut(g, get(boost::edge_weight, g));
   BOOST_TEST_EQ(w, 21755);
 }
 
