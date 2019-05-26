@@ -65,8 +65,11 @@ namespace boost { namespace detail {
      */
 
     template <typename PartitionMap>
-    struct bipartition_colorize
+    class bipartition_colorize
     {
+        PartitionMap partition_map_;
+
+    public:
         typedef on_tree_edge event_filter;
 
         bipartition_colorize(PartitionMap partition_map) :
@@ -89,9 +92,6 @@ namespace boost { namespace detail {
                 ) ? color_traits::white() : color_traits::black()
             );
         }
-
-    private:
-        PartitionMap partition_map_;
     };
 
     /**
@@ -114,8 +114,11 @@ namespace boost { namespace detail {
      */
 
     template <typename PartitionMap>
-    struct bipartition_check
+    class bipartition_check
     {
+        PartitionMap partition_map_;
+
+    public:
         typedef on_back_edge event_filter;
 
         bipartition_check(PartitionMap partition_map) :
@@ -145,9 +148,6 @@ namespace boost { namespace detail {
                 >(source_vertex, target_vertex);
             }
         }
-
-    private:
-        PartitionMap partition_map_;
     };
 
     /**
