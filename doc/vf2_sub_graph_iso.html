@@ -6,7 +6,7 @@
     Distributed under the Boost Software License, Version 1.0.
     (See accompanying file LICENSE_1_0.txt or copy at
     http://www.boost.org/LICENSE_1_0.txt)
-  -->
+-->
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-15">
@@ -38,16 +38,31 @@
       <tt>vf2_subgraph_iso</tt>
     </h1>
     <pre>
-<em class="comment">// All defaults interface</em>
-template &lt;typename GraphSmall,
-          typename GraphLarge,
-          typename SubGraphIsoMapCallback&gt;
-bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
-                      const GraphLarge&amp; graph_large, 
-                      SubGraphIsoMapCallback user_callback)
+<em class="comment">// Boost.Parameter-enabled version</em>
+template &lt;
+    typename GraphSmall, typename GraphLarge, typename SubGraphIsoMapCallback,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+typename boost::enable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+        TaggedArg0, TaggedArg1, ..., TaggedArg4
+    &gt;,
+    bool
+&gt;::type
+vf2_subgraph_iso(
+    const GraphSmall&amp; graph_small,
+    const GraphLarge&amp; graph_large,
+    SubGraphIsoMapCallback user_callback,
+    const VertexOrderSmall&amp; vertex_order_small,
+    const TaggedArg0&amp; a0 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    ...,
+    const TaggedArg4&amp; a4 = <i>unspecified</i>,
+);
 
-
-<em class="comment">// Named parameter version</em>
+<em class="comment">// old-style amed parameter version</em>
 template &lt;typename GraphSmall,
           typename GraphLarge,
           typename VertexOrderSmall,
@@ -59,8 +74,7 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       const GraphLarge&amp; graph_large,
                       SubGraphIsoMapCallback user_callback,
                       const VertexOrderSmall&amp; vertex_order_small,
-                      const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params)
-
+                      const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params);
 
 <em class="comment">// Non-named parameter version</em>
 template &lt;typename GraphSmall,
@@ -68,8 +82,8 @@ template &lt;typename GraphSmall,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapSmall</a>,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapLarge</a>,
           typename VertexOrderSmall,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
           typename SubGraphIsoMapCallback&gt;
 bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       const GraphLarge&amp; graph_large,
@@ -78,7 +92,7 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       IndexMapLarge index_map_large, 
                       const VertexOrderSmall&amp; vertex_order_small,
                       EdgeEquivalencePredicate edge_comp,
-                      VertexEquivalencePredicate vertex_comp)
+                      VertexEquivalencePredicate vertex_comp);
     </pre>
     <p>
       An isomorphism between two graphs <em>G<sub>1</sub>=(V<sub>1</sub>, E<sub>1</sub>)</em> 
@@ -137,144 +151,258 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
     </p>
     
     <h3>Parameters</h3>
-  
-    <p>IN: <tt>const GraphSmall&amp; graph_small</tt></p>
-    <blockquote>
-      <p>
-        The (first) smaller graph (fewer vertices) of the pair to be tested for 
-        isomorphism. The type <tt>GraphSmall</tt> must be a
-        model of 
-        <a href="./VertexListGraph.html">Vertex List Graph</a>,
-        <a href="./EdgeListGraph.html">Edge List Graph</a>,
-        <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
-        <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
-        The edge descriptors <tt>graph_traits&lt;GraphSmall&gt;::edge_descriptor</tt>
-        must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
-        LessThan Comparable</a>, cf. also the remark <a href="#notes">below</a>.
-      </p>
-    </blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const GraphSmall&amp; graph_small</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The (first) smaller graph (fewer vertices) of the pair to be tested for
+isomorphism.  Its type must be a model of <a
+href="./VertexListGraph.html"><b>Vertex List Graph</b></a>, <a
+href="./EdgeListGraph.html"><b>Edge List Graph</b></a>, <a
+href="./BidirectionalGraph.html"><b>Bidirectional Graph</b></a>, and <a
+href="./AdjacencyMatrix.html"><b>Adjacency Matrix</b></a>.  The type
+<tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphSmall&gt;::edge_descriptor</tt> must be <a
+href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less-Than
+Comparable</b></a>, cf. also the remark <a href="#notes">below</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const GraphLarge&amp; graph_large</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The (second) larger graph to be tested.  Its type must be a model of <a
+href="./VertexListGraph.html"><b>Vertex List Graph</b></a>, <a
+href="./EdgeListGraph.html"><b>Edge List Graph</b></a>, <a
+href="./BidirectionalGraph.html"><b>Bidirectional Graph</b></a>, and <a
+href="./AdjacencyMatrix.html"><b>Adjacency Matrix</b></a>.  The type
+<tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphSmall&gt;::edge_descriptor</tt> must be <a
+href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less-Than
+Comparable</b></a>, cf. also the remark <a href="#notes">below</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>SubGraphIsoMapCallback user_callback</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>
+<p>A function object to be called when a graph-subgraph isomorphism has been
+discovered.  The function call operator must have following form:</p>
+<pre>
+template &lt;typename CorrespondenceMap1To2, typename CorrespondenceMap2To1&gt;
+bool operator()(CorrespondenceMap1To2 f1, CorrespondenceMap2To1 f2) const
+</pre>
+<p>Both the <tt>CorrespondenceMap1To2</tt> and <tt>CorresondenceMap2To1</tt>
+types are models of <a href="../../property_map/doc/ReadablePropertyMap.html"
+><b>Readable Property Map</b></a> and map equivalent vertices across the two
+graphs given to <tt>vf2_subgraph_iso</tt> (or <tt>vf2_graph_iso</tt> or <tt
+>vf2_subgraph_mono</tt>).  For instance, if <tt>v</tt> is from <tt
+>graph_small</tt>, <tt>w</tt> is from <tt>graph_large</tt>, and the vertices
+can be considered equivalent, then <tt>get(f1, v)</tt> will be <tt>w</tt> and
+<tt>get(f2, w)</tt> will be <tt>v</tt>.  If any vertex, say <tt>v</tt> in <tt
+>graph_small</tt>, does not match a vertex in <tt>graph_large</tt>, then <tt
+>get(f1, v)</tt> will be <tt><a href="graph_traits.html">graph_traits</a
+>&lt;GraphLarge&gt;::null_vertex()</tt>.  Likewise for any unmatched vertices
+from <tt>graph_large</tt>, <tt>get(f2, w)</tt> will be <tt><a
+href="graph_traits.html">graph_traits</a>&lt;GraphSmall&gt;::null_vertex()</tt
+>.</p>
+<p>Returning false from the callback will abort the search
+immediately.  Otherwise, the entire search space will be explored.  A
+"default" print callback is provided as a <a href="#vf2_callback">utility
+function</a>.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const VertexOrderSmall&amp;
+vertex_order_small</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The ordered vertices of the smaller (first) graph
+<tt>graph_small</tt>.  During the matching process the vertices are examined
+in the order given by <tt>vertex_order_small</tt>.  Its type must be a model
+of <a href="http://www.boost.com/sgi/stl/Container.html"><b>SGI
+Container</b></a> with value type <tt><a href="graph_traits.html"
+>graph_traits</a>&lt;GraphSmall&gt;::vertex_descriptor</tt>.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td>The vertices are ordered by multiplicity of in/out degrees.</td>
+</tr>
+</table>
 
-    <p>IN: <tt>const GraphLarge&amp; graph_large</tt></p>
-    <blockquote>
-      <p>
-        The (second) larger graph to be tested.
-        Type <tt>GraphLarge</tt> must be a model of 
-        <a href="./VertexListGraph.html">Vertex List Graph</a>,
-        <a href="./EdgeListGraph.html">Edge List Graph</a>,
-        <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
-        <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
-        The edge descriptors <tt>graph_traits&lt;GraphLarge&gt;::edge_descriptor</tt>
-        must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
-        LessThan Comparable</a>, cf. also the remark <a href="#notes">below</a>. 
-      </p>
-    </blockquote>
-    
-    <p>OUT: <tt>SubGraphIsoMapCallback  user_callback</tt></p>
-    <blockquote>
-      <p>
-        A function object to be called when a graph-subgraph isomorphism has been discovered. The
-        <tt>operator()</tt> must have following form:
-      </p>
-      <pre>
-template &lt;typename CorrespondenceMap1To2,
-          typename CorrespondenceMap2To1&gt;
-bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
-      </pre>
-      <p>
-        Both the <tt>CorrespondenceMap1To2</tt>
-        and <tt>CorresondenceMap2To1</tt> types are models
-        of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
-          Property Map</a> and map equivalent vertices across the two
-        graphs given to <tt>vf2_subgraph_iso</tt> (or <tt>vf2_graph_iso</tt> or
-        <tt>vf2_subgraph_mono</tt>). For instance, if <tt>v</tt> is
-        from <tt>graph_small</tt>, <tt>w</tt> is from <tt>graph_large</tt>,
-        and the vertices can be considered equivalent,
-        then <tt>get(f, v)</tt> will be <tt>w</tt> and <tt>get(g, w)</tt> 
-        will be <tt>v</tt>. If any vertex, say <tt>v</tt> in <tt>graph_small</tt>, 
-        does not match a vertex in <tt>graph_large</tt> ,
-        then <tt>get(f, v)</tt> will be <tt>graph_traits&lt;GraphLarge&gt;::null_vertex()</tt>.
-        Likewise for any unmatched vertices from <tt>graph_large</tt>,
-        <tt>get(g, w)</tt> will be <tt>graph_traits&lt;GraphSmall&gt;::null_vertex()</tt>.
-
-        Returning false from the callback will abort the search immediately. Otherwise,
-        the entire search space will be explored. A "default" print callback 
-        is provided as a <a href="#vf2_callback">utility function</a>.
-        </p>
-    </blockquote>
-
-    <p>IN: <tt>const VertexOrderSmall&amp; vertex_order_small</tt></p>
-    <blockquote>
-      <p>
-        The ordered vertices of the smaller (first) graph <tt>graph_small</tt>.
-        During the matching process the vertices are examined in the order given by
-        <tt>vertex_order_small</tt>. Type <tt>VertexOrderSmall</tt> must be a model 
-        of <a href="http://www.sgi.com/tech/stl/Container.html">ContainerConcept</a> 
-        with value type 
-        <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt>.
-        <br>
-        <b>Default</b> The vertices are ordered by multiplicity of
-        in/out degrees.
-      </p>
-    </blockquote>
-    
     <h3>Named Parameters</h3>
-    
-    <p>IN: <tt>vertex_index1(IndexMapSmall index_map_small)</tt></p>  
-    <blockquote>
-      <p>
-        This maps each vertex to an integer in the range <tt>[0, num_vertices(graph_small))</tt>.
-        Type <tt>IndexMapSmall</tt> must be a model of 
-        <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
-        <br>
-        <b>Default:</b> <tt>get(vertex_index, graph_small)</tt>
-      </p>
-    </blockquote>
-
-    <p>IN: <tt>vertex_index2(IndexMapLarge index_map_large)</tt></p>  
-    <blockquote>
-      <p>
-        This maps each vertex to an integer in the range <tt>[0, num_vertices(graph_large))</tt>.
-        Type <tt>IndexMapLarge</tt> must be a model of
-        <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
-        <br>
-        <b>Default:</b> <tt>get(vertex_index, graph_large)</tt>
-      </p>
-    </blockquote>
-    
-    <p>IN: <tt>edges_equivalent(EdgeEquivalencePredicate edge_comp)</tt></p>
-    <blockquote>
-      <p>
-        This function object is used to determine if edges between the two graphs 
-        <tt>graph_small</tt> and <tt>graph_large</tt> are equivalent. 
-        Type <tt>EdgeEquivalencePredicate</tt> must be a model of 
-        <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
-          Predicate</a> and have argument types of
-        <tt>graph_traits&lt;GraphSmall&gt;::edge_descriptor</tt> and
-        <tt>graph_traits&lt;GraphLarge&gt;::edge_descriptor</tt>.
-        The edge descriptors must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
-        LessThan Comparable</a>. A return value of true indicates that the edges are equivalent.
-        <br>
-        <b>Default:</b> <tt><a href="./mcgregor_common_subgraphs.html#always_equivalent">
-            always_equivalent</a></tt>
-        </p>
-    </blockquote>
-    
-    <p>IN: <tt>vertices_equivalent(VertexEquivalencePredicate vertex_comp)</tt></p>
-    <blockquote>
-      <p>
-        This function object is used to determine if vertices between the two graphs 
-        <tt>graph_small</tt> and <tt>graph_large</tt> are equivalent. 
-        Type <tt>VertexEquivalencePredicate</tt> must be a model of 
-        <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary Predicate</a> 
-        and have argument types of
-        <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt> and
-        <tt>graph_traits&lt;GraphLarge&gt;::vertex_descriptor</tt>. A return value of true
-        indicates that the vertices are equivalent.
-        <br>
-        <b>Default:</b> <tt><a href="./mcgregor_common_subgraphs.html#always_equivalent">
-            always_equivalent</a></tt>
-        </p>
-    </blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index1_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index1_map(VertexIndex1Map i1_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(graph_small))</tt>.  This is necessary for efficient
+updates of the heap data structure when an edge is relaxed.  The argument type
+must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+><b>Readable Property Map</b></a>.  The value type of the map must be an
+integer type.  The vertex descriptor type of <tt>graph_small</tt> needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph_small)</tt><br />Note: if
+you use this default, make sure that <tt>graph_small</tt> has an internal
+<tt>vertex_index</tt> property.  For example, <tt>adjacency_list</tt> with
+<tt>VertexList=listS</tt> does not have an internal <tt>vertex_index</tt>
+property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index2_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index2_map(VertexIndex2Map i2_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex of the graph to a unique integer in the range
+<tt>[0, num_vertices(graph_large))</tt>.  This is necessary for efficient
+updates of the heap data structure when an edge is relaxed.  The argument type
+must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+><b>Readable Property Map</b></a>.  The value type of the map must be an
+integer type.  The vertex descriptor type of <tt>graph_large</tt> needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph_large)</tt><br />Note: if
+you use this default, make sure that <tt>graph_large</tt> has an internal
+<tt>vertex_index</tt> property.  For example, <tt>adjacency_list</tt> with
+<tt>VertexList=listS</tt> does not have an internal <tt>vertex_index</tt>
+property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_edges_equivalent</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>edges_equivalent(EdgeEquivalencePredicate
+edge_comp)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function object is used to determine if edges between the two graphs
+<tt>graph_small</tt> and <tt>graph_large</tt> are equivalent.  The argument
+type must be a model of <a
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> and have argument types of <tt><a href="graph_traits.html"
+>graph_traits</a>&lt;GraphSmall&gt;::edge_descriptor</tt> and <tt><a
+href="graph_traits.html">graph_traits</a
+>&lt;GraphLarge&gt;::edge_descriptor</tt>.  The edge descriptors must be
+<a href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less-Than
+Comparable</b></a>.  A return value of <tt>true</tt> indicates that the edges
+are equivalent.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt><a
+href="./mcgregor_common_subgraphs.html#always_equivalent"
+>always_equivalent</a></tt></td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertices_equivalent</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertices_equivalent(VertexEquivalencePredicate
+vertex_comp)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This function object is used to determine if edges between the two graphs
+<tt>graph_small</tt> and <tt>graph_large</tt> are equivalent.  The argument
+type must be a model of <a
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
+Predicate</b></a> and have argument types of <tt><a href="graph_traits.html"
+>graph_traits</a>&lt;GraphSmall&gt;::vertex_descriptor</tt> and <tt><a
+href="graph_traits.html">graph_traits</a
+>&lt;GraphLarge&gt;::vertex_descriptor</tt>.  A return value of <tt>true</tt>
+indicates that the edges are equivalent.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt><a
+href="./mcgregor_common_subgraphs.html#always_equivalent"
+>always_equivalent</a></tt></td>
+</tr>
+</table>
 
     <h3>Related Functions</h3>
     <p>
@@ -474,8 +602,11 @@ vf2_print_callback&lt;graph_type, graph_type&gt; callback(graph1, graph2);
 // Function vertex_order_by_mult is used to compute the order of 
 // vertices of graph1. This is the order in which the vertices are examined
 // during the matching process.</em>
-vf2_subgraph_iso(graph1, graph2, callback, vertex_order_by_mult(graph1),
-                 edges_equivalent(edge_comp).vertices_equivalent(vertex_comp));
+vf2_subgraph_iso(
+    graph1, graph2, callback, vertex_order_by_mult(graph1),
+    boost::graph::keywords::_edges_equivalent = edge_comp,
+    boost::graph::keywords::_vertices_equivalent = vertex_comp
+);
     </pre>
 
     <p>

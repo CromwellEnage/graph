@@ -1399,9 +1399,6 @@ namespace boost { namespace graph {
             graph1, graph2, user_callback, parameter::compose()
         );
     }
-}} // namespace boost::graph
-
-namespace boost {
 
   // Verifies a graph (sub)graph isomorphism map 
   template<typename Graph1,
@@ -1417,7 +1414,7 @@ namespace boost {
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph1> ));
     BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph2> ));
 
-    detail::equivalent_edge_exists<Graph2> edge2_exists;
+    boost::detail::equivalent_edge_exists<Graph2> edge2_exists;
 
     BGL_FORALL_EDGES_T(e1, graph1, Graph1) {
       typename graph_traits<Graph1>::vertex_descriptor s1, t1;
@@ -1432,7 +1429,7 @@ namespace boost {
       typename graph_traits<Graph2>::edge_descriptor e2;
       
       if (!edge2_exists(s2, t2,
-                        detail::edge2_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp, e1), 
+                        boost::detail::edge2_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp, e1), 
                         graph2))
         return false;
       
@@ -1450,7 +1447,7 @@ namespace boost {
     return verify_vf2_subgraph_iso(graph1, graph2, f, 
                                    always_equivalent(), always_equivalent());
   }
-} // namespace boost
+}} // namespace boost::graph
 
 #include <boost/parameter/are_tagged_arguments.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
@@ -1545,6 +1542,7 @@ namespace boost {
     using ::boost::graph::vf2_subgraph_mono;
     using ::boost::graph::vf2_subgraph_iso;
     using ::boost::graph::vf2_graph_iso;
+    using ::boost::graph::verify_vf2_subgraph_iso;
 
   // Old-style named parameter interface of vf2_subgraph_iso
   template <typename GraphSmall,
