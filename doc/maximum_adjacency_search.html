@@ -169,7 +169,7 @@ The full program is in <a href="../test/mas_test.cpp"
 </tr>
 <tr valign="top">
 <th>Description:</th>
-<td>A connected, directed graph.  Its type must be a model of
+<td>A connected, undirected graph.  Its type must be a model of
 <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
 <a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
 </tr>
@@ -417,10 +417,8 @@ keyword:</th>
 used.  The argument type must be a model of <a
 href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
 Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
-value type of the distance map must be a size type (<tt>typename std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a
->&lt;typename <a href="graph_traits.html">graph_traits</a
->&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+value type of the distance map must be the weight type (<tt>typename
+boost::property_traits&lt;WeightMap&gt;::value_type</tt>).</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>

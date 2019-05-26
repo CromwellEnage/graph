@@ -27,7 +27,7 @@ typename boost::enable_if&lt;
     parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-        TaggedArg0, TaggedArg1, ..., TaggedArg4
+        TaggedArg0, TaggedArg1, ..., TaggedArg5
     &gt;,
     typename property_traits&lt;WeightMap&gt;::value_type
 &gt;::type
@@ -61,100 +61,298 @@ stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
 
 <p>Sometimes a graph has multiple min-cuts, but all have the same weight. The <tt>stoer_wagner_min_cut</tt> function determines exactly one of the min-cuts as well as its weight.
 
+<h3>Example</h3>
+
+<p>
+One overload of <tt>stoer_wagner_min_cut()</tt> can take in named parameter
+arguments, courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.
+</p>
+
+<pre>
+struct edge_t
+{
+    unsigned long first;
+    unsigned long second;
+};
+<i>// ...</i>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::vecS, boost::vecS, boost::undirectedS
+&gt; undirected_unweighted_graph;
+<i>// ...</i>
+typedef boost::<a href="graph_traits.html">graph_traits</a
+>&lt;undirected_unweighted_graph&gt;::vertex_descriptor vertex_descriptor;
+<i>// ...</i>
+edge_t edges[] = <i>// ...</i>
+undirected_unweighted_graph g(edges, edges + 14, 8);
+std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, bool&gt; parity;
+boost::<a href="../../property_map/doc/associative_property_map.html">associative_property_map</a>&lt;std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, bool&gt; &gt; parities(parity);
+std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, vertex_descriptor&gt; assignment;
+boost::<a href="../../property_map/doc/associative_property_map.html">associative_property_map</a>&lt;std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, vertex_descriptor&gt; &gt; assignments(assignment);
+<i>// ...</i>
+int w = stoer_wagner_min_cut(
+    g,
+    boost::<a href="../../property_map/doc/static_property_map.html">make_static_property_map</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;undirected_unweighted_graph&gt;::edge_descriptor&gt;(1),
+    <b>boost::graph::keywords::_vertex_assignment_map =</b> assignments,
+    <b>boost::graph::keywords::_parity_map =</b> parities
+);
+</pre>
+
+<p>
+The full program is in <a href="../test/stoer_wagner_test.cpp"
+><tt>test/stoer_wagner_test.cpp</tt></a>
+</p>
+
 <h3>Where Defined</h3>
 <p><a href="../../../boost/graph/stoer_wagner_min_cut.hpp"><tt>boost/graph/stoer_wagner_min_cut.hpp</tt></a>
 
 <h3>Parameters</h3>
 
-<p>IN: <tt>const UndirectedGraph&amp; g</tt>
-<blockquote>
-  A connected, undirected graph. The graph type must be a model of
-  <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
-</blockquote>
-
-<p>IN: <tt>WeightMap weights</tt>
-<blockquote>
-  The weight or length of each edge in the graph. The <tt>WeightMap</tt> type must be a model
-  of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
-  Property Map</a> and its value type must be <a class="external" href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
-  Comparable</a> and summable. The key type of this map needs to be the graph's
-  edge descriptor type.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>const UndirectedGraph&amp; g</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A connected, undirected graph.  Its type must be a model of
+<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
+<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th>Signature:</th>
+<td bgcolor="#dfdfdf"><tt>WeightMap weights</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The weight or ``length'' of each edge in the graph.  The argument type
+must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a> and its value type must be <a
+href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
+Comparable</b></a> and summable.  The key type of this map needs to be the
+graph's edge descriptor type.</td>
+</tr>
+</table>
 
 <h3>Named Parameters</h3>
 
-<p>OUT: <tt>parity_map(ParityMap parities)</tt>
-<blockquote>
-  The algorithm computes a min-cut, which divides the set of vertices into two,
-  non-empty sets. The <tt>stoer_wagner_min_cut</tt> function records which of
-  the two sets that each vertex belongs to by setting the parity to <tt>true</tt>
-  (representing one set) or <tt>false</tt> (for the other). <tt>ParityMap</tt>
-  must be a model of a <a href="../../property_map/doc/WritablePropertyMap.html">Writable
-  Property Map</a> and its value type should be a bool type. The
-  key type must be the graph's vertex descriptor type.<br>
-  <b>Default:</b> <tt>boost::dummy_property_map</tt>
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_parity_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>parity_map(ParityMap parities)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The algorithm computes a min-cut, which divides the set of vertices into
+two, non-empty sets.  The <tt>stoer_wagner_min_cut()</tt> function records
+which of the two sets that each vertex belongs to by setting the parity to
+<tt>true</tt> (representing one set) or <tt>false</tt> (for the other).  Its
+argument type must be a model of a
+<a href="../../property_map/doc/WritablePropertyMap.html"><b>Writable Property
+Map</b></a> and its value type should be a bool type.  The key type must be
+the graph's vertex descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>boost::dummy_property_map</tt></td>
+</tr>
+</table>
 
 <h4>Expert Parameters</h4>
 
-<p>IN: <tt>vertex_index_map(VertexIndexMap vertexIndices)</tt> 
-<blockquote>
-  This maps each vertex to an integer in the range [0, <tt>num_vertices(g)</tt>). This
-  is only necessary if the default is used for the assignment, index-in-heap, or distance maps.
-  <tt>VertexIndexMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  key type must be the graph's vertex descriptor type.<br>
-  <b>Default:</b> <tt>get(boost::vertex_index, g)</tt>
-</blockquote>
-
-<p>UTIL: <tt>assignment_map(AssignmentMap assignments)</tt>
-<blockquote>
-  <tt>AssignmentMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key and value types must be the graph's vertex descriptor type.<br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a <tt>std::vector</tt>
-  of <tt>num_vertices(g)</tt> vertex descriptors and <tt>vertexIndices</tt> for
-  the index map.
-</blockquote>
-
-<p>UTIL: <tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt>
-<blockquote>
-  <tt>MaxPriorityQueue</tt> must be a model of <a href="./KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
-  and a max-<a href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue">Updatable Priority Queue</a>.
-  The value type must be the graph's vertex descriptor and the key type must be 
-  the weight type.
-  <b>Default:</b> A <tt>boost::d_ary_heap_indirect</tt> using a default index-in-heap
-  and distance map.
-</blockquote>
-
-<p>UTIL: <tt>index_in_heap_map(IndexInHeapMap indicesInHeap)</tt>
-<blockquote>
-  This parameter only has an effect when the default max-priority queue is used.<br>
-  <tt>IndexInHeapMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key type must be the graph's vertex descriptor type. The value type
-  must be a size type (<tt>typename&nbsp;std::vector&lt;vertex_descriptor&gt;::size_type</tt>).<br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a <tt>std::vector</tt>
-  of <tt>num_vertices(g)</tt> size type objects and <tt>vertexIndices</tt> for
-  the index map.
-</blockquote>
-
-<p>UTIL: <tt>distance_map(DistanceMap wAs)</tt>
-<blockquote>
-  This parameter only has an effect when the default max-priority queue is used.<br>
-  <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key type must be the graph's vertex descriptor type. The value type
-  must be the weight type (<tt>typename&nbsp;boost::property_traits&lt;WeightMap&gt;::value_type</tt>).<br>
-  <b>Default:</b> A <tt>boost::iterator_property_map</tt> using a <tt>std::vector</tt>
-  of <tt>num_vertices(g)</tt> weight type objects and <tt>vertexIndices</tt> for
-  the index map.
-</blockquote>
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(g))</tt>.  This is only necessary if the default is used for the
+assignment, index-in-heap, or distance maps.  The argument type must be a
+model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
+Property Map</b></a>.  The value type of the map must be an integer type.  The
+key type must be the graph's vertex descriptor type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
+default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_vertex_assignment_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_assignment_map(AssignmentMap
+assignments)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key and value types must be the graph's vertex descriptor
+type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the graph's vertex descriptor type, and of size <tt>num_vertices(g)</tt>, and
+using the index map argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"
+><tt>boost::graph::keywords::_max_priority_queue</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"
+><tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"><b
+>Keyed Updatable Queue</b></a> and max-<a
+href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue"><b>Updatable
+Priority Queue</b></a>.  The value type must be the graph's vertex descriptor
+and the key type must be the weight type.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">A <tt>boost::d_ary_heap_indirect</tt> using the
+index-in-heap and distance map arguments.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_index_in_heap_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>index_in_heap_map(IndexInHeapMap
+indicesInHeap)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This parameter only has an effect when the default max-priority queue is
+used.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the index-in-heap map must be a size type (<tt>typename std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a
+>&lt;typename <a href="graph_traits.html">graph_traits</a
+>&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the size type, and of size <tt>num_vertices(g)</tt>, and using the index map
+argument for the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This parameter only has an effect when the default max-priority queue is
+used.  The argument type must be a model of <a
+href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
+Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the distance map must be the weight type (<tt>typename
+boost::property_traits&lt;WeightMap&gt;::value_type</tt>).</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the value type of the weight map argument type, and of size
+<tt>num_vertices(g)</tt>, and using the index map argument for the index
+map.</td>
+</tr>
+</table>
 
 <h3>Returns</h3>
-<p>The weight of the min-cut
+<p>The weight of the min-cut.</p>
 
 <h3>Throws</h3>
 
