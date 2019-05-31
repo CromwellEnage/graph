@@ -1,13 +1,20 @@
 <HTML>
 <!--
-     Copyright (c) Jeremy Siek 2000
+    Copyright (c) Jeremy Siek 2000
     
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-<Head>
-<Title>Boost Graph Library: Copy Graph</Title>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Copy Graph</title>
+<style>
+tr.deduced_param_0 {
+    color:#dfdfff;
+    background-color:#000000;
+}
+</style>
+</head>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -15,94 +22,281 @@
 
 <BR Clear>
 
-<H1><TT>copy_graph</TT></H1>
+<h1><tt>copy_graph</tt></h1>
 
-<PRE>
+<pre>
 template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>&gt; 
-void copy_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_copy,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
-</PRE>
+void copy_graph(const VertexListGraph&amp; graph, MutableGraph&amp; result,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+</pre>
 
-This function copies all of the vertices and edges from graph
-<tt>G</tt> into <tt>G_copy</tt>. Also, it copies the vertex and edge
-properties, either by using the <tt>vertex_all</tt> and
-<tt>edge_all</tt> property maps, or by user-supplied copy functions.
+<p>
+If the configuration macro
+<tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined but the
+configuration macro
+<a href="../../config/doc/html/boost_config/macro_reference.html"><tt
+>BOOST_NO_CXX11_DECLTYPE</tt></a> is <strong>not</strong> defined, then the
+following function overload definition is available.
+</p>
 
-<H3>Where Defined</H3>
+<pre>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), copy_graph, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , <i>// unspecified predicate</i>
+        )
+    )
+    (deduced
+        (required
+            (result
+              , <i>// unspecified predicate</i>
+            )
+        )
+        (optional
+            (vertex_copy
+              , <i>// unspecified predicate</i>
+              , <i>// see parameter table for default value</i>
+            )
+            (edge_copy
+              , <i>// unspecified predicate</i>
+              , <i>// see parameter table for default value</i>
+            )
+            (vertex_index_map
+              , <i>// unspecified predicate</i>
+              , <i>// see parameter table for default value</i>
+            )
+            (orig_to_copy
+              , <i>// unspecified predicate</i>
+              , <i>// see parameter table for default value</i>
+            )
+        )
+    )
+)
+</pre>
 
-<P>
-<a href="../../../boost/graph/copy.hpp"><TT>boost/graph/copy.hpp</TT></a>
+<p>
+This function copies all of the vertices and edges from <tt>graph</tt> into
+<tt>result</tt>.  Also, it copies the vertex and edge properties, either by
+copying the contents of <tt>get(vertex_all, graph)</tt> to <tt>get(vertex_all,
+result)</tt> and by copying the contents of <tt>get(edge_all, graph)</tt> to
+<tt>get(edge_all, result)</tt>, or by user-supplied copy functions.
+</p>
 
-<P>
+<h3>Where Defined</h3>
 
-<H3>Parameters</H3>
-
-IN: <tt>const VertexListGraph&amp; G</tt>
-<blockquote>
-A directed or undirected graph. The graph type must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
-</blockquote>
-
-OUT: <tt>MutableGraph&amp; G_copy</tt>
-<blockquote>
-The resulting copy of the graph.  The graph type must be a model of <a
-href="./MutableGraph.html">Mutable Graph</a>.
-</blockquote>
+<p>
+<a href="../../../boost/graph/copy.hpp"><tt>boost/graph/copy.hpp</tt></a>
+</p>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>vertex_copy(VertexCopier vc)</tt>
-<blockquote>
-This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of a vertex in the original graph
-into the corresponding vertex in the copy.<br>
+<p>
+If <strong>any</strong> of the following are true:
+</p>
 
-<b>Default:</b> <tt>vertex_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
-which uses the property tag <tt>vertex_all</tt> to access a property
-map from the graph.
-</blockquote>
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro
+<tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is
+<strong>not</strong> defined.</li>
+<li>The configuration macro
+<a href="../../config/doc/html/boost_config/macro_reference.html"><tt
+>BOOST_NO_CXX11_DECLTYPE</tt></a> is defined.</li>
+</ul>
 
-IN: <tt>edge_copy(EdgeCopier ec)</tt>
-<blockquote>
-This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of an edge in the original graph
-into the corresponding edge in the copy.<br>
+<p>
+Then the argument must be bound
+to this parameter either by name or by position.  On the other hand, if
+<strong>any</strong> of the following are true:
+</p>
 
-<b>Default:</b> <tt>edge_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
-which uses the property tag <tt>edge_all</tt> to access a property
-map from the graph.
-</blockquote>
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro
+<tt>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</tt> is defined.</li>
+<li>The configuration macro
+<a href="../../config/doc/html/boost_config/macro_reference.html"><tt
+>BOOST_NO_CXX11_DECLTYPE</tt></a> is <strong>not</strong> defined.</li>
+</ul>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
-<blockquote>
-The vertex index map type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a> and must map the vertex descriptors of <tt>G</tt> to the
-integers in the half-open range <tt>[0,num_vertices(G))</tt>.<br>
+<p>
+Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a> type
+deduction facilities can bind an unnamed argument to this parameter as long
+as <strong>all</strong> of the following are true:
+</p>
 
-<b>Default:</b> <tt>get(vertex_index, G)</tt>.
-Note: if you use this default, make sure your graph has
-an internal <tt>vertex_index</tt> property. For example,
-<tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-not have an internal <tt>vertex_index</tt> property.
-</blockquote>
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
 
+<table>
+<tr valign="top">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_graph</tt></td>
+</tr>
+<tr valign="top">
+<th>Unnamed version:</th>
+<td bgcolor="#dfdfdf"><tt>const VertexListGraph&amp; graph</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>A directed or undirected graph.  Its type must be a model of
+<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top" class="deduced_param_0">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_result</tt></td>
+</tr>
+<tr valign="top">
+<th>Unnamed version:</th>
+<td bgcolor="#dfdfdf"><tt>MutableGraph&amp; result</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>The resulting copy of the graph.  Its type must be a model of
+<a href="./MutableGraph.html"><b>Mutable Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top" class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_copy</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_copy(VertexCopier vc)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This is a <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+><b>Binary Function</b></a> that copies the properties of a vertex in the
+original graph into the corresponding vertex in the copy.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">A function object that copies the contents of
+<tt>get(vertex_all, graph)</tt> to <tt>get(vertex_all, result)</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top" class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_edge_copy</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>edge_copy(EdgeCopier ec)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This is a <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+><b>Binary Function</b></a> that copies the properties of an edge in the
+original graph into the corresponding edge in the copy.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">A function object that copies the contents of
+<tt>get(edge_all, graph)</tt> to <tt>get(edge_all, result)</tt>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top" class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+num_vertices(graph))</tt>.  The argument type must be a model of <a
+href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
+Map</b></a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph)</tt><br />Note: if you use
+this default, make sure your graph has an internal <tt>vertex_index</tt>
+property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
+does not have an internal <tt>vertex_index</tt> property.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr valign="top" class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr valign="top">
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_orig_to_copy</tt></td>
+</tr>
+<tr valign="top">
+<th>Old-style signature:</th>
+<td bgcolor="#dfdfdf"><tt>orig_to_copy(Orig2CopyMap c)</tt></td>
+</tr>
+<tr valign="top">
+<th>Description:</th>
+<td>This maps vertices in the original graph to vertices in the copy.</td>
+</tr>
+<tr valign="top">
+<th>Default:</th>
+<td bgcolor="#dfdfdf">An <a
+href="../../property_map/doc/iterator_property_map.html"><tt
+>iterator_property_map</tt></a> created from a <tt>std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
+the result graph's vertex descriptor type, and of size
+<tt>num_vertices(graph)</tt>, and using the index map argument for the index
+map.</td>
+</tr>
+</table>
 
-UTIL/OUT: <tt>orig_to_copy(Orig2CopyMap c)</tt>
-<blockquote>
-This maps vertices in the original graph to vertices in the copy.
+<h3>Complexity</h3>
 
-<b>Default:</b> an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of the output graph's vertex descriptor type of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
-</blockquote>
-
-<H3>Complexity</H3>
-
-<P>
+<p>
 The time complexity is <i>O(V + E)</i>.
-
-
+</p>
 
 <br>
 <HR>
