@@ -71,7 +71,7 @@ int main()
     add_edge(vertex(1, g1_1), vertex(4, g1_1), g1_1);
     add_edge(vertex(3, g1_1), vertex(0, g1_1), g1_1);
     add_edge(vertex(5, g1_1), vertex(2, g1_1), g1_1);
-    boost::copy_graph(g1_1, g1_2);
+    copy_graph(g1_1, g1_2);
     BOOST_TEST_EQ(num_vertices(g1_1), num_vertices(g1_2));
 
     for (std::size_t i = 0; i < num_vertices(g1_2); ++i)
@@ -94,7 +94,7 @@ int main()
     > o2c(num_vertices(g1_1), boost::graph_traits<G2>::null_vertex());
     copier c(g1_1, g2);
 
-    boost::copy_graph(
+    copy_graph(
         g1_1,
         g2,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) || ( \

@@ -3,13 +3,13 @@
 <html>
 <!--
     Copyright (c) Jeremy Siek 2000
-    
+
     Distributed under the Boost Software License, Version 1.0.
     (See accompanying file LICENSE_1_0.txt or copy at
     http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<title>Boost Graph Library: Copy Graph</title>
+<title>Boost Graph Library: Copy Component</title>
 <style>
 body {
     color:#000000;
@@ -38,12 +38,20 @@ tr.deduced_param_0 {
 
 <br />
 
-<h1><tt>copy_graph</tt></h1>
+<h1><tt>copy_component</tt></h1>
 
 <pre>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>&gt; 
-void copy_graph(const VertexListGraph&amp; graph, MutableGraph&amp; result,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+template &lt;typename <a href="./IncidenceGraph.html">IncidenceGraph</a
+>, typename <a href="./MutableGraph.html">MutableGraph</a>&gt; 
+typename <a href="graph_traits.html">graph_traits</a
+>&lt;MutableGraph&gt;::vertex_descriptor
+copy_component(
+    const IncidenceGraph&amp; graph,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor root_vertex
+    MutableGraph&amp; result,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>
+);
 </pre>
 
 <p>
@@ -57,7 +65,15 @@ following function overload definition is available.
 
 <pre>
 <a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
-    (void), copy_graph, ::boost::graph::keywords::tag,
+    (
+        boost::lazy_enable_if&lt;
+            typename mpl::has_key&lt;
+                Args,
+                boost::graph::keywords::tag::result
+            &gt;::type,
+            <i>// unspecified metafunction instantiation</i>
+        &gt;
+    ), copy_component, ::boost::graph::keywords::tag,
     (required
         (graph
           , <i>// unspecified predicate</i>
@@ -65,6 +81,9 @@ following function overload definition is available.
     )
     (deduced
         (required
+            (root_vertex
+              , <i>// unspecified predicate</i>
+            )
             (result
               , <i>// unspecified predicate</i>
             )
@@ -92,10 +111,11 @@ following function overload definition is available.
 </pre>
 
 <p>
-This function copies all of the vertices and edges from <tt>graph</tt> into
-<tt>result</tt>.  Also, it copies the vertex and edge properties, either by
-copying the contents of <tt>get(vertex_all, graph)</tt> to <tt>get(vertex_all,
-result)</tt> and by copying the contents of <tt>get(edge_all, graph)</tt> to
+This function copies all of the vertices and edges to which the specified root
+vertex is connected from <tt>graph</tt> into <tt>result</tt>.  Also, it copies
+the vertex and edge properties, either by copying the appropriate contents of
+<tt>get(vertex_all, graph)</tt> to <tt>get(vertex_all, result)</tt> and by
+copying the appropriate contents of <tt>get(edge_all, graph)</tt> to
 <tt>get(edge_all, result)</tt>, or by user-supplied copy functions.
 </p>
 
@@ -162,12 +182,34 @@ keyword:</th>
 </tr>
 <tr>
 <th>Unnamed version:</th>
-<td bgcolor="#dfdfdf"><tt>const VertexListGraph&amp; graph</tt></td>
+<td bgcolor="#dfdfdf"><tt>const IncidenceGraph&amp; graph</tt></td>
 </tr>
 <tr>
 <th>Description:</th>
 <td>A directed or undirected graph.  Its type must be a model of
-<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_root_vertex</tt></td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor root_vertex</tt></td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The starting vertex to which all connected vertices and edges will be
+copied.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -229,7 +271,7 @@ original graph into the corresponding vertex in the copy.</td>
 keyword:</th>
 <td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_edge_copy</tt></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td bgcolor="#dfdfdf"><tt>edge_copy(EdgeCopier ec)</tt></td>
 </tr>
@@ -288,7 +330,7 @@ does not have an internal <tt>vertex_index</tt> property.</td>
 keyword:</th>
 <td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_orig_to_copy</tt></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td bgcolor="#dfdfdf"><tt>orig_to_copy(Orig2CopyMap c)</tt></td>
 </tr>
