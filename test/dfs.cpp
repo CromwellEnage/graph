@@ -155,21 +155,21 @@ struct dfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::depth_first_search(g, visitor(vis).color_map(color));
+            depth_first_search(g, visitor(vis).color_map(color));
             break;
           case 1:
-            boost::depth_first_search(
+            depth_first_search(
               g,
               boost::graph::keywords::_visitor = vis,
               boost::graph::keywords::_color_map = color
             );
             break;
           case 2:
-            boost::depth_first_search(g, vis, color);
+            depth_first_search(g, vis, color);
             break;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
           case 3:
-            boost::depth_first_search(g, color, vis);
+            depth_first_search(g, color, vis);
             break;
 #endif
         }

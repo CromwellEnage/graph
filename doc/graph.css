@@ -1,0 +1,47 @@
+/*============================================================================
+    Copyright (c) 2019 Cromwell D. Enage
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+============================================================================*/
+
+body {
+    color: #000000;
+    background-color: #ffffff;
+}
+a:link {
+    color: #0000ee;
+}
+a.python_code:link {
+    color: #003f00;
+}
+a:visited {
+    color: #551a8b;
+}
+a:active {
+    color: #ff0000;
+}
+tr {
+    vertical-align: top;
+}
+tr.deduced_param_0 {
+    color: #dfdfff;
+    background-color: #000000;
+}
+th {
+    text-align: right;
+}
+.cxx_concept {
+    font-weight: bold;
+}
+.cxx_code {
+    font-family: monospace;
+    background-color: #dfdfdf;
+}
+.python_code {
+    font-family: monospace;
+    color: #003f00;
+    background-color: #ffffdf;
+}
+

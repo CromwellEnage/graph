@@ -980,15 +980,15 @@ namespace boost { namespace graph {
     // from the source vertex into g_out.  Return the vertex
     // in g_out that matches the source vertex of g_in.
     template <typename IncidenceGraph, typename MutableGraph, typename Args>
-    typename graph_traits<MutableGraph>::vertex_descriptor copy_component(
+    typename boost::enable_if<
+        parameter::is_argument_pack<Args>,
+        typename graph_traits<MutableGraph>::vertex_descriptor
+    >::type
+    copy_component(
         const IncidenceGraph& g_in,
         typename graph_traits<IncidenceGraph>::vertex_descriptor src,
         MutableGraph& g_out,
-        const Args& args,
-        typename boost::enable_if<
-            parameter::is_argument_pack<Args>,
-            mpl::true_
-        >::type = mpl::true_()
+        const Args& args
     )
     {
         typename boost::remove_const<
