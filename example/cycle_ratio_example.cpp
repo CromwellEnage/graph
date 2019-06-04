@@ -4,8 +4,8 @@
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <cassert>
 #include <ctime>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
             vim[target(*itr, tgr)] << ") ";
     }
     cout << endl;
-    assert(std::abs(cr.first / cr.second - min_cr) < epsilon);
-    return EXIT_SUCCESS;
+    BOOST_TEST(std::abs(cr.first / cr.second - min_cr) < epsilon);
+    return boost::report_errors();
 }
 
