@@ -1,37 +1,35 @@
-<HTML>
+<html>
 <!--
-     Copyright (c) 2004 Kris Beevers
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) 2004 Kris Beevers
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: A* Heuristic Search</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: A* Heuristic Search</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:astar"></A>
-<TT>astar_search</TT>
-</H1>
+<h1><a NAME="sec:astar"></a><tt>astar_search</tt></h1>
 
-
-<P>
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled interfaces</i>
 template &lt;
-    typename VertexListGraph, typename AStarHeuristic,
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
 &gt;
 void astar_search(
     const VertexListGraph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    AStarHeuristic h,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
@@ -47,14 +45,16 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 template &lt;
-    typename IncidenceGraph, typename AStarHeuristic,
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
 &gt;
 void astar_search_no_init(
     const IncidenceGraph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
-    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    AStarHeuristic h,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
@@ -70,14 +70,16 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 template &lt;
-    typename VertexListGraph, typename AStarHeuristic,
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg10
 &gt;
 void astar_search_tree(
     const VertexListGraph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    AStarHeuristic h,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
@@ -93,14 +95,16 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 template &lt;
-    typename IncidenceGraph, typename AStarHeuristic,
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
 &gt;
 void astar_search_no_init_tree(
     const IncidenceGraph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
-    <a href="AStarHeuristic.html">AStarHeuristic</a> h,
+    AStarHeuristic h,
     const TaggedArg0&amp; a0,
     const TaggedArg1&amp; a1 = <i>unspecified</i>,
     ...,
@@ -116,233 +120,246 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 <i>// old-style named parameter interfaces</i>
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename P, typename T, typename R&gt;
-void
-astar_search
-  (const VertexListGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+template &lt;
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
+    typename P, typename T, typename R
+&gt;
+void astar_search(
+    const VertexListGraph &amp;g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a
-> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+    AStarHeuristic h,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename P, typename T, typename R&gt;
-void
-astar_search_no_init
-  (const IncidenceGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
->&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a
-> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
+    typename P, typename T, typename R
+&gt;
+void astar_search_no_init(
+    const IncidenceGraph &amp;g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename P, typename T, typename R&gt;
-void
-astar_search_tree
-  (const VertexListGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+template &lt;
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
+    typename P, typename T, typename R
+&gt;
+void astar_search_tree(
+    const VertexListGraph &amp;g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a
-> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+    AStarHeuristic h,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 
-template &lt;typename VertexListGraph,
-          typename AStarHeuristic,
-          typename P, typename T, typename R&gt;
-void
-astar_search_no_init_tree
-  (const IncidenceGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
->&lt;VertexListGraph&gt;::vertex_descriptor s,
-   <a href="AStarHeuristic.html">AStarHeuristic</a
-> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>,
+    typename P, typename T, typename R
+&gt;
+void astar_search_no_init_tree(
+    const IncidenceGraph &amp;g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    AStarHeuristic h,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 
 <i>// non-named parameter interface</i>
-template &lt;typename VertexListGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a
->, typename PredecessorMap,
-          typename CostMap, typename DistanceMap,
-          typename WeightMap, typename VertexIndexMap,
-	  typename ColorMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
->CompareFunction</a>, typename <a
+template &lt;
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>, typename <a class="cxx_concept"
+href="AStarVisitor.html">AStarVisitor</a>,
+    typename PredecessorMap, typename CostMap, typename DistanceMap,
+    typename WeightMap, typename VertexIndexMap, typename ColorMap,
+    typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+class="cxx_concept">CompareFunction</a>, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
-          typename CostInf, typename CostZero&gt;
-inline void
-astar_search
-  (const VertexListGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+    typename CostInf, typename CostZero
+&gt;
+void astar_search(
+    const VertexListGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-   AStarHeuristic h, AStarVisitor vis,
-   PredecessorMap predecessor, CostMap cost,
-   DistanceMap distance, WeightMap weight,
-   VertexIndexMap index_map, ColorMap color,
-   CompareFunction compare, CombineFunction combine,
-   CostInf inf, CostZero zero);
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    VertexIndexMap index_map, ColorMap color,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero
+);
 
-template &lt;typename VertexListGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a
->, typename PredecessorMap,
-          typename CostMap, typename DistanceMap,
-          typename WeightMap,
-          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
->CompareFunction</a>, typename <a
+template &lt;
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>, typename <a class="cxx_concept"
+href="AStarVisitor.html">AStarVisitor</a>,
+    typename PredecessorMap, typename CostMap, typename DistanceMap,
+    typename WeightMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>CompareFunction</a>, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
-          typename CostInf, typename CostZero&gt;
-inline void
-astar_search_tree
-  (const VertexListGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+    typename CostInf, typename CostZero
+&gt;
+void astar_search_tree(
+    const VertexListGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
-   AStarHeuristic h, AStarVisitor vis,
-   PredecessorMap predecessor, CostMap cost,
-   DistanceMap distance, WeightMap weight,
-   CompareFunction compare, CombineFunction combine,
-   CostInf inf, CostZero zero);
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero
+);
 
 <i>// Versions that do not initialize property maps
 // (used for implicit graphs)</i>
-template &lt;typename IncidenceGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a
->, typename PredecessorMap,
-          typename CostMap, typename DistanceMap,
-          typename WeightMap, typename ColorMap,
-          typename VertexIndexMap,
-          typename <a
-href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
->CompareFunction</a>, typename <a
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>, typename <a class="cxx_concept"
+href="AStarVisitor.html">AStarVisitor</a>,
+    typename PredecessorMap, typename CostMap, typename DistanceMap,
+    typename WeightMap, typename ColorMap, typename VertexIndexMap,
+    typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+class="cxx_concept">CompareFunction</a>, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
-          typename CostInf, typename CostZero&gt;
-inline void
-astar_search_no_init
-  (const IncidenceGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+    typename CostInf, typename CostZero
+&gt;
+void astar_search_no_init(
+    const IncidenceGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
-   AStarHeuristic h, AStarVisitor vis,
-   PredecessorMap predecessor, CostMap cost,
-   DistanceMap distance, WeightMap weight,
-   ColorMap color, VertexIndexMap index_map,
-   CompareFunction compare, CombineFunction combine,
-   CostInf inf, CostZero zero);
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    ColorMap color, VertexIndexMap index_map,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero
+);
 
-<b>Note that the index_map and color parameters are swapped in
-astar_search_no_init() relative to astar_search(); the named parameter
-interfaces are not affected.</b>
+<b>// Note that the index_map and color parameters are swapped in
+// astar_search_no_init() relative to astar_search(); the named parameter
+// interfaces are not affected.</b>
 
-template &lt;typename IncidenceGraph, typename AStarHeuristic,
-          typename <a href="AStarVisitor.html">AStarVisitor</a
-        >, typename PredecessorMap,
-          typename CostMap, typename DistanceMap,
-          typename WeightMap,
-          typename <a
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept"
+href="AStarHeuristic.html">AStarHeuristic</a>, typename <a class="cxx_concept"
+href="AStarVisitor.html">AStarVisitor</a>,
+    typename PredecessorMap, typename CostMap, typename DistanceMap,
+    typename WeightMap, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a
 >, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
->CombineFunction</a>,
-          typename CostInf, typename CostZero&gt;
-inline void
-astar_search_no_init_tree
-  (const IncidenceGraph &amp;g,
-   typename <a href="graph_traits.html">graph_traits</a
+class="cxx_concept">CombineFunction</a>,
+    typename CostInf, typename CostZero
+&gt;
+void astar_search_no_init_tree(
+    const IncidenceGraph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
-   AStarHeuristic h, AStarVisitor vis,
-   PredecessorMap predecessor, CostMap cost,
-   DistanceMap distance, WeightMap weight,
-   CompareFunction compare, CombineFunction combine,
-   CostInf inf, CostZero zero);
-</PRE>
+    AStarHeuristic h, AStarVisitor vis,
+    PredecessorMap predecessor, CostMap cost,
+    DistanceMap distance, WeightMap weight,
+    CompareFunction compare, CombineFunction combine,
+    CostInf inf, CostZero zero
+);
+</pre>
 
-<P>
-This algorithm implements a heuristic search on a weighted, directed
-or undirected graph for the case where all edge weights are
-non-negative.
-</P>
+<p>
+This algorithm implements a heuristic search on a weighted, directed or
+undirected graph for the case where all edge weights are non-negative.
+</p>
 
-<P>
-The A* algorithm is a <i>heuristic graph search algorithm</i>: an A*
-search is "guided" by a <i>heuristic function</i>.  A heuristic
-function <i>h(v)</i> is one which estimates the cost from a non-goal
-state (<i>v</i>) in the graph to some goal state, <i>g</i>.
-Intuitively, A* follows paths (through the graph) to the goal that are
-estimated by the heuristic function to be the best paths.  Unlike
-best-first search, A* takes into account the known cost from the start
-of the search to <i>v</i>; the paths A* takes are guided by a function
-<i>f(v) = g(v) + h(v)</i>, where <i>h(v)</i> is the heuristic
-function, and <i>g(v)</i> (sometimes denoted <i>c(s, v)</i>) is the
-known cost from the start to <i>v</i>.  Clearly, the efficiency of A*
-is highly dependent on the heuristic function with which it is used.
-</P>
+<p>
+The A* algorithm is a <i>heuristic graph search algorithm</i>: an A* search
+is "guided" by a <i>heuristic function</i>.  A heuristic function <i>h(v)</i>
+is one which estimates the cost from a non-goal state (<i>v</i>) in the graph
+to some goal state, <i>g</i>.  Intuitively, A* follows paths (through the
+graph) to the goal that are estimated by the heuristic function to be the best
+paths.  Unlike best-first search, A* takes into account the known cost from
+the start of the search to <i>v</i>; the paths A* takes are guided by a
+function <i>f(v) = g(v) + h(v)</i>, where <i>h(v)</i> is the heuristic
+function, and <i>g(v)</i> (sometimes denoted <i>c(s, v)</i>) is the known cost
+from the start to <i>v</i>.  Clearly, the efficiency of A* is highly dependent
+on the heuristic function with which it is used.
+</p>
 
-<P>
-The A* algorithm is very similar to Dijkstra's Shortest Paths
-algorithm.  This implementation finds all the shortest paths from the
-start vertex to every other vertex by creating a search tree,
-examining vertices according to their remaining cost to some goal, as
-estimated by a heuristic function.  Most commonly, A* is used to find
-some specific goal vertex or vertices in a graph, after which the
-search is terminated.
-</P>
+<p>
+The A* algorithm is very similar to Dijkstra's Shortest Paths algorithm.  This
+implementation finds all the shortest paths from the start vertex to every
+other vertex by creating a search tree, examining vertices according to their
+remaining cost to some goal, as estimated by a heuristic function.  Most
+commonly, A* is used to find some specific goal vertex or vertices in a graph,
+after which the search is terminated.
+</p>
 
-<P>
-A* is particularly useful for searching <i>implicit</i> graphs.
-Implicit graphs are graphs that are not completely known at the
-beginning of the search.  Upon visiting a vertex, its neighbors are
-"generated" and added to the search.  Implicit graphs are particularly
-useful for searching large state spaces -- in game-playing scenarios
-(e.g. chess), for example -- in which it may not be possible to store
-the entire graph.  Implicit searches can be performed with this
-implementation of A* by creating special visitors that generate
-neighbors of newly-expanded vertices.  Please note that
-<tt>astar_search_no_init()</tt> or <tt>astar_search_no_init_tree()</tt> must be
-used for implicit graphs; the basic
-<tt>astar_search()</tt> function requires a graph that models
-the <a href="VertexListGraph.html">Vertex List Graph</a> concept.  Both
-versions
-also require the graph type to model the <a
-href="IncidenceGraph.html">Incidence Graph</a> concept.
-</P>
+<p>
+A* is particularly useful for searching <i>implicit</i> graphs.  Implicit
+graphs are graphs that are not completely known at the beginning of the
+search.  Upon visiting a vertex, its neighbors are "generated" and added to
+the search.  Implicit graphs are particularly useful for searching large state
+spaces -- in game-playing scenarios (e.g. chess), for example -- in which it
+may not be possible to store the entire graph.  Implicit searches can be
+performed with this implementation of A* by creating special visitors that
+generate neighbors of newly-expanded vertices.  Please note that <span
+class="cxx_code">astar_search_no_init()</span> or <span class="cxx_code"
+>astar_search_no_init_tree()</span> must be used for implicit graphs; the
+basic <span class="cxx_code">astar_search()</span> function requires a graph
+that models the <a class="cxx_concept" href="VertexListGraph.html">Vertex List
+Graph</a> concept.  Both versions also require the graph type to model the <a
+class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a> concept.
+</p>
 
-<P>
-For the non-tree versions of the algorithm,
-this implementation of A* is based on an OPEN/CLOSED list formulation.
-Vertices on the OPEN list have been ``discovered''
-by the algorithm, but not ``expanded'' (we have not discovered their
-adjacent vertices).  Vertices on the CLOSED list have been completely
-examined by our search (we have expanded them and added their children
-to the OPEN list).  Vertices that are on neither list have not been
-encountered in any context so far in our search.  A major advantage of
-this formulation of the A* algorithm over other approaches is that it
-avoids ``cycles'' in the state space; the search will not become
-trapped by loops in the graph.  The OPEN/CLOSED lists are implemented
-using BGL's vertex coloring mechanisms.  Vertices in OPEN are colored
-gray, vertices in CLOSED are colored black, and undiscovered vertices
-are colored white.  For the versions of the algorithm whose names end in
-<tt>_tree</tt>, all vertices are assumed to always be white, leading to
-checking for repeated vertices being done using the distance map.  If a dummy
-value is used for the distance map and the graph contains cycles, the algorithm
-will probably enter an infinite loop.
-</P>
+<p>
+For the non-tree versions of the algorithm, this implementation of A* is based
+on an OPEN/CLOSED list formulation.  Vertices on the OPEN list have been
+``discovered'' by the algorithm, but not ``expanded'' (we have not discovered
+their adjacent vertices).  Vertices on the CLOSED list have been completely
+examined by our search (we have expanded them and added their children to the
+OPEN list).  Vertices that are on neither list have not been encountered in
+any context so far in our search.  A major advantage of this formulation of
+the A* algorithm over other approaches is that it avoids ``cycles'' in the
+state space; the search will not become trapped by loops in the graph.  The
+OPEN/CLOSED lists are implemented using BGL's vertex coloring
+mechanisms.  Vertices in OPEN are colored gray, vertices in CLOSED are colored
+black, and undiscovered vertices are colored white.  For the versions of the
+algorithm whose names end in <span class="cxx_code">_tree</span>, all vertices
+are assumed to always be white, leading to checking for repeated vertices
+being done using the distance map.  If a dummy value is used for the distance
+map and the graph contains cycles, the algorithm will probably enter an
+infinite loop.
+</p>
 
-<P>
-The criteria for expanding a vertex on the OPEN list is that it has
-the lowest <i>f(v) = g(v) + h(v)</i> value of all vertices on OPEN.
-Cost information about vertices is stored in a property map.
-</P>
+<p>
+The criteria for expanding a vertex on the OPEN list is that it has the lowest
+<i>f(v) = g(v) + h(v)</i> value of all vertices on OPEN.  Cost information
+about vertices is stored in a property map.
+</p>
 
-<P>
-The following is the pseudocode for the A* heuristic search algorithm.
-In the pseudocode, <i>h</i> is the heuristic function, <i>w</i> is the
-edge weight, <i>d</i> is the distance of a vertex from <i>s</i>, and
-<i>Q</i> is a priority queue, sorted by <i>f</i>, the estimated cost
-to the goal of the path through a vertex.  <i>p</i> is a predecessor
-map.  The visitor event points for the algorithm are indicated by the
-labels on the right.
-</P>
+<p>
+The following is the pseudocode for the A* heuristic search algorithm.  In the
+pseudocode, <i>h</i> is the heuristic function, <i>w</i> is the edge weight,
+<i>d</i> is the distance of a vertex from <i>s</i>, and <i>Q</i> is a priority
+queue, sorted by <i>f</i>, the estimated cost to the goal of the path through
+a vertex.  <i>p</i> is a predecessor map.  The visitor event points for the
+algorithm are indicated by the labels on the right.
+</p>
 
 <table>
-<tr valign="top">
+<tr>
 <td>
 <pre>
 A*(<i>G</i>, <i>s</i>, <i>h</i>)
@@ -413,13 +430,13 @@ finish vertex <i>u</i>
 
 <h3>Example</h3>
 
-<P>
+<p>
 The A* algorithms can take in named parameter arguments, courtesy of
 <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
 following example illustrates the syntax for passing arguments by name.
-</P>
+</p>
 
-<pre>
+<pre class="cxx_code">
 struct location { float x, y; };
 
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -467,38 +484,40 @@ The full program is in
 <h3>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  If the algorithm
-is <tt>astar_search()</tt> or <tt>astar_search_tree()</tt>, then the type
-<tt>Graph</tt> must be a model of the <a href="VertexListGraph.html"><b>Vertex
-List Graph</b></a> and <a href="IncidenceGraph.html"><b>Incidence
-Graph</b></a> concepts.  If the algorithm is <tt>astar_search_no_init()</tt>
-or <tt>astar_search_no_init_tree()</tt>, then the type <tt>Graph</tt> must be
-a model of the <a href="IncidenceGraph.html"><b>Incidence Graph</b></a>
-concept.</td>
+is <span class="cxx_code">astar_search()</span> or <span class="cxx_code"
+>astar_search_tree()</span>, then the type <span class="cxx_code">Graph</span>
+must be a model of the <a class="cxx_concept" href="VertexListGraph.html"
+>Vertex List Graph</a> and <a class="cxx_concept" href="IncidenceGraph.html"
+>Incidence Graph</a> concepts.  If the algorithm is <span class="cxx_code"
+>astar_search_no_init()</span> or <span class="cxx_code"
+>astar_search_no_init_tree()</span>, then the type <span class="cxx_code"
+>Graph</span> must be a model of the <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a> concept.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor s</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The start vertex for the search.  All distances will be calculated from
 this vertex, and the shortest paths tree (recorded in the predecessor map)
@@ -507,223 +526,233 @@ will be rooted at this vertex.</td>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>AStarHeuristic h</tt></td>
+<td class="cxx_code">AStarHeuristic h</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The heuristic function that guides the search.  The type
-<tt>AStarHeuristic</tt> must be a model of the <a href="AStarHeuristic.html"
-><b>AStarHeuristic</b></a> concept.</td>
+<td>The heuristic function that guides the search.  The type <span
+class="cxx_code">AStarHeuristic</span> must be a model of the <a
+class="cxx_concept" href="AStarHeuristic.html">AStarHeuristic</a>
+concept.</td>
 </tr>
 </table>
 
 <h3>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
-be non-negative; the algorithm will throw a <a
-href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
-one of the edges is negative.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
-key type for the weight map.  The value type for this map must be the same as
-the value type of the distance map.</td>
+be non-negative; the algorithm will throw a <a class="cxx_code"
+href="./exception.html#negative_edge">negative_edge</a> exception if one of
+the edges is negative.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The edge descriptor type of the graph needs to be
+usable as the key type for the weight map.  The value type for this map must
+be the same as the value type of the distance map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is necessary in non-tree versions of the
-algorithm for efficient updates of the heap data structure when an edge is
-relaxed.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is necessary in non-tree
+versions of the algorithm for efficient updates of the heap data structure
+when an edge is relaxed.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The value type of the map must be an integer
+type.  The vertex descriptor type of the graph needs to be usable as the key
+type of the map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The predecessor map records the edges in the minimum spanning tree.  Upon
-completion of the algorithm, the edges <tt>(p[u],u)</tt> for all <tt>u</tt> in
-<tt>V</tt> are in the minimum spanning tree.  If <tt>p[u] = u</tt> then
-<tt>u</tt> is either the start vertex or a vertex that is not reachable from
-the start.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write
-Property Map</b></a> with key and vertex types the same as the vertex
+completion of the algorithm, the edges <span class="cxx_code">(p[u],u)</span>
+for all <span class="cxx_code">u</span> in <span class="cxx_code">V</span> are
+in the minimum spanning tree.  If <span class="cxx_code">p[u] = u</span> then
+<span class="cxx_code">u</span> is either the start vertex or a vertex that is
+not reachable from the start.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a> with key and vertex types the same as the vertex
 descriptor type of the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+<td class="cxx_code">dummy_property_map()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The shortest path weight from the start vertex <tt>s</tt> to each vertex
-in the graph <tt>g</tt> is recorded in this property map.  The shortest path
-weight is the sum of the edge weights along the shortest path.  The argument
-type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.  The value type of the distance map is the
-element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
-distance combine argument and the distance zero argument for the identity
-element.  Also, the distance value type must have a <a
+<td>The shortest path weight from the start vertex <span class="cxx_code"
+>s</span> to each vertex in the graph <span class="cxx_code">g</span> is
+recorded in this property map.  The shortest path weight is the sum of the
+edge weights along the shortest path.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
+to be usable as the key type of the distance map.  The value type of the
+distance map is the element type of a <a class="cxx_concept"
+href="./Monoid.html">Monoid</a> formed with the distance combine argument and
+the distance zero argument for the identity element.  Also, the distance value
+type must have a <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
-><b>StrictWeakOrdering</b></a> provided by the distance compare argument.  A
-<a href="../../property_map/doc/static_property_map.html"><tt
->static_property_map</tt></a> returning the infinity value can be used for
-this parameter in <tt>astar_search_tree()</tt> or
-<tt>astar_search_no_init_tree()</tt> when the graph does not contain a
-directed cycle.</td>
+>StrictWeakOrdering</a> provided by the distance compare argument.  A <a
+class="cxx_code" href="../../property_map/doc/static_property_map.html"
+>static_property_map</a> returning the infinity value can be used for this
+parameter in <span class="cxx_code">astar_search_tree()</span> or <span
+class="cxx_code">astar_search_no_init_tree()</span> when the graph does not
+contain a directed cycle.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <a
-href="../../property_map/doc/shared_array_property_map.html"><tt
->shared_array_property_map</tt></a> with the same value type as the weight map
-argument type, and of size <tt>num_vertices(g)</tt>, and using the index map
-argument for the index map.</td>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> with the same value type as the
+weight map argument type, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_rank_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_rank_map</td>
 </tr>
 <tr valign="top">
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>rank_map(CostMap c_map)</tt></td>
+<td class="cxx_code">rank_map(CostMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The <i>f</i>-value for each vertex.  The <i>f</i>-value is defined as the
 sum of the cost to get to a vertex from the start vertex, and the estimated
-cost (as returned by the heuristic function <tt>h</tt>) from the vertex to a
-goal.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a> in non-tree versions of the algorithm, and <a
-href="../../property_map/doc/WritablePropertyMap.html"><b>Writable Property
-Map</b></a> in tree versions of the algorithm.  The vertex descriptor type of
-the graph needs to be usable as the key type of the distance map.  The value
-type of the distance map is the element type of a <a href="./Monoid.html"
-><b>Monoid</b></a> formed with the <tt>combine</tt> function object and the
-zero object for the identity element.  Also the distance value type must have
-a <a href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
-><b>StrictWeakOrdering</b></a> provided by the <tt>compare</tt> function
-object.  The value type for this map must be the same as the value type for
-the distance map.  In tree versions of the algorithm,
-<tt>null_property_map</tt> can be used for this parameter.</td>
+cost (as returned by the heuristic function <span class="cxx_code">h</span>)
+from the vertex to a goal.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a> in non-tree versions of the algorithm, and <a
+class="cxx_concept" href="../../property_map/doc/WritablePropertyMap.html"
+>Writable Property Map</a> in tree versions of the algorithm.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+distance map.  The value type of the distance map is the element type of a <a
+class="cxx_concept" href="./Monoid.html">Monoid</a> formed with the <span
+class="cxx_code">combine</span> function object and the zero object for the
+identity element.  Also the distance value type must have a <a
+href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
+class="cxx_concept">StrictWeakOrdering</a> provided by the <span
+class="cxx_code">compare</span> function object.  The value type for this map
+must be the same as the value type for the distance map.  In tree versions of
+the algorithm, <span class="cxx_code">null_property_map</span> can be used for
+this parameter.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <a
-href="../../property_map/doc/shared_array_property_map.html"><tt
->shared_array_property_map</tt></a> with the same value type as the distance
-map argument type, and of size <tt>num_vertices(g)</tt>, and using the index
-map argument for the index map.</td>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> with the same value type as the
+distance map argument type, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+<td class="cxx_code">color_map(ColorMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This is used during the execution of non-tree versions of the algorithm to
 mark the vertices, indicating whether they are on the OPEN or CLOSED
@@ -731,170 +760,173 @@ lists.  The vertices start out white and become gray when they are inserted
 into the OPEN list.  They then turn black when they are examined and placed on
 the CLOSED list.  At the end of the algorithm, vertices reachable from the
 source vertex will have been colored black.  All other vertices will still be
-white.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  A vertex descriptor must be usable as the key type of the map,
+white.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  A vertex descriptor must be usable as the key type of the map,
 and the value type of the map must be a model of <a href="./ColorValue.html"
-><b>Color Value</b></a>.</td>
+class="cxx_concept">Color Value</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <a
-href="../../property_map/doc/shared_array_property_map.html"><tt
->shared_array_property_map</tt></a> of value type <tt>default_color_type</tt>,
-and of size <tt>num_vertices(g)</tt>, and using the index map argument for the
-index map.</td>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of value type <span
+class="cxx_code">default_color_type</span>, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_compare</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+<td class="cxx_code">distance_compare(CompareFunction cmp)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function is use to compare distances to determine which vertex is
 closer to the start vertex, and to compare <i>f</i>-values to determine which
 vertex on the OPEN list to examine next.  The argument type type must be a
-model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
-Predicate</b></a> and have argument types that match the value type of the
-distance map argument.</td>
+model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+class="cxx_concept">Binary Predicate</a> and have argument types that match
+the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
->&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
-argument type</i>&gt;::value_type</tt>.</td>
+>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument type</i>&gt;::value_type</span
+>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_combine</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+<td class="cxx_code">distance_combine(CombineFunction cmb)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function is used to combine distances to compute the distance of a
 path, and to combine distance and heuristic values to compute the
 <i>f</i>-value of a vertex.  The argument type type must be a model of <a
-href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
-Function</b></a>.  Both argument types of the binary function must match the
-value type of the distance map argument (which is the same as that of the
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>Binary Function</a>.  Both argument types of the binary function must match
+the value type of the distance map argument (which is the same as that of the
 weight map and cost map argument types).  The result type must be the same
 type as the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::closed_plus&lt;D&gt;(<i>infinite
-distance argument</i>)</tt> with <tt>D = typename
+<td><span class="cxx_code">boost::graph::closed_plus&lt;D&gt;(<i>infinite
+distance argument</i>)</span> with <span class="cxx_code">D = typename
 property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_inf</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+<td class="cxx_code">distance_inf(D inf)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The argument value must be the greatest value of any instance of the
-argument type.  That is, for any value <tt>d</tt> not equal to the argument
-value <tt>inf</tt>, <tt>compare(d, inf) == true</tt>.  The type <tt>D</tt> is
-the value type of the distance map argument type.</td>
+argument type.  That is, for any value <span class="cxx_code">d</span> not
+equal to the argument value <span class="cxx_code">inf</span>, <span
+class="cxx_code">compare(d, inf) == true</span>.  The type <span
+class="cxx_code">D</span> is the value type of the distance map argument
+type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
-<tt>D = typename property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">std::numeric_limits&lt;D&gt;::max()</span> with
+<span class="cxx_code">D = typename property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_zero</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+<td class="cxx_code">distance_zero(D zero)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The argument value must be the identity element for the <a
-href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
-distance combine argument.  The type <tt>D</tt> is the value type of the
-distance map argument.</td>
+class="cxx_concept" href="./Monoid.html">Monoid</a> formed by the distance
+values and the distance combine argument.  The type <span class="cxx_code"
+>D</span> is the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>D()</tt> with <tt>D = typename
+<td><span class="cxx_code">D()</span> with <span class="cxx_code">D = typename
 property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>visitor(AStarVisitor vis)</tt></td>
+<td class="cxx_code">visitor(AStarVisitor vis)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Use this to specify actions that you would like to happen during certain
 event points within the algorithm.  The argument type must be a model of the
-<a href="AStarVisitor.html"><b>AStarVisitor</b></a> concept.  The visitor
-object is passed by value <a href="#1">[1]</a>.</td>
+<a class="cxx_concept" href="AStarVisitor.html">AStarVisitor</a> concept.  The
+visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::default_astar_visitor()</tt></td>
+<td class="cxx_code">boost::graph::default_astar_visitor()</td>
 </tr>
 </table>
 
@@ -949,5 +981,5 @@ Rensselaer Polytechnic Institute (<A
 HREF="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</A>)
 </TD></TR></TABLE>
 
-</BODY>
-</HTML> 
+</body>
+</html> 
