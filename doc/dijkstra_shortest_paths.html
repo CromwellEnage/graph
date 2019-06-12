@@ -46,51 +46,65 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 
 <i>// old-style named parameter version</i>
 template &lt;typename Graph, typename P, typename T, typename R&gt;
-void
-dijkstra_shortest_paths(Graph&amp; g,
-  typename <a href="graph_traits.html">graph_traits</a
+void dijkstra_shortest_paths(
+    Graph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
+    const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 
 <i>// non-named parameter version</i>
-template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
-	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>, 
-	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
-void dijkstra_shortest_paths
-  (const Graph&amp; g,
-   typename <a href="graph_traits.html">graph_traits</a
+template &lt;
+    typename Graph, typename PredecessorMap, typename DistanceMap,
+    typename WeightMap, typename IndexMap, typename <a
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>Compare</a>,
+    typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>Combine</a>, typename DistInf, typename DistZero,
+    typename <a class="cxx_concept" href="DijkstraVisitor.html"
+>DijkstraVisitor</a>, typename ColorMap = <i>default</i>
+&gt;
+void dijkstra_shortest_paths(
+    const Graph&amp; g, typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s, 
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-   VertexIndexMap index_map,
-   CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
-   DijkstraVisitor vis, ColorMap color = <i>default</i>)
+    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+    IndexMap index_map, Compare compare, Combine combine, DistInf inf,
+    DistZero zero, DijkstraVisitor vis, ColorMap color = <i>default</i>
+);
 
-<i>// version that does not initialize the property maps (except for the default color map)</i>
-template &lt;class Graph, class DijkstraVisitor,
-          class PredecessorMap, class DistanceMap,
-          class WeightMap, class IndexMap, class Compare, class Combine,
-          class DistZero, class ColorMap&gt;
-void
-dijkstra_shortest_paths_no_init
-  (const Graph&amp; g,
-   typename <a href="graph_traits.html">graph_traits</a
+<i>// version that does not initialize the property maps
+// (except for the default color map)</i>
+template &lt;
+    typename Graph, typename PredecessorMap, typename DistanceMap,
+    typename WeightMap, typename IndexMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>Compare</a>,
+    typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>Combine</a>, typename DistZero, typename <a class="cxx_concept"
+href="DijkstraVisitor.html">DijkstraVisitor</a>,
+    typename ColorMap = <i>default</i>
+&gt;
+void dijkstra_shortest_paths_no_init(
+    const Graph&amp; g, typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s,
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
-   IndexMap index_map,
-   Compare compare, Combine combine, DistZero zero,
-   DijkstraVisitor vis, ColorMap color = <i>default</i>);
+    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+    IndexMap index_map, Compare compare, Combine combine, DistZero zero,
+    DijkstraVisitor vis, ColorMap color = <i>default</i>
+);
 </pre>
 
 <p>
-This algorithm&nbsp;[<a HREF="bibliography.html#dijkstra59">10</a>, <a
-HREF="bibliography.html#clr90">8</a>] solves the single-source shortest-paths
+This algorithm [<a href="bibliography.html#dijkstra59">10</a>, <a
+href="bibliography.html#clr90">8</a>] solves the single-source shortest-paths
 problem on a weighted, directed or undirected graph for the case where all
-edge weights are nonnegative.  Use the Bellman-Ford algorithm for the case
-when some edge weights are negative.  Use breadth-first search instead of
-Dijkstra's algorithm when all edge weights are equal to one.  For the
-definition of the shortest-path problem see Section <a
-HREF="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
+edge weights are nonnegative.  Use the <a href="bellman_ford_shortest.html"
+>Bellman-Ford algorithm</a> for the case when some edge weights are
+negative.  Use <a href="breadth_first_search.html">breadth-first search</a>
+instead of Dijkstra's algorithm when all edge weights are equal to one.  For
+the definition of the shortest-path problem see Section <a
+href="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
 Algorithms</a> for some background to the shortest-path problem.
 </p>
 
@@ -626,8 +640,8 @@ the end of the algorithm, vertices reachable from the source vertex will have
 been colored black.  All other vertices will still be white.  The argument
 type must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-Map</a>.  A vertex descriptor must be usable as the key type of the map,
-and the value type of the map must be a model of <a class="cxx_concept"
+Map</a>.  A vertex descriptor must be usable as the key type of the map, and
+the value type of the map must be a model of <a class="cxx_concept"
 href="./ColorValue.html">Color Value</a>.</td>
 </tr>
 <tr>
@@ -665,8 +679,8 @@ keyword:</th>
 <th>Description:</th>
 <td>Use this to specify actions that you would like to happen during certain
 event points within the algorithm.  The argument type must be a model of the
-<a href="DijkstraVisitor.html"><b>Dijkstra Visitor</b></a> concept.  The
-visitor object is passed by value <a href="#2">[2]</a>.</td>
+<a class="cxx_concept" href="DijkstraVisitor.html">Dijkstra Visitor</a>
+concept.  The visitor object is passed by value <a href="#2">[2]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>

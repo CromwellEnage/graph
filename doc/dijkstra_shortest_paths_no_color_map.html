@@ -1,26 +1,26 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Michael Hansen 2009
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Michael Hansen 2009
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Dijkstra's Shortest Paths (No Color Map)</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: Dijkstra's Shortest Paths (No Color Map)</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:dijkstra"></A>
-<TT>dijkstra_shortest_paths_no_color_map</TT>
-</H1>
+<h1><a
+name="sec:dijkstra"></a><tt>dijkstra_shortest_paths_no_color_map</tt></h1>
 
-<P>
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled version</i>
 template &lt;
     typename Graph,
@@ -46,80 +46,106 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 
 <i>// old-style named parameter version</i>
 template &lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
-void dijkstra_shortest_paths_no_color_map
-  (const Graph&amp; graph,
-   typename <a href="graph_traits.html">graph_traits</a
+void dijkstra_shortest_paths_no_color_map(
+    const Graph&amp; graph,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor start_vertex,
-   const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
+    const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params
+);
 
 <i>// non-named parameter version</i>
-template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
-	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">DistanceCompare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">DistanceWeightCombine</a>, 
-	  typename DistanceInfinity, typename DistanceZero&gt;
-void dijkstra_shortest_paths_no_color_map
-  (const Graph&amp; graph,
-   typename <a href="graph_traits.html">graph_traits</a
+template &lt;
+    typename Graph, typename <a class="cxx_concept"
+href="DijkstraVisitor.html">DijkstraVisitor</a>, typename PredecessorMap,
+    typename DistanceMap, typename WeightMap, typename VertexIndexMap,
+    typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html">DistanceCompare</a>,
+typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>DistanceWeightCombine</a>,
+    typename DistanceInfinity, typename DistanceZero
+&gt;
+void dijkstra_shortest_paths_no_color_map(
+    const Graph&amp; graph,
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor start_vertex, 
-   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map, 
-   VertexIndexMap index_map,
-   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
-   DistanceInfinity distance_infinity, DistanceZero distance_zero);
+    PredecessorMap predecessor_map, DistanceMap distance_map,
+    WeightMap weight_map, VertexIndexMap index_map,
+    DistanceCompare distance_compare,
+    DistanceWeightCombine distance_weight_combine,
+    DistanceInfinity distance_infinity, DistanceZero distance_zero
+);
 
 <i>// version that does not initialize the property maps</i>
-template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
-	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">DistanceCompare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">DistanceWeightCombine</a>, 
-	  typename DistanceInfinity, typename DistanceZero&gt;
-void dijkstra_shortest_paths_no_color_map_no_init
-  (const Graph&amp; graph,
-   typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor start_vertex, 
-   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map, 
-   VertexIndexMap index_map,
-   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
-   DistanceInfinity distance_infinity, DistanceZero distance_zero);
-</PRE>
+template &lt;
+    typename Graph, typename <a class="cxx_concept"
+href="DijkstraVisitor.html">DijkstraVisitor</a>, typename PredecessorMap,
+    typename DistanceMap, typename WeightMap, typename VertexIndexMap,
+    typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html">DistanceCompare</a
+>, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>DistanceWeightCombine</a>,
+    typename DistanceInfinity, typename DistanceZero
+&gt;
+void dijkstra_shortest_paths_no_color_map_no_init(
+    const Graph&amp; graph,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor start_vertex,
+    PredecessorMap predecessor_map, DistanceMap distance_map,
+    WeightMap weight_map, VertexIndexMap index_map,
+    DistanceCompare distance_compare,
+    DistanceWeightCombine distance_weight_combine,
+    DistanceInfinity distance_infinity, DistanceZero distance_zero
+);
+</pre>
 
-<P>
-This algorithm&nbsp;[<A HREF="bibliography.html#dijkstra59">10</A>,<A
-HREF="bibliography.html#clr90">8</A>] solves the single-source
-shortest-paths problem on a weighted, directed or undirected graph for
-the case where all edge weights are nonnegative.  Use the Bellman-Ford
-algorithm for the case when some edge weights are negative.  Use
-breadth-first search instead of Dijkstra's algorithm when all edge
-weights are equal to one.  For the definition of the shortest-path
-problem see Section <A
-HREF="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</A> for some background to the shortest-path problem.
-</P>
+<p>
+This algorithm [<a href="bibliography.html#dijkstra59">10</a>, <a
+href="bibliography.html#clr90">8</a>] solves the single-source shortest-paths
+problem on a weighted, directed or undirected graph for the case where all
+edge weights are nonnegative.  Use the <a href="bellman_ford_shortest.html"
+>Bellman-Ford algorithm</a> for the case when some edge weights are
+negative.  Use <a href="breadth_first_search.html">breadth-first search</a>
+instead of Dijkstra's algorithm when all edge weights are equal to one.  For
+the definition of the shortest-path problem see Section <a
+href="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
+Algorithms</a> for some background to the shortest-path problem.
+</p>
 
-<P>
-	<tt>dijkstra_shortest_paths_no_color_map</tt> differs from the original <tt>dijkstra_shortest_paths</tt> algorithm by not using a color map to identify vertices as discovered or undiscovered.  Instead, this is done with the distance map: a vertex <i>u</i> such that <i>distance_compare(distance_map[u], distance_infinity) == false</i> is considered to be undiscovered.  Note that this means that edges with infinite weight will not work correctly in this algorithm.
-</P>
+<p>
+The <span class="cxx_code">dijkstra_shortest_paths_no_color_map()</span>
+algorithm differs from the original <span class="cxx_code"
+>dijkstra_shortest_paths()</span> algorithm by not using a color map to
+identify vertices as discovered or undiscovered.  Instead, this is done with
+the distance map: a vertex <i>u</i> such that
+<i>distance_compare(distance_map[u], distance_infinity) == false</i> is
+considered to be undiscovered.  Note that this means that edges with infinite
+weight will not work correctly in this algorithm.
+</p>
 
-<P>
-There are two main options for obtaining output from the
-<tt>dijkstra_shortest_paths_no_color_map()</tt> function. If you provide a
-distance property map through the <tt>distance_map()</tt> parameter
-then the shortest distance from the start vertex to every other
-vertex in the graph will be recorded in the distance map. Also you can
-record the shortest paths tree in a predecessor map: for each vertex
-<i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in
+<p>
+There are two main options for obtaining output from the <span
+class="cxx_code">dijkstra_shortest_paths_no_color_map()</span> function.  If
+you provide a distance property map through the <span class="cxx_code"
+>distance_map()</span> parameter then the shortest distance from the start
+vertex to every other vertex in the graph will be recorded in the distance
+map.  Also you can record the shortest paths tree in a predecessor map: for
+each vertex <i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in
 the shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
-either the source or a vertex unreachable from the source).  In
-addition to these two options, the user can provide their own
-custom-made visitor that takes actions during any of the
-algorithm's event points <a href="#4">[4]</a>.</P>
+either the source or a vertex unreachable from the source).  In addition to
+these two options, the user can provide their own custom-made visitor that
+takes actions during any of the algorithm's event points <a href="#4">[4]</a>.
+</p>
 
-<P>
+<p>
 Dijkstra's algorithm finds all the shortest paths from the source
 vertex to every other vertex by iteratively &quot;growing&quot; the set of
 vertices <i>S</i> to which it knows the shortest path. At each step of
 the algorithm, the next vertex added to <i>S</i> is determined by a
 priority queue.  The queue contains the vertices in <i>V - S</i><a
 href="#1">[1]</a> prioritized by their distance label, which is the
-length of the shortest path seen so far for each vertex. The vertex
+length of the shortest path seen so far for each vertex.  The vertex
 <i>u</i> at the top of the priority queue is then added to <i>S</i>,
 and each of its out-edges is relaxed: if the distance to <i>u</i> plus
 the weight of the out-edge <i>(u,v)</i> is less than the distance
@@ -127,19 +153,20 @@ label for <i>v</i> then the estimated distance for vertex <i>v</i> is
 reduced.  The algorithm then loops back, processing the next vertex at
 the top of the priority queue. The algorithm finishes when the
 priority queue is empty.
-</P>
+</p>
+
 <p>
 The following is the pseudo-code for Dijkstra's single-source shortest
-paths algorithm. <i>w</i> is the edge weight, <i>d</i> is the distance label,
+paths algorithm.  <i>w</i> is the edge weight, <i>d</i> is the distance label,
 and <i>p</i> is the predecessor of each vertex which is used to encode
-the shortest paths tree. <i>Q</i> is a priority queue that supports the
+the shortest paths tree.  <i>Q</i> is a priority queue that supports the
 DECREASE-KEY operation.  The visitor event points for the algorithm are
 indicated by the labels on the right.
 </p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
   <i>d[s] := 0</i> 
@@ -161,7 +188,7 @@ DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
   return (<i>d</i>, <i>p</i>)
 </pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 
 
@@ -186,14 +213,15 @@ finish vertex <i>u</i>
 
 <h3>Example</h3>
 
-<P>
-One overload of <tt>dijkstra_shortest_paths_no_color_map()</tt> can take in
-named parameter arguments, courtesy of
-<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</P>
+<p>
+One overload of <span class="cxx_code"
+>dijkstra_shortest_paths_no_color_map()</span> can take in named parameter
+arguments, courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.
+</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::vecS, boost::directedS, boost::no_property,
     boost::<a href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
@@ -209,10 +237,10 @@ dijkstra_shortest_paths_no_color_map(
 );
 </pre>
 
-<P>
+<p>
 The full program is in <a href="../example/dijkstra-no-color-map-example.cpp"
 ><tt>example/dijkstra-no-color-map-example.cpp</tt></a>.
-</P>
+</p>
 
 <h3>Where Defined</h3>
 
@@ -221,143 +249,153 @@ The full program is in <a href="../example/dijkstra-no-color-map-example.cpp"
 <h3>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; graph</tt></td>
+<td class="cxx_code">const Graph&amp; graph</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+a model of <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
+Graph</a> and <a class="cxx_concept" href="./IncidenceGraph.html">Incidence
+Graph</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The parameter is named <tt>graph</tt>.</td>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor start_vertex</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor start_vertex</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The source vertex.  All distance will be calculated from this vertex, and
 the shortest paths tree will be rooted at this vertex.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The parameter is named <tt>root_vertex</tt>.</td>
+<td>The parameter is named <span class="python_code">root_vertex</span>.</td>
 </tr>
 </table>
 
 <h3>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
 be non-negative and non-infinite <a href="#3">[3]</a>.  The algorithm will
-throw a <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
-exception if one of the edges is negative.  The argument type must be a model
-of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
-Property Map</b></a>.  The edge descriptor type of the graph needs to be
-usable as the key type for the weight map.  The value type for this map must
-be the same as the value type of the distance map argument, and that type must
-be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
-Comparable</b></a>.</td>
+throw a <a class="cxx_code" href="./exception.html#negative_edge"
+>negative_edge</a> exception if one of the edges is negative.  The argument
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The edge descriptor type of the graph needs to be usable as the key
+type for the weight map.  The value type for this map must be the same as the
+value type of the distance map argument, and that type must be
+<a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
+Comparable</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, graph)</tt></td>
+<td class="cxx_code">get(edge_weight, graph)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be an <tt>edge_double_map</tt> for the graph.</td>
+<td>Must be an <span class="python_code">edge_double_map</span> for the
+graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python default:</th>
-<td bgcolor="#dfdfdf"><tt>graph.get_edge_double_map("weight")</tt></td>
+<td class="python_code">graph.get_edge_double_map("weight")</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(graph))</tt>.  This is necessary for efficient updates of the
-heap data structure&nbsp;[<A HREF="bibliography.html#driscoll88">61</A>] when
-an edge is relaxed.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This is necessary for
+efficient updates of the heap data structure [<a
+href="bibliography.html#driscoll88">61</a>] when an edge is relaxed.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
 descriptor type of the graph needs to be usable as the key type of the
 map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, graph)</tt><br />Note: if you use
-this default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
+</tr>
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The predecessor map records the edges in the shortest path tree, the tree
 computed by the traversal of the graph.  Upon completion of the algorithm, the
@@ -371,299 +409,320 @@ a <a href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write
 Property Map</b></a> whose key and value types are the same as the vertex
 descriptor type of the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+<td class="cxx_code">dummy_property_map()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_vertex_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_vertex_map</span> for the
+graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The shortest path weight from the source vertex <tt>start_vertex</tt> to
-each vertex in the graph <tt>graph</tt> is recorded in this property map.  The
-shortest path weight is the sum of the edge weights along the shortest
-path.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.  The value type of the distance map is the
-element type of a <a href="./Monoid.html"><b>Monoid</b></a> formed with the
-distance combine argument and the distance zero argument for the identity
-element.  Also, the value type of the distance map must have a <a
+<td>The shortest path weight from the source vertex <span class="cxx_code"
+>start_vertex</span> to each vertex in the graph <span class="cxx_code"
+>graph</span> is recorded in this property map.  The shortest path weight is
+the sum of the edge weights along the shortest path.  The argument type must
+be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The vertex descriptor type of the graph needs to be usable as the
+key type of the distance map.  The value type of the distance map is the
+element type of a <a class="cxx_concept" href="./Monoid.html">Monoid</a>
+formed with the distance combine argument and the distance zero argument for
+the identity element.  Also, the value type of the distance map must have a
+<a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
-><b>StrictWeakOrdering</b></a> provided by the distance compare argument.</td>
+>StrictWeakOrdering</a> provided by the distance compare argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(graph)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a class="cxx_code"
+href="../../property_map/doc/iterator_property_map.html"
+>iterator_property_map</a> created from a <span class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(graph)</span>, and using the index map argument
+for the index map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_double_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_double_map</span> for the
+graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_compare</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+<td class="cxx_code">distance_compare(CompareFunction cmp)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function is use to compare distances to determine which vertex is
-closer to the source vertex.  The argument type type must be a model of
-<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
-Predicate</b></a> and have argument types that match the value type of the
+closer to the source vertex.  The argument type type must be a model of <a
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>Binary Predicate</a> and have argument types that match the value type of the
 distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
->&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
-argument type</i>&gt;::value_type</tt>.</td>
+>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_combine</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+<td class="cxx_code">distance_combine(CombineFunction cmb)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function is used to combine distances to compute the distance of a
-path.  The argument type type must be a model of <a
-href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
-Function</b></a>.  The first argument type of the binary function must match
-the value type of the distance map argument and the second argument type must
+path.  The argument type type must be a model of <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
+Function</a>.  The first argument type of the binary function must match the
+value type of the distance map argument and the second argument type must
 match the value type of the weight map argument.  The result type must be the
 same type as the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/plus"
->plus</a>&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance
-map argument type</i>&gt;::value_type</tt>.</td>
+>plus</a>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_inf</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+<td class="cxx_code">distance_inf(D inf)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The argument value must be the greatest value of any instance of the
-argument type.  That is, given the distance compare argument <tt>compare</tt>,
-for any value <tt>d</tt> not equal to the argument value <tt>inf</tt>,
-<tt>compare(d, inf) == true</tt>.</td>
+argument type.  That is, given the distance compare argument <span
+class="cxx_code">compare</span>, for any value <span class="cxx_code">d</span>
+not equal to the argument value <span class="cxx_code">inf</span>, <span
+class="cxx_code">compare(d, inf) == true</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
-<tt>D = typename property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">std::numeric_limits&lt;D&gt;::max()</span> with
+<span class="cxx_code">D = typename property_traits&lt;<i>distance map
+argument type</i>&gt;::value_type</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_zero</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+<td class="cxx_code">distance_zero(D zero)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The argument value must be the identity element for the <a
-href="./Monoid.html"><b>Monoid</b></a> formed by the distance values and the
-distance combine argument.</td>
+<td>The argument value must be the identity element for the
+<a class="cxx_concept" href="./Monoid.html">Monoid</a> formed by the distance
+values and the distance combine argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>D()</tt> with <tt>D = typename
+<td><span class="cxx_code">D()</span> with <span class="cxx_code">D = typename
 property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>visitor(DijkstraVisitor vis)</tt></td>
+<td class="cxx_code">visitor(DijkstraVisitor vis)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Use this to specify actions that you would like to happen during certain
 event points within the algorithm.  The argument type must be a model of the
-<a href="DijkstraVisitor.html"><b>Dijkstra Visitor</b></a> concept.  The
-visitor object is passed by value <a href="#2">[2]</a>.</td>
+<a class="cxx_concept" href="DijkstraVisitor.html">Dijkstra Visitor</a>
+concept.  The visitor object is passed by value <a href="#2">[2]</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::default_dijkstra_visitor()</tt></td>
+<td class="cxx_code">boost::graph::default_dijkstra_visitor()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>The parameter should be an object that derives from the <a
-href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type of the
-graph.</td>
+class="python_code" href="DijkstraVisitor.html#python">DijkstraVisitor</a>
+type of the graph.</td>
 </tr>
 </table>
 
-<H3>Complexity</H3>
+<h3>Complexity</h3>
 
-<P>
+<p>
 The time complexity is <i>O(V log V + E)</i>.
-</P>
+</p>
 
 <h3>Visitor Event Points</h3>
 
 <ul>
 <li><b><tt>vis.initialize_vertex(u, g)</tt></b>
   is invoked on each vertex in the graph before the start of the
-  algorithm.
+  algorithm.</li>
 <li><b><tt>vis.examine_vertex(u, g)</tt></b>
   is invoked on a vertex as it is removed from the priority queue
   and added to set <i>S</i>. At this point we know that <i>(p[u],u)</i>
   is a shortest-paths tree edge so 
   <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
   of the examined vertices is monotonically increasing
-  <i>d[u<sub>1</sub>] <= d[u<sub>2</sub>] <= d[u<sub>n</sub>]</i>. 
+  <i>d[u<sub>1</sub>] <= d[u<sub>2</sub>] <= d[u<sub>n</sub>]</i>.</li>
 <li><b><tt>vis.examine_edge(e, g)</tt></b>
   is invoked on each out-edge of a vertex immediately after it has
-  been added to set <i>S</i>. 
+  been added to set <i>S</i>.</li>
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>
   is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) < d[v]</i>.
   The edge <i>(u,v)</i> that participated in the last
-  relaxation for vertex <i>v</i> is an edge in the shortest paths tree. 
+  relaxation for vertex <i>v</i> is an edge in the shortest paths tree.</li>
 <li><b><tt>vis.discover_vertex(v, g)</tt></b>
   is invoked on vertex <i>v</i> when the edge 
   <i>(u,v)</i> is examined and <i>v</i> has not yet been discovered (i.e. its distance was infinity before relaxation was attempted on the edge).  This
-  is also when the vertex is inserted into the priority queue.
+  is also when the vertex is inserted into the priority queue.</li>
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
-  is invoked if the edge is not relaxed (see above).
+  is invoked if the edge is not relaxed (see above).</li>
 <li><b><tt>vis.finish_vertex(u, g)</tt></b>
    is invoked on a vertex after all of its out edges have
-  been examined.
+  been examined.</li>
 </ul>
 
-<H3>See also</H3> <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a> for a version of Dijkstra's shortest path that uses a color map.
+<h3>See also</h3>
 
-<H3>Notes</H3>
+<p>
+<a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a> for a version of Dijkstra's shortest path that uses a color map.
+</p>
 
-<p>Based on the documentation for <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>.
+<h3>Notes</h3>
+
+<p>Based on the documentation for <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>.</p>
 
 <p><a name="1">[1]</a>
 The algorithm used here saves a little space by not putting all <i>V -
 S</i> vertices in the priority queue at once, but instead only those
 vertices in <i>V - S</i> that are discovered and therefore have a
-distance less than infinity.
+distance less than infinity.</p>
 
 <p><a name="2">[2]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
-  
+Since the visitor parameter is passed by value, if your visitor
+contains state then any changes to the state during the algorithm
+will be made to a copy of the visitor object, not the visitor object
+passed in.  Therefore you may want the visitor to hold this state by
+pointer or reference.</p>
+
 <p><a name="3">[3]</a> 
-  The algorithm will not work correctly if any of the edge weights are equal to infinity since the infinite distance value is used to determine if a vertex has been discovered.
-  
+The algorithm will not work correctly if any of the edge weights are equal to
+infinity since the infinite distance value is used to determine if a vertex
+has been discovered.</p>
+
 <p><a name="4">[4]</a> 
-  Calls to the visitor events occur in the same order as <tt>dijkstra_shortest_paths</tt> (i.e. <i>discover_vertex(u)</i> will always be called after <i>examine_vertex(u)</i> for an undiscovered vertex <i>u</i>).  However, the vertices of the graph given to <i>dijkstra_shortest_paths_no_color_map</i> will <b>not</b> necessarily be visited in the same order as <i>dijkstra_shortest_paths</i>.
+Calls to the visitor events occur in the same order as <span class="cxx_code"
+>dijkstra_shortest_paths()</span> (i.e. <i>discover_vertex(u)</i> will always
+be called after <i>examine_vertex(u)</i> for an undiscovered vertex
+<i>u</i>).  However, the vertices of the graph given to
+<i class="cxx_code">dijkstra_shortest_paths_no_color_map()</i> will
+<strong>not</strong> necessarily be visited in the same order as
+<i class="cxx_code">dijkstra_shortest_paths()</i>.</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2009</TD><TD>
-Trustees of Indiana University</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2009</td>
+<td>Trustees of Indiana University</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 
