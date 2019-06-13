@@ -430,7 +430,7 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
 <p>
 The A* algorithms can take in named parameter arguments, courtesy of
@@ -474,16 +474,19 @@ astar_search_tree(
 );
 </pre>
 
-<P>
+<p>
 The full program is in
 <a href="../example/astar-cities.cpp"><tt>example/astar-cities.cpp</tt></a>.
-</P>
+</p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<a href="../../../boost/graph/astar_search.hpp"><tt>boost/graph/astar_search.hpp</tt></a>
+<p>
+<a href="../../../boost/graph/astar_search.hpp"><tt
+>boost/graph/astar_search.hpp</tt></a>
+</p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
 <tr>
@@ -545,7 +548,7 @@ concept.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
 <tr>
@@ -932,56 +935,62 @@ visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 </table>
 
-<H3>Complexity</H3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<P>
+<p>
 The time complexity is <i>O((E + V) log V)</i>.
+</p>
 
-<h3>Visitor Event Points</h3>
+<h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
 <ul>
 <li><b><tt>vis.initialize_vertex(u, g)</tt></b>
   is invoked on each vertex in the graph before the start of the
-  algorithm.
+  algorithm.</li>
 <li><b><tt>vis.discover_vertex(v, g)</tt></b>
   is invoked when a vertex is first discovered and is added to the
-  OPEN list.
+  OPEN list.</li>
 <li><b><tt>vis.examine_vertex(u, g)</tt></b>
   is invoked when a vertex is popped from
-  the queue (i.e., it has the lowest cost on the OPEN list).
+  the queue (i.e., it has the lowest cost on the OPEN list).</li>
 <li><b><tt>vis.examine_edge(e, g)</tt></b>
   is invoked on each out-edge of a vertex immediately after it is
-  examined.
+  examined.</li>
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.
+  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.</li>
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
-  is invoked if the edge is not relaxed (see above).
+  is invoked if the edge is not relaxed (see above).</li>
 <li><b><tt>vis.black_target(e, g)</tt></b>
    is invoked when a vertex that is on the CLOSED list is
   "rediscovered" via a more efficient path, and is re-added to the
-  OPEN list.
+  OPEN list.</li>
 <li><b><tt>vis.finish_vertex(u, g)</tt></b>
   is invoked on a vertex when it is added to the CLOSED list, which
-  happens after all of its out edges have been examined.
+  happens after all of its out edges have been examined.</li>
 </ul>
 
-<H3>Notes</H3>
+<h3><a name="sec:notes"></a>Notes</h3>
 
+<p>
 <a name="1">[1]</a> Since the visitor parameter is passed by value, if
 your visitor contains state then any changes to the state during the
 algorithm will be made to a copy of the visitor object, not the
 visitor object passed in.  Therefore you may want the visitor to hold
 this state by pointer or reference.
+</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://cs.krisbeevers.com/">Kristopher Beevers</A>,
-Rensselaer Polytechnic Institute (<A
-HREF="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2004</td>
+<td>
+<a href="http://cs.krisbeevers.com/">Kristopher Beevers</a>, Rensselaer
+Polytechnic Institute
+(<a href="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</a>)
+</td>
+</tr>
+</table>
 
 </body>
 </html> 

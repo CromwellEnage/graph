@@ -1,25 +1,26 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) 2002 Rensselaer Polytechnic Institute
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) 2002 Rensselaer Polytechnic Institute
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Floyd-Warshall All Pairs Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Floyd-Warshall All Pairs Shortest Paths</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:floyd-warshall">
-<TT>floyd_warshall_all_pairs_shortest_paths</TT>
-</H1>
+<h1><a name="sec:floyd-warshall"></a><tt
+>floyd_warshall_all_pairs_shortest_paths</tt></h1>
 
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled versions</i>
 template &lt;
     typename VertexListGraph, typename DistanceMatrix,
@@ -68,15 +69,15 @@ template &lt;class VertexListGraph, class DistanceMatrix,
     class P, class T, class R&gt;
 bool floyd_warshall_initialized_all_pairs_shortest_paths(
     const VertexListGraph&amp; g, DistanceMatrix&amp; d,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params)
+    const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
     class P, class T, class R&gt;
 bool floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph&amp; g, DistanceMatrix&amp; d,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params)
+    const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<em>// positional parameter versions</em>
+<i>// positional parameter versions</i>
 \begin{verbatim}
 template &lt;typename VertexListGraph, typename DistanceMatrix,
     typename BinaryPredicate, typename BinaryFunction,
@@ -84,7 +85,7 @@ template &lt;typename VertexListGraph, typename DistanceMatrix,
 bool floyd_warshall_initialized_all_pairs_shortest_paths(
     const VertexListGraph&amp; g, DistanceMatrix&amp; d,
     const BinaryPredicate&amp; compare, const BinaryFunction&amp; combine,
-    const Infinity&amp; inf, const Zero&amp; zero)
+    const Infinity&amp; inf, const Zero&amp; zero);
 
 template &lt;typename VertexAndEdgeListGraph, typename DistanceMatrix,
     typename WeightMap, typename BinaryPredicate,
@@ -93,30 +94,34 @@ bool floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph&amp; g, DistanceMatrix&amp; d,
     const WeightMap&amp; w, const BinaryPredicate&amp; compare,
     const BinaryFunction&amp; combine,
-    const Infinity&amp; inf, const Zero&amp; zero)</PRE>
+    const Infinity&amp; inf, const Zero&amp; zero);
+</pre>
 
-<P>
-These algorithms find the shortest distance between every pair of
-vertices in the graph.  The algorithms return false if there is a
-negative weight cycle in the graph, true otherwise.  The shortest
-distance between each pair of vertices is stored in the distance
-matrix <code>d</code>.  The difference between the two algorithms is in
-whether the distance matrix is assumed to be initialized or not, as
-discussed below under the OUT parameter description.
+<p>
+These algorithms find the shortest distance between every pair of vertices in
+the graph.  The algorithms return false if there is a negative weight cycle in
+the graph, true otherwise.  The shortest distance between each pair of
+vertices is stored in the distance matrix <span class="cxx_code"
+>d</span>.  The difference between the two algorithms is in whether the
+distance matrix is assumed to be initialized or not, as discussed below under
+the <a href="#sec:parameters">Parameters</a> section.
+</p>
 
-<P>This algorithm should be used to compute shortest paths between
-every pair of vertices for dense graphs. For sparse graphs, use <a
-href="johnson_all_pairs_shortest.html"><code>johnson_all_pairs_shortest_paths</code></a>. 
+<p>
+This algorithm should be used to compute shortest paths between every pair of
+vertices for dense graphs.  For sparse graphs, use <a class="cxx_code"
+href="johnson_all_pairs_shortest.html">johnson_all_pairs_shortest_paths()</a>.
+</p>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<P>
+<p>
 The Floyd-Warshall algorithms can take in named parameter arguments, courtesy
 of <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
 following example illustrates the syntax for passing arguments by name.
-</P>
+</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::listS, boost::directedS,
     boost::<a href="property.html">property</a>&lt;
@@ -147,221 +152,234 @@ bool floyd2 = floyd_warshall_all_pairs_shortest_paths(
 );
 </pre>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/floyd_warshall_shortest.hpp"><TT>boost/graph/floyd_warshall_shortest.hpp</TT></a>
+<p>
+<a href="../../../boost/graph/floyd_warshall_shortest.hpp"
+><tt>boost/graph/floyd_warshall_shortest.hpp</tt></a>
+</p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>A directed or undirected graph.  For calls to
-<tt>floyd_warshall_initialized_all_pairs_shortest_paths()</tt>, the graph must
-be a model of the <a href="VertexListGraph.html"><b>Vertex List Graph</b></a>
-concept.  For calls to <tt>floyd_warshall_all_pairs_shortest_paths()</tt>, the
-graph must be a model of the <a href="VertexAndEdgeListGraph.html"><b>Vertex
-And Edge List Graph</b></a> concept.</td>
+<td>A directed or undirected graph.  For calls to <span class="cxx_code"
+>floyd_warshall_initialized_all_pairs_shortest_paths()</span>, the graph must
+be a model of the <a class="cxx_concept" href="VertexListGraph.html">Vertex
+List Graph</a> concept.  For calls to <span class="cxx_code"
+>floyd_warshall_all_pairs_shortest_paths()</span>, the graph must be a model
+of the <a class="cxx_concept" href="VertexAndEdgeListGraph.html">Vertex And
+Edge List Graph</a> concept.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>DistanceMatrix&amp; d</tt></td>
+<td class="cxx_code">DistanceMatrix&amp; d</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The length of the shortest path between each pair of vertices
-&lt;<tt>u</tt>, <tt>v</tt>&gt; are stored in the matrix at location
-<tt>D[u][v]</tt>.  The distance matrix must be of type <tt>{M, I, V}</tt>
-where <tt>I</tt> is of type <tt><a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor</tt> and <tt>V</tt> is the type of the
-weight map named argument.  The set of types must be a model of <a
-href="BasicMatrix.html"><b>BasicMatrix</b></a>, with the exceptions that it
-isn't required to run in constant time, and it must be mutable.  The matrix
-must be properly initialized when it is passed to the function <tt
->floyd_warshall_initialized_all_pairs_shortest_paths()</tt>.  If the function
-<tt>floyd_warshall_all_pairs_shortest_paths()</tt> is used then the matrix
-will be initialized for the user.</td>
+<td>The length of the shortest path between each pair of vertices &lt;<span
+class="cxx_code">u</span>, <span class="cxx_code">v</span>&gt; are stored in
+the matrix at location <span class="cxx_code">D[u][v]</span>.  The distance
+matrix must be of type <span class="cxx_code">{M, I, V}</span> where <span
+class="cxx_code">I</span> is of type <span class="cxx_code"><a
+href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor</span> and <span class="cxx_code">V</span>
+is the type of the weight map named argument.  The set of types must be a
+model of <a class="cxx_concept" href="BasicMatrix.html">BasicMatrix</a>, with
+the exceptions that it isn't required to run in constant time, and it must be
+mutable.  The matrix must be properly initialized when it is passed to the
+function <span class="cxx_code"
+>floyd_warshall_initialized_all_pairs_shortest_paths()</span>.  If the
+function <span class="cxx_code"
+>floyd_warshall_all_pairs_shortest_paths()</span> is used then the matrix will
+be initialized for the user.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or length of each edge in the graph.  The argument type must be
-a model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b
->Readable Property Map</b></a>.  The value type for this map must be the type
-of the <tt>DistanceMatrix</tt>, and must always either be part of the graph
-passed to the function, or passed in as a parameter.</td>
+a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type for this map
+must be the type of the <span class="cxx_code">DistanceMatrix</span>, and must
+always either be part of the graph passed to the function, or passed in as a
+parameter.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_compare</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+<td class="cxx_code">distance_compare(CompareFunction cmp)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The function used to compare distances to determine which target vertex is
-closer to the source vertex.  The argument type type must be a model of
-<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
-Predicate</b></a> and have argument types that match the value type of the
+closer to the source vertex.  The argument type type must be a model of <a
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>Binary Predicate</a> and have argument types that match the value type of the
 weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
->&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
-argument type</i>&gt;::value_type</tt>.</td>
+>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_combine</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+<td class="cxx_code">distance_combine(CombineFunction cmb)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The function used to combine distance to compute the distance of a
-path.  The argument type type must be a model of <a
-href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
-Function</b></a>.  The result type as well as both argument types of the
-binary function must match the value type of the weight map argument
-type.</td>
+path.  The argument type type must be a model of <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
+Function</a>.  The result type as well as both argument types of the binary
+function must match the value type of the weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::closed_plus&lt;W&gt;()</tt> with <tt>W =
-typename property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">boost::closed_plus&lt;W&gt;()</span> with <span
+class="cxx_code">W = typename property_traits&lt;<i>weight map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_inf</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+<td class="cxx_code">distance_inf(D inf)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The value used to initialize the distance for each vertex before starting
 the algorithm, and to represent the distance between vertices for which there
 is no path.  Should be larger than any possible valid path length.  The
 argument type must match the value type of the weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
-<tt>W = typename property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">std::numeric_limits&lt;D&gt;::max()</span> with
+<span class="cxx_code">W = typename property_traits&lt;<i>weight map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_zero</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+<td class="cxx_code">distance_zero(D zero)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The value used to represent the distance from a vertex to itself, and
 to determine if a value is negative.  The argument type must match the
 value type of the weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>W()</tt> with <tt>W = typename
+<td><span class="cxx_code">W()</span> with <span class="cxx_code">W = typename
 property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
+<p>
 The time complexity is <i>O(V<sup>3</sup>)</i>.
+</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2002-2004</TD><TD>
-  Lauren Foutz, Rensselaer Polytechnic Institute</td>
-  </tr><tr valign="top"><td></td>
-  <td>Scott Hill, Rensselaer Polytechnic Institute
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2004</td>
+<td>Lauren Foutz, Rensselaer Polytechnic Institute</td>
+</tr>
+<tr>
+<td></td>
+<td>Scott Hill, Rensselaer Polytechnic Institute</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

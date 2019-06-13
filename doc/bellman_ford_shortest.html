@@ -1,30 +1,30 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Jeremy Siek 2000
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Bellman Ford Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Bellman Ford Shortest Paths</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
+<h1><a name="sec:bellman-ford"></a><img src="figs/python.gif"
+alt="(Python)" /><tt>bellman_ford_shortest_paths</tt></h1>
 
-<H1><A NAME="sec:bellman-ford"></A><img src="figs/python.gif" alt="(Python)"/>
-<TT>bellman_ford_shortest_paths</TT>
-</H1>
-
-<P>
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled interface</i>
 template &lt;
-    typename <a href="./EdgeListGraph.html">EdgeListGraph</a>,
+    typename <a class="cxx_concept" href="./EdgeListGraph.html"
+>EdgeListGraph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
 &gt;
 typename boost::enable_if&lt;
@@ -44,24 +44,33 @@ bellman_ford_shortest_paths(
 );
 
 <i>// old-style named paramter interfaces</i>
-template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
+template &lt;class <a class="cxx_concept" href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 
-template &lt;class <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class P, class T, class R&gt;
+template &lt;class <a class="cxx_concept" href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(const VertexAndEdgeListGraph&amp; g,
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 
 <i>// non-named parameter interfaces</i>
-template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap,
-	  class PredecessorMap, class DistanceMap,
-	  class <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>,
-	  class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-  WeightMap weight, PredecessorMap pred, DistanceMap distance, 
-  BinaryFunction combine, BinaryPredicate compare, BellmanFordVisitor v);
+template &lt;
+    typename <a class="cxx_concept" href="./EdgeListGraph.html"
+>EdgeListGraph</a>, typename Size, typename WeightMap,
+    typename PredecessorMap, typename DistanceMap,
+    typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+>BinaryFunction</a>, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>,
+    typename <a class="cxx_concept" href="./BellmanFordVisitor.html"
+>BellmanFordVisitor</a>
+&gt;
+bool bellman_ford_shortest_paths(
+    EdgeListGraph&amp; g, Size N, WeightMap weight, PredecessorMap pred,
+    DistanceMap distance, BinaryFunction combine, BinaryPredicate compare,
+    BellmanFordVisitor v
+);
 
-template &lt;typename <a href="./EdgeListGraph.html"
+template &lt;typename <a class="cxx_concept" href="./EdgeListGraph.html"
 >EdgeListGraph</a>, typename Size&gt;
 typename boost::disable_if&lt;
     parameter::<a
@@ -70,42 +79,41 @@ href="../../parameter/doc/html/reference.html#is-argument-pack"
     bool
 &gt;::type
 bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N);
-</PRE>
+</pre>
 
-<P>
-The Bellman-Ford algorithm&nbsp;[<A
-HREF="bibliography.html#bellman58">4</A>,<A
-HREF="bibliography.html#ford62:_flows">11</A>,<A
-HREF="bibliography.html#lawler76:_comb_opt">20</A>,<A
-HREF="bibliography.html#clr90">8</A>] solves the single-source
+<p>
+The Bellman-Ford algorithm [<a
+href="bibliography.html#bellman58">4</a>, <a
+href="bibliography.html#ford62:_flows">11</a>, <a
+href="bibliography.html#lawler76:_comb_opt">20</a>, <a
+href="bibliography.html#clr90">8</a>] solves the single-source
 shortest paths problem for a graph with both positive and negative
-edge weights. For the definition of the shortest paths problem see
-Section <A
-HREF="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</A>. 
-If you only need to solve the shortest paths problem for positive edge
-weights, Dijkstra's algorithm provides a more efficient
-alternative. If all the edge weights are all equal to one then breadth-first
-search provides an even more efficient alternative.
+edge weights.  For the definition of the shortest paths problem see
+Section <a
+href="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
+Algorithms</a>.  If you only need to solve the shortest paths problem for
+positive edge weights, <a href="dijkstra_shortest_paths.html">Dijkstra's
+algorithm</a> provides a more efficient alternative.  If all the edge weights
+are all equal to one then <a href="breadth_first_search.html">breadth-first
+search</a> provides an even more efficient alternative.
 </p>
 
 <p>
-Before calling the <tt>bellman_ford_shortest_paths()</tt> function,
-the user must assign the source vertex a distance of zero and all
-other vertices a distance of infinity <i>unless</i> you are providing
-a starting vertex. The Bellman-Ford algorithm
-proceeds by looping through all of the edges in the graph, applying
-the relaxation operation to each edge. In the following pseudo-code,
-<i>v</i> is a vertex adjacent to <i>u</i>, <i>w</i> maps edges to
-their weight, and <i>d</i> is a distance map that records the length
-of the shortest path to each vertex seen so far. <i>p</i> is a
-predecessor map which records the parent of each vertex, which will
-ultimately be the parent in the shortest paths tree
+Before calling the <span class="cxx_code">bellman_ford_shortest_paths()</span>
+function, the user must assign the source vertex a distance of zero and all
+other vertices a distance of infinity <i>unless</i> you are providing a
+starting vertex.  The Bellman-Ford algorithm proceeds by looping through all
+of the edges in the graph, applying the relaxation operation to each edge.  In
+the following pseudo-code, <i>v</i> is a vertex adjacent to <i>u</i>, <i>w</i>
+maps edges to their weight, and <i>d</i> is a distance map that records the
+length of the shortest path to each vertex seen so far.  <i>p</i> is a
+predecessor map which records the parent of each vertex, which will ultimately
+be the parent in the shortest paths tree
 </p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
   <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>) 
@@ -115,7 +123,7 @@ RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
     ...
 </pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 
 
@@ -129,20 +137,20 @@ edge <i>(u,v)</i> is not relaxed
 </table>
 
 <p>
-The algorithm repeats this loop <i>|V|</i> times after which it is
-guaranteed that the distances to each vertex have been reduced to the
-minimum possible unless there is a negative cycle in the graph. If
-there is a negative cycle, then there will be edges in the graph that
-were not properly minimized. That is, there will be edges <i>(u,v)</i> such
-that <i>w(u,v) + d[u] < d[v]</i>.  The algorithm loops over the edges in
-the graph one final time to check if all the edges were minimized,
-returning <tt>true</tt> if they were and returning <tt>false</tt>
-otherwise.
+The algorithm repeats this loop <i>|V|</i> times after which it is guaranteed
+that the distances to each vertex have been reduced to the minimum possible
+unless there is a negative cycle in the graph.  If there is a negative cycle,
+then there will be edges in the graph that were not properly minimized.  That
+is, there will be edges <i>(u,v)</i> such that
+<i>w(u,v) + d[u] < d[v]</i>.  The algorithm loops over the edges in the graph
+one final time to check if all the edges were minimized, returning <span
+class="cxx_code">true</span> if they were and returning <span class="cxx_code"
+>false</span> otherwise.
 </p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 BELLMAN-FORD(<i>G</i>)
   <i>// Optional initialization</i>
@@ -164,7 +172,7 @@ BELLMAN-FORD(<i>G</i>)
   <b>return</b> (true, <i>p</i>, <i>d</i>)
 </pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 
 
@@ -187,31 +195,31 @@ edge <i>(u,v)</i> was minimized
 </tr>
 </table>
 
-There are two main options for obtaining output from the
-<tt>bellman_ford_shortest_paths()</tt> function. If the user provides
-a distance property map through the <tt>distance_map()</tt> parameter
-then the shortest distance from the source vertex to every other
-vertex in the graph will be recorded in the distance map (provided the
-function returns <tt>true</tt>). The second option is recording the
-shortest paths tree in the <tt>predecessor_map()</tt>. For each vertex
-<i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in the
-shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
-either the source vertex or a vertex unreachable from the source).  In
-addition to these two options, the user can provide her own
-custom-made visitor that can take actions at any of the
-algorithm's event points.
+<p>
+There are two main options for obtaining output from the <span
+class="cxx_code">bellman_ford_shortest_paths()</span> function.  If the user
+provides a distance property map through the <span class="cxx_code"
+>distance_map()</span> parameter then the shortest distance from the source
+vertex to every other vertex in the graph will be recorded in the distance map
+(provided the function returns <span class="cxx_code">true</span>).  The
+second option is recording the shortest paths tree in the <span
+class="cxx_code">predecessor_map()</span>.  For each vertex <i>u in V</i>,
+<i>p[u]</i> will be the predecessor of <i>u</i> in the shortest paths tree
+(unless <i>p[u] = u</i>, in which case <i>u</i> is either the source vertex or
+a vertex unreachable from the source).  In addition to these two options, the
+user can provide her own custom-made visitor that can take actions at any of
+the algorithm's event points.
+</p>
 
-<P>
+<h3><a name="sec:example"></a>Example</h3>
 
-<h3>Example</h3>
-
-<P>
+<p>
 The Bellman-Ford algorithm can take in named parameter arguments, courtesy of
 <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
 following example illustrates the syntax for passing arguments by name.
-</P>
+</p>
 
-<pre>
+<pre class="cxx_code">
 struct EdgeProperties { int weight; };
 
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -230,328 +238,339 @@ bool r = bellman_ford_shortest_paths(
 );
 </pre>
 
-<P>
+<p>
 The full program is in <a href="../example/bellman-example.cpp"
 ><tt>examples/bellman-example.cpp</tt></a>.
-</P>
+</p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
+
+<p>
+<a href="../../../boost/graph/bellman_ford_shortest_paths.hpp"
+><tt>boost/graph/bellman_ford_shortest_paths.hpp</tt></a>
+</p>
+
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>EdgeListGraph&amp; g</tt></td>
+<td class="cxx_code">EdgeListGraph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A directed or undirected graph whose type must be a model of <a
-href="./EdgeListGraph.html"><b>Edge List Graph</b></a>.  If a root vertex is
-provided, then the graph must also model <a href="./VertexListGraph.html"><b
->Vertex List Graph</b></a>.</td>
+class="cxx_concept" href="./EdgeListGraph.html">Edge List Graph</a>.  If a
+root vertex is provided, then the graph must also model <a class="cxx_concept"
+href="./VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The parameter is named <tt>graph</tt>.</td>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_size</tt></td>
+<td class="cxx_code">boost::graph::keywords::_size</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td>N/A</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The number of vertices in the graph.  The argument type must be an
 integer type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>num_vertices(g)</tt></td>
+<td class="cxx_code">num_vertices(g)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight (also know as ``length'' or ``cost'') of each edge in the
-graph.  The <tt>WeightMap</tt> type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The key type for this property map must be the edge descriptor
+graph.  Its type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The key type for this property map must be the edge descriptor
 of the graph.  The value type for the weight map must be <i>Addable</i> with
 the distance map's value type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be an <tt>edge_double_map</tt> for the graph.</td>
+<td>Must be an <span class="python_code">edge_double_map</span> for the
+graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python default:</th>
-<td bgcolor="#dfdfdf"><tt>graph.get_edge_double_map("weight")</tt></td>
+<td class="python_code">graph.get_edge_double_map("weight")</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The predecessor map records the edges in the minimum spanning tree.  Upon
-completion of the algorithm, the edges <tt>(p[u],u)</tt> for all <tt>u</tt> in
-<tt>V</tt> are in the minimum spanning tree.  If <tt>p[u] = u</tt> then
-<tt>u</tt> is either the source vertex or a vertex that is not reachable from
-the source.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write
-Property Map</b></a> with key and vertex types the same as the vertex
+completion of the algorithm, the edges <span class="cxx_code">(p[u],u)</span>
+for all <span class="cxx_code">u</span> in <span class="cxx_code">V</span> are
+in the minimum spanning tree.  If <span class="cxx_code">p[u] = u</span> then
+<span class="cxx_code">u</span> is either the source vertex or a vertex that
+is not reachable from the source.  The argument type must be a model of <a
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a> with key and vertex types the same as the vertex
 descriptor type of the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+<td class="cxx_code">dummy_property_map()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_vertex_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_vertex_map</span> for the
+graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The shortest path weight from the source vertex to each vertex in the
-graph <tt>g</tt> is recorded in this property map.  The argument type must be
-a model of <a href="../../property_map/doc/ReadWritePropertyMap.html"><b
->Read/Write Property Map</b></a>.  The key type of the property map must be
-the vertex descriptor type of the graph, and the value type of the distance
-map must be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b
->Less Than Comparable</b></a>.</td>
+graph <span class="cxx_code">g</span> is recorded in this property map.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key type of the property map must be the vertex descriptor type
+of the graph, and the value type of the distance map must be
+<a href="http://www.boost.org/sgi/stl/LessThanComparable.html"
+class="cxx_concept">Less Than Comparable</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_distance, g)</tt></td>
+<td class="cxx_code">get(vertex_distance, g)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_double_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_double_map</span> for the
+graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_root_vertex</tt></td>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>root_vertex(Vertex s)</tt></td>
+<td class="cxx_code">root_vertex(Vertex s)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The starting (or "root") vertex from which shortest paths will be
 computed.  When provided, the distance map need not be initialized (the
 algorithm will perform the initialization itself).  However, the graph must
-model <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> when this
-parameter is provided.</td>
+model <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
+Graph</a> when this parameter is provided.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
 <td>None; if omitted, the user must initialize the distance map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>visitor(BellmanFordVisitor vis)</tt></td>
+<td class="cxx_code">visitor(BellmanFordVisitor vis)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The visitor object, whose type must be a model of <a
-href="./BellmanFordVisitor.html"><b>Bellman-Ford Visitor</b></a>.  The visitor
-object is passed by value <a href="#1">[1]</a>.</td>
+<td>The visitor object, whose type must be a model of <a class="cxx_concept"
+href="./BellmanFordVisitor.html">Bellman-Ford Visitor</a>.  The visitor object
+is passed by value <a href="#1">[1]</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::default_bellman_visitor()</tt></td>
+<td class="cxx_code">boost::graph::default_bellman_visitor()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>The parameter should be an object that derives from the <a
-href="BellmanFordVisitor.html#python"><tt>BellmanFordVisitor</tt></a> type of
-the graph.</td>
+class="python_code" href="BellmanFordVisitor.html#python"
+>BellmanFordVisitor</a> type of the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_combine</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+<td class="cxx_code">distance_combine(CombineFunction cmb)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function object replaces the role of addition in the relaxation
-step.  The argument type type must be a model of <a
-href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
-Function</b></a>.  The first argument type must match the distance map's value
+step.  The argument type type must be a model of <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
+Function</a>.  The first argument type must match the distance map's value
 type and the second argument type must match the weight map's value type.  The
 result type must be the same as the distance map's value type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::closed_plus&lt;D&gt;(<i>infinite
-distance argument</i>)</tt> with <tt>D = typename
+<td><span class="cxx_code">boost::graph::closed_plus&lt;D&gt;(<i>infinite
+distance argument</i>)</span> with <span class="cxx_code">D = typename
 property_traits&lt;<i>distance map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_compare</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+<td class="cxx_code">distance_compare(CompareFunction cmp)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This function object replaces the role of the less-than operator that
 compares distances in the relaxation step.  The argument type type must be a
-model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
-Predicate</b></a> and have argument types that match the value type of the
-distance map argument type.</td>
+model of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+class="cxx_concept">Binary Predicate</a> and have argument types that match
+the value type of the distance map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
->&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
-argument type</i>&gt;::value_type</tt>.</td>
+>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 </table>
 
-<P>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<H3>Complexity</H3>
-
-<P>
+<p>
 The time complexity is <i>O(V E)</i>.
+</p>
 
-
-<h3>Visitor Event Points</h3>
+<h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
 <ul>
 <li><b><tt>vis.examine_edge(e, g)</tt></b>  is invoked on every edge in
-  the graph <i>|V|</i> times.
+  the graph <i>|V|</i> times.</li>
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>  is invoked when the distance
   label for the target vertex is decreased. The edge <i>(u,v)</i> that 
   participated in the last relaxation for vertex <i>v</i> is an edge in the
-  shortest paths tree. 
+  shortest paths tree.</li>
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>  is invoked if the distance label
-  for the target vertex is not decreased. 
+  for the target vertex is not decreased.</li>
 <li><b><tt>vis.edge_minimized(e, g)</tt></b>  is invoked during the
   second stage of the algorithm, during the test of whether each edge
   was minimized. If the edge is minimized then this function
-  is invoked.
+  is invoked.</li>
 <li><b><tt>vis.edge_not_minimized(e, g)</tt></b>  is also invoked during the
   second stage of the algorithm, during the test of whether each edge
   was minimized.  If the edge was not minimized, this function is
-  invoked.  This happens when there is a negative cycle in the graph.
+  invoked.  This happens when there is a negative cycle in the graph.</li>
 </ul>
 
-<h3>Notes</h3>
+<h3><a name="sec:notes"></a>Notes</h3>
 
 <p><a name="1">[1]</a> 
   Since the visitor parameter is passed by value, if your visitor
@@ -559,14 +578,19 @@ The time complexity is <i>O(V E)</i>.
   will be made to a copy of the visitor object, not the visitor object
   passed in. Therefore you may want the visitor to hold this state by
   pointer or reference.
+</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
+University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

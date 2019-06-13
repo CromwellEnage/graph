@@ -1,25 +1,26 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Jeremy Siek 2000
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Johnson All Pairs Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Johnson All Pairs Shortest Paths</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:johnson"></A>
-<TT>johnson_all_pairs_shortest_paths</TT>
-</H1>
+<h1><a name="sec:johnson"></a><tt
+>johnson_all_pairs_shortest_paths</tt></h1>
 
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled version</i>
 template &lt;
     typename VertexAndEdgeListGraph, typename DistanceMatrix,
@@ -43,51 +44,55 @@ johnson_all_pairs_shortest_paths(
 );
 
 <i>// old-style named paramter version</i>
+template &lt;typename Graph, typename DistanceMatrix, typename P, typename T, typename R&gt;
+bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+
+<i>// non-named parameter versions</i>
   template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
             class VertexID, class Weight, class BinaryPredicate, 
             class BinaryFunction, class Infinity, class DistanceZero&gt;
   bool
-  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1, 
                DistanceMatrix&amp; D,
                VertexID id1, Weight w1, const BinaryPredicate&amp; compare, 
                const BinaryFunction&amp; combine, const Infinity&amp; inf,
                DistanceZero zero);
 
-template &lt;typename Graph, typename DistanceMatrix, typename P, typename T, typename R&gt;
-bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
-
-<i>// non-named parameter version</i>
 template &lt;typename Graph, typename DistanceMatrix,
           typename VertexIndex, typename WeightMap, typename DT&gt;
 bool
 johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1, 
   DistanceMatrix&amp; D,
   VertexIndex i_map, WeightMap w_map, DT zero);
-</PRE>
+</pre>
 
-<P>
-This algorithm finds the shortest distance between every pair of
-vertices in the graph. The algorithm returns false if there is a
-negative weight cycle in the graph and true otherwise. The distance
-between each pair of vertices is stored in the distance matrix
-<TT>D</TT>. This is one of the more time intensive graph algorithms,
-having a time complexity of <i>O(V E log V)</i>.
+<p>
+This algorithm finds the shortest distance between every pair of vertices in
+the graph.  The algorithm returns false if there is a negative weight cycle in
+the graph and true otherwise.  The distance between each pair of vertices is
+stored in the distance matrix <span class="cxx_code">D</span>.  This is one of
+the more time intensive graph algorithms, having a time complexity of <i>O(V E
+log V)</i>.
+</p>
 
-<P>This algorithm should be used to compute shortest paths between
-every pair of vertices for sparse graphs. For dense graphs, use <a
-href="floyd_warshall_shortest.html"><code>floyd_warshall_all_pairs_shortest_paths</code></a>.
+<p>
+This algorithm should be used to compute shortest paths between every pair of
+vertices for sparse graphs.  For dense graphs, use <a class="cxx_code"
+href="floyd_warshall_shortest.html"
+>floyd_warshall_all_pairs_shortest_paths()</a>.
+</p>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<P>
+<p>
 The BGL implementations of Johnson's all-pairs shortest-path algorithms can
 take in named parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
 example illustrates the syntax for passing arguments by name.
-</P>
+</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::directedS, boost::no_property,
     boost::<a href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
@@ -103,122 +108,129 @@ bool found_no_negative_weight_cycle = johnson_all_pairs_shortest_paths(
 );
 </pre>
 
-<P>
+<p>
 The full program is in <a
 href="../example/johnson-eg.cpp"><tt>example/johnson-eg.cpp</tt></a>.  It
 applies Johnson's algorithm for all-pairs shortest paths to the example graph
-from page 568 of the CLR&nbsp;[<A HREF="bibliography.html#clr90">8</A>].
-</P>
+from page 568 of the CLR&nbsp;[<a href="bibliography.html#clr90">8</a>].
+</p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/johnson_all_pairs_shortest.hpp"><TT>boost/graph/johnson_all_pairs_shortest.hpp</TT></a>
+<p>
+<a href="../../../boost/graph/johnson_all_pairs_shortest.hpp"><tt
+>boost/graph/johnson_all_pairs_shortest.hpp</tt></a>
+</p>
 
-
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>Graph&amp; g</tt></td>
+<td class="cxx_code">Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A directed or undirected graph.  The graph type must be a model of
-<a href="VertexListGraph.html"><b>Vertex List Graph</b></a>,
-<a href="EdgeListGraph.html"><b>Edge List Graph</b></a>, and
-<a href="IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>,
+<a class="cxx_concept" href="EdgeListGraph.html">Edge List Graph</a>, and
+<a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>DistanceMatrix&amp; d</tt></td>
+<td class="cxx_code">DistanceMatrix&amp; d</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The length of the shortest path between each pair of vertices
-&lt;<tt>u</tt>, <tt>v</tt>&gt; in the graph is stored in
-<tt>D[u][v]</tt>.  The tuple of types (<tt>DistanceMatrix, <a
-href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::vertices_size_type,
-D</tt>) must be a model of <a href="BasicMatrix.html"><b>BasicMatrix</b></a>
-where <tt>D</tt> is the value type of the distance map argument.  There must
-be implicit conversions between the value type of the distance matrix and the
-value type of the weight map argument.</td>
+<td>The length of the shortest path between each pair of vertices &lt;<span
+class="cxx_code">u</span>, <span class="cxx_code">v</span>&gt; in the graph is
+stored in <span class="cxx_code">D[u][v]</span>.  The tuple of types (<span
+class="cxx_code">DistanceMatrix, <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertices_size_type, D</span>) must be a model of <a
+class="cxx_concept" href="BasicMatrix.html">BasicMatrix</a> where <span
+class="cxx_code">D</span> is the value type of the distance map
+argument.  There must be implicit conversions between the value type of the
+distance matrix and the value type of the weight map argument.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or "length" of each edge in the graph.  The argument type must
-be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b
->Readable Property Map</b></a>.  The edge descriptor type of the graph needs
-to be usable as the key type for the weight map.  The value type for this map
-must support a subtraction operation.</td>
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The edge descriptor type of
+the graph needs to be usable as the key type for the weight map.  The value
+type for this map must support a subtraction operation.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is necessary for efficient updates of the heap
-data structure in the internal call to Dijkstra's algorithm.  The argument
-type must be a model of
-<a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is necessary for
+efficient updates of the heap data structure in the internal call to
+Dijkstra's algorithm.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The value type of the map must be an integer
+type.  The vertex descriptor type of the graph needs to be usable as the key
+type of the map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -239,158 +251,166 @@ keyword:</th>
 <tr valign="top">
 <th>Description:</th>
 <td>The function used to compare distances to determine which target vertex is
-closer to the source vertex.  The argument type type must be a model of
-<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><b>Binary
-Predicate</b></a> and have argument types that match the value type of the
+closer to the source vertex.  The argument type type must be a model of <a
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
+Predicate</a> and have argument types that match the value type of the
 weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td><span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/functional/less">less</a
->&lt;D&gt;()</tt> with <tt>D = typename property_traits&lt;<i>distance map
-argument type</i>&gt;::value_type</tt>.</td>
+>&lt;D&gt;()</span> with <span class="cxx_code">D = typename
+property_traits&lt;<i>distance map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_combine</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_combine</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_combine(CombineFunction cmb)</tt></td>
+<td class="cxx_code">distance_combine(CombineFunction cmb)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The function used to combine distance to compute the distance of a
-path.  The argument type type must be a model of <a
-href="http://www.boost.org/sgi/stl/BinaryFunction.html"><b>Binary
-Function</b></a>.  The result type as well as both argument types of the
-binary function must match the value type of the weight map argument
-type.  This operation is required to act as the sum operation for the weight
-type; in particular, it must be the inverse of the binary <tt>-</tt> operator
-on that type.</td>
+path.  The argument type type must be a model of <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
+Function</a>.  The result type as well as both argument types of the binary
+function must match the value type of the weight map argument type.  This
+operation is required to act as the sum operation for the weight type; in
+particular, it must be the inverse of the binary <span class="cxx_code"
+>-</span> operator on that type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::closed_plus&lt;W&gt;()</tt> with <tt>W =
-typename property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">boost::closed_plus&lt;W&gt;()</span> with <span
+class="cxx_code">W = typename property_traits&lt;<i>weight map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_inf</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_inf</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_inf(D inf)</tt></td>
+<td class="cxx_code">distance_inf(D inf)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This value is used to initialize the distance for each vertex before the
 start of the algorithm.  The argument type must match the value type of the
 weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::numeric_limits&lt;D&gt;::max()</tt> with
-<tt>W = typename property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+<td><span class="cxx_code">std::numeric_limits&lt;D&gt;::max()</span> with
+<span class="cxx_code">W = typename property_traits&lt;<i>weight map argument
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_zero</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_zero</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_zero(D zero)</tt></td>
+<td class="cxx_code">distance_zero(D zero)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This value is used to initialize the distance for the source vertex before
 the start of the algorithm.  The argument type must match the value type of
 the weight map argument type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>W()</tt> with <tt>W = typename
+<td><span class="cxx_code">W()</span> with <span class="cxx_code">W = typename
 property_traits&lt;<i>weight map argument
-type</i>&gt;::value_type</tt>.</td>
+type</i>&gt;::value_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+<td class="cxx_code">color_map(ColorMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This is used during the execution of the algorithm to mark the
 vertices.  The vertices start out white and become gray when they are inserted
 in the queue.  They then turn black when they are removed from the queue.  At
 the end of the algorithm, vertices reachable from the source vertex will have
 been colored black.  All other vertices will still be white.  The argument
-type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  A vertex descriptor must be usable as the key type of the map,
-and the value type of the map must be a model of <a href="./ColorValue.html"
-><b>Color Value</b></a>.</td>
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  A vertex descriptor must be usable as the key type of the map,
+and the value type of the map must be a model of <a class="cxx_concept"
+href="./ColorValue.html">Color Value</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
-the index map argument for the index map.</td>
+<td>An <a class="cxx_code"
+href="../../property_map/doc/iterator_property_map.html"
+>iterator_property_map</a> created from a <span class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+<span class="cxx_code">default_color_type</span>, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
+<p>
 The time complexity is <i>O(V E log V)</i>.
+</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
+University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

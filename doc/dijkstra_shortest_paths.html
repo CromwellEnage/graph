@@ -221,7 +221,7 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
 <p>
 One overload of <span class="cxx_code">dijkstra_shortest_paths()</span> can
@@ -251,13 +251,14 @@ The full program is in <a href="../example/dijkstra-example.cpp"
 ><tt>example/dijkstra-example.cpp</tt></a>
 </p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
 <p>
-<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
+<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt
+>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
 </p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
 <tr>
@@ -301,7 +302,7 @@ the shortest paths tree will be rooted at this vertex.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
 <tr>
@@ -694,13 +695,13 @@ type of the graph.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
 <p>
 The time complexity is <i>O(V log V + E)</i>.
 </p>
 
-<h3>Visitor Event Points</h3>
+<h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
 <ul>
 <li><b><tt>vis.initialize_vertex(u, g)</tt></b>
@@ -712,12 +713,12 @@ The time complexity is <i>O(V log V + E)</i>.
   is a shortest-paths tree edge so 
   <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
   of the examined vertices is monotonically increasing
-  <i>d[u<sub>1</sub>] <= d[u<sub>2</sub>] <= d[u<sub>n</sub>]</i>.</li>
+  <i>d[u<sub>1</sub>] &lt;= d[u<sub>2</sub>] &lt;= d[u<sub>n</sub>]</i>.</li>
 <li><b><tt>vis.examine_edge(e, g)</tt></b>
   is invoked on each out-edge of a vertex immediately after it has
   been added to set <i>S</i>.</li>
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) < d[v]</i>.
+  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.
   The edge <i>(u,v)</i> that participated in the last
   relaxation for vertex <i>v</i> is an edge in the shortest paths tree.</li>
 <li><b><tt>vis.discover_vertex(v, g)</tt></b>
@@ -733,7 +734,7 @@ The time complexity is <i>O(V log V + E)</i>.
   been examined.</li>
 </ul>
 
-<h3>See also</h3>
+<h3><a name="sec:see_also"></a>See also</h3>
 
 <p>
 <a href="dijkstra_shortest_paths_no_color_map.html"
@@ -741,7 +742,7 @@ The time complexity is <i>O(V log V + E)</i>.
 path that does not use a color map.
 </p>
 
-<h3>Notes</h3>
+<h3><a name="sec:notes"></a>Notes</h3>
 
 <p><a name="1">[1]</a>
 The algorithm used here saves a little space by not putting all <i>V -
