@@ -1,29 +1,26 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Jeremy Siek 2000
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Prim Minimum Spanning Tree</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: Prim Minimum Spanning Tree</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
-<BR Clear>
+<br />
 
+<h1><a name="sec:prim"></a><img src="figs/python.gif"
+alt="(Python)" /><tt>prim_minimum_spanning_tree</tt></h1>
 
-
-<H1><A NAME="sec:prim"></A>
-<img src="figs/python.gif" alt="(Python)"/>
-<TT>prim_minimum_spanning_tree</TT>
-</H1>
-
-<P>
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled version</i>
 template &lt;
     typename Graph, typename PredecessorMap,
@@ -49,7 +46,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 <i>// old-style named parameter version</i>
 template &lt;class Graph, class PredMap, class P, class T, class R&gt;
 void prim_minimum_spanning_tree(const Graph&amp; g, PredMap p_map,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params)
+  const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
 template &lt;class Graph, class DijkstraVisitor, 
@@ -59,32 +56,29 @@ void prim_minimum_spanning_tree(const Graph&amp; g,
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s, 
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-   IndexMap index_map, DijkstraVisitor vis)
-</PRE>
+   IndexMap index_map, DijkstraVisitor vis);
+</pre>
 
-<P>
-This is Prim's algorithm&nbsp;[<A
-HREF="bibliography.html#prim57:_short">25</A>,<A
-HREF="bibliography.html#clr90">8</A>,<A
-HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>,<A
-HREF="bibliography.html#graham85">15</A>] for solving the minimum
-spanning tree problem for an undirected graph with weighted edges. A
-MST is a set of edges that connects all the vertices in the graph
-where the total weight of the edges in the tree is minimized.  See
-Section <A
-HREF="graph_theory_review.html#sec:minimum-spanning-tree">Minimum
-Spanning Tree Problem</A> for more details. The implementation is
-simply a call to <a
-href="./dijkstra_shortest_paths.html"><TT>dijkstra_shortest_paths()</TT></a>
-with the appropriate choice of comparison and combine functors.
-The pseudo-code for Prim's algorithm is listed below.
-The algorithm as implemented in Boost.Graph does not produce correct results on
+<p>
+This is Prim's algorithm [<a href="bibliography.html#prim57:_short">25</a>,<a
+href="bibliography.html#clr90">8</a>,<a
+href="bibliography.html#tarjan83:_data_struct_network_algo">27</a>,<a
+href="bibliography.html#graham85">15</a>] for solving the minimum spanning
+tree problem for an undirected graph with weighted edges.  A MST is a set of
+edges that connects all the vertices in the graph where the total weight of
+the edges in the tree is minimized.  See Section <a
+href="graph_theory_review.html#sec:minimum-spanning-tree">Minimum Spanning
+Tree Problem</a> for more details.  The implementation is simply a call to <a
+class="cxx_code" href="./dijkstra_shortest_paths.html"
+>dijkstra_shortest_paths()</a> with the appropriate choice of comparison and
+combine functors.  The pseudo-code for Prim's algorithm is listed below.  The
+algorithm as implemented in Boost.Graph does not produce correct results on
 graphs with parallel edges.
 </p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 PRIM-MST(<i>G</i>, <i>s</i>, <i>w</i>)
   <b>for</b> each vertex <i>u</i> <i>in</i> <i>V[G]</i>  
@@ -114,7 +108,7 @@ PRIM-MST(<i>G</i>, <i>s</i>, <i>w</i>)
   <b>return</b> (<i>p</i>, <i>d</i>)
 </pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 
 initialize vertex <i>u</i>
@@ -143,16 +137,16 @@ finish <i>u</i>
 </tr>
 </table>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<P>
-One overload of <tt>prim_minimum_spanning_tree()</tt> can take in named
-parameter arguments, courtesy of <a href="../../parameter/doc/html/index.html"
->Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</P>
+<p>
+One overload of <span class="cxx_code">prim_minimum_spanning_tree()</span> can
+take in named parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.
+</p>
 
-<pre>
+<pre class="cxx_code">
 template &lt;typename Distance&gt;
 class total_length_visitor : public boost::graph::<a
 href="dijkstra_visitor.html">dijkstra_visitor</a>&lt;&gt;
@@ -200,312 +194,327 @@ prim_minimum_spanning_tree(
 );
 </pre>
 
-<P>
+<p>
 The full program is in <a
 href="../example/miles_span.cpp"><tt>example/miles_span.cpp</tt></a>
-</P>
+</p>
 
-<P>
+<p>
 The file <a
 href="../example/prim-example.cpp"><tt>examples/prim-example.cpp</tt></a>
 contains another example of using Prim's algorithm.
-</P>
+</p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/prim_minimum_spanning_tree.hpp"><TT>boost/graph/prim_minimum_spanning_tree.hpp</TT></a>
-</P>
+<p>
+<a href="../../../boost/graph/prim_minimum_spanning_tree.hpp"
+><tt>boost/graph/prim_minimum_spanning_tree.hpp</tt></a>
+</p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>An undirected graph.  Its type must be a model of
-<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  It should not
-contain parallel edges.</td>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="./VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="./IncidenceGraph.html">Incidence Graph</a>.  It should not contain
+parallel edges.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The parameter is named <tt>graph</tt>.</td>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>PredecessorMap p_map</tt></td>
+<td class="cxx_code">PredecessorMap p_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The predecessor map records the edges in the minimum spanning tree.  Upon
 completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i>
 are in the minimum spanning tree.  If <i>p[u] = u</i> then <i>u</i> is either
 the root of the tree or is a vertex that is not reachable from the root.  The
-<tt>PredecessorMap</tt> type must be a <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a> with key and vertex types the same as the vertex descriptor type
-of the graph.</td>
+<span class="cxx_code">PredecessorMap</span> type must be a <a
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a> with key and vertex types the same as the vertex
+descriptor type of the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_vertex_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_vertex_map</span> for the
+graph.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_root_vertex</tt></td>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>root_vertex(<a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertex_descriptor s)</tt></td>
+<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor s)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The vertex that will be the root of the minimum spanning tree.  The choice
 of the root vertex is arbitrary.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>(0 &lt; num_vertices(g)) ? *vertices(g).first :
-<a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::null_vertex()</tt></td>
+<td class="cxx_code">(0 &lt; num_vertices(g)) ? *vertices(g).first :
+<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
-be non-negative, and the algorithm will throw a <a
-href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
+be non-negative, and the algorithm will throw a <a class="cxx_code"
+href="./exception.html#negative_edge">negative_edge</a> exception if
 one of the edges is negative.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
-key type for the weight map.  The value type for this map must be the same as
-the value type of the distance map argument, and that type must be <a
-href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
-Comparable</b></a>.</td>
+class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The edge descriptor type of the graph needs to be
+usable as the key type for the weight map.  The value type for this map must
+be the same as the value type of the distance map argument, and that type must
+be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html"
+class="cxx_concept">Less Than Comparable</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be an <tt>edge_double_map</tt> for the graph.</td>
+<td>Must be an <span class="python_code">edge_double_map</span> for the
+graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python default:</th>
-<td bgcolor="#dfdfdf"><tt>graph.get_edge_double_map("weight")</tt></td>
+<td class="python_code">graph.get_edge_double_map("weight")</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is necessary for efficient updates of the heap
-data structure&nbsp;[<A HREF="bibliography.html#driscoll88">61</A>] when an
-edge is relaxed.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is necessary for
+efficient updates of the heap data structure [<a
+href="bibliography.html#driscoll88">61</a>] when an edge is relaxed.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
 descriptor type of the graph needs to be usable as the key type of the
 map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
+</tr>
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The weight of the spanning tree edge into each vertex in the graph
-<tt>g</tt> is recorded in this property map, with edges directed away from the
-spanning tree root.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.  The value type of the distance map must be
-the same as that of the weight map argument, and that type must be <a
-href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
-Comparable</b></a>.</td>
+<td>The weight of the spanning tree edge into each vertex in the graph <span
+class="cxx_code">g</span> is recorded in this property map, with edges
+directed away from the spanning tree root.  The argument type must be a model
+of <a href="../../property_map/doc/ReadWritePropertyMap.html"
+class="cxx_concept">Read/Write Property Map</a>.  The vertex descriptor type
+of the graph needs to be usable as the key type of the distance map.  The
+value type of the distance map must be the same as that of the weight map
+argument, and that type must be <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
+Comparable</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_double_map</tt> for the graph.</td>
+<td>Must be a <span class="python_code">vertex_double_map</span> for the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+<td class="cxx_code">color_map(ColorMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This is used during the execution of the algorithm to mark the
 vertices.  The vertices start out white and become gray when they are inserted
 in the queue.  They then turn black when they are removed from the queue.  At
 the end of the algorithm, vertices reachable from the source vertex will have
 been colored black.  All other vertices will still be white.  The argument
-type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  A vertex descriptor must be usable as the key type of the map,
-and the value type of the map must be a model of <a href="./ColorValue.html"
-><b>Color Value</b></a>.</td>
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  A vertex descriptor must be usable as the key type of the map, and
+the value type of the map must be a model of <a class="cxx_concept"
+href="./ColorValue.html">Color Value</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
-the index map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+<span class="cxx_code">default_color_type</span>, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The color map must be a <tt>vertex_color_map</tt> for the graph.</td>
+<td>The color map must be a <span class="python_code">vertex_color_map</span>
+for the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>visitor(DijkstraVisitor vis)</tt></td>
+<td class="cxx_code">visitor(DijkstraVisitor vis)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Use this to specify actions that you would like to happen during certain
 event points within the algorithm.  The argument type must be a model of the
-<a href="DijkstraVisitor.html"><b>Dijkstra Visitor</b></a> concept.  The
-visitor object is passed by value <a href="#1">[1]</a>.</td>
+<a class="cxx_concept" href="DijkstraVisitor.html">Dijkstra Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::default_dijkstra_visitor()</tt></td>
+<td class="cxx_code">boost::graph::default_dijkstra_visitor()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>The parameter should be an object that derives from the <a
-href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type of the
-graph.</td>
+class="python_code" href="DijkstraVisitor.html#python">DijkstraVisitor</a>
+type of the graph.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<P>
+<p>
 The time complexity is <i>O(E log V)</i>.
-</P>
+</p>
 
-<h3>Notes</h3>
+<h3><a name="sec:notes"></a>Notes</h3>
 
 <p><a name="1">[1]</a> 
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
+  passed in.  Therefore you may want the visitor to hold this state by
+  pointer or reference.</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
+University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

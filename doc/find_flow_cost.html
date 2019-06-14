@@ -1,28 +1,27 @@
-<HTML>
+<html>
 <!--
-     Copyright (c) Piotr Wygocki 2013
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Piotr Wygocki 2013
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Find Flow Cost</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+<head>
+<title>Boost Graph Library: Find Flow Cost</title>
+</head>
+<body BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
      ALT="C++ Boost" width="277" height="86"> 
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:find_flow_cost">
-<TT>find_flow_cost</TT>
-</H1>
+<h1><a name="sec:find_flow_cost"></a><tt>find_flow_cost</tt></h1>
 
-<PRE>
+<pre class="cxx_code">
 <i>// Boost.Parameter-enabled version</i>
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="./Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, typename TaggedArg2
 &gt;
 typename boost::lazy_enable_if&lt;
@@ -42,42 +41,44 @@ find_flow_cost(
 );
 
 <i>// old-style named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>&gt;
+template &lt;class <a class="cxx_concept" href="./Graph.html">Graph</a>&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g,
         const bgl_named_params&lt;P, T, R&gt; &amp; params = <i>all defaults</i>);
 
 <i>// non-named parameter version</i>
-template&lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
+template&lt;class <a class="cxx_concept" href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight);
-</PRE>
+</pre>
 
-<P>
-The <tt>find_flow_cost()</tt> function calculates the minimum cost maximum flow value of a network and given flow. See Section <a
+<p>
+The <span class="cxx_code">find_flow_cost()</span> function calculates the
+minimum cost maximum flow value of a network and given flow. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  
-The function  calculates the cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in
+Flow Algorithms</a> for a description of maximum flow.  The function
+calculates the cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in
 <i>E</i>, which are passed in the form of the residual capacity
 <i>r(u,v) = c(u,v) - f(u,v)</i>. 
-</P>
+</p>
 
-<P>
-In order to compute the min cost max flow use : 
-<a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a>  or
-<a href="./cycle_canceling.html"><tt>cycle_canceling()</tt></a>.
-</P>
+<p>
+In order to compute the min cost max flow use: <a class="cxx_code"
+href="./successive_shortest_path_nonnegative_weights.html"
+>successive_shortest_path_nonnegative_weights()</a> or <a class="cxx_code"
+href="./cycle_canceling.html">cycle_canceling()</a>.
+</p>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<P>
-One overload of <tt>find_flow_cost()</tt> can take in named parameter
-arguments, courtesy of <a href="../../parameter/doc/html/index.html"
->Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</P>
+<p>
+One overload of <span class="cxx_code">find_flow_cost()</span> can take in
+named parameter arguments, courtesy of <a
+href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
+example illustrates the syntax for passing arguments by name.
+</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list_traits.html">adjacency_list_traits</a>&lt;boost::vecS,boost::vecS,boost::directedS&gt; traits;
 struct edge_t
 {
@@ -114,34 +115,33 @@ The full program is in
 ><tt>test/find_flow_cost_bundled_properties_and_named_params_test.cpp</tt></a>
 </P>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
 <P>
 <a href="../../../boost/graph/find_flow_cost.hpp"
 ><tt>boost/graph/find_flow_cost.hpp</tt></a>
 </P>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>A directed graph.  Its type must be a model of <a
-href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
-<i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
-graph.</td>
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="./IncidenceGraph.html">Incidence Graph</a>.  For each edge <i>(u,v)</i>
+in the graph, the reverse edge <i>(v,u)</i> must also be in the graph.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
 <tr valign="top">
@@ -243,8 +243,8 @@ The complexity is <i> O(|E|)</i>,
 Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos at mimuw.edu.pl</A>)
 </TD></TR></TABLE>
 
-</BODY>
-</HTML> 
+</body>
+</html> 
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt
