@@ -1,23 +1,23 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <!--
-     Copyright (c) 2004 Trustees of Indiana University
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-  <head>
-    <title>Boost Graph Library: Brandes' Betweenness Centrality</title>
-  </head>
+    Copyright (c) 2004 Trustees of Indiana University
 
-  <body>
-    <IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
-<h1><img src="figs/python.gif" alt="(Python)"/><tt>brandes_betweenness_centrality</tt></h1>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Brandes' Betweenness Centrality</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<h1><img src="figs/python.gif"
+alt="(Python)"/><tt>brandes_betweenness_centrality</tt></h1>
 
-    <p>
-    <pre>
+<pre class="cxx_code">
 <em>// Boost.Parameter-enabled version</em>
 template &lt;
     typename Graph,
@@ -86,73 +86,70 @@ relative_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map
 template&lt;typename Graph, typename CentralityMap&gt;
 typename property_traits&lt;CentralityMap&gt;::value_type
 central_point_dominance(const Graph&amp; g, CentralityMap centrality_map);
-    </pre>
+</pre>
 
-<p>This algorithm&nbsp;[<a href="bibliography.html#brandes01">54</a>]
-computes the <em>betweenness centrality</em>&nbsp;[<a
-href="bibliography.html#freeman77">55</a>,<a
-href="bibliography.html#anthonisse71">56</a>] of each vertex or each
-edge in the graph. The betweenness centrality of a vertex <em>v</em>
-is defined by
-
-<p><img src="figs/betweenness_centrality.gif">,
-
-<p>where <img src="figs/sigma_st.gif"> is the number of shortest paths from
-vertex <em>s</em> to vertex <em>t</em> and <img src="figs/sigma_stv.gif">
-is the number of shortest paths from vertex <em>s</em> to vertex
-<em>t</em> that pass through vertex <em>v</em>.
+<p>This algorithm [<a href="bibliography.html#brandes01">54</a>] computes the
+<em>betweenness centrality</em> [<a href="bibliography.html#freeman77">55</a>,
+<a href="bibliography.html#anthonisse71">56</a>] of each vertex or each edge
+in the graph.  The betweenness centrality of a vertex <em>v</em> is defined
+by<br /><br /><img src="figs/betweenness_centrality.gif" />,<br /><br />where
+<img src="figs/sigma_st.gif" /> is the number of shortest paths from vertex
+<em>s</em> to vertex <em>t</em> and <img src="figs/sigma_stv.gif" /> is the
+number of shortest paths from vertex <em>s</em> to vertex <em>t</em> that pass
+through vertex <em>v</em>.</p>
 
 <!-- \sum_{s \neq v \neq t}\frac{\sigma_{st}(v)}{\sigma_{st}} -->
 
 <p>The edge betweenness centrality indicates for each edge the
 betweenness centrality that was contributed to the target(s) of the
-edge (plural for undirected graphs). Similar to (vertex) betweenness
+edge (plural for undirected graphs).  Similar to (vertex) betweenness
 centrality, edge betweenness centrality can be used to determine the
-edges through which most shortest paths must pass. A single invocation
+edges through which most shortest paths must pass.  A single invocation
 of this algorithm can compute either the vertex or edge centrality (or
 both).</p>
 
-<p>This algorithm can operate either on weighted graphs (if a suitable
-edge weight map is supplied) or unweighted graphs (if no edge weight
-map is supplied). The result is the absolute betweenness centrality;
-to convert to the relative betweenness centrality, which scales each
-absolute centrality by <img src="figs/rel_betweenness_centrality.gif">
-(where <em>n</em> is the number of vertices in the graph), use
-<tt>relative_betweenness_centrality</tt>. Given the relative
-betweenness centrality, one can compute the <em>central point
-dominance</em>&nbsp;[<a href="bibliography.html#freeman77">55</a>], which is a measure of the maximum "betweenness" of any
-point in the graph: it will be 0 for complete graphs and
-1 for "wheel" graphs (in which there is a central vertex that all
-paths include; see <a href="#Fig1">Fig. 1</a>). Let <img src="figs/v_star.gif"> be the vertex with the largest relative betweenness centrality; then, the central point dominance is defined as:
-
-<p><img src="figs/central_point_dominance.gif">
+<p>This algorithm can operate either on weighted graphs (if a suitable edge
+weight map is supplied) or unweighted graphs (if no edge weight map is
+supplied).  The result is the absolute betweenness centrality; to convert to
+the relative betweenness centrality, which scales each absolute centrality by
+<img src="figs/rel_betweenness_centrality.gif" /> (where <em>n</em> is the
+number of vertices in the graph), use <span class="cxx_code"
+>relative_betweenness_centrality()</span>.  Given the relative betweenness
+centrality, one can compute the <em>central point dominance</em> [<a
+href="bibliography.html#freeman77">55</a>], which is a measure of the maximum
+"betweenness" of any point in the graph: it will be 0 for complete graphs and
+1 for "wheel" graphs (in which there is a central vertex that all paths
+include; see <a href="#Fig1">Fig. 1</a>).  Let <img src="figs/v_star.gif" />
+be the vertex with the largest relative betweenness centrality; then, the
+central point dominance is defined as:<br /><br /><img
+src="figs/central_point_dominance.gif" /></p>
 
 <!-- C_B' = \frac{\sum_{v \in V} C_B(v^*) - C_B'(v)}{n-1} -->
 
-<p><a name="Fig1">
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Fig. 1: A wheel graph, where every path travels through the central node. <br>The central point dominance of this graph is 1.</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="center"><img src="figs/wheel_graph.gif"></td>
-        </tr>
-      </tbody>
-    </table>
+<p><a name="Fig1"></a></p>
 
-<h3>Example</h3>
+<table border="1">
+<thead>
+<tr>
+<th>Fig. 1: A wheel graph, where every path travels through the central node.
+<br />The central point dominance of this graph is 1.</td>
+</tr>
+</thead>
+<tbody>
+<tr><td align="center"><img src="figs/wheel_graph.gif" /></td></tr>
+</tbody>
+</table>
 
-<P>
-One overload of <tt>brandes_betweenness_centrality()</tt> can take in named
-parameter arguments, courtesy of <a href="../../parameter/doc/html/index.html"
->Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</P>
+<h3><a name="sec:example"></a>Example</h3>
 
-<pre>
+<p>
+One overload of <span class="cxx_code">brandes_betweenness_centrality()</span>
+can take in named parameter arguments, courtesy of <a
+href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
+example illustrates the syntax for passing arguments by name.
+</p>
+
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::listS, boost::vecS, boost::directedS, boost::no_property,
     boost::<a href="property.html">property</a>&lt;
@@ -171,372 +168,394 @@ brandes_betweenness_centrality(
 );
 </pre>
 
-<P>
+<p>
 The full program is in <a href="../test/betweenness_centrality_test.cpp"
 ><tt>test/betweenness_centrality_test.cpp</tt></a>
-</P>
+</p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
+<p>
 <a href="../../../boost/graph/betweenness_centrality.hpp"><tt>boost/graph/betweenness_centrality.hpp</tt></a>
-</P>
+</p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  When an edge
-centrality map is supplied, the graph type must also model
-<a href="EdgeListGraph.html"><b>Edge List Graph</b></a>.</td>
+a model of <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
+Graph</a> and <a class="cxx_concept" href="./IncidenceGraph.html">Incidence
+Graph</a>.  When an edge centrality map is supplied, the graph type must also
+model <a class="cxx_concept" href="EdgeListGraph.html">Edge List
+Graph</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The parameter is named <tt>graph</tt>.</td>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_incoming_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_incoming_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td>N/A</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This property map records the set of edges incoming to each vertex that
 comprise a shortest path from a particular source vertex through this vertex,
 and is used internally by the algorithm.  The argument type must be a <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a> whose key type is the same as the vertex descriptor type of the
-graph and whose value type is a Sequence (e.g., a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt>)
+class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a> whose key type is the same as the vertex descriptor
+type of the graph and whose value type is a Sequence (e.g., a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span>)
 containing edge descriptors.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"
-><tt>iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-<tt>std::<a href="http://en.cppreference.com/w/cpp/container/vector"
->vector</a>&lt;Edge&gt;</tt>, where <tt>Edge</tt> is the edge descriptor type
-of the graph.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+<span class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a
+>&lt;Edge&gt;</span>, where <span class="cxx_code">Edge</span> is the edge
+descriptor type of the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td>N/A</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The shortest path weight from each source vertex <tt>s</tt> to each vertex
-in the graph <tt>g</tt> is recorded in this property map, but the result is
-only used internally.  The argument type must be a <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.  The value type of the distance map is the
-element type of a <a href="./Monoid.html"><b>Monoid</b></a>.</td>
+<td>The shortest path weight from each source vertex <span class="cxx_code"
+>s</span> to each vertex in the graph <span class="cxx_code">g</span> is
+recorded in this property map, but the result is only used internally.  The
+argument type must be a <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The vertex descriptor type of the graph needs to be usable as the
+key type of the distance map.  The value type of the distance map is the
+element type of a <a class="cxx_concept" href="./Monoid.html">Monoid</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"
-><tt>iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the weight map argument's value type (or <tt><a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertices_size_type</tt> of the graph when no
-weight map exists) of size <tt>num_vertices(g)</tt> and using the index map
-argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the weight map argument's value type (or <span class="cxx_code"><a
+href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertices_size_type</span> of the graph when no weight map
+exists) of size <span class="cxx_code">num_vertices(g)</span> and using the
+index map argument for the index map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_dependency_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_dependency_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td>N/A</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Property map used internally to accumulate partial betweenness centrality
-results.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
+results.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The vertex descriptor type of the graph needs to be usable as
 the key type of the dependency map.  The value type of the dependency map must
 be compatible with the value type of the centrality map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"
-><tt>iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the centrality map argument's value type, of size <tt>num_vertices(g)</tt>,
-and using the index map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the centrality map argument's value type, of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_path_count_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_path_count_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
 <td>N/A</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Property map used internally to accumulate the number of paths that pass
 through each particular vertex.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the dependency map.  The value type of the dependency map must
-be an integral type large enough to store the number of paths in the
-graph.</td>
+class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
+to be usable as the key type of the dependency map.  The value type of the
+dependency map must be an integral type large enough to store the number of
+paths in the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"
-><tt>iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the weight map argument's value type (or <tt><a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::degree_size_type</tt>, of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the weight map argument's value type (or <span class="cxx_code"><a
+href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::degree_size_type</span
+>, of size <span class="cxx_code">num_vertices(g)</span>, and using the index
+map argument for the index map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT/UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_centrality_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_centrality_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>centrality_map(CentralityMap centrality)</tt></td>
+<td class="cxx_code">centrality_map(CentralityMap centrality)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This property map is used to accumulate the betweenness centrality of each
 vertex, and is the primary output of the algorithm.  The argument type must be
 a model of <a href="../../property_map/doc/ReadWritePropertyMap.html"
-><b>Read/Write Property Map</b></a>, with the graph's vertex descriptor type
-as its key type.  The value type of this property map should be a
-floating-point or rational type.</td>
+class="cxx_concept">Read/Write Property Map</a>, with the graph's vertex
+descriptor type as its key type.  The value type of this property map should
+be a floating-point or rational type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <tt>dummy_property_map</tt>, which requires no work to
-compute and returns no answer.</td>
+<td>A <span class="cxx_code">dummy_property_map</span>, which requires no work
+to compute and returns no answer.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The color map must be a <tt>vertex_double_map</tt> for the graph.</td>
+<td>The color map must be a <span class="python_code">vertex_double_map</span>
+for the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python default:</th>
-<td bgcolor="#dfdfdf"><tt>graph.get_vertex_double_map("centrality")</tt></td>
+<td class="python_code">graph.get_vertex_double_map("centrality")</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT/UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_edge_centrality_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_edge_centrality_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>edge_centrality_map(EdgeCentralityMap
-edge_centrality)</tt></td>
+<td class="cxx_code">edge_centrality_map(EdgeCentralityMap
+edge_centrality)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This property map is used to accumulate the betweenness centrality of each
 edge, and is a secondary form of output for the algorithm.  The argument type
 must be a model of <a href="../../property_map/doc/ReadWritePropertyMap.html"
-><b>Read/Write Property Map</b></a>, with the graph's edge descriptor type as
-its key type.  The value type of this property map should be the same as the
-value type of the centrality map argument.</td>
+class="cxx_concept">Read/Write Property Map</a>, with the graph's edge
+descriptor type as its key type.  The value type of this property map should
+be the same as the value type of the centrality map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <tt>dummy_property_map</tt>, which requires no work to
-compute and returns no answer.</td>
+<td>A <span class="cxx_code">dummy_property_map</span>, which requires no work
+to compute and returns no answer.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>The color map must be an <tt>edge_double_map</tt> for the graph.</td>
+<td>The color map must be an <span class="python_code">edge_double_map</span>
+for the graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python default:</th>
-<td bgcolor="#dfdfdf"><tt>graph.get_edge_double_map("centrality")</tt></td>
+<td class="python_code">graph.get_edge_double_map("centrality")</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is necessary for efficient updates of the heap
-data structure&nbsp;[<A HREF="bibliography.html#driscoll88">61</A>] when an
-edge is relaxed.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is necessary for
+efficient updates of the heap data structure [<a
+href="bibliography.html#driscoll88">61</a>] when an edge is relaxed.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
 descriptor type of the graph needs to be usable as the key type of the
 map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
+</tr>
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
-be non-negative, and the algorithm will throw a <a
-href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
+be non-negative, and the algorithm will throw a <a class="cxx_code"
+href="./exception.html#negative_edge">negative_edge</a> exception if
 one of the edges is negative.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
-key type for the weight map.  The value type for this map must be the same as
-the value type of the distance map argument.</td>
+class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The edge descriptor type of the graph needs to be
+usable as the key type for the weight map.  The value type for this map must
+be the same as the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">All edge weights are assumed to be equivalent.</td>
+<td>All edge weights are assumed to be equivalent.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>If supplied, must be an <tt>edge_double_map</tt> for the graph.</td>
+<td>If supplied, must be an <span class="python_code">edge_double_map</span>
+for the graph.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3> 
-The time complexity is <em>O(VE)</em> for unweighted graphs and
-<em>O(VE + V(V+E) log V)</em> for weighted graphs. The space complexity
-is <em>O(VE)</em>.
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-    <hr>
+<p>The time complexity is <em>O(VE)</em> for unweighted graphs and
+<em>O(VE + V(V+E) log V)</em> for weighted graphs.  The space complexity
+is <em>O(VE)</em>.</p>
 
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University (dgregor@cs.indiana.edu</A>)<br>
-<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
-Indiana University (<A
-HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
-</TD></TR></TABLE>
-<!-- Created: Fri Jun  4 16:42:50 EST 2004 -->
-<!-- hhmts start -->Last modified: Tue Mar  1 14:14:51 EST 2005 <!-- hhmts end -->
-  </body>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2004</td>
+<td>
+<a href="http://www.boost.org/people/doug_gregor.htm">Douglas Gregor</a>, Indiana
+University (<a href="mailto:dgregor@cs.indiana.edu">dgregor@cs.indiana.edu</a>)
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>, Indiana
+University (<a href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
+
+</body>
 </html>
