@@ -163,13 +163,13 @@ struct dfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::undirected_dfs(
+            undirected_dfs(
               g,
               visitor(vis).color_map(color).edge_color_map(e_color)
             );
             break;
           case 1:
-            boost::undirected_dfs(
+            undirected_dfs(
               g,
               boost::graph::keywords::_visitor = vis,
               boost::graph::keywords::_color_map = color,
@@ -177,23 +177,23 @@ struct dfs_test
             );
             break;
           case 2:
-            boost::undirected_dfs(g, vis, color, e_color);
+            undirected_dfs(g, vis, color, e_color);
             break;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
           case 3:
-            boost::undirected_dfs(g, vis, e_color, color);
+            undirected_dfs(g, vis, e_color, color);
             break;
           case 4:
-            boost::undirected_dfs(g, color, e_color, vis);
+            undirected_dfs(g, color, e_color, vis);
             break;
           case 5:
-            boost::undirected_dfs(g, color, vis, e_color);
+            undirected_dfs(g, color, vis, e_color);
             break;
           case 6:
-            boost::undirected_dfs(g, e_color, color, vis);
+            undirected_dfs(g, e_color, color, vis);
             break;
           case 7:
-            boost::undirected_dfs(g, e_color, vis, color);
+            undirected_dfs(g, e_color, vis, color);
             break;
 #endif
         }

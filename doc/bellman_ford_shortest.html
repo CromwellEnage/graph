@@ -12,16 +12,18 @@
 <title>Bellman Ford Shortest Paths</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:bellman-ford"></a><img src="figs/python.gif"
 alt="(Python)" /><tt>bellman_ford_shortest_paths</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled interface</i>
+<span class="comment">// Boost.Parameter-enabled interface</span>
 template &lt;
     typename <a class="cxx_concept" href="./EdgeListGraph.html"
 >EdgeListGraph</a>,
@@ -38,21 +40,21 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 bellman_ford_shortest_paths(
     EdgeListGraph&amp; g,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg7&amp; a7 = <i>unspecified</i>
+    const TaggedArg7&amp; a7 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named paramter interfaces</i>
+<span class="comment">// old-style named paramter interfaces</span>
 template &lt;class <a class="cxx_concept" href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N, 
-  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment">/* all defaults */</span>);
 
 template &lt;class <a class="cxx_concept" href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(const VertexAndEdgeListGraph&amp; g,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment">/* all defaults */</span>);
 
-<i>// non-named parameter interfaces</i>
+<span class="comment">// non-named parameter interfaces</span>
 template &lt;
     typename <a class="cxx_concept" href="./EdgeListGraph.html"
 >EdgeListGraph</a>, typename Size, typename WeightMap,
@@ -81,35 +83,32 @@ href="../../parameter/doc/html/reference.html#is-argument-pack"
 bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N);
 </pre>
 
-<p>
-The Bellman-Ford algorithm [<a
-href="bibliography.html#bellman58">4</a>, <a
-href="bibliography.html#ford62:_flows">11</a>, <a
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The Bellman-Ford algorithm [<a href="bibliography.html#bellman58">4</a>,
+<a href="bibliography.html#ford62:_flows">11</a>, <a
 href="bibliography.html#lawler76:_comb_opt">20</a>, <a
-href="bibliography.html#clr90">8</a>] solves the single-source
-shortest paths problem for a graph with both positive and negative
-edge weights.  For the definition of the shortest paths problem see
-Section <a
-href="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
+href="bibliography.html#clr90">8</a>] solves the single-source shortest paths
+problem for a graph with both positive and negative edge weights.  For the
+definition of the shortest paths problem see Section <a
+href="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
 Algorithms</a>.  If you only need to solve the shortest paths problem for
 positive edge weights, <a href="dijkstra_shortest_paths.html">Dijkstra's
 algorithm</a> provides a more efficient alternative.  If all the edge weights
 are all equal to one then <a href="breadth_first_search.html">breadth-first
-search</a> provides an even more efficient alternative.
-</p>
+search</a> provides an even more efficient alternative.</p>
 
-<p>
-Before calling the <span class="cxx_code">bellman_ford_shortest_paths()</span>
-function, the user must assign the source vertex a distance of zero and all
-other vertices a distance of infinity <i>unless</i> you are providing a
-starting vertex.  The Bellman-Ford algorithm proceeds by looping through all
-of the edges in the graph, applying the relaxation operation to each edge.  In
-the following pseudo-code, <i>v</i> is a vertex adjacent to <i>u</i>, <i>w</i>
-maps edges to their weight, and <i>d</i> is a distance map that records the
-length of the shortest path to each vertex seen so far.  <i>p</i> is a
-predecessor map which records the parent of each vertex, which will ultimately
-be the parent in the shortest paths tree
-</p>
+<p>Before calling the <span class="cxx_code"
+>bellman_ford_shortest_paths()</span> function, the user must assign the
+source vertex a distance of zero and all other vertices a distance of infinity
+<em>unless</em> you are providing a starting vertex.  The Bellman-Ford
+algorithm proceeds by looping through all of the edges in the graph, applying
+the relaxation operation to each edge.  In the following pseudo-code, <i>v</i>
+is a vertex adjacent to <i>u</i>, <i>w</i> maps edges to their weight, and
+<i>d</i> is a distance map that records the length of the shortest path to
+each vertex seen so far.  <i>p</i> is a predecessor map which records the
+parent of each vertex, which will ultimately be the parent in the shortest
+paths tree</p>
 
 <table>
 <tr>
@@ -136,17 +135,15 @@ edge <i>(u,v)</i> is not relaxed
 </tr>
 </table>
 
-<p>
-The algorithm repeats this loop <i>|V|</i> times after which it is guaranteed
-that the distances to each vertex have been reduced to the minimum possible
-unless there is a negative cycle in the graph.  If there is a negative cycle,
-then there will be edges in the graph that were not properly minimized.  That
-is, there will be edges <i>(u,v)</i> such that
-<i>w(u,v) + d[u] < d[v]</i>.  The algorithm loops over the edges in the graph
-one final time to check if all the edges were minimized, returning <span
+<p>The algorithm repeats this loop <i>|V|</i> times after which it is
+guaranteed that the distances to each vertex have been reduced to the minimum
+possible unless there is a negative cycle in the graph.  If there is a
+negative cycle, then there will be edges in the graph that were not properly
+minimized.  That is, there will be edges <i>(u,v)</i> such that <i>w(u,v) +
+d[u] &lt; d[v]</i>.  The algorithm loops over the edges in the graph one final
+time to check if all the edges were minimized, returning <span
 class="cxx_code">true</span> if they were and returning <span class="cxx_code"
->false</span> otherwise.
-</p>
+>false</span> otherwise.</p>
 
 <table>
 <tr>
@@ -195,8 +192,7 @@ edge <i>(u,v)</i> was minimized
 </tr>
 </table>
 
-<p>
-There are two main options for obtaining output from the <span
+<p>There are two main options for obtaining output from the <span
 class="cxx_code">bellman_ford_shortest_paths()</span> function.  If the user
 provides a distance property map through the <span class="cxx_code"
 >distance_map()</span> parameter then the shortest distance from the source
@@ -208,16 +204,13 @@ class="cxx_code">predecessor_map()</span>.  For each vertex <i>u in V</i>,
 (unless <i>p[u] = u</i>, in which case <i>u</i> is either the source vertex or
 a vertex unreachable from the source).  In addition to these two options, the
 user can provide her own custom-made visitor that can take actions at any of
-the algorithm's event points.
-</p>
+the algorithm's event points.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-The Bellman-Ford algorithm can take in named parameter arguments, courtesy of
-<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</p>
+<p>The Bellman-Ford algorithm can take in named parameter arguments, courtesy
+of <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 struct EdgeProperties { int weight; };
@@ -238,17 +231,13 @@ bool r = bellman_ford_shortest_paths(
 );
 </pre>
 
-<p>
-The full program is in <a href="../example/bellman-example.cpp"
-><tt>examples/bellman-example.cpp</tt></a>.
-</p>
+<p>The full program is in <a href="../example/bellman-example.cpp"
+><tt>examples/bellman-example.cpp</tt></a>.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/bellman_ford_shortest_paths.hpp"
-><tt>boost/graph/bellman_ford_shortest_paths.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/bellman_ford_shortest_paths.hpp"
+><tt>boost/graph/bellman_ford_shortest_paths.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -264,9 +253,9 @@ The full program is in <a href="../example/bellman-example.cpp"
 <tr>
 <th>Description:</th>
 <td>A directed or undirected graph whose type must be a model of <a
-class="cxx_concept" href="./EdgeListGraph.html">Edge List Graph</a>.  If a
-root vertex is provided, then the graph must also model <a class="cxx_concept"
-href="./VertexListGraph.html">Vertex List Graph</a>.</td>
+class="cxx_concept" href="EdgeListGraph.html">Edge List Graph</a>.  If a root
+vertex is provided, then the graph must also model <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -328,8 +317,8 @@ keyword:</th>
 graph.  Its type must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
 Map</a>.  The key type for this property map must be the edge descriptor
-of the graph.  The value type for the weight map must be <i>Addable</i> with
-the distance map's value type.</td>
+of the graph.  The value type for the weight map must be
+<i class="cxx_concept">Addable</i> with the distance map's value type.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -367,8 +356,8 @@ completion of the algorithm, the edges <span class="cxx_code">(p[u],u)</span>
 for all <span class="cxx_code">u</span> in <span class="cxx_code">V</span> are
 in the minimum spanning tree.  If <span class="cxx_code">p[u] = u</span> then
 <span class="cxx_code">u</span> is either the source vertex or a vertex that
-is not reachable from the source.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+is not reachable from the source.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
 >Read/Write Property Map</a> with key and vertex types the same as the vertex
 descriptor type of the graph.</td>
 </tr>
@@ -438,7 +427,7 @@ keyword:</th>
 <td>The starting (or "root") vertex from which shortest paths will be
 computed.  When provided, the distance map need not be initialized (the
 algorithm will perform the initialization itself).  However, the graph must
-model <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
+model <a class="cxx_concept" href="VertexListGraph.html">Vertex List
 Graph</a> when this parameter is provided.</td>
 </tr>
 <tr>
@@ -545,50 +534,57 @@ type</i>&gt;::value_type</span>.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V E)</i>.
-</p>
+<p>The time complexity is <i>O(V E)</i>.</p>
 
 <h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-<ul>
-<li><b><tt>vis.examine_edge(e, g)</tt></b>  is invoked on every edge in
-  the graph <i>|V|</i> times.</li>
-<li><b><tt>vis.edge_relaxed(e, g)</tt></b>  is invoked when the distance
-  label for the target vertex is decreased. The edge <i>(u,v)</i> that 
-  participated in the last relaxation for vertex <i>v</i> is an edge in the
-  shortest paths tree.</li>
-<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>  is invoked if the distance label
-  for the target vertex is not decreased.</li>
-<li><b><tt>vis.edge_minimized(e, g)</tt></b>  is invoked during the
-  second stage of the algorithm, during the test of whether each edge
-  was minimized. If the edge is minimized then this function
-  is invoked.</li>
-<li><b><tt>vis.edge_not_minimized(e, g)</tt></b>  is also invoked during the
-  second stage of the algorithm, during the test of whether each edge
-  was minimized.  If the edge was not minimized, this function is
-  invoked.  This happens when there is a negative cycle in the graph.</li>
-</ul>
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on every edge in the graph <i>|V|</i> times.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<td>is invoked when the distance label for the target vertex is
+decreased.  The edge <i>(u,v)</i> that participated in the last relaxation for
+vertex <i>v</i> is an edge in the shortest paths tree.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<td>is invoked if the distance label for the target vertex is not
+decreased.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_minimized(e, g)</th>
+<td>is invoked during the second stage of the algorithm, during the test of
+whether each edge was minimized.  If the edge is minimized then this function
+is invoked.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_not_minimized(e, g)</th>
+<td>is also invoked during the second stage of the algorithm, during the test
+of whether each edge was minimized.  If the edge was not minimized, this
+function is invoked.  This happens when there is a negative cycle in the
+graph.</td>
+</tr>
+</table>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
-</p>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000</td>
-<td>
-<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
-University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University
+(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

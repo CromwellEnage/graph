@@ -12,16 +12,17 @@
 <title>Johnson All Pairs Shortest Paths</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
-<h1><a name="sec:johnson"></a><tt
->johnson_all_pairs_shortest_paths</tt></h1>
+<h1><a name="sec:johnson"></a><tt>johnson_all_pairs_shortest_paths</tt></h1>
+
+<h3>Synopsis</h3>
 
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
     typename VertexAndEdgeListGraph, typename DistanceMatrix,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
@@ -37,18 +38,19 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 johnson_all_pairs_shortest_paths(
     VertexAndEdgeListGraph&amp; g,
     DistanceMatrix&amp; d,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg5&amp; a5 = <i>unspecified</i>
+    const TaggedArg5&amp; a5 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named paramter version</i>
+<span class="comment">// old-style named paramter version</span>
 template &lt;typename Graph, typename DistanceMatrix, typename P, typename T, typename R&gt;
 bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>);
 
-<i>// non-named parameter versions</i>
+<span class="comment">// non-named parameter versions</span>
   template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
             class VertexID, class Weight, class BinaryPredicate, 
             class BinaryFunction, class Infinity, class DistanceZero&gt;
@@ -67,30 +69,26 @@ johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1,
   VertexIndex i_map, WeightMap w_map, DT zero);
 </pre>
 
-<p>
-This algorithm finds the shortest distance between every pair of vertices in
-the graph.  The algorithm returns false if there is a negative weight cycle in
-the graph and true otherwise.  The distance between each pair of vertices is
-stored in the distance matrix <span class="cxx_code">D</span>.  This is one of
-the more time intensive graph algorithms, having a time complexity of <i>O(V E
-log V)</i>.
-</p>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-This algorithm should be used to compute shortest paths between every pair of
-vertices for sparse graphs.  For dense graphs, use <a class="cxx_code"
-href="floyd_warshall_shortest.html"
->floyd_warshall_all_pairs_shortest_paths()</a>.
-</p>
+<p>This algorithm finds the shortest distance between every pair of vertices
+in the graph.  The algorithm returns false if there is a negative weight cycle
+in the graph and true otherwise.  The distance between each pair of vertices
+is stored in the distance matrix <span class="cxx_code">D</span>.  This is one
+of the more time intensive graph algorithms, having a time complexity of
+<i>O(V E log V)</i>.</p>
+
+<p>This algorithm should be used to compute shortest paths between every pair
+of vertices for sparse graphs.  For dense graphs, use
+<a class="cxx_code" href="floyd_warshall_shortest.html"
+>floyd_warshall_all_pairs_shortest_paths()</a>.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-The BGL implementations of Johnson's all-pairs shortest-path algorithms can
+<p>The BGL implementations of Johnson's all-pairs shortest-path algorithms can
 take in named parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</p>
+example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -108,19 +106,15 @@ bool found_no_negative_weight_cycle = johnson_all_pairs_shortest_paths(
 );
 </pre>
 
-<p>
-The full program is in <a
-href="../example/johnson-eg.cpp"><tt>example/johnson-eg.cpp</tt></a>.  It
+<p>The full program is in
+<a href="../example/johnson-eg.cpp"><tt>example/johnson-eg.cpp</tt></a>.  It
 applies Johnson's algorithm for all-pairs shortest paths to the example graph
-from page 568 of the CLR&nbsp;[<a href="bibliography.html#clr90">8</a>].
-</p>
+from page 568 of the CLR [<a href="bibliography.html#clr90">8</a>].</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/johnson_all_pairs_shortest.hpp"><tt
->boost/graph/johnson_all_pairs_shortest.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/johnson_all_pairs_shortest.hpp"
+><tt>boost/graph/johnson_all_pairs_shortest.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -235,25 +229,25 @@ class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_compare</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_compare</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_compare(CompareFunction cmp)</tt></td>
+<td class="cxx_code">distance_compare(CompareFunction cmp)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The function used to compare distances to determine which target vertex is
 closer to the source vertex.  The argument type type must be a model of <a
-class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
-Predicate</a> and have argument types that match the value type of the
+class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
+>Binary Predicate</a> and have argument types that match the value type of the
 weight map argument type.</td>
 </tr>
 <tr>
@@ -380,13 +374,13 @@ type must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
 Map</a>.  A vertex descriptor must be usable as the key type of the map,
 and the value type of the map must be a model of <a class="cxx_concept"
-href="./ColorValue.html">Color Value</a>.</td>
+href="ColorValue.html">Color Value</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td>An <a class="cxx_code"
-href="../../property_map/doc/iterator_property_map.html"
->iterator_property_map</a> created from a <span class="cxx_code">std::<a
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
 <span class="cxx_code">default_color_type</span>, and of size <span
 class="cxx_code">num_vertices(g)</span>, and using the index map argument for
@@ -396,19 +390,16 @@ the index map.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V E log V)</i>.
-</p>
+<p>The time complexity is <i>O(V E log V)</i>.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000-2001</td>
-<td>
-<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
-University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University
+(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

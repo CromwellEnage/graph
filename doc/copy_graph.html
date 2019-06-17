@@ -12,89 +12,88 @@
 <title>Boost Graph Library: Copy Graph</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
+<body>
 <img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
 <br />
 
 <h1><tt>copy_graph</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-template &lt;typename <a class="cxx_concept" href="./VertexListGraph.html"
+template &lt;typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
-href="./MutableGraph.html">MutableGraph</a>&gt; 
+href="MutableGraph.html">MutableGraph</a>&gt; 
 void copy_graph(const VertexListGraph&amp; graph, MutableGraph&amp; result,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>);
 </pre>
 
-<p>
-If the configuration macro
+<p>If the configuration macro
 <span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
 is defined but the configuration macro <a class="cxx_code"
 href="../../config/doc/html/boost_config/macro_reference.html"
 >BOOST_NO_CXX11_DECLTYPE</a> is <strong>not</strong> defined, then the
-following function overload definition is available.
-</p>
+following function overload definition is available.</p>
 
 <pre class="cxx_code">
 <a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (void), copy_graph, ::boost::graph::keywords::tag,
     (required
         (graph
-          , <i>// unspecified predicate</i>
+          , <span class="comment">// unspecified predicate</span>
         )
     )
     (deduced
         (required
             (result
-              , <i>// unspecified predicate</i>
+              , <span class="comment">// unspecified predicate</span>
             )
         )
         (optional
             (vertex_copy
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
             )
             (edge_copy
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
             )
             (vertex_index_map
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
             )
             (orig_to_copy
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
             )
         )
     )
 )
 </pre>
 
-<p>
-If the configuration macro <span class="cxx_code"
+<p>If the configuration macro <span class="cxx_code"
 >BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is <strong
 >not</strong> defined, or if the configuration macro <a class="cxx_code"
 href="../../config/doc/html/boost_config/macro_reference.html"
 >BOOST_NO_CXX11_DECLTYPE</a> <strong>is</strong> defined, then the
-following function overload definition is available instead.
-</p>
+following function overload definition is available instead.</p>
 
 <pre class="cxx_code">
 template &lt;
-    typename <a class="cxx_concept" href="./VertexListGraph.html"
+    typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
-href="./MutableGraph.html">MutableGraph</a>,
+href="MutableGraph.html">MutableGraph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
 &gt;
 void copy_graph(
     const VertexListGraph&amp; graph,
     MutableGraph&amp; result,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg9&amp; a9 = <i>unspecified</i>,
+    const TaggedArg9&amp; a9 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -106,45 +105,40 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 </pre>
 
-<p>
-This function copies all of the vertices and edges from <span
-class="cxx_code">graph</span> into <span class="cxx_code"
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>This function copies all of the vertices and edges from
+<span class="cxx_code">graph</span> into <span class="cxx_code"
 >result</span>.  Also, it copies the vertex and edge properties, either by
 copying the contents of <span class="cxx_code">get(vertex_all, graph)</span>
 to <span class="cxx_code">get(vertex_all, result)</span> and by copying the
 contents of <span class="cxx_code">get(edge_all, graph)</span> to <span
 class="cxx_code">get(edge_all, result)</span>, or by user-supplied copy
-functions.
-</p>
+functions.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/copy.hpp"><tt>boost/graph/copy.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/copy.hpp"
+><tt>boost/graph/copy.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<p>
-If <strong>any</strong> of the following are true:
-</p>
+<p>If <strong>any</strong> of the following are true:</p>
 
 <ul>
 <li>This document renders the category of a parameter as black text on a white
 background.</li>
-<li>The configuration macro <span
-class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
-<strong>not</strong> defined.</li>
+<li>The configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined.</li>
 <li>The configuration macro <a class="cxx_code"
 href="../../config/doc/html/boost_config/macro_reference.html"
 >BOOST_NO_CXX11_DECLTYPE</a> is defined.</li>
 </ul>
 
-<p>
-Then the argument must be bound
-to this parameter either by name or by position.  On the other hand, if
-<strong>all</strong> of the following are true:
-</p>
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
 <ul>
 <li>This document renders the category of a parameter as colored text on a
@@ -156,11 +150,9 @@ href="../../config/doc/html/boost_config/macro_reference.html"
 >BOOST_NO_CXX11_DECLTYPE</a> is <strong>not</strong> defined.</li>
 </ul>
 
-<p>
-Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a> type
-deduction facilities can bind an unnamed argument to this parameter as long
-as <strong>all</strong> of the following are true:
-</p>
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
 <ul>
 <li>The argument type fulfills the parameter type requirements.</li>
@@ -185,7 +177,7 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>A directed or undirected graph.  Its type must be a model of <a
-class="cxx_concept" href="./VertexListGraph.html">Vertex List Graph</a>.</td>
+class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -206,7 +198,7 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>The resulting copy of the graph.  Its type must be a model of
-<a class="cxx_concept" href="./MutableGraph.html">Mutable Graph</a>.</td>
+<a class="cxx_concept" href="MutableGraph.html">Mutable Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -326,9 +318,9 @@ keyword:</th>
 </tr>
 <tr>
 <th>Default:</th>
-<td>An <span class="cxx_code"><a
-href="../../property_map/doc/iterator_property_map.html"
->iterator_property_map</a></span> created from a <span class="cxx_code"
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code"
 >std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a
 ></span> of the result graph's vertex descriptor type, and of size <span
 class="cxx_code">num_vertices(graph)</span>, and using the index map argument
@@ -338,19 +330,16 @@ for the index map.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V + E)</i>.
-</p>
+<p>The time complexity is <i>O(V + E)</i>.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000-2001</td>
-<td>
-<a HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a
->, Indiana University (<a HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University
+(<a HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

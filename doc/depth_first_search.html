@@ -12,21 +12,91 @@
 <title>Boost Graph Library: Depth-First Search</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:depth-first-search"></a><img src="figs/python.gif"
 alt="(Python)" /><tt>depth_first_search</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class Graph, class class P, class T, class R&gt;
 void depth_first_search(Graph&amp; G,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
+</pre>
 
-<i>// non-named parameter version</i>
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), depth_first_search, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , <span class="comment">// unspecified predicate</span>
+        )
+    )
+    (deduced
+        (optional
+            (vertex_index_map
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
+            )
+            (color_map
+              , <span class="comment">// unspecified predicate</span>
+              , <a
+href="../../property_map/doc/shared_array_property_map.html"
+>make_shared_array_property_map</a>(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+            (visitor
+              , <span class="comment">// unspecified predicate</span>
+              , default_dfs_visitor()
+            )
+            (root_vertex
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
+            )
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definitions are available.</p>
+
+<pre class="cxx_code">
+template &lt;
+    typename Graph, typename TaggedArg0, typename TaggedArg1,
+    typename TaggedArg2, typename TaggedArg3
+&gt;
+void depth_first_search(
+    const Graph&amp; graph,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg2&amp; a2 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg3&amp; a3 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<span class="comment">// non-named parameter versions</span>
 template &lt;typename Graph, typename <a class="cxx_concept"
 href="DFSVisitor.html">DFSVisitor</a>, typename ColorMap&gt;
 void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color);
@@ -37,80 +107,9 @@ void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color,
                         typename graph_traits&lt;Graph&gt;::vertex_descriptor start);
 </pre>
 
-<p>
-If the configuration macro
-<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
-is defined, then the following function overload definition is available.
-</p>
+<h3><a name="sec:description"></a>Description</h3>
 
-<pre class="cxx_code">
-<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
-    (void), depth_first_search, ::boost::graph::keywords::tag,
-    (required
-        (graph
-          , <i>// unspecified predicate</i>
-        )
-    )
-    (deduced
-        (optional
-            (vertex_index_map
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
-            )
-            (color_map
-              , <i>// unspecified predicate</i>
-              , <a
-href="../../property_map/doc/shared_array_property_map.html"
->make_shared_array_property_map</a>(
-                    num_vertices(graph),
-                    white_color,
-                    vertex_index_map
-                )
-            )
-            (visitor
-              , <i>// unspecified predicate</i>
-              , default_dfs_visitor()
-            )
-            (root_vertex
-              , <i>// unspecified predicate</i>
-              , <i>// see parameter table for default value</i>
-            )
-        )
-    )
-)
-</pre>
-
-<p>
-If the configuration macro
-<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
-is <strong>not</strong> defined, then the following function overload
-definition is available.
-</p>
-
-<pre class="cxx_code">
-template &lt;
-    typename Graph, typename TaggedArg0, typename TaggedArg1,
-    typename TaggedArg2, typename TaggedArg3
-&gt;
-void depth_first_search(
-    const Graph&amp; graph,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
-    const TaggedArg2&amp; a2 = <i>unspecified</i>,
-    const TaggedArg3&amp; a3 = <i>unspecified</i>,
-    typename boost::enable_if&lt;
-        parameter::<a
-href="../../parameter/doc/html/reference.html#are-tagged-arguments"
->are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
-        &gt;,
-        mpl::true_
-    &gt;::type = mpl::true_()
-);
-</pre>
-
-<p>
-The <span class="cxx_code">depth_first_search()</span> function performs a
+<p>The <span class="cxx_code">depth_first_search()</span> function performs a
 depth-first traversal of the vertices in a directed graph.  When possible, a
 depth-first traversal chooses a vertex adjacent to the current vertex to visit
 next.  If all adjacent vertices have already been discovered, or there are no
@@ -119,36 +118,30 @@ undiscovered neighbors.  Once all reachable vertices have been visited, the
 algorithm selects from any remaining undiscovered vertices and continues the
 traversal.  The algorithm finishes when all vertices have been
 visited.  Depth-first search is useful for categorizing edges in a graph, and
-for imposing an ordering on the vertices.  Section <a
-href="./graph_theory_review.html#sec:dfs-algorithm">Depth-First
-Search</a> describes the various properties of DFS and walks through
-an example.
-</p>
+for imposing an ordering on the vertices.  Section
+<a href="graph_theory_review.html#sec:dfs-algorithm">Depth-First Search</a>
+describes the various properties of DFS and walks through an example.</p>
 
-<p>
-Similar to BFS, color markers are used to keep track of which vertices
-have been discovered.  White marks vertices that have yet to be
-discovered, gray marks a vertex that is discovered but still has
-vertices adjacent to it that are undiscovered.  A black vertex is
-discovered vertex that is not adjacent to any white vertices.
-</p>
+<p>Similar to BFS, color markers are used to keep track of which vertices have
+been discovered.  White marks vertices that have yet to be discovered, gray
+marks a vertex that is discovered but still has vertices adjacent to it that
+are undiscovered.  A black vertex is discovered vertex that is not adjacent to
+any white vertices.</p>
 
-<p>
-The <span class="cxx_code">depth_first_search()</span> function invokes
+<p>The <span class="cxx_code">depth_first_search()</span> function invokes
 user-defined actions at certain event-points within the algorithm.  This
 provides a mechanism for adapting the generic DFS algorithm to the many
 situations in which it can be used.  In the pseudo-code below, the event
 points for DFS are the labels on the right.  The user-defined actions must be
 provided in the form of a visitor object, that is, an object whose type meets
-the requirements for a <a class="cxx_concept" href="./DFSVisitor.html">DFS
+the requirements for a <a class="cxx_concept" href="DFSVisitor.html">DFS
 Visitor</a>.  In the pseudo-code we show the algorithm computing predecessors
 <i>p</i>, discover time <i>d</i> and finish time <i>t</i>.  By default, the
 <span class="cxx_code">depth_first_search()</span> function does not compute
 these properties, however there are pre-defined visitors such as <a
-class="cxx_code" href="./predecessor_recorder.html">predecessor_recorder</a>
-and <a class="cxx_code" href="./time_stamper.html">time_stamper</a> that can
-be used to do this.
-</p>
+class="cxx_code" href="predecessor_recorder.html">predecessor_recorder</a>
+and <a class="cxx_code" href="time_stamper.html">time_stamper</a> that can
+be used to do this.</p>
 
 <table>
 <tr>
@@ -223,27 +216,23 @@ finish vertex <i>u</i>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-The example in <a href="../example/dfs-example.cpp">
-<tt>examples/dfs-example.cpp</tt></a> shows DFS applied to the graph in
-<a href="./graph_theory_review.html#fig:dfs-example">Figure 1</a>.
-</p>
+<p>The example in <a href="../example/dfs-example.cpp"
+><tt>examples/dfs-example.cpp</tt></a> shows DFS applied to the graph in
+<a href="graph_theory_review.html#fig:dfs-example">Figure 1</a>.</p>
 
-<p>
-One overload of <span class="cxx_code">depth_first_search()</span> can take in
-named parameter arguments, courtesy of <a
+<p>One overload of <span class="cxx_code">depth_first_search()</span> can take
+in named parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  For another
-example, given the following definitions:
-</p>
+example, given the following definitions:</p>
 
 <pre class="cxx_code">
 template &lt;typename ...&gt;
 struct dfs_test_visitor
 {
-    <i>// Overload the necessary member functions...</i>
+    <span class="comment">// Overload the necessary member functions...</span>
 };
 
-<i>// ...</i>
+<span class="comment">// ...</span>
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::directedS,
     boost::<a href="property.html">property</a>&lt;boost::vertex_color_t, boost::default_color_type&gt;
@@ -253,14 +242,13 @@ typedef boost::property_map&lt;Graph, boost::vertex_index_t&gt;::const_type VInd
 typedef boost::property_map&lt;Graph, boost::vertex_color_t&gt;::type ColorMap;
 
 Graph g;
-<i>// ...</i>
+<span class="comment">// ...</span>
 ColorMap color = get(boost::vertex_color, g);
 dfs_test_visitor&lt;...&gt; vis;
 </pre>
 
-<p>
-The following call illustrates the syntax for passing arguments by name.
-</p>
+<p>The following call illustrates the syntax for passing arguments by
+name.</p>
 
 <pre class="cxx_code">
 depth_first_search(
@@ -270,33 +258,26 @@ depth_first_search(
 );
 </pre>
 
-<p>
-If the configuration macro <span class="cxx_code"
+<p>If the configuration macro <span class="cxx_code"
 >BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then the
 same function overload can deduce the non-graph arguments, so the following
-call is equivalent to the previous one.
-</p>
+call is equivalent to the previous one.</p>
 
 <pre class="cxx_code">
 depth_first_search(g, color, vis);
 </pre>
 
-<p>
-The full program is in <a href="../test/dfs.cpp"><tt>test/dfs.cpp</tt></a>
-</p>
+<p>The full program is in
+<a href="../test/dfs.cpp"><tt>test/dfs.cpp</tt></a></p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/depth_first_search.hpp"
-><tt>boost/graph/depth_first_search.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/depth_first_search.hpp"
+><tt>boost/graph/depth_first_search.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<p>
-If <strong>any</strong> of the following are true:
-</p>
+<p>If <strong>any</strong> of the following are true:</p>
 
 <ul>
 <li>This document renders the category of a parameter as black text on a white
@@ -306,11 +287,9 @@ class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
 <strong>not</strong> defined.</li>
 </ul>
 
-<p>
-Then the argument must be bound
-to this parameter either by name or by position.  On the other hand, if
-<strong>all</strong> of the following are true:
-</p>
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
 <ul>
 <li>This document renders the category of a parameter as colored text on a
@@ -319,11 +298,9 @@ black background.</li>
 >BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
 </ul>
 
-<p>
-Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a> type
-deduction facilities can bind an unnamed argument to this parameter as long
-as <strong>all</strong> of the following are true:
-</p>
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
 <ul>
 <li>The argument type fulfills the parameter type requirements.</li>
@@ -348,8 +325,8 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>A directed graph.  Its type must be a model of <a class="cxx_concept"
-href="./IncidenceGraph.html">Incidence Graph</a> and <a class="cxx_concept"
-href="./VertexListGraph.html">Vertex List Graph</a>.</td>
+href="IncidenceGraph.html">Incidence Graph</a> and <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -374,9 +351,8 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>A visitor object that is invoked inside the algorithm at the event-points
-specified by the <a class="cxx_concept" href="./DFSVisitor.html">DFS
-Visitor</a> concept.  The visitor object is passed by value
-<a href="#1">[1]</a>.</td>
+specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -384,9 +360,9 @@ Visitor</a> concept.  The visitor object is passed by value
 </tr>
 <tr>
 <th>Python:</th>
-<td>The parameter should be an object that derives from the <a
-class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of the
-graph.</td>
+<td>The parameter should be an object that derives from the
+<a class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of
+the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -411,7 +387,7 @@ graph.  Its argument type must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
 Map</a>, its key type must be the graph's vertex descriptor type, and the
 value type of the color map must model <a class="cxx_concept"
-href="./ColorValue.html">ColorValue</a>.</td>
+href="ColorValue.html">ColorValue</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -424,8 +400,8 @@ map.</td>
 </tr>
 <tr>
 <th>Python:</th>
-<td>The color map must be a <span class="python_code"
->vertex_color_map</span> for the graph.</td>
+<td>The color map must be a <span class="python_code">vertex_color_map</span>
+for the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -450,9 +426,8 @@ keyword:</th>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">(0 &lt; num_vertices(graph)) ?
-*vertices(graph).first : <a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
+<td class="cxx_code">(0 &lt; num_vertices(graph)) ? *vertices(graph).first :
+<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -476,14 +451,13 @@ keyword:</th>
 </tr>
 <tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-<span class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is
-only necessary when the default color property map is used.  The argument type
-must be a model of <a class="cxx_concept"
-href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is only
+necessary when the default color property map is used.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type of the map must
+be an integer type.  The vertex descriptor type of the graph needs to be
+usable as the key type of the map.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -505,61 +479,68 @@ class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(E + V)</i>.
-</p>
+<p>The time complexity is <i>O(E + V)</i>.</p>
 
 <h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-<ul>
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<td>is invoked on every vertex of the graph before the start of the graph
+search.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.start_vertex(s, g)</th>
+<td>is invoked on the source vertex once before the start of the search.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</th>
+<td>is invoked when a vertex is encountered for the first time.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on every out-edge of each vertex after it is discovered.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</th>
+<td>is invoked on each edge as it becomes a member of the edges that form the
+search tree.  If you wish to record predecessors, do so at this event
+point.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.back_edge(e, g)</th>
+<td>is invoked on the back edges in the graph.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.forward_or_cross_edge(e, g)</th>
+<td>is invoked on forward or cross edges in the graph.  In an undirected graph
+this method is never called.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_edge(e, g)</th>
+<td>is invoked on the non-tree edges in the graph as well as on each tree edge
+after its target vertex is finished.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex after all of its out edges have been added to the
+search tree and all of the adjacent vertices have been discovered (but before
+their out-edges have been examined).</td>
+</tr>
+</table>
 
-<li><b><tt>vis.initialize_vertex(s, g)</tt></b> is invoked on every
-  vertex of the graph before the start of the graph search.
-</li>
-<li><b><tt>vis.start_vertex(s, g)</tt></b> is invoked on the source
-  vertex once before the start of the search.
-</li>
-<li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked when a vertex
-  is encountered for the first time.
-</li>
-<li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
-  of each vertex after it is discovered.
-</li>
-<li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked on each edge as it
-  becomes a member of the edges that form the search tree. If you
-  wish to record predecessors, do so at this event point.
-</li>
-<li><b><tt>vis.back_edge(e, g)</tt></b> is invoked on the back edges in
-  the graph.
-</li>
-<li><b><tt>vis.forward_or_cross_edge(e, g)</tt></b> is invoked on
-  forward or cross edges in the graph. In an undirected graph this
-  method is never called.
-</li>
-<li><b><tt>vis.finish_edge(e, g)</tt></b> is invoked on the non-tree edges in 
-  the graph as well as on each tree edge after its target vertex is finished. 
-</li>
-<li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked on a vertex after
-  all of its out edges have been added to the search tree and all of
-  the adjacent vertices have been discovered (but before their
-  out-edges have been examined).
-</li>
-</ul>
+<h3><a name="sec:see_also"></a>See Also</h3>
 
-<h3>See Also</h3>
+<p><a class="cxx_code" href="depth_first_visit.html">depth_first_visit()</a>,
+<a class="cxx_code" href="undirected_dfs.html">undirected_dfs()</a></p>
 
-<a href="./depth_first_visit.html"><tt>depth_first_visit</tt></a>
-<a href="./undirected_dfs.html"><tt>undirected_dfs</tt></a>
+<h3><a name="sec:notes"></a>Notes</h3>
 
-<h3>Notes</h3>
-
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
-</p>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
 <br />
 <hr />

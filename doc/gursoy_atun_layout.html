@@ -1,4 +1,6 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
     Copyright (c) 2004 Trustees of Indiana University
 
@@ -6,37 +8,32 @@
     (See accompanying file LICENSE_1_0.txt or copy at
     http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: G&uuml;rsoy-Atun Layout</Title>
+<head>
+<title>Boost Graph Library: G&uuml;rsoy-Atun Layout</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
 <script language="JavaScript" type="text/JavaScript">
 <!--
 function address(host, user) {
     var atchar = '@';
     var thingy = user+atchar+host;
-    thingy = '<a hre' + 'f=' + "mai" + "lto:" + thingy + '>' + user+atchar+host + '</a>';
+    thingy = '<a hre' + 'f=' + "mai" + "lto:" + thingy + '>' +
+        thingy + '</a>';
     document.write(thingy);
 }
 //-->
 </script>
 </head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 
+<br />
 
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
-
-<BR Clear>
-
-<H1>
-<TT>gursoy_atun_layout</TT>
-</H1>
-
-<P>
+<h1><tt>gursoy_atun_layout</tt></h1>
 
 <h3>Synopsis</h3>
-<PRE>
-<em>// non-named parameter version</em>
+
+<pre class="cxx_code">
+<span class="comment">// non-named parameter version</span>
 template &lt;
     typename VertexListAndIncidenceGraph, typename Topology,
     typename PositionMap, typename VertexIndexMap, 
@@ -55,7 +52,7 @@ void gursoy_atun_layout(
     EdgeWeightMap weight = dummy_property_map()
 );
 
-<em>// Boost.Parameter-enabled version</em>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template&lt;
     typename Graph, typename Topology, typename PositionMap,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
@@ -64,10 +61,10 @@ void gursoy_atun_layout(
     const Graph&amp; g,
     const Topology&amp; space,
     PositionMap position,
-    const TaggedArg0&amp; tagged_arg0,
-    const TaggedArg1&amp; tagged_arg1,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg4&amp; tagged_arg4,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -78,7 +75,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<em>// old-style named parameter version</em>
+<span class="comment">// old-style named parameter version</span>
 template&lt;
     typename VertexListAndIncidenceGraph, typename Topology,
     typename PositionMap, typename P, typename T, typename R
@@ -87,167 +84,168 @@ void gursoy_atun_layout(
     const VertexListAndIncidenceGraph&amp; g,
     const Topology&amp; space,
     PositionMap position,
-    const bgl_named_params&lt;P,T,R&gt;&amp; params = <em>all defaults</em>
+    const bgl_named_params&lt;P,T,R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>
 );
-</PRE>
+</pre>
 
-<h3>Description</h3>
+<h3><a name="sec:description"></a>Description</h3>
 
-<P> This algorithm&nbsp;[<A HREF="bibliography.html#gursoy00">60</A>]
-performs layout of directed graphs, either weighted or unweighted. This
-algorithm is very different from the <a
-href="kamada_kawai_spring_layout.html">Kamada-Kawai</a> and <a
-href="fruchterman_reingold.html">Fruchterman-Reingold</a> algorithms,
-because it does not explicitly strive to layout graphs in a visually
-pleasing manner. Instead, it attempts to distribute the vertices
-uniformly within a <em>topology</em> (e.g., rectangle, sphere, heart shape),
-keeping vertices close to their neighbors; <a href="topology.html">various
-topologies</a> are provided by BGL, and users can also create their own. The
-algorithm itself is
-based on <a
-href="http://davis.wpi.edu/~matt/courses/soms/">Self-Organizing
-Maps</a>.
-
-<p>
-<a href="topology.html#square_topology"><img src="figs/ga-square.png"></a>
-<a href="topology.html#heart_topology"><img src="figs/ga-heart.png"></a>
-<a href="topology.html#circle_topology"><img src="figs/ga-circle.png"></a>
+<p>This algorithm [<a href="bibliography.html#gursoy00">60</a>] performs
+layout of directed graphs, either weighted or unweighted.  This algorithm is
+very different from the <a href="kamada_kawai_spring_layout.html"
+>Kamada-Kawai</a> and <a href="fruchterman_reingold.html"
+>Fruchterman-Reingold</a> algorithms, because it does not explicitly strive to
+layout graphs in a visually pleasing manner.  Instead, it attempts to
+distribute the vertices uniformly within a <em>topology</em> (e.g., rectangle,
+sphere, heart shape), keeping vertices close to their neighbors;
+<a href="topology.html">various topologies</a> are provided by BGL, and users
+can also create their own.  The algorithm itself is based on
+<a href="http://davis.wpi.edu/~matt/courses/soms/">Self-Organizing Maps</a>.
+<br />
+<a href="topology.html#square_topology"><img src="figs/ga-square.png" /></a>
+<a href="topology.html#heart_topology"><img src="figs/ga-heart.png" /></a>
+<a href="topology.html#circle_topology"><img src="figs/ga-circle.png" /></a>
 </p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<a href="../../../boost/graph/gursoy_atun_layout.hpp"><tt>boost/graph/gursoy_atun_layout.hpp</tt></a>
+<p><a href="../../../boost/graph/gursoy_atun_layout.hpp"
+><tt>boost/graph/gursoy_atun_layout.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters">Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+a model of <a class="cxx_concept" href="VertexListGraph.html">Vertex List
+Graph</a> and <a class="cxx_concept" href="IncidenceGraph.html">Incidence
+Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Topology&amp; space</tt></td>
+<td class="cxx_code">const Topology&amp; space</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The topology on which the graph will be laid out.  Its type must model the
-<a href="topology.html#topology-concept"><b>Topology</b></a> concept.</td>
+<a class="cxx_concept" href="topology.html#topology-concept">Topology</a>
+concept.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>PositionMap position</tt></td>
+<td class="cxx_code">PositionMap position</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The property map that stores the position of each vertex.  Its type must
-be a model of <a href="../../property_map/doc/LvaluePropertyMap.html"><b
->Lvalue Property Map</b></a> such that the vertex descriptor type of
-<tt>Graph</tt> is convertible to its key type.  Its value type must be
-<tt>Topology::point_type</tt>.</td>
+be a model of <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a> such that the vertex descriptor
+type of <span class="cxx_code">Graph</span> is convertible to its key
+type.  Its value type must be
+<span class="cxx_code">Topology::point_type</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>int nsteps</tt></td>
+<td class="cxx_code">int nsteps</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The number of iterations to perform.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>num_vertices(g)</tt></td>
+<td class="cxx_code">num_vertices(g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>double diameter_initial</tt></td>
+<td class="cxx_code">double diameter_initial</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>When a vertex is selected to be updated, all vertices that are reachable
 from that vertex within a certain diameter (in graph terms) will also be
-updated.  This diameter begins at <tt>diameter_initial</tt> in the first
-iteration and ends at <tt>diameter_final</tt> in the last iteration,
-progressing exponentially.  Generally the diameter decreases, in a manner
-similar to the cooling schedule in <a href="fruchterman_reingold.html"
+updated.  This diameter begins at <span class="cxx_code"
+>diameter_initial</span> in the first iteration and ends at <span
+class="cxx_code">diameter_final</span> in the last iteration, progressing
+exponentially.  Generally the diameter decreases, in a manner similar to the
+cooling schedule in <a href="fruchterman_reingold.html"
 >Fruchterman-Reingold</a>.  The diameter should typically decrease in later
 iterations, so this value should not be less than
-<tt>diameter_final</tt>.</td>
+<span class="cxx_code">diameter_final</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"
-><tt>sqrt(static_cast&lt;double&gt;(num_vertices(g)))</tt></td>
+<td class="cxx_code">sqrt(static_cast&lt;double&gt;(num_vertices(g)))</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>double diameter_final</tt></td>
+<td class="cxx_code">double diameter_final</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The final value of the diameter.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>1.0</tt></td>
+<td class="cxx_code">1.0</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>double learning_constant_initial</tt></td>
+<td class="cxx_code">double learning_constant_initial</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The learning rate affects how far vertices can moved to rearrange
 themselves in a given iteration.  The learning rate progresses linearly from
@@ -255,230 +253,254 @@ the initial value to the final value, both of which should be between 0 and
 1.  The learning rate should typically decrease, so the initial value should
 not exceed the final value.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>0.8</tt></td>
+<td class="cxx_code">0.8</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>double learning_constant_final</tt></td>
+<td class="cxx_code">double learning_constant_final</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The final learning rate constant.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>0.2</tt></td>
+<td class="cxx_code">0.2</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>VertexIndexMap vertex_index_map</tt></td>
+<td class="cxx_code">VertexIndexMap vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is only necessary when no displacement map is
-provided.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an integer type.  The vertex
-descriptor type of the graph needs to be usable as the key type of the
-map.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is only necessary when no
+displacement map is provided.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The value type of the map must be an integer
+type.  The vertex descriptor type of the graph needs to be usable as the key
+type of the map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>EdgeWeightMap weight</tt></td>
+<td class="cxx_code">EdgeWeightMap weight</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each edge to a weight.  Its argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type of the map must be an floating-point type
-compatible with <tt>double</tt>.  The edge descriptor type of the graph needs
-to be usable as the key type of the map.  When this map is a
-<tt>dummy_property_map</tt>, the algorithm assumes the graph is
-unweighted.</td>
+<td>This maps each edge to a weight.  Its argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The value type of the map must be an
+floating-point type compatible with <span class="cxx_code">double</span>.  The
+edge descriptor type of the graph needs to be usable as the key type of the
+map.  When this map is a <span class="cxx_code">dummy_property_map</span>, the
+algorithm assumes the graph is unweighted.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+<td class="cxx_code">dummy_property_map()</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_iterations</tt></td>
+<td class="cxx_code">boost::graph::keywords::_iterations</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>iterations(int n)</tt></td>
+<td class="cxx_code">iterations(int n)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>Executes the algorithm for <tt>n</tt> iterations.</td>
+<td>Executes the algorithm for the specified number of iterations.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>num_vertices(g)</tt></td>
+<td class="cxx_code">num_vertices(g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_diameter_range</tt></td>
+<td class="cxx_code">boost::graph::keywords::_diameter_range</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>diameter_range(std::<a
+<td class="cxx_code">diameter_range(std::<a
 href="http://en.cppreference.com/w/cpp/utility/pair">pair</a>&lt;T, T&gt;
-range)</tt></td>
+range)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>Range specifying the parameters (<tt>diameter_initial</tt>,
-<tt>diameter_final</tt>).</td>
+<td>Range specifying the parameters (<span class="cxx_code"
+>diameter_initial</span>, <span class="cxx_code">diameter_final</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/pair">make_pair</a
->(sqrt(static_cast&lt;double&gt;(num_vertices(g))), 1.0)</tt></td>
+>(sqrt(static_cast&lt;double&gt;(num_vertices(g))), 1.0)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_learning_constant_range</tt></td>
+<td class="cxx_code">boost::graph::keywords::_learning_constant_range</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>learning_constant_range(std::<a
+<td class="cxx_code">learning_constant_range(std::<a
 href="http://en.cppreference.com/w/cpp/utility/pair">pair</a>&lt;T, T&gt;
-range)</tt></td>
+range)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>Range specifying the parameters (<tt>learning_constant_initial</tt>,
-<tt>learning_constant_final</tt>).</td>
+<td>Range specifying the parameters (<span class="cxx_code"
+>learning_constant_initial</span>, <span class="cxx_code"
+>learning_constant_final</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>std::<a
+<td class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/utility/pair">make_pair</a>(0.8,
-0.2)</tt></td>
+0.2)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(EdgeWeightMap weight)</tt></td>
+<td class="cxx_code">weight_map(EdgeWeightMap weight)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>Equivalent to the non-named <tt>weight</tt> parameter.</td>
+<td>Equivalent to the non-named <span class="cxx_code">weight</span>
+parameter.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>dummy_property_map()</tt></td>
+<td class="cxx_code">dummy_property_map()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>Equivalent to the non-named <tt>vertex_index_map</tt> parameter.</td>
+<td>Equivalent to the non-named <span class="cxx_code">vertex_index_map</span>
+parameter.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 </table>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2004 Trustees of Indiana University</TD><TD>
-Jeremiah Willcock, Indiana University (<script language="Javascript">address("osl.iu.edu", "jewillco")</script>)<br>
-<A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
-  <A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
-Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2004</td>
+<td>Jeremiah Willcock, Indiana University (<script language="Javascript"
+>address("osl.iu.edu", "jewillco");</script>)</td>
+</tr>
+<tr>
+<td nowrap="nowrap">Trustees of Indiana University</td>
+<td><a href="http://www.boost.org/people/doug_gregor.html">Doug Gregor</a>,
+Indiana University (<script language="Javascript">address("cs.indiana.edu",
+"dgregor");</script>)</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
+Indiana University (<script language="Javascript">address("osl.iu.edu",
+"lums");</script>)
+</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

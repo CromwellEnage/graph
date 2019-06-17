@@ -1,28 +1,31 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Jeremy Siek 2000
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Edmonds-Karp Maximum Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: Edmonds-Karp Maximum Flow</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:edmonds_karp_max_flow">
-<TT>edmonds_karp_max_flow</TT>
-</H1>
+<h1><a name="sec:edmonds_karp_max_flow"
+></a><tt>edmonds_karp_max_flow</tt></h1>
 
-<PRE>
-<i>// Boost.Parameter-enabled version</i>
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename <a href="./Graph.html">Graph</a>,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
 &gt;
 typename boost::lazy_enable_if&lt;
@@ -42,24 +45,25 @@ edmonds_karp_max_flow(
 >&lt;Graph&gt;::vertex_descriptor src,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg5&amp; a5 = <i>unspecified</i>
+    const TaggedArg5&amp; a5 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
+<span class="comment">// old-style named parameter version</span>
+template &lt;class <a href="Graph.html">Graph</a>, class P, class T, class R&gt;
 typename boost::detail::edge_capacity_value&lt;Graph, P, T, R&gt;::value_type
 edmonds_karp_max_flow(Graph&amp; g, 
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor src,
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
-   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
+   const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>);
 
-<i>// non-named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>, 
+<span class="comment">// non-named parameter version</span>
+template &lt;class <a href="Graph.html">Graph</a>, 
 	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	  class ReverseEdgeMap, class ColorMap, class PredEdgeMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
@@ -69,344 +73,347 @@ edmonds_karp_max_flow(Graph&amp; g,
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
    CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev, 
-   ColorMap color, PredEdgeMap pred)
-</PRE>
+   ColorMap color, PredEdgeMap pred);
+</pre>
 
-<P>
-The <tt>edmonds_karp_max_flow()</tt> function calculates the maximum flow
-of a network. See Section <a
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The <span class="cxx_code">edmonds_karp_max_flow()</span> function
+calculates the maximum flow of a network.  See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
 Flow Algorithms</a> for a description of maximum flow.  The calculated
-maximum flow will be the return value of the function. The function
+maximum flow will be the return value of the function.  The function
 also calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>. </p>
 
-<p>
-There are several special requirements on the input graph and property
-map parameters for this algorithm. First, the directed graph
-<i>G=(V,E)</i> that represents the network must be augmented to
-include the reverse edge for every edge in <i>E</i>.  That is, the
-input graph should be <i>G<sub>in</sub> = (V,{E U
-E<sup>T</sup>})</i>. The <tt>ReverseEdgeMap</tt> argument <tt>rev</tt>
-must map each edge in the original graph to its reverse edge, that is
-<i>(u,v) -> (v,u)</i> for all <i>(u,v)</i> in <i>E</i>. The
-<tt>CapacityEdgeMap</tt> argument <tt>cap</tt> must map each edge in
-<i>E</i> to a positive number, and each edge in <i>E<sup>T</sup></i>
-to 0.
+<p>There are several special requirements on the input graph and property
+map parameters for this algorithm.  First, the directed graph <i>G=(V,E)</i>
+that represents the network must be augmented to include the reverse edge for
+every edge in <i>E</i>.  That is, the input graph should be <i>G<sub>in</sub>
+= (V, {E U E<sup>T</sup>})</i>.  The <span class="cxx_code"
+>ReverseEdgeMap</span> argument <span class="cxx_code">rev</span> must map
+each edge in the original graph to its reverse edge, that is <i>(u,v) -&gt;
+(v,u)</i> for all <i>(u,v)</i> in <i>E</i>.  The <span class="cxx_code"
+>CapacityEdgeMap</span> argument <span class="cxx_code">cap</span> must map
+each edge in <i>E</i> to a positive number, and each edge in
+<i>E<sup>T</sup></i> to 0.</p>
 
-<p>
-The algorithm is due to <a
-href="./bibliography.html#edmonds72:_improvements_netflow">Edmonds and
-Karp</a>, though we are using the variation called the ``labeling
-algorithm'' described in <a
-href="./bibliography.html#ahuja93:_network_flows">Network Flows</a>.
+<p>The algorithm is due to <a
+href="bibliography.html#edmonds72:_improvements_netflow">Edmonds and
+Karp</a>, though we are using the variation called the ``labeling algorithm''
+described in <a
+href="bibliography.html#ahuja93:_network_flows">Network Flows</a>.</p>
 
-<p>
-This algorithm provides a very simple and easy to implement solution to
-the maximum flow problem. However, there are several reasons why this
-algorithm is not as good as the <a
-href="./push_relabel_max_flow.html"><tt>push_relabel_max_flow()</tt></a>
-or the <a
-href="./boykov_kolmogorov_max_flow.html"><tt>boykov_kolmogorov_max_flow()</tt></a>
-algorithm.
+<p>This algorithm provides a very simple and easy to implement solution to the
+maximum flow problem.  However, there are several reasons why this algorithm
+is not as good as the <a class="cxx_code" href="push_relabel_max_flow.html"
+>push_relabel_max_flow()</a> or the <a class="cxx_code"
+href="boykov_kolmogorov_max_flow.html">boykov_kolmogorov_max_flow()</a>
+algorithm.</p>
 
 <ul>
-  <li>In the non-integer capacity case, the time complexity is <i>O(V
-   E<sup>2</sup>)</i> which is worse than the time complexity of the
-   push-relabel algorithm <i>O(V<sup>2</sup>E<sup>1/2</sup>)</i>
-   for all but the sparsest of graphs.</li>
-
-  <li>In the integer capacity case, if the capacity bound <i>U</i> is
-    very large then the algorithm will take a long time.</li>
+<li>In the non-integer capacity case, the time complexity is <i>O(V
+E<sup>2</sup>)</i> which is worse than the time complexity of the push-relabel
+algorithm <i>O(V<sup>2</sup>E<sup>1/2</sup>)</i> for all but the sparsest of
+graphs.</li>
+<li>In the integer capacity case, if the capacity bound <i>U</i> is very large
+then the algorithm will take a long time.</li>
 </ul>
 
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<h3>Where Defined</h3>
+<p><a href="../../../boost/graph/edmonds_karp_max_flow.hpp"
+><tt>boost/graph/edmonds_karp_max_flow.hpp</tt></a></p>
 
-<P>
-<a href="../../../boost/graph/edmonds_karp_max_flow.hpp"><TT>boost/graph/edmonds_karp_max_flow.hpp</TT></a>
-</P>
-
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>Graph&amp; g</tt></td>
+<td class="cxx_code">Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>A directed graph.  Its type must be a model of <a
-href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and <a
-href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
-<i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
-graph.</td>
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.  For each edge <i>(u,v)</i> in
+the graph, the reverse edge <i>(v,u)</i> must also be in the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor src</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The source vertex for the flow network graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor sink</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The sink vertex for the flow network graph.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+<td class="cxx_code">capacity_map(CapacityEdgeMap cap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The edge capacity property map.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+<td>The edge capacity property map.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_residual_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
-res)</tt></td>
+<td class="cxx_code">residual_capacity_map(ResidualCapacityEdgeMap res)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The edge residual capacity property map.  Its type must be a model of a
-mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type of the map must be the graph's edge
-descriptor type.</td>
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type of the map must be
+the graph's edge descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_residual_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_reverse_edge_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_reverse_edge_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>reverse_edge_map(ReverseEdgeMap rev)</tt></td>
+<td class="cxx_code">reverse_edge_map(ReverseEdgeMap rev)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>An edge property map that maps every edge <i>(u,v)</i> in the graph to the
-reverse edge <i>(v,u)</i>.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+reverse edge <i>(v,u)</i>.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_reverse, g)</tt></td>
+<td class="cxx_code">get(edge_reverse, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredEdgeMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredEdgeMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Use by the algorithm to store augmenting paths.  The argument type must be
-a mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type must be the graph's vertex descriptor type
-and the value type must be the graph's edge descriptor type.</td>
+a mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type must be the graph's
+vertex descriptor type and the value type must be the graph's edge descriptor
+type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-edge descriptors, and of size <tt>num_vertices(g)</tt>, and using the index
-map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+edge descriptors, and of size <span class="cxx_code">num_vertices(g)</span>,
+and using the index map argument for the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+<td class="cxx_code">color_map(ColorMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Used by the algorithm to keep track of progress during the breadth-first
 search stage.  At the end of the algorithm, the white vertices define the
-minimum cut set.  The argument type must be a mutable <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
-type, and the value type of the map must be a model of
-<a href="./ColorValue.html"><b>Color Value</b></a>.</td>
+minimum cut set.  The argument type must be a mutable <a class="cxx_concept"
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
+Map</a>.  The key type of the map must be the graph's vertex descriptor
+type, and the value type of the map must be a model of <a class="cxx_concept"
+href="ColorValue.html">Color Value</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-<tt>default_color_type</tt>, and of size <tt>num_vertices(g)</tt>, and using
-the index map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+<span class="cxx_code">default_color_type</span>, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This maps each vertex of the graph to a unique integer in the range
-<tt>[0, num_vertices(g))</tt>.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
+<tt>[0, <span class="cxx_code">num_vertices(g)</span>)</tt>.  The argument
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The key type of the map must be the graph's vertex descriptor
 type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-The time complexity is <i>O(V E<sup>2</sup>)</i> in the general case
+<p>The time complexity is <i>O(V E<sup>2</sup>)</i> in the general case
 or <i>O(V E U)</i> if capacity values are integers bounded by
-some constant <i>U</i>.
+some constant <i>U</i>.</p>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-The program in <a
+<p>The program in <a
 href="../example/edmonds-karp-eg.cpp"><tt>example/edmonds-karp-eg.cpp</tt></a>
 reads an example maximum flow problem (a graph with edge capacities)
-from a file in the DIMACS format and computes the maximum flow.
+from a file in the DIMACS format and computes the maximum flow.</p>
 
+<h3><a name="sec:see_also"></a>See Also</h3>
 
-<h3>See Also</h3>
+<p><a class="cxx_code" href="push_relabel_max_flow.html"
+>push_relabel_max_flow()</a><br /><a class="cxx_code"
+href="boykov_kolmogorov_max_flow.html">boykov_kolmogorov_max_flow()</a>.</p>
 
-<a href="./push_relabel_max_flow.html"><tt>push_relabel_max_flow()</tt></a><br>
-<a href="./boykov_kolmogorov_max_flow.html"><tt>boykov_kolmogorov_max_flow()</tt></a>.
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
+University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/users/people/jeremy_siek.html">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
-
-</BODY>
-</HTML> 
+</body>
+</html> 
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
- -->
+-->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt
- -->
+-->
 <!--  LocalWords:  typename VertexListGraph CapacityEdgeMap ReverseEdgeMap gt
- -->
+-->
 <!--  LocalWords:  ResidualCapacityEdgeMap VertexIndexMap src rev ColorMap pred
- -->
+-->
 <!--  LocalWords:  PredEdgeMap tt href html hpp ul li nbsp br LvaluePropertyMap
- -->
+-->
 <!--  LocalWords:  num ColorValue DIMACS cpp pre config iostream dimacs int std
- -->
+-->
 <!--  LocalWords:  namespace vecS directedS cout endl iter ei HR valign nowrap
- -->
+-->
 <!--  LocalWords:  jeremy siek htm Univ mailto jsiek lsc edu
 p -->

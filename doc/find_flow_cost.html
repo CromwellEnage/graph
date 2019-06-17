@@ -1,3 +1,5 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <!--
     Copyright (c) Piotr Wygocki 2013
@@ -8,20 +10,21 @@
 -->
 <head>
 <title>Boost Graph Library: Find Flow Cost</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:find_flow_cost"></a><tt>find_flow_cost</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename <a class="cxx_concept" href="./Graph.html">Graph</a>,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, typename TaggedArg2
 &gt;
 typename boost::lazy_enable_if&lt;
@@ -35,48 +38,45 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 &gt;::type
 find_flow_cost(
     const Graph&amp; g,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
-    const TaggedArg2&amp; a2 = <i>unspecified</i>
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg2&amp; a2 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named parameter version</i>
-template &lt;class <a class="cxx_concept" href="./Graph.html">Graph</a>&gt;
+<span class="comment">// old-style named parameter version</span>
+template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a>&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g,
-        const bgl_named_params&lt;P, T, R&gt; &amp; params = <i>all defaults</i>);
+    const bgl_named_params&lt;P, T, R&gt; &amp; params = <span class="comment"
+>/* all defaults */</span>);
 
-<i>// non-named parameter version</i>
-template&lt;class <a class="cxx_concept" href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
+<span class="comment">// non-named parameter version</span>
+template&lt;class <a class="cxx_concept" href="Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
 find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight);
 </pre>
 
-<p>
-The <span class="cxx_code">find_flow_cost()</span> function calculates the
-minimum cost maximum flow value of a network and given flow. See Section <a
-href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  The function
-calculates the cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in
-<i>E</i>, which are passed in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
-</p>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-In order to compute the min cost max flow use: <a class="cxx_code"
-href="./successive_shortest_path_nonnegative_weights.html"
+<p>The <span class="cxx_code">find_flow_cost()</span> function calculates the
+minimum cost maximum flow value of a network and given flow.  See Section
+<a href="graph_theory_review.html#sec:network-flow-algorithms">Network Flow
+Algorithms</a> for a description of maximum flow.  The function calculates the
+cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in <i>E</i>, which
+are passed in the form of the residual capacity
+<i>r(u,v) = c(u,v) - f(u,v)</i>.</p>
+
+<p>In order to compute the min cost max flow use: <a class="cxx_code"
+href="successive_shortest_path_nonnegative_weights.html"
 >successive_shortest_path_nonnegative_weights()</a> or <a class="cxx_code"
-href="./cycle_canceling.html">cycle_canceling()</a>.
-</p>
+href="cycle_canceling.html">cycle_canceling()</a>.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code">find_flow_cost()</span> can take in
+<p>One overload of <span class="cxx_code">find_flow_cost()</span> can take in
 named parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</p>
+example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list_traits.html">adjacency_list_traits</a>&lt;boost::vecS,boost::vecS,boost::directedS&gt; traits;
@@ -100,7 +100,7 @@ Graph g;
 boost::property_map&lt;Graph,double edge_t::* &gt;::type capacity = get(&amp;edge_t::capacity, g);
 boost::property_map&lt;Graph,float edge_t::* &gt;::type cost = get(&amp;edge_t::cost, g);
 boost::property_map&lt;Graph,float edge_t::* &gt;::type residual_capacity = get(&amp;edge_t::residual_capacity, g);
-<i>// ...</i>
+<span class="comment">// ...</span>
 long flow_cost = find_flow_cost(
     g,
     <b>boost::graph::keywords::_capacity_map =</b> capacity,
@@ -109,18 +109,15 @@ long flow_cost = find_flow_cost(
 );
 </pre>
 
-<P>
-The full program is in
+<p>The full program is in
 <a href="../test/find_flow_cost_bundled_properties_and_named_params_test.cpp"
-><tt>test/find_flow_cost_bundled_properties_and_named_params_test.cpp</tt></a>
-</P>
+><tt
+>test/find_flow_cost_bundled_properties_and_named_params_test.cpp</tt></a></p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/find_flow_cost.hpp"
-><tt>boost/graph/find_flow_cost.hpp</tt></a>
-</P>
+<p><a href="../../../boost/graph/find_flow_cost.hpp"
+><tt>boost/graph/find_flow_cost.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -136,7 +133,7 @@ The full program is in
 <tr>
 <th>Description:</th>
 <td>A directed graph.  Its type must be a model of <a class="cxx_concept"
-href="./IncidenceGraph.html">Incidence Graph</a>.  For each edge <i>(u,v)</i>
+href="IncidenceGraph.html">Incidence Graph</a>.  For each edge <i>(u,v)</i>
 in the graph, the reverse edge <i>(v,u)</i> must also be in the graph.</td>
 </tr>
 </table>
@@ -144,121 +141,124 @@ in the graph, the reverse edge <i>(v,u)</i> must also be in the graph.</td>
 <h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+<td class="cxx_code">capacity_map(CapacityEdgeMap cap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The edge capacity property map.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
-</tr>
-<tr valign="top">
-<th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
-</tr>
-<tr>
-<td colspan="2"><hr /></td>
-</tr>
-<tr valign="top">
-<th>Category:</th>
-<td>IN</td>
-</tr>
-<tr valign="top">
-<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
-keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
-</tr>
-<tr valign="top">
-<th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
-res)</tt></td>
-</tr>
-<tr valign="top">
-<th>Description:</th>
-<td>This maps edges to their residual capacity.  Its type must be a model of a
-mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type of the map must be the graph's edge
+class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
 descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_residual_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">residual_capacity_map(ResidualCapacityEdgeMap res)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Description:</th>
+<td>This maps edges to their residual capacity.  Its type must be a model of a
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type of the map must be
+the graph's edge descriptor type.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">get(edge_residual_capacity, g)</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>The weight or ``cost'' of each edge in the graph.  The argument type must
-be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b
->Readable Property Map</b></a>.  The edge descriptor type of the graph needs
-to be usable as the key type for the weight map.  The value type for this map
-must be the same as the value type of the distance map argument.</td>
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The edge descriptor type of
+the graph needs to be usable as the key type for the weight map.  The value
+type for this map must be the same as the value type of the distance map
+argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
-The complexity is <i> O(|E|)</i>, 
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<h3>See Also</h3>
+<p>The complexity is <i>O(|E|)</i>.</p>
 
-<a href="./cycle_canceling.html"><tt>cycle_canceling()</tt></a><br>
-<a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a>.
+<h3><a name="sec:see_also"></a>See Also</h3>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2013</TD><TD>
-Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos at mimuw.edu.pl</A>)
-</TD></TR></TABLE>
+<p><a class="cxx_code" href="cycle_canceling.html">cycle_canceling()</a>,
+<a class="cxx_code" href="successive_shortest_path_nonnegative_weights.html"
+>successive_shortest_path_nonnegative_weights()</a>.</p>
+
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2013</td>
+<td>Piotr Wygocki, University of Warsaw (<a href="mailto:wygos@mimuw.edu.pl"
+>wygos at mimuw.edu.pl</a>)</td>
+</tr>
+</table>
 
 </body>
 </html> 
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
- -->
+-->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt
- -->
+-->
 <!--  LocalWords:  typename VertexListGraph CapacityEdgeMap ReverseEdgeMap gt
- -->
+-->
 <!--  LocalWords:  ResidualCapacityEdgeMap VertexIndexMap src rev ColorMap pred
- -->
+-->
 <!--  LocalWords:  PredEdgeMap tt href html hpp ul li nbsp br LvaluePropertyMap
- -->
+-->
 <!--  LocalWords:  num ColorValue DIMACS cpp pre config iostream dimacs int std
- -->
+-->
 <!--  LocalWords:  namespace vecS directedS cout endl iter ei HR valign nowrap
- -->
+-->
 <!--  LocalWords:  jeremy siek htm Univ mailto jsiek lsc edu
 p -->
 

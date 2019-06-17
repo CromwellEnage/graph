@@ -1,37 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <!--
     Copyright (c) Fernando Vilas 2013
 
-
     Some content from the Stoer-Wagner Min Cut documentation,
     Copyright (c) Daniel Trebbien 2010
 
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<title>Boost Graph Library: Maximum Adjacency Search</Title>
+<title>Boost Graph Library: Maximum Adjacency Search</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
 <body>
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86">
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<h1><a name="sec:maximum-adjacency-search"></a>
-<tt>maximum_adjacency_search</tt>
-</h1>
+<h1><a name="sec:maximum-adjacency-search"
+></a><tt>maximum_adjacency_search</tt></h1>
 
-<p>
-<pre>
-<i>// Boost.Parameter-enabled version</i>
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph,
+    typename UndirectedGraph,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
 &gt;
 void maximum_adjacency_search(
-    const Graph&amp; g,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const UndirectedGraph&amp; g,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg7&amp; a7 = <i>unspecified</i>,
+    const TaggedArg7&amp; a7 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -42,44 +45,43 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
-template &lt;class Graph, class class P, class T, class R&gt;
+<span class="comment">// old-style named parameter version</span>
+template &lt;class UndirectedGraph, class class P, class T, class R&gt;
 void
-maximum_adjacency_search(const Graph&amp; g,
+maximum_adjacency_search(const UndirectedGraph&amp; g,
        const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<i>// non-named parameter versions</i>
-template &lt;class Graph, class WeightMap, class MASVisitor&gt;
+<span class="comment">// non-named parameter versions</span>
+template &lt;class UndirectedGraph, class WeightMap, class MASVisitor&gt;
 void
-maximum_adjacency_search(const Graph&amp; g, WeightMap weights, MASVisitor vis,
+maximum_adjacency_search(const UndirectedGraph&amp; g, WeightMap weights, MASVisitor vis,
        const typename graph_traits&lt;Graph&gt;::vertex_descriptor start);
 
 </pre>
 
-<p>
-The <tt>maximum_adjacency_search()</tt> function performs a traversal
-of the vertices in an undirected graph. The next vertex visited is the
-vertex that has the most visited neighbors at any time. In the case of
-an unweighted, undirected graph, the number of visited neighbors of the
-very last vertex visited in the graph is also the number of edge-disjoint
-paths between that vertex and the next-to-last vertex visited. These can be
-retrieved from a visitor, an example of which is in the test harness
-mas_test.cpp.
-</p>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-The <tt>maximum_adjacency_search()</tt> function invokes user-defined
-actions at certain event-points within the algorithm. This provides a
-mechanism for adapting the generic MAS algorithm to the many situations
-in which it can be used. In the pseudo-code below, the event points
-for MAS are the labels on the right. The user-defined actions must be
-provided in the form of a visitor object, that is, an object whose type
-meets the requirements for a MAS Visitor.
-</p>
+<p>The <span class="cxx_code">maximum_adjacency_search()</span> function
+performs a traversal of the vertices in an undirected graph.  The next vertex
+visited is the vertex that has the most visited neighbors at any time.  In the
+case of an unweighted, undirected graph, the number of visited neighbors of
+the very last vertex visited in the graph is also the number of edge-disjoint
+paths between that vertex and the next-to-last vertex visited.  These can be
+retrieved from a visitor, an example of which is in the test harness
+<a href="../test/mas_test.cpp"><tt>mas_test.cpp</tt></a>.</p>
+
+<p>The <span class="cxx_code">maximum_adjacency_search()</span> function
+invokes user-defined actions at certain event-points within the
+algorithm.  This provides a mechanism for adapting the generic MAS algorithm
+to the many situations in which it can be used.  In the pseudo-code below, the
+event points for MAS are the labels on the right.  The user-defined actions
+must be provided in the form of a visitor object: that is, an object whose
+type meets the requirements for a <a class="cxx_concept" href="#concept">MAS
+Visitor</a>.</p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 MAS(<i>G</i>)
   <b>for</b> each vertex <i>u in V</i> 
@@ -99,7 +101,7 @@ MAS(<i>G</i>)
   <b>end for</b> each unvisited vertex
 <pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 -
 -
@@ -122,381 +124,389 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <tt>maximum_adjacency_search()</tt> can take in named
-parameter arguments, courtesy of
+<p>One overload of <span class="cxx_code">maximum_adjacency_search()</span>
+can take in named parameter arguments, courtesy of
 <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</p>
+following example illustrates the syntax for passing arguments by name.</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::undirectedS, boost::no_property,
     boost::<a
 href="property.html">property</a>&lt;boost::edge_weight_t, int&gt;
 &gt; undirected_graph;
-<i>// ...</i>
+<span class="comment">// ...</span>
 undirected_graph g;
-<i>// ...</i>
+<span class="comment">// ...</span>
 maximum_adjacency_search(
     g,
     <b>boost::graph::keywords::_weight_map =</b> get(boost::edge_weight, g)
 );
 </pre>
 
-<p>
-The full program is in <a href="../test/mas_test.cpp"
-><tt>test/mas_test.cpp</tt></a>
-</p>
+<p>The full program is in <a href="../test/mas_test.cpp"
+><tt>test/mas_test.cpp</tt></a></p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/maximum_adjacency_search.hpp"><tt>boost/graph/maximum_adjacency_search.hpp</tt></a></p>
+<p><a href="../../../boost/graph/maximum_adjacency_search.hpp"
+><tt>boost/graph/maximum_adjacency_search.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const UndirectedGraph&amp; g</tt></td>
+<td class="cxx_code">const UndirectedGraph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A connected, undirected graph.  Its type must be a model of
-<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a> and
+<a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a>.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The argument type
-must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The value type must be <a
-href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
-Comparable</b></a> and summable.  The key type of this map needs to be the
-graph's edge descriptor type.</td>
+must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type must be <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
+Comparable</a> and summable.  The key type of this map needs to be the graph's
+edge descriptor type.</td>
 </tr>
 <tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_visitor</tt></td>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>visitor(MASVisitor vis)</tt></td>
+<td class="cxx_code">visitor(MASVisitor vis)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A visitor object that is invoked inside the algorithm at the event-points
-specified by the <a href="#concept"><b>MAS Visitor</b></a> concept.  The
-visitor object is passed by value <a href="#1">[1]</a>.</td>
+specified by the <a class="cxx_concept" href="#concept">MAS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::default_mas_visitor()</tt></td>
+<td class="cxx_code">boost::graph::default_mas_visitor()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_root_vertex</tt></td>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>root_vertex(typename <a href="graph_traits.html"
->graph_traits</a>&lt;UndirectedGraph&gt;::vertex_descriptor start)</tt></td>
+<td class="cxx_code">root_vertex(typename <a href="graph_traits.html"
+>graph_traits</a>&lt;UndirectedGraph&gt;::vertex_descriptor start)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This specifies the vertex that the depth-first search should originate
 from.  The type is the type of a vertex descriptor for the given graph.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>(0 &lt; num_vertices(g)) ? *vertices(g).first :
-<a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::null_vertex()</tt></td>
+<td class="cxx_code">(0 &lt; num_vertices(g)) ? *vertices(g).first :
+<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
 </tr>
 </table>
 
-<h4>Expert Parameters</h4>
+<h4><a name="sec:expert_parameters"></a>Expert Parameters</h4>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is necessary if the default is used for the
-assignment, index-in-heap, or distance maps.  The argument type must be a
-model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
-Property Map</b></a>.  The value type of the map must be an integer type.  The
-key type must be the graph's vertex descriptor type.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is necessary if the
+default is used for the assignment, index-in-heap, or distance maps.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The key type
+must be the graph's vertex descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_vertex_assignment_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_assignment_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_assignment_map(AssignmentMap
-assignments)</tt></td>
+<td class="cxx_code">vertex_assignment_map(AssignmentMap assignments)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key and value types must be the graph's vertex descriptor
+<td>The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key and value types must be the graph's vertex descriptor
 type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the graph's vertex descriptor type, and of size <tt>num_vertices(g)</tt>, and
-using the index map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the graph's vertex descriptor type, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_max_priority_queue</tt></td>
+<td class="cxx_code">boost::graph::keywords::_max_priority_queue</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"
-><tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt></td>
+<td class="cxx_code">max_priority_queue(MaxPriorityQueue&amp; pq)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"><b
->Keyed Updatable Queue</b></a> and max-<a
-href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue"><b>Updatable
-Priority Queue</b></a>.  The value type must be the graph's vertex descriptor
+<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"
+class="cxx_concept">Keyed Updatable Queue</a> and max-<a class="cxx_concept"
+href="UpdatableQueue.html#concept%3AUpdatablePriorityQueue">Updatable
+Priority Queue</a>.  The value type must be the graph's vertex descriptor
 and the key type must be the weight type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <tt>boost::d_ary_heap_indirect</tt> using the
+<td>A <span class="cxx_code">boost::d_ary_heap_indirect</span> using the
 index-in-heap and distance map arguments.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_index_in_heap_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_index_in_heap_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>index_in_heap_map(IndexInHeapMap
-indicesInHeap)</tt></td>
+<td class="cxx_code">index_in_heap_map(IndexInHeapMap indicesInHeap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This parameter only has an effect when the default max-priority queue is
-used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
-value type of the index-in-heap map must be a size type (<tt>typename std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a
->&lt;typename <a href="graph_traits.html">graph_traits</a
->&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+used.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key type must be the graph's vertex descriptor type.  The value
+type of the index-in-heap map must be a size type (<span class="cxx_code"
+>typename std::<a href="http://en.cppreference.com/w/cpp/container/vector"
+>vector</a>&lt;typename <a href="graph_traits.html">graph_traits</a
+>&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the size type, and of size <tt>num_vertices(g)</tt>, and using the index map
-argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the size type, and of size <span class="cxx_code">num_vertices(g)</span>, and
+using the index map argument for the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This parameter only has an effect when the default max-priority queue is
-used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
-value type of the distance map must be the weight type (<tt>typename
-boost::property_traits&lt;WeightMap&gt;::value_type</tt>).</td>
+used.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the distance map must be the weight type (<span class="cxx_code"
+>typename boost::property_traits&lt;WeightMap&gt;::value_type</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
 </table>
 
-<h3>Returns</h3>
-<p>void</p>
+<h3><a name="returns"></a>Returns</h3>
 
-<h3>Throws</h3>
+<p><span class="cxx_code">void</span></p>
+
+<h3><a name="throws"></a>Throws</h3>
 
 <table>
-<tr valign="top">
-<td bgcolor="#dfdfdf"><tt>bad_graph</tt></td>
-<td>If <tt>num_vertices(g)</tt> is less than 2.</td>
+<tr>
+<td class="cxx_code">bad_graph</td>
+<td>If <span class="cxx_code">num_vertices(g)</span> is less than 2.</td>
 </tr>
-<tr valign="top">
-<td bgcolor="#dfdfdf"><tt>std::invalid_argument</tt></td>
+<tr>
+<td class="cxx_code">std::invalid_argument</td>
 <td>If a max-priority queue argument is specified, and if it is not
 empty.</td>
 </tr>
 </table>
 
-<h3><a name="SECTION001340300000000000000">Complexity</a></h3>
+<h3><a name="complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(E + V)</i>.
-</p>
+<p>The time complexity is <i>O(E + V)</i>.</p>
 
-<h3>References</h3>
+<h3><a name="references"></a>References</h3>
+
 <ul>
-<li>David Matula (1993). <q><a href="http://dl.acm.org/citation.cfm?id=313872&dl=ACM&coll=DL&CFID=85991501&CFTOKEN=44461131">A linear time 2 + epsilon approximation algorightm for edge connectivity</a></q>
+<li>
+<p>David Matula (1993).</p>
+<blockquote><a
+href="http://dl.acm.org/citation.cfm?id=313872&dl=ACM&coll=DL&CFID=85991501&CFTOKEN=44461131"
+>A linear time 2 + epsilon approximation algorightm for edge
+connectivity</a></blockquote>
 </li>
-<li>Cai, Weiqing and Matula, David W. 
-Partitioning by maximum adjacency search of graphs. 
-Partitioning Data Sets: Dimacs Workshop, April 19-21, 1993. 
+<li>Cai, Weiqing and Matula, David W.<br />
+Partitioning by maximum adjacency search of graphs.<br />
+Partitioning Data Sets: Dimacs Workshop, April 19-21, 1993.<br />
 Vol 19. Page 55. 1995. Amer Mathematical Society</li>
 </ul>
 
-<h3><a name="concept">Visitor Event Points</a></h3>
+<h3><a name="concept"></a>Visitor Event Points</h3>
 
-<ul>
-<li><b><tt>vis.initialize_vertex(s, g)</tt></b> is invoked on every
-  vertex of the graph before the start of the graph search.</li>
-
-<li><b><tt>vis.start_vertex(s, g)</tt></b> is invoked on the source
-  vertex once before processing its out edges.</li>
-
-<li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
-  of each vertex after it is started.</li>
-
-<li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked on a vertex after
-  all of its out edges have been examined and the reach counts of the
-  unvisited targets have been updated.</li>
-</ul>
-
-<h3>Notes</h3>
-
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.</p>
-
-<hr>
 <table>
-<tr valign=top>
-<td nowrap>Copyright &copy; 2012</td><td>
-Fernando Vilas
-</td></tr></table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<td>is invoked on every vertex of the graph before the start of the graph
+search.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.start_vertex(s, g)</th>
+<td>is invoked on the source vertex once before processing its out edges.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on every out-edge of each vertex after it is started.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex after all of its out edges have been examined and
+the reach counts of the unvisited targets have been updated.</td>
+</tr>
+</table>
+
+<h3><a name="notes"></a>Notes</h3>
+
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore you may want the visitor to hold this state by pointer or
+reference.</p>
+
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2012</td>
+<td>Fernando Vilas</td>
+</tr>
+</table>
 
 </body>
 </html> 

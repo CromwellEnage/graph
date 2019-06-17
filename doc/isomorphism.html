@@ -1,28 +1,28 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Jeremy Siek 2000
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Isomorphism</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: Isomorphism</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<BR Clear>
+<br />
 
-<H1>
-<img src="figs/python.gif" alt="(Python)"/>
-<TT>isomorphism</TT>
-</H1>
+<h1><img src="figs/python.gif" alt="(Python)" /><tt>isomorphism</tt></h1>
 
+<h3>Synopsis</h3>
 
-<PRE>
-<i>// Boost.Parameter-enabled version</i>
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
     typename Graph1, typename Graph2,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
@@ -37,18 +37,19 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 &gt;::type
 isomorphism(
     const Graph1&amp; g1, const Graph2&amp; g2,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg5&amp; a5 = <i>unspecified</i>
+    const TaggedArg5&amp; a5 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class Graph1, class Graph2, class P, class T, class R&gt;
 bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
-                 const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>);
+                 const bgl_named_params&lt;P,T,R&gt;&amp; params = <span
+class="comment">/* all defaults */</span>);
 
-<i>// non-named parameter version</i>
+<span class="comment">// non-named parameter version</span>
 template &lt;typename Graph1, typename Graph2, typename IsoMap, 
           typename VertexInvariant1, typename VertexInvariant2, 
           typename V1Map, typename V2Map&gt;
@@ -57,48 +58,42 @@ bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
 		 std::size_t max_invariant, VertexIndex1Map i1_map, VertexIndex2Map i2_map);
 </pre>
 
-<p>
-An <b><i>isomorphism</i></b> is a 1-to-1 mapping of the vertices in
-one graph to the vertices of another graph such that adjacency is
-preserved. Another words, given graphs <i>G<sub>1</sub> =
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>An <strong><em>isomorphism</em></strong> is a 1-to-1 mapping of the
+vertices in one graph to the vertices of another graph such that adjacency is
+preserved.  Another words, given graphs <i>G<sub>1</sub> =
 (V<sub>1</sub>,E<sub>1</sub>)</i> and <i>G<sub>2</sub> =
 (V<sub>2</sub>,E<sub>2</sub>)</i> an isomorphism is a function
 <i>f</i> such that for all pairs of vertices <i>a,b</i> in
 <i>V<sub>1</sub></i>, edge <i>(a,b)</i> is in <i>E<sub>1</sub></i> if
-and only if edge <i>(f(a),f(b))</i> is in <i>E<sub>2</sub></i>.
-</p>
+and only if edge <i>(f(a),f(b))</i> is in <i>E<sub>2</sub></i>.</p>
 
-<p>
-This function returns <tt>true</tt> if there exists an isomorphism
-between graph 1 and graph 2 and <tt>false</tt> otherwise. Also, if a
-isomorphism map named parameter is provided then an isomorphism is
-recorded in the map.
-</p>
+<p>This function returns <span class="cxx_code">true</span> if there exists an
+isomorphism between graph 1 and graph 2 and <span class="cxx_code"
+>false</span> otherwise.  Also, if a isomorphism map named parameter is
+provided, then an isomorphism is recorded in the map.</p>
 
-<p>
-The current implementation is based on descriptions of a backtracking
-algorithm in [<a
-href="./bibliography.html#fortin96:_graph_iso_prob">46</a>,<a
-href="./bibliography.html#reingold77:_combin_algo">48</a>].  The file
-<a href="./isomorphism-impl.pdf">isomorphism-impl.pdf</a> contains a (somewhat out-of-date)
-&quot;literate&quot; description of the implementation.  The algorithm
-used is simple but slow. A more efficient (and much more complex)
-algorithm is described in [<a
-href="./bibliography.html#mckay81:_pract_graph_iso">47</a>]. When (and
-if) a version of this algorithm is ported to the BGL interface it
-should replace the current algorithm.
-</p>
+<p>The current implementation is based on descriptions of a backtracking
+algorithm in
+[<a href="bibliography.html#fortin96:_graph_iso_prob">46</a>,
+<a href="bibliography.html#reingold77:_combin_algo">48</a>].  The file
+<a href="isomorphism-impl.pdf">isomorphism-impl.pdf</a> contains a (somewhat
+out-of-date) &quot;literate&quot; description of the implementation.  The
+algorithm used is simple but slow.  A more efficient (and much more complex)
+algorithm is described in
+[<a href="bibliography.html#mckay81:_pract_graph_iso">47</a>].  When (and if)
+a version of this algorithm is ported to the BGL interface, it should replace
+the current algorithm.</p>
 
-<h3>Example</h3>
+<h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <tt>isomorphism()</tt> can take in named parameter arguments,
-courtesy of <a href="../../parameter/doc/html/index.html"
->Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</p>
+<p>One overload of <span class="cxx_code">isomorphism()</span> can take in
+named parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.</p>
 
-<pre>
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::listS, boost::undirectedS,
     boost::<a href="property.html">property</a>&lt;boost::vertex_index_t, int&gt;
@@ -106,7 +101,7 @@ typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
 
 const int n = 12;
 graph_t g1(n), g2(n);
-<i>// ...</i>
+<span class="comment">// ...</span>
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt; boost::<a href="graph_traits.html">graph_traits</a>&lt;graph_t&gt;::vertex_descriptor&gt; f(n);
 bool ret = isomorphism(
     g1, g2,
@@ -114,285 +109,308 @@ bool ret = isomorphism(
 );
 </pre>
 
-<p>
-The full program is in <a href="../example/isomorphism.cpp"
-><tt>example/isomorphism.cpp</tt></a>
-</p>
+<p>The full program is in <a href="../example/isomorphism.cpp"
+><tt>example/isomorphism.cpp</tt></a></p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/isomorphism.hpp"><TT>boost/graph/isomorphism.hpp</TT></a>
-</p>
+<p><a href="../../../boost/graph/isomorphism.hpp"
+><tt>boost/graph/isomorphism.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph1&amp; g1</tt></td>
+<td class="cxx_code">const Graph1&amp; g1</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A directed or undirected graph.  Its type must be a model of <a
-href="./EdgeListGraph.html"><b>Edge List Graph</b></a> and <a
-href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+class="cxx_concept" href="EdgeListGraph.html">Edge List Graph</a> and <a
+class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph2&amp; g2</tt></td>
+<td class="cxx_code">const Graph2&amp; g2</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A directed or undirected graph.  Its type must be a model of <a
-href="./BidirectionalGraph.html"><b>Bidirectional Graph</b></a> and <a
-href="./VertexListGraph.html"><b>Vertex List Graph</b></a>.</td>
+class="cxx_concept" href="BidirectionalGraph.html">Bidirectional Graph</a> and
+<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_isomorphism_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_isomorphism_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>isomorphism_map(IsoMap f)</tt></td>
+<td class="cxx_code">isomorphism_map(IsoMap f)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The mapping from vertices in graph 1 to vertices in graph 2.  The argument
-type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.</td>
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the vertex descriptor type of <tt>g2</tt>, and of size
-<tt>num_vertices(g1)</tt>, and using the <tt>_index_map1</tt> argument for the
-index map of <tt>g1</tt>.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the vertex descriptor type of <span class="cxx_code">g2</span>, and of size
+<span class="cxx_code">num_vertices(g1)</span>, and using the
+<span class="cxx_code">_index_map1</span> argument for the index map of
+<span class="cxx_code">g1</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
-<td>Must be a <tt>vertex_vertex_map</tt> for the first graph.</td>
+<td>Must be a <span class="python_code">vertex_vertex_map</span> for the first
+graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_invariant1</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_invariant1</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_invariant1(VertexInvariant1 i1)</tt></td>
+<td class="cxx_code">vertex_invariant1(VertexInvariant1 i1)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This unary function object takes in a vertex in <tt>g1</tt> and returns an
-integer in the range [0, vertex max invariant argument).  If a candidate
-isomorphism maps a vertex <tt>v1</tt> in <tt>g1</tt> to a vertex <tt>v2</tt>
-in <tt>g2</tt>, but a call to this function object that passes in <tt>v1</tt>
-returns a different value from a call to the <tt>_vertex_invariant2</tt>
-function object that passes in <tt>v2</tt>, then that candidate is
-rejected.  This mapping can be used either to speed up the search (as is done
-by the default value, which requires that the degrees of <tt>v1</tt> and
-<tt>v2</tt> are equal) or to impose extra conditions on the result.</td>
+<td>This unary function object takes in a vertex in <span class="cxx_code"
+>g1</span> and returns an integer in the range [0, vertex max invariant
+argument).  If a candidate isomorphism maps a vertex <span class="cxx_code"
+>v1</span> in <span class="cxx_code">g1</span> to a vertex <span
+class="cxx_code">v2</span> in <span class="cxx_code">g2</span>, but a call to
+this function object that passes in <span class="cxx_code">v1</span> returns a
+different value from a call to the <span class="cxx_code"
+>_vertex_invariant2</span> function object that passes in <span
+class="cxx_code">v2</span>, then that candidate is rejected.  This mapping can
+be used either to speed up the search (as is done by the default value, which
+requires that the degrees of <span class="cxx_code">v1</span> and <span
+class="cxx_code">v2</span> are equal) or to impose extra conditions on the
+result.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>degree_vertex_invariant()</tt></td>
+<td class="cxx_code">degree_vertex_invariant()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_invariant2</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_invariant2</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_invariant2(VertexInvariant2 i2)</tt></td>
+<td class="cxx_code">vertex_invariant2(VertexInvariant2 i2)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This unary function object takes in a vertex in <tt>g2</tt> and returns an
-integer in the range [0, vertex max invariant argument).  If a candidate
-isomorphism maps a vertex <tt>v2</tt> in <tt>g2</tt> to a vertex <tt>v1</tt>
-in <tt>g1</tt>, but a call to this function object that passes in <tt>v2</tt>
-returns a different value from a call to the <tt>_vertex_invariant1</tt>
-function object that passes in <tt>v1</tt>, then that candidate is
-rejected.  This mapping can be used either to speed up the search (as is done
-by the default value, which requires that the degrees of <tt>v2</tt> and
-<tt>v1</tt> are equal) or to impose extra conditions on the result.</td>
+<td>This unary function object takes in a vertex in <span class="cxx_code"
+>g2</span> and returns an integer in the range [0, vertex max invariant
+argument).  If a candidate isomorphism maps a vertex <span class="cxx_code"
+>v2</span> in <span class="cxx_code">g2</span> to a vertex <span
+class="cxx_code">v1</span> in <span class="cxx_code">g1</span>, but a call to
+this function object that passes in <span class="cxx_code">v2</span> returns a
+different value from a call to the <span class="cxx_code"
+>_vertex_invariant1</span> function object that passes in <span
+class="cxx_code">v1</span>, then that candidate is rejected.  This mapping can
+be used either to speed up the search (as is done by the default value, which
+requires that the degrees of <span class="cxx_code">v2</span> and <span
+class="cxx_code">v1</span> are equal) or to impose extra conditions on the
+result.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>degree_vertex_invariant()</tt></td>
+<td class="cxx_code">degree_vertex_invariant()</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_vertex_max_invariant</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_max_invariant</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_max_invariant(std::size_t
-max_invariant)</tt></td>
+<td class="cxx_code">vertex_max_invariant(std::size_t max_invariant)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>An upper bound on the possible values returned from either the
-<tt>_vertex_invariant1</tt> function object argument or the
-<tt>_vertex_invariant2</tt> function object argument.</td>
+<td>An upper bound on the possible values returned from either the <span
+class="cxx_code">_vertex_invariant1</span> function object argument or the
+<span class="cxx_code">_vertex_invariant2</span> function object
+argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">The return value of the <tt>max()</tt> member function
-of the <tt>_vertex_invariant2</tt> argument.  The default
-<tt>_vertex_invariant2</tt> argument, an instance of
-<tt>degree_vertex_invariant</tt>, defines this function to return
-<tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.</td>
+<td>The return value of the <span class="cxx_code">max()</span> member
+function of the <span class="cxx_code">_vertex_invariant2</span>
+argument.  The default <span class="cxx_code">_vertex_invariant2</span>
+argument, an instance of <span class="cxx_code">degree_vertex_invariant</span
+>, defines this function to return <span class="cxx_code">num_vertices(g2) *
+(num_vertices(g2) + 1)</span>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index1_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index1_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index1_map(VertexIndex1Map i1_map)</tt></td>
+<td class="cxx_code">vertex_index1_map(VertexIndex1Map i1_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This maps each vertex of the graph to a unique integer in the range
-<tt>[0, num_vertices(g1))</tt>.  This is necessary for efficient updates of
-the heap data structure when an edge is relaxed.  The argument type must be a
-model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
-Property Map</b></a>.  The value type of the map must be an integer type.  The
-vertex descriptor type of <tt>g1</tt> needs to be usable as the key type of
-the map.</td>
+<tt>[0, <span class="cxx_code">num_vertices(g1)</span>)</tt>.  This is
+necessary for efficient updates of the heap data structure when an edge is
+relaxed.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of <span class="cxx_code">g1</span> needs to be usable as the
+key type of the map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g1)</tt><br />Note: if you use this
-default, make sure that <tt>g1</tt> has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g1)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure that <span class="cxx_code">g1</span>
+has an internal <span class="cxx_code">vertex_index</span> property.  For
+example, <span class="cxx_code">adjacency_list</span> with
+<span class="cxx_code">VertexList=listS</span> does not have an internal
+<span class="cxx_code">vertex_index</span> property.</td>
+</tr>
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index2_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index2_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index2_map(VertexIndex2Map i2_map)</tt></td>
+<td class="cxx_code">vertex_index2_map(VertexIndex2Map i2_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This maps each vertex of the graph to a unique integer in the range
-<tt>[0, num_vertices(g2))</tt>.  This is necessary for efficient updates of
-the heap data structure when an edge is relaxed.  The argument type must be a
-model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
-Property Map</b></a>.  The value type of the map must be an integer type.  The
-vertex descriptor type of <tt>g2</tt> needs to be usable as the key type of
-the map.</td>
+<tt>[0, <span class="cxx_code">num_vertices(g2)</span>)</tt>.  This is
+necessary for efficient updates of the heap data structure when an edge is
+relaxed.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of <span class="cxx_code">g2</span> needs to be usable as the
+key type of the map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g2)</tt><br />Note: if you use this
-default, make sure that <tt>g2</tt> has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g2)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure that <span class="cxx_code">g2</span>
+has an internal <span class="cxx_code">vertex_index</span> property.  For
+example, <span class="cxx_code">adjacency_list</span> with
+<span class="cxx_code">VertexList=listS</span> does not have an internal
+<span class="cxx_code">vertex_index</span> property.</td>
+</tr>
+<tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-The worst-case time complexity is <i>O(|V|!)</i>.
+<p>The worst-case time complexity is <i>O(|V|!)</i>.</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
+University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

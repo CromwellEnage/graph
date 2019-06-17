@@ -12,18 +12,21 @@
 <title>Boost Graph Library: Fruchterman-Reingold Force-Directed Layout</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><img src="figs/python.gif"
 alt="(Python)" /><tt>fruchterman_reingold_force_directed_layout</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph, typename PositionMap, typename Topology,
+    typename <a class="cxx_concept" href="Graph.html"
+>Graph</a>, typename PositionMap, typename Topology,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 void fruchterman_reingold_force_directed_layout(
@@ -31,9 +34,9 @@ void fruchterman_reingold_force_directed_layout(
     PositionMap position,
     const Topology&amp; space,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg4&amp; a4 = <i>unspecified</i>,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -44,7 +47,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template&lt;typename Graph, typename PositionMap, typename Topology, typename Param,
 	 typename Tag, typename Rest&gt;
 void
@@ -54,8 +57,9 @@ fruchterman_reingold_force_directed_layout
    const Topology&amp; space,
    const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params);
 
-<i>// non-named parameter version</i>
-template&lt;typename Graph, typename PositionMap, typename Topology,
+<span class="comment">// non-named parameter version</span>
+template&lt;typename <a class="cxx_concept" href="Graph.html"
+>Graph</a>, typename PositionMap, typename Topology,
          typename AttractiveForce, typename RepulsiveForce,
          typename ForcePairs, typename DisplacementMap, typename Cooling&gt;
 void
@@ -69,7 +73,8 @@ fruchterman_reingold_force_directed_layout
   Cooling         cool,
   DisplacementMap displacement);
 
-template&lt;typename Graph, typename PositionMap, typename Topology&gt;
+template&lt;typename <a class="cxx_concept" href="Graph.html"
+>Graph</a>, typename PositionMap, typename Topology&gt;
 void
 fruchterman_reingold_force_directed_layout(const Graph&amp;    g,
 			     		   PositionMap     position,
@@ -78,17 +83,19 @@ fruchterman_reingold_force_directed_layout(const Graph&amp;    g,
 			     		   Dim             height);
 </pre>
 
+<h3><a name="sec:description"></a>Description</h3>
+
 <p>This algorithm [<a href="bibliography.html#fruchterman91">58</a>] performs
-layout of unweighted, undirected graphs.  Unlike the <a
-href="kamada_kawai_spring_layout.html">Kamada-Kawai</a> layout algorithm, this
-algorithm directly supports the layout of disconnected graphs (but see the
-<span class="cxx_code">force_pairs</span> named parameter).  It is a
+layout of unweighted, undirected graphs.  Unlike the
+<a href="kamada_kawai_spring_layout.html">Kamada-Kawai</a> layout algorithm,
+this algorithm directly supports the layout of disconnected graphs (but see
+the <span class="cxx_code">force_pairs</span> named parameter).  It is a
 <em>force-directed</em> algorithm, meaning that vertex layout is determined by
 the forces pulling vertices together and pushing them apart.  Attractive
 forces occur between adjacent vertices only, whereas repulsive forces occur
 between every pair of vertices.  Each iteration computes the sum of the forces
 on each vertex, then moves the vertices to their new positions.  The movement
-of vertices is mitigated by the <i>temperature</i> of the system for that
+of vertices is mitigated by the <em>temperature</em> of the system for that
 iteration: as the algorithm progresses through successive iterations, the
 temperature should decrease so that vertices settle in place.  The cooling
 schedule, attractive forces, and repulsive forces can be provided by the
@@ -99,13 +106,11 @@ via <a class="cxx_code" href="random_layout.html">random_graph_layout</a>.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code"
+<p>One overload of <span class="cxx_code"
 >fruchterman_reingold_force_directed_layout()</span> can take in named
 parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</p>
+example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -117,7 +122,7 @@ Graph g;
 double width = 0;
 double height = 0;
 
-<i>// ...</i>
+<span class="comment">// ...</span>
 
 typedef std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::rectangle_topology&lt;&gt;::point_type&gt; PositionVec;
 PositionVec position_vec(num_vertices(g));
@@ -133,17 +138,13 @@ fruchterman_reingold_force_directed_layout(
 );
 </pre>
 
-<p>
-The full program is in <a href="../example/fr_layout.cpp"
-><tt>example/fr_layout.cpp</tt></a>
-</p>
+<p>The full program is in <a href="../example/fr_layout.cpp"
+><tt>example/fr_layout.cpp</tt></a></p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/fruchterman_reingold.hpp"
-><tt>boost/graph/fruchterman_reingold.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/fruchterman_reingold.hpp"
+><tt>boost/graph/fruchterman_reingold.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -159,7 +160,7 @@ The full program is in <a href="../example/fr_layout.cpp"
 <tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a class="cxx_concept" href="./VertexAndEdgeListGraph.html">Vertex
+a model of <a class="cxx_concept" href="VertexAndEdgeListGraph.html">Vertex
 And Edge List Graph</a>.</td>
 </tr>
 <tr>
@@ -484,10 +485,8 @@ schedule.</p>
 </tr>
 <tr>
 <td></td>
-<td>
-<a href="http://www.boost.org/people/doug_gregor.htm">Doug Gregor</a>, Indiana
-University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/doug_gregor.htm">Doug Gregor</a>,
+Indiana University</td>
 </tr>
 </table>
 

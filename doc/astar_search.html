@@ -12,15 +12,17 @@
 <title>Boost Graph Library: A* Heuristic Search</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:astar"></a><tt>astar_search</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled interfaces</i>
+<span class="comment">// Boost.Parameter-enabled interfaces</span>
 template &lt;
     typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
@@ -33,9 +35,10 @@ void astar_search(
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
     AStarHeuristic h,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg10&amp; a10 = <i>unspecified</i>,
+    const TaggedArg10&amp; a10 = <span class="comment"
+>/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -58,9 +61,9 @@ void astar_search_no_init(
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
     AStarHeuristic h,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg8&amp; a8 = <i>unspecified</i>,
+    const TaggedArg8&amp; a8 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -83,9 +86,10 @@ void astar_search_tree(
 >&lt;VertexListGraph&gt;::vertex_descriptor s,
     AStarHeuristic h,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg10&amp; a10 = <i>unspecified</i>,
+    const TaggedArg10&amp; a10 = <span class="comment"
+>/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -108,9 +112,9 @@ void astar_search_no_init_tree(
 >&lt;IncidenceGraph&gt;::vertex_descriptor s,
     AStarHeuristic h,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg8&amp; a8 = <i>unspecified</i>,
+    const TaggedArg8&amp; a8 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -121,7 +125,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter interfaces</i>
+<span class="comment">// old-style named parameter interfaces</span>
 template &lt;
     typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
@@ -178,7 +182,7 @@ void astar_search_no_init_tree(
     const bgl_named_params&lt;P, T, R&gt;&amp; params
 );
 
-<i>// non-named parameter interface</i>
+<span class="comment">// non-named parameter interface</span>
 template &lt;
     typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
@@ -226,8 +230,8 @@ void astar_search_tree(
     CostInf inf, CostZero zero
 );
 
-<i>// Versions that do not initialize property maps
-// (used for implicit graphs)</i>
+<span class="comment">// Versions that do not initialize property maps
+// (used for implicit graphs)</span>
 template &lt;
     typename <a class="cxx_concept" href="IncidenceGraph.html"
 >IncidenceGraph</a>, typename <a class="cxx_concept"
@@ -252,8 +256,8 @@ void astar_search_no_init(
     CostInf inf, CostZero zero
 );
 
-<b>// Note that the index_map and color parameters are swapped in
-// astar_search_no_init() relative to astar_search(); the named parameter
+<b class="comment">// Note that the index_map and color parameters are swapped
+// in astar_search_no_init() relative to astar_search(); the named parameter
 // interfaces are not affected.</b>
 
 template &lt;
@@ -280,36 +284,31 @@ void astar_search_no_init_tree(
 );
 </pre>
 
-<p>
-This algorithm implements a heuristic search on a weighted, directed or
-undirected graph for the case where all edge weights are non-negative.
-</p>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-The A* algorithm is a <i>heuristic graph search algorithm</i>: an A* search
-is "guided" by a <i>heuristic function</i>.  A heuristic function <i>h(v)</i>
-is one which estimates the cost from a non-goal state (<i>v</i>) in the graph
-to some goal state, <i>g</i>.  Intuitively, A* follows paths (through the
-graph) to the goal that are estimated by the heuristic function to be the best
-paths.  Unlike best-first search, A* takes into account the known cost from
-the start of the search to <i>v</i>; the paths A* takes are guided by a
-function <i>f(v) = g(v) + h(v)</i>, where <i>h(v)</i> is the heuristic
-function, and <i>g(v)</i> (sometimes denoted <i>c(s, v)</i>) is the known cost
-from the start to <i>v</i>.  Clearly, the efficiency of A* is highly dependent
-on the heuristic function with which it is used.
-</p>
+<p>This algorithm implements a heuristic search on a weighted, directed or
+undirected graph for the case where all edge weights are non-negative.</p>
 
-<p>
-The A* algorithm is very similar to Dijkstra's Shortest Paths algorithm.  This
-implementation finds all the shortest paths from the start vertex to every
-other vertex by creating a search tree, examining vertices according to their
-remaining cost to some goal, as estimated by a heuristic function.  Most
-commonly, A* is used to find some specific goal vertex or vertices in a graph,
-after which the search is terminated.
-</p>
+<p>The A* algorithm is a <i>heuristic graph search algorithm</i>: an A*
+search is "guided" by a <i>heuristic function</i>.  A heuristic function
+<i>h(v)</i> is one which estimates the cost from a non-goal state (<i>v</i>)
+in the graph to some goal state, <i>g</i>.  Intuitively, A* follows paths
+(through the graph) to the goal that are estimated by the heuristic function
+to be the best paths.  Unlike best-first search, A* takes into account the
+known cost from the start of the search to <i>v</i>; the paths A* takes are
+guided by a function <i>f(v) = g(v) + h(v)</i>, where <i>h(v)</i> is the
+heuristic function, and <i>g(v)</i> (sometimes denoted <i>c(s, v)</i>) is the
+known cost from the start to <i>v</i>.  Clearly, the efficiency of A* is
+highly dependent on the heuristic function with which it is used.</p>
 
-<p>
-A* is particularly useful for searching <i>implicit</i> graphs.  Implicit
+<p>The A* algorithm is very similar to Dijkstra's Shortest Paths
+algorithm.  This implementation finds all the shortest paths from the start
+vertex to every other vertex by creating a search tree, examining vertices
+according to their remaining cost to some goal, as estimated by a heuristic
+function.  Most commonly, A* is used to find some specific goal vertex or
+vertices in a graph, after which the search is terminated.</p>
+
+<p>A* is particularly useful for searching <em>implicit</em> graphs.  Implicit
 graphs are graphs that are not completely known at the beginning of the
 search.  Upon visiting a vertex, its neighbors are "generated" and added to
 the search.  Implicit graphs are particularly useful for searching large state
@@ -321,13 +320,12 @@ class="cxx_code">astar_search_no_init()</span> or <span class="cxx_code"
 >astar_search_no_init_tree()</span> must be used for implicit graphs; the
 basic <span class="cxx_code">astar_search()</span> function requires a graph
 that models the <a class="cxx_concept" href="VertexListGraph.html">Vertex List
-Graph</a> concept.  Both versions also require the graph type to model the <a
-class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a> concept.
-</p>
+Graph</a> concept.  Both versions also require the graph type to model the
+<a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a>
+concept.</p>
 
-<p>
-For the non-tree versions of the algorithm, this implementation of A* is based
-on an OPEN/CLOSED list formulation.  Vertices on the OPEN list have been
+<p>For the non-tree versions of the algorithm, this implementation of A* is
+based on an OPEN/CLOSED list formulation.  Vertices on the OPEN list have been
 ``discovered'' by the algorithm, but not ``expanded'' (we have not discovered
 their adjacent vertices).  Vertices on the CLOSED list have been completely
 examined by our search (we have expanded them and added their children to the
@@ -342,23 +340,18 @@ algorithm whose names end in <span class="cxx_code">_tree</span>, all vertices
 are assumed to always be white, leading to checking for repeated vertices
 being done using the distance map.  If a dummy value is used for the distance
 map and the graph contains cycles, the algorithm will probably enter an
-infinite loop.
-</p>
+infinite loop.</p>
 
-<p>
-The criteria for expanding a vertex on the OPEN list is that it has the lowest
-<i>f(v) = g(v) + h(v)</i> value of all vertices on OPEN.  Cost information
-about vertices is stored in a property map.
-</p>
+<p>The criteria for expanding a vertex on the OPEN list is that it has the
+lowest <i>f(v) = g(v) + h(v)</i> value of all vertices on OPEN.  Cost
+information about vertices is stored in a property map.</p>
 
-<p>
-The following is the pseudocode for the A* heuristic search algorithm.  In the
-pseudocode, <i>h</i> is the heuristic function, <i>w</i> is the edge weight,
-<i>d</i> is the distance of a vertex from <i>s</i>, and <i>Q</i> is a priority
-queue, sorted by <i>f</i>, the estimated cost to the goal of the path through
-a vertex.  <i>p</i> is a predecessor map.  The visitor event points for the
-algorithm are indicated by the labels on the right.
-</p>
+<p>The following is the pseudocode for the A* heuristic search algorithm.  In
+the pseudocode, <i>h</i> is the heuristic function, <i>w</i> is the edge
+weight, <i>d</i> is the distance of a vertex from <i>s</i>, and <i>Q</i> is a
+priority queue, sorted by <i>f</i>, the estimated cost to the goal of the path
+through a vertex.  <i>p</i> is a predecessor map.  The visitor event points
+for the algorithm are indicated by the labels on the right.</p>
 
 <table>
 <tr>
@@ -432,11 +425,9 @@ finish vertex <i>u</i>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-The A* algorithms can take in named parameter arguments, courtesy of
+<p>The A* algorithms can take in named parameter arguments, courtesy of
 <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</p>
+following example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 struct location { float x, y; };
@@ -474,17 +465,13 @@ astar_search_tree(
 );
 </pre>
 
-<p>
-The full program is in
-<a href="../example/astar-cities.cpp"><tt>example/astar-cities.cpp</tt></a>.
-</p>
+<p>The full program is in <a href="../example/astar-cities.cpp"
+><tt>example/astar-cities.cpp</tt></a>.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/astar_search.hpp"><tt
->boost/graph/astar_search.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/astar_search.hpp"
+><tt>boost/graph/astar_search.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -541,9 +528,9 @@ will be rooted at this vertex.</td>
 </tr>
 <tr>
 <th>Description:</th>
-<td>The heuristic function that guides the search.  The type <span
-class="cxx_code">AStarHeuristic</span> must be a model of the <a
-class="cxx_concept" href="AStarHeuristic.html">AStarHeuristic</a>
+<td>The heuristic function that guides the search.  The type
+<span class="cxx_code">AStarHeuristic</span> must be a model of the
+<a class="cxx_concept" href="AStarHeuristic.html">AStarHeuristic</a>
 concept.</td>
 </tr>
 </table>
@@ -568,9 +555,9 @@ keyword:</th>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
 be non-negative; the algorithm will throw a <a class="cxx_code"
-href="./exception.html#negative_edge">negative_edge</a> exception if one of
-the edges is negative.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+href="exception.html#negative_edge">negative_edge</a> exception if one of the
+edges is negative.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
 >Readable Property Map</a>.  The edge descriptor type of the graph needs to be
 usable as the key type for the weight map.  The value type for this map must
 be the same as the value type of the distance map.</td>
@@ -641,8 +628,8 @@ completion of the algorithm, the edges <span class="cxx_code">(p[u],u)</span>
 for all <span class="cxx_code">u</span> in <span class="cxx_code">V</span> are
 in the minimum spanning tree.  If <span class="cxx_code">p[u] = u</span> then
 <span class="cxx_code">u</span> is either the start vertex or a vertex that is
-not reachable from the start.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+not reachable from the start.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
 >Read/Write Property Map</a> with key and vertex types the same as the vertex
 descriptor type of the graph.</td>
 </tr>
@@ -671,12 +658,12 @@ keyword:</th>
 <td>The shortest path weight from the start vertex <span class="cxx_code"
 >s</span> to each vertex in the graph <span class="cxx_code">g</span> is
 recorded in this property map.  The shortest path weight is the sum of the
-edge weights along the shortest path.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+edge weights along the shortest path.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
 >Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
 to be usable as the key type of the distance map.  The value type of the
 distance map is the element type of a <a class="cxx_concept"
-href="./Monoid.html">Monoid</a> formed with the distance combine argument and
+href="Monoid.html">Monoid</a> formed with the distance combine argument and
 the distance zero argument for the identity element.  Also, the distance value
 type must have a <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
@@ -716,22 +703,22 @@ keyword:</th>
 <td>The <i>f</i>-value for each vertex.  The <i>f</i>-value is defined as the
 sum of the cost to get to a vertex from the start vertex, and the estimated
 cost (as returned by the heuristic function <span class="cxx_code">h</span>)
-from the vertex to a goal.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
->Read/Write Property Map</a> in non-tree versions of the algorithm, and <a
-class="cxx_concept" href="../../property_map/doc/WritablePropertyMap.html"
+from the vertex to a goal.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a> in non-tree versions of the algorithm, and
+<a class="cxx_concept" href="../../property_map/doc/WritablePropertyMap.html"
 >Writable Property Map</a> in tree versions of the algorithm.  The vertex
 descriptor type of the graph needs to be usable as the key type of the
-distance map.  The value type of the distance map is the element type of a <a
-class="cxx_concept" href="./Monoid.html">Monoid</a> formed with the <span
-class="cxx_code">combine</span> function object and the zero object for the
-identity element.  Also the distance value type must have a <a
-href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
-class="cxx_concept">StrictWeakOrdering</a> provided by the <span
-class="cxx_code">compare</span> function object.  The value type for this map
-must be the same as the value type for the distance map.  In tree versions of
-the algorithm, <span class="cxx_code">null_property_map</span> can be used for
-this parameter.</td>
+distance map.  The value type of the distance map is the element type of a
+<a class="cxx_concept" href="Monoid.html">Monoid</a> formed with the
+<span class="cxx_code">combine</span> function object and the zero object
+for the identity element.  Also the distance value type must have a
+<a href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
+class="cxx_concept">StrictWeakOrdering</a> provided by the
+<span class="cxx_code">compare</span> function object.  The value type for
+this map must be the same as the value type for the distance map.  In tree
+versions of the algorithm, <span class="cxx_code">null_property_map</span> can
+be used for this parameter.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -832,8 +819,8 @@ keyword:</th>
 <th>Description:</th>
 <td>This function is used to combine distances to compute the distance of a
 path, and to combine distance and heuristic values to compute the
-<i>f</i>-value of a vertex.  The argument type type must be a model of <a
-class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+<i>f</i>-value of a vertex.  The argument type type must be a model of
+<a class="cxx_concept" href="http://www.boost.org/sgi/stl/BinaryFunction.html"
 >Binary Function</a>.  Both argument types of the binary function must match
 the value type of the distance map argument (which is the same as that of the
 weight map and cost map argument types).  The result type must be the same
@@ -895,8 +882,8 @@ keyword:</th>
 </tr>
 <tr>
 <th>Description:</th>
-<td>The argument value must be the identity element for the <a
-class="cxx_concept" href="./Monoid.html">Monoid</a> formed by the distance
+<td>The argument value must be the identity element for the
+<a class="cxx_concept" href="Monoid.html">Monoid</a> formed by the distance
 values and the distance combine argument.  The type <span class="cxx_code"
 >D</span> is the value type of the distance map argument.</td>
 </tr>
@@ -937,58 +924,67 @@ visitor object is passed by value <a href="#1">[1]</a>.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O((E + V) log V)</i>.
-</p>
+<p>The time complexity is <i>O((E + V) log V)</i>.</p>
 
 <h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-<ul>
-<li><b><tt>vis.initialize_vertex(u, g)</tt></b>
-  is invoked on each vertex in the graph before the start of the
-  algorithm.</li>
-<li><b><tt>vis.discover_vertex(v, g)</tt></b>
-  is invoked when a vertex is first discovered and is added to the
-  OPEN list.</li>
-<li><b><tt>vis.examine_vertex(u, g)</tt></b>
-  is invoked when a vertex is popped from
-  the queue (i.e., it has the lowest cost on the OPEN list).</li>
-<li><b><tt>vis.examine_edge(e, g)</tt></b>
-  is invoked on each out-edge of a vertex immediately after it is
-  examined.</li>
-<li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.</li>
-<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
-  is invoked if the edge is not relaxed (see above).</li>
-<li><b><tt>vis.black_target(e, g)</tt></b>
-   is invoked when a vertex that is on the CLOSED list is
-  "rediscovered" via a more efficient path, and is re-added to the
-  OPEN list.</li>
-<li><b><tt>vis.finish_vertex(u, g)</tt></b>
-  is invoked on a vertex when it is added to the CLOSED list, which
-  happens after all of its out edges have been examined.</li>
-</ul>
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(u, g)</th>
+<td>is invoked on each vertex in the graph before the start of the
+algorithm.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(v, g)</th>
+<td>is invoked when a vertex is first discovered and is added to the OPEN
+list.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<td>is invoked when a vertex is popped from the queue (i.e., it has the lowest
+cost on the OPEN list).</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on each out-edge of a vertex immediately after it is
+examined.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<td>is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<td>is invoked if the edge is not relaxed (see above).</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.black_target(e, g)</th>
+<td>is invoked when a vertex that is on the CLOSED list is "rediscovered" via
+a more efficient path, and is re-added to the OPEN list.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex when it is added to the CLOSED list, which happens
+after all of its out edges have been examined.</td>
+</tr>
+</table>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
-<p>
-<a name="1">[1]</a> Since the visitor parameter is passed by value, if
-your visitor contains state then any changes to the state during the
-algorithm will be made to a copy of the visitor object, not the
-visitor object passed in.  Therefore you may want the visitor to hold
-this state by pointer or reference.
-</p>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2004</td>
-<td>
-<a href="http://cs.krisbeevers.com/">Kristopher Beevers</a>, Rensselaer
+<td><a href="http://cs.krisbeevers.com/">Kristopher Beevers</a>, Rensselaer
 Polytechnic Institute
-(<a href="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</a>)
-</td>
+(<a href="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</a>)</td>
 </tr>
 </table>
 

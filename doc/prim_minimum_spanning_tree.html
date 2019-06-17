@@ -12,27 +12,30 @@
 <title>Boost Graph Library: Prim Minimum Spanning Tree</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:prim"></a><img src="figs/python.gif"
 alt="(Python)" /><tt>prim_minimum_spanning_tree</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph, typename PredecessorMap,
+    typename <a class="cxx_concept" href="Graph.html"
+>Graph</a>, typename PredecessorMap,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
 &gt;
 void prim_minimum_spanning_tree(
     const Graph&amp; g,
     PredecessorMap p_map,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg9&amp; a9 = <i>unspecified</i>,
+    const TaggedArg9&amp; a9 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -43,38 +46,44 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class Graph, class PredMap, class P, class T, class R&gt;
 void prim_minimum_spanning_tree(const Graph&amp; g, PredMap p_map,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<i>// non-named parameter version</i>
-template &lt;class Graph, class DijkstraVisitor, 
-	  class PredecessorMap, class DistanceMap,
-	  class WeightMap, class IndexMap&gt;
-void prim_minimum_spanning_tree(const Graph&amp; g,
-   typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor s, 
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-   IndexMap index_map, DijkstraVisitor vis);
+<span class="comment">// non-named parameter version</span>
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename <a
+class="cxx_concept" href="DijkstraVisitor.html"
+>DijkstraVisitor</a>,
+    typename PredecessorMap, typename DistanceMap,
+    typename WeightMap, typename IndexMap
+&gt;
+void prim_minimum_spanning_tree(
+    const Graph&amp; g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor s,
+    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+    IndexMap index_map, DijkstraVisitor vis
+);
 </pre>
 
-<p>
-This is Prim's algorithm [<a href="bibliography.html#prim57:_short">25</a>,<a
-href="bibliography.html#clr90">8</a>,<a
-href="bibliography.html#tarjan83:_data_struct_network_algo">27</a>,<a
-href="bibliography.html#graham85">15</a>] for solving the minimum spanning
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>This is Prim's algorithm [<a href="bibliography.html#prim57:_short">25</a>,
+<a href="bibliography.html#clr90">8</a>,
+<a href="bibliography.html#tarjan83:_data_struct_network_algo">27</a>,
+<a href="bibliography.html#graham85">15</a>] for solving the minimum spanning
 tree problem for an undirected graph with weighted edges.  A MST is a set of
 edges that connects all the vertices in the graph where the total weight of
-the edges in the tree is minimized.  See Section <a
-href="graph_theory_review.html#sec:minimum-spanning-tree">Minimum Spanning
-Tree Problem</a> for more details.  The implementation is simply a call to <a
-class="cxx_code" href="./dijkstra_shortest_paths.html"
+the edges in the tree is minimized.  See Section
+<a href="graph_theory_review.html#sec:minimum-spanning-tree">Minimum Spanning
+Tree Problem</a> for more details.  The implementation is simply a call to
+<a class="cxx_code" href="dijkstra_shortest_paths.html"
 >dijkstra_shortest_paths()</a> with the appropriate choice of comparison and
 combine functors.  The pseudo-code for Prim's algorithm is listed below.  The
 algorithm as implemented in Boost.Graph does not produce correct results on
-graphs with parallel edges.
-</p>
+graphs with parallel edges.</p>
 
 <table>
 <tr>
@@ -139,12 +148,10 @@ finish <i>u</i>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code">prim_minimum_spanning_tree()</span> can
-take in named parameter arguments, courtesy of
+<p>One overload of <span class="cxx_code">prim_minimum_spanning_tree()</span>
+can take in named parameter arguments, courtesy of
 <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</p>
+following example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 template &lt;typename Distance&gt;
@@ -188,29 +195,23 @@ prim_minimum_spanning_tree(
     g, p,
     <b>boost::graph::keywords::_distance_map =</b> d,
     <b>boost::graph::keywords::_weight_map =</b> get(boost::edge_length_t(), g),
-    <i>// Use the "y" utility field for color</i>
+    <span class="comment">// Use the "y" utility field for color</span>
     <b>boost::graph::keywords::_color_map =</b> get(boost::y_property&lt;long&gt;(), g),
     <b>boost::graph::keywords::_visitor =</b> length_vis
 );
 </pre>
 
-<p>
-The full program is in <a
-href="../example/miles_span.cpp"><tt>example/miles_span.cpp</tt></a>
-</p>
+<p>The full program is in
+<a href="../example/miles_span.cpp"><tt>example/miles_span.cpp</tt></a></p>
 
-<p>
-The file <a
-href="../example/prim-example.cpp"><tt>examples/prim-example.cpp</tt></a>
-contains another example of using Prim's algorithm.
-</p>
+<p>The file
+<a href="../example/prim-example.cpp"><tt>examples/prim-example.cpp</tt></a>
+contains another example of using Prim's algorithm.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/prim_minimum_spanning_tree.hpp"
-><tt>boost/graph/prim_minimum_spanning_tree.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/prim_minimum_spanning_tree.hpp"
+><tt>boost/graph/prim_minimum_spanning_tree.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -226,8 +227,8 @@ contains another example of using Prim's algorithm.
 <tr>
 <th>Description:</th>
 <td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
-href="./VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
-href="./IncidenceGraph.html">Incidence Graph</a>.  It should not contain
+href="VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.  It should not contain
 parallel edges.</td>
 </tr>
 <tr>
@@ -251,8 +252,8 @@ parallel edges.</td>
 completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i>
 are in the minimum spanning tree.  If <i>p[u] = u</i> then <i>u</i> is either
 the root of the tree or is a vertex that is not reachable from the root.  The
-<span class="cxx_code">PredecessorMap</span> type must be a <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+<span class="cxx_code">PredecessorMap</span> type must be a
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
 >Read/Write Property Map</a> with key and vertex types the same as the vertex
 descriptor type of the graph.</td>
 </tr>
@@ -311,8 +312,8 @@ keyword:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
 be non-negative, and the algorithm will throw a <a class="cxx_code"
 href="./exception.html#negative_edge">negative_edge</a> exception if
-one of the edges is negative.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+one of the edges is negative.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
 >Readable Property Map</a>.  The edge descriptor type of the graph needs to be
 usable as the key type for the weight map.  The value type for this map must
 be the same as the value type of the distance map argument, and that type must
@@ -437,7 +438,7 @@ type must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
 Map</a>.  A vertex descriptor must be usable as the key type of the map, and
 the value type of the map must be a model of <a class="cxx_concept"
-href="./ColorValue.html">Color Value</a>.</td>
+href="ColorValue.html">Color Value</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -491,28 +492,24 @@ type of the graph.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(E log V)</i>.
-</p>
+<p>The time complexity is <i>O(E log V)</i>.</p>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in.  Therefore you may want the visitor to hold this state by
-  pointer or reference.</p>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000-2001</td>
-<td>
-<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
-University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University
+(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

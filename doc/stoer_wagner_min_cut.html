@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
 <!--
     Copyright Daniel Trebbien 2010.
     Distributed under the Boost Software License, Version 1.0.
@@ -8,19 +9,27 @@
 <html>
 <head>
 <title>Boost Graph Library: Stoer&ndash;Wagner Min-Cut</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
-<img src="../../../boost.png"  alt="C++ Boost"> 
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <h1><a name="sec:stoer_wagner"><tt>stoer_wagner_min_cut</tt></a></h1>
+
 <table border="0" cellspacing="0" style="float: right">
-<caption align="bottom">A min-cut of a weighted graph<br>having min-cut weight 4</caption>
-<tr><td style="border: #666 1px solid"><img src="stoer_wagner_imgs/stoer_wagner-example-min-cut.gif" width="376"></td></tr>
+<caption align="bottom">A min-cut of a weighted graph<br />having min-cut
+weight 4</caption>
+<tr><td style="border: #666 1px solid"><img
+src="stoer_wagner_imgs/stoer_wagner-example-min-cut.gif"
+width="376" /></td></tr>
 </table>
-<pre>
-<i>// Boost.Parameter-enabled version</i>
+
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph, typename WeightMap,
+    typename UndirectedGraph, typename WeightMap,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
 &gt;
 typename boost::enable_if&lt;
@@ -32,12 +41,12 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     typename property_traits&lt;WeightMap&gt;::value_type
 &gt;::type
 stoer_wagner_min_cut(
-    const Graph&amp; g,
+    const UndirectedGraph&amp; g,
     WeightMap weights,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg5&amp; a5 = <i>unspecified</i>,
+    const TaggedArg5&amp; a5 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -48,49 +57,59 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class UndirectedGraph, class WeightMap, class P, class T, class R&gt;
 typename property_traits&lt;WeightMap&gt;::value_type
 stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>);
 </pre>
 
-<p>The <tt>stoer_wagner_min_cut</tt> function determines a min-cut and the min-cut weight of a connected, undirected graph.
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>A <em>cut</em> of a graph <i>G</i> is a partition of the vertices into two, non-empty sets. The <em>weight</em> of such a partition is the number of edges between the two sets if <i>G</i> is unweighted, or the sum of the weights of all edges between the two sets if <i>G</i> is weighted. A <em>min-cut</em> is a cut having the least weight.
+<p>The <span class="cxx_code">stoer_wagner_min_cut()</span> function
+determines a min-cut and the min-cut weight of a connected, undirected
+graph.</p>
 
-<p>Sometimes a graph has multiple min-cuts, but all have the same weight. The <tt>stoer_wagner_min_cut</tt> function determines exactly one of the min-cuts as well as its weight.
+<p>A <em>cut</em> of a graph <span class="cxx_code">G</span> is a partition of
+the vertices into two, non-empty sets.  The <em>weight</em> of such a
+partition is the number of edges between the two sets if <span
+class="cxx_code">G</span> is unweighted, or the sum of the weights of all
+edges between the two sets if <span class="cxx_code">G</span> is weighted.  A
+<em>min-cut</em> is a cut having the least weight.</p>
 
-<h3>Example</h3>
+<p>Sometimes a graph has multiple min-cuts, but all have the same weight.  The
+<span class="cxx_code">stoer_wagner_min_cut</span> function determines exactly
+one of the min-cuts as well as its weight.</p>
 
-<p>
-One overload of <tt>stoer_wagner_min_cut()</tt> can take in named parameter
-arguments, courtesy of <a href="../../parameter/doc/html/index.html"
->Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</p>
+<h3><a name="sec:example"></a>Example</h3>
 
-<pre>
+<p>One overload of <span class="cxx_code">stoer_wagner_min_cut()</span> can
+take in named parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
+following example illustrates the syntax for passing arguments by name.</p>
+
+<pre class="cxx_code">
 struct edge_t
 {
     unsigned long first;
     unsigned long second;
 };
-<i>// ...</i>
+<span class="comment">// ...</span>
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::undirectedS
 &gt; undirected_unweighted_graph;
-<i>// ...</i>
+<span class="comment">// ...</span>
 typedef boost::<a href="graph_traits.html">graph_traits</a
 >&lt;undirected_unweighted_graph&gt;::vertex_descriptor vertex_descriptor;
-<i>// ...</i>
-edge_t edges[] = <i>// ...</i>
+<span class="comment">// ...</span>
+edge_t edges[] = <span class="comment">// ...</span>
 undirected_unweighted_graph g(edges, edges + 14, 8);
 std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, bool&gt; parity;
 boost::<a href="../../property_map/doc/associative_property_map.html">associative_property_map</a>&lt;std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, bool&gt; &gt; parities(parity);
 std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, vertex_descriptor&gt; assignment;
 boost::<a href="../../property_map/doc/associative_property_map.html">associative_property_map</a>&lt;std::<a href="http://en.cppreference.com/w/cpp/container/map">map</a>&lt;vertex_descriptor, vertex_descriptor&gt; &gt; assignments(assignment);
-<i>// ...</i>
+<span class="comment">// ...</span>
 int w = stoer_wagner_min_cut(
     g,
     boost::<a href="../../property_map/doc/static_property_map.html">make_static_property_map</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;undirected_unweighted_graph&gt;::edge_descriptor&gt;(1),
@@ -99,293 +118,314 @@ int w = stoer_wagner_min_cut(
 );
 </pre>
 
-<p>
-The full program is in <a href="../test/stoer_wagner_test.cpp"
-><tt>test/stoer_wagner_test.cpp</tt></a>
-</p>
+<p>The full program is in <a href="../test/stoer_wagner_test.cpp"
+><tt>test/stoer_wagner_test.cpp</tt></a></p>
 
-<h3>Where Defined</h3>
-<p><a href="../../../boost/graph/stoer_wagner_min_cut.hpp"><tt>boost/graph/stoer_wagner_min_cut.hpp</tt></a>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<h3>Parameters</h3>
+<p><a href="../../../boost/graph/stoer_wagner_min_cut.hpp"
+><tt>boost/graph/stoer_wagner_min_cut.hpp</tt></a>
+
+<h3><a name="sec:parameters">Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const UndirectedGraph&amp; g</tt></td>
+<td class="cxx_code">const UndirectedGraph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A connected, undirected graph.  Its type must be a model of
-<a href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and
-<a href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.</td>
+<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a> and
+<a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>WeightMap weights</tt></td>
+<td class="cxx_code">WeightMap weights</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The argument type
-must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a> and its value type must be <a
-href="http://www.boost.org/sgi/stl/LessThanComparable.html"><b>Less Than
-Comparable</b></a> and summable.  The key type of this map needs to be the
+must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a> and its value type must be <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
+Comparable</a> and summable.  The key type of this map needs to be the
 graph's edge descriptor type.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_parity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_parity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>parity_map(ParityMap parities)</tt></td>
+<td class="cxx_code">parity_map(ParityMap parities)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The algorithm computes a min-cut, which divides the set of vertices into
-two, non-empty sets.  The <tt>stoer_wagner_min_cut()</tt> function records
-which of the two sets that each vertex belongs to by setting the parity to
-<tt>true</tt> (representing one set) or <tt>false</tt> (for the other).  Its
-argument type must be a model of a
-<a href="../../property_map/doc/WritablePropertyMap.html"><b>Writable Property
-Map</b></a> and its value type should be a bool type.  The key type must be
-the graph's vertex descriptor type.</td>
+two, non-empty sets.  The <span class="cxx_code">stoer_wagner_min_cut()</span>
+function records which of the two sets that each vertex belongs to by setting
+the parity to <span class="cxx_code">true</span> (representing one set) or
+<span class="cxx_code">false</span> (for the other).  Its argument type must
+be a model of a <a href="../../property_map/doc/WritablePropertyMap.html"
+class="cxx_concept">Writable Property Map</a> and its value type should be a
+<span class="cxx_code">bool</span> type.  The key type must be the graph's
+vertex descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>boost::dummy_property_map</tt></td>
+<td class="cxx_code">boost::dummy_property_map</td>
 </tr>
 </table>
 
-<h4>Expert Parameters</h4>
+<h4><a name="sec:expert_parameters"></a>Expert Parameters</h4>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to an integer in the range <tt>[0,
-num_vertices(g))</tt>.  This is only necessary if the default is used for the
-assignment, index-in-heap, or distance maps.  The argument type must be a
-model of <a href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable
-Property Map</b></a>.  The value type of the map must be an integer type.  The
-key type must be the graph's vertex descriptor type.</td>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  This is only necessary if the
+default is used for the assignment, index-in-heap, or distance maps.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The key type
+must be the graph's vertex descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_vertex_assignment_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_assignment_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_assignment_map(AssignmentMap
-assignments)</tt></td>
+<td class="cxx_code">vertex_assignment_map(AssignmentMap assignments)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key and value types must be the graph's vertex descriptor
+<td>The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key and value types must be the graph's vertex descriptor
 type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the graph's vertex descriptor type, and of size <tt>num_vertices(g)</tt>, and
-using the index map argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the graph's vertex descriptor type, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
+map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_max_priority_queue</tt></td>
+<td class="cxx_code">boost::graph::keywords::_max_priority_queue</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"
-><tt>max_priority_queue(MaxPriorityQueue&amp; pq)</tt></td>
+<td class="cxx_code">max_priority_queue(MaxPriorityQueue&amp; pq)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"><b
->Keyed Updatable Queue</b></a> and max-<a
-href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue"><b>Updatable
-Priority Queue</b></a>.  The value type must be the graph's vertex descriptor
+<td>The argument type must be a model of <a href="KeyedUpdatableQueue.html"
+class="cxx_concept">Keyed Updatable Queue</a> and max-<a class="cxx_concept"
+href="UpdatableQueue.html#concept%3AUpdatablePriorityQueue">Updatable
+Priority Queue</a>.  The value type must be the graph's vertex descriptor
 and the key type must be the weight type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">A <tt>boost::d_ary_heap_indirect</tt> using the
+<td>A <span class="cxx_code">boost::d_ary_heap_indirect</span> using the
 index-in-heap and distance map arguments.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_index_in_heap_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_index_in_heap_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>index_in_heap_map(IndexInHeapMap
-indicesInHeap)</tt></td>
+<td class="cxx_code">index_in_heap_map(IndexInHeapMap indicesInHeap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This parameter only has an effect when the default max-priority queue is
-used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
-value type of the index-in-heap map must be a size type (<tt>typename std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a
->&lt;typename <a href="graph_traits.html">graph_traits</a
->&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</tt>).</td>
+used.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key type must be the graph's vertex descriptor type.  The value
+type of the index-in-heap map must be a size type (<span class="cxx_code"
+>typename std::<a href="http://en.cppreference.com/w/cpp/container/vector"
+>vector</a>&lt;typename <a href="graph_traits.html">graph_traits</a
+>&lt;UndirectedGraph&gt;::vertex_descriptor&gt;::size_type</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the size type, and of size <tt>num_vertices(g)</tt>, and using the index map
-argument for the index map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the size type, and of size <span class="cxx_code">num_vertices(g)</span>, and
+using the index map argument for the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This parameter only has an effect when the default max-priority queue is
-used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The key type must be the graph's vertex descriptor type.  The
-value type of the distance map must be the weight type (<tt>typename
-boost::property_traits&lt;WeightMap&gt;::value_type</tt>).</td>
+used.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key type must be the graph's vertex descriptor type.  The
+value type of the distance map must be the weight type (<span class="cxx_code"
+>typename boost::property_traits&lt;WeightMap&gt;::value_type</span>).</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
 </table>
 
-<h3>Returns</h3>
+<h3><a name="returns"></a>Returns</h3>
+
 <p>The weight of the min-cut.</p>
 
-<h3>Throws</h3>
+<h3><a name="throws"></a>Throws</h3>
 
 <table>
-<tr valign="top">
-<td bgcolor="#dfdfdf"><tt>bad_graph</tt></td>
-<td>If <tt>num_vertices(g)</tt> is less than 2.</td>
+<tr>
+<td class="cxx_code">bad_graph</td>
+<td>If <span class="cxx_code">num_vertices(g)</span> is less than 2.</td>
 </tr>
-<tr valign="top">
-<td bgcolor="#dfdfdf"><tt>std::invalid_argument</tt></td>
+<tr>
+<td class="cxx_code">std::invalid_argument</td>
 <td>If a max-priority queue argument is specified, and if it is not
 empty.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="complexity"></a>Complexity</h3>
 
-<p>The time complexity is <i>O</i>(<i>V</i>&#xb7;<i>E</i> + <i>V</i><sup>2</sup> log <i>V</i>).</p>
+<p>The time complexity is <i>O</i>(<i>V</i>&#xb7;<i>E</i> +
+<i>V</i><sup>2</sup> log <i>V</i>).</p>
 
-<h3>References</h3>
+<h3><a name="references"></a>References</h3>
+
 <ul>
-<li>Mehlhorn, Kurt and Christian Uhrig (1995). <q><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.31.614&amp;rep=rep1&amp;type=pdf">The minimum cut algorithm of Stoer and Wagner</a></q>.
-<li>Stoer, Mechthild and Frank Wagner (1997). <q><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.6687&amp;rep=rep1&amp;type=pdf">A simple min-cut algorithm</a></q>. <i>Journal of the ACM</i> <b>44</b> (4), 585&ndash;591.
-<li>Zwick, Uri (2008). <q><a href="http://www.cs.tau.ac.il/~zwick/grad-algo-08/gmc.pdf">Global minimum cuts</a></q>.
+<li>
+<p>Mehlhorn, Kurt and Christian Uhrig (1995).</p>
+<blockquote><a
+href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.31.614&amp;rep=rep1&amp;type=pdf"
+>The minimum cut algorithm of Stoer and Wagner</a>.</blockquote>
+</li>
+<li>
+<p>Stoer, Mechthild and Frank Wagner (1997).</p>
+<blockquote><a
+href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.114.6687&amp;rep=rep1&amp;type=pdf"
+>A simple min-cut algorithm</a>.</blockquote>
+<p><i>Journal of the ACM</i> <b>44</b> (4), 585&ndash;591.</p>
+</li>
+<li>
+<p>Zwick, Uri (2008).</p>
+<blockquote><a href="http://www.cs.tau.ac.il/~zwick/grad-algo-08/gmc.pdf"
+>Global minimum cuts</a>.</blockquote>
+</li>
 </ul>
 
-<br>
-<hr>
+<br />
+<hr />
 <table>
 <tr>
 <td>Copyright&nbsp;&copy;&nbsp;2010</td>
-<td>Daniel Trebbien (<a href="mailto:dtrebbien@gmail.com">dtrebbien@gmail.com</a>)
-</td>
+<td>Daniel Trebbien
+(<a href="mailto:dtrebbien@gmail.com">dtrebbien@gmail.com</a>)</td>
 </tr>
 </table>
 

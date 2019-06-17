@@ -1,12 +1,12 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
-	<TITLE>Boost Graph Library: Boykov-Kolmogorov Maximum Flow</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
-	<META NAME="CREATED" CONTENT="20060820;17315200">
-	<META NAME="CHANGEDBY" CONTENT="Stephan Diederich">
-	<META NAME="CHANGED" CONTENT="20060820;23125100">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Boost Graph Library: Boykov-Kolmogorov Maximum Flow</title>
+<meta name="GENERATOR" content="OpenOffice.org 2.0 (Linux)" />
+<meta name="CREATED" content="20060820;17315200" />
+<meta name="CHANGEDBY" content="Stephan Diederich" />
+<meta name="CHANGED" content="20060820;23125100" />
 <!--
 //  Copyright (c) 2006 Stephan Diederich
 //
@@ -38,28 +38,22 @@
 //    Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //    http://www.boost.org/LICENSE_1_0.txt)
- -->
-	<STYLE>
-	<!--
-		TD P { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		PRE { color: #000000 }
-		H3 { color: #000000 }
-		BLOCKQUOTE { color: #000000 }
-		A:link { color: #0000ee }
-		A:visited { color: #551a8b }
-	-->
-	</STYLE>
-</HEAD>
-<BODY LANG="de-DE" TEXT="#000000" LINK="#0000ee" VLINK="#551a8b" BGCOLOR="#ffffff" DIR="LTR">
-<P><IMG SRC="../../../boost.png" NAME="Grafik1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
-</P>
-<H1><A NAME="sec:boykov_kolmogorov_max_flow"></A><TT>boykov_kolmogorov_max_flow</TT>
-</H1>
-<PRE><i>// Boost.Parameter-enabled version</i>
+-->
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
+<br />
+
+<h1><a name="sec:boykov_kolmogorov_max_flow"
+></a><tt>boykov_kolmogorov_max_flow</tt></h1>
+
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg6
 &gt;
 typename boost::lazy_enable_if&lt;
@@ -79,13 +73,13 @@ boykov_kolmogorov_max_flow(
 >&lt;Graph&gt;::vertex_descriptor src,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg6&amp; a6 = <i>unspecified</i>
+    const TaggedArg6&amp; a6 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class Graph, class P, class T, class R&gt;
 typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
 boykov_kolmogorov_max_flow(Graph&amp; g,
@@ -93,10 +87,11 @@ boykov_kolmogorov_max_flow(Graph&amp; g,
 >&lt;Graph&gt;::vertex_descriptor src,
    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor sink,
-   const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>);
+   const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>/* all defaults */</span>);
 
-<i>// non-named parameter version</i>
-template &lt;class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap,
+<span class="comment">// non-named parameter version</span>
+template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a>, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap,
           class PredecessorMap, class ColorMap, class DistanceMap, class IndexMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
 boykov_kolmogorov_max_flow(Graph&amp; g,
@@ -110,403 +105,431 @@ boykov_kolmogorov_max_flow(Graph&amp; g,
        typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor src,
        typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph &gt;::vertex_descriptor sink);</PRE><P>
-<FONT SIZE=3>Additional overloaded versions for non-named parameters
-are provided (without DistanceMap/ColorMap/DistanceMap; for those
-iterator_property_maps with the provided index map are used)</FONT></P>
-<P>The <TT>boykov_kolmogorov_max_flow()</TT> function calculates the maximum
-flow of a network. See Section <A HREF="graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</A> for a description of maximum flow. The calculated
-maximum flow will be the return value of the function. The function
-also calculates the flow values <I>f(u,v)</I> for all <I>(u,v)</I> in
-<I>E</I>, which are returned in the form of the residual capacity
-<I>r(u,v) = c(u,v) - f(u,v)</I>.
-</P>
-<P><B>Requirements:</B><BR>The directed graph <I>G=(V,E)</I> that
-represents the network must include a reverse edge for every edge in
-<I>E</I>. That is, the input graph should be <I>G<SUB>in</SUB> =
-(V,{E U E<SUP>T</SUP>})</I>. The <TT>ReverseEdgeMap</TT> argument <TT>rev</TT>
-must map each edge in the original graph to its reverse edge, that is
-<I>(u,v) -&gt; (v,u)</I> for all <I>(u,v)</I> in <I>E</I>.
-</P>
+>&lt;Graph &gt;::vertex_descriptor sink);
 
-<P>Remarks: While the push-relabel method states that each edge in <I>E<SUP>T</SUP></I>
-has to have capacity of 0, the reverse edges for this algorithm ARE
-allowed to carry capacities. If there are already reverse edges in
-the input Graph <I><FONT FACE="Courier New, monospace">G</FONT></I>,
-those can be used. This can halve the amount of edges and will
-noticeably increase the performance.</P>
+<span class="comment"
+>// Additional overloaded versions for non-named parameters are provided
+// (without DistanceMap/ColorMap/DistanceMap; for those,
+// iterator_property_maps with the provided index map are used).</span>
+</pre>
 
-<P>
-<B>Algorithm description:</B><BR>The Boykov-Kolmogorov max-flow (or often
-BK max-flow) algorithm is a variety of the augmenting-path algorithm. Standard
-augmenting path algorithms find shortest paths from source to sink vertex and
-augment them by subtracting the bottleneck capacity found on that path from the
-residual capacities of each edge and adding it to the total flow. Additionally
-the minimum capacity is added to the residual capacity of the reverse edges. If
-no more paths in the residual-edge tree are found, the algorithm terminates.
-Instead of finding a new shortest path from source to sink in the graph in each
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The <span class="cxx_code">boykov_kolmogorov_max_flow()</span> function
+calculates the maximum flow of a network.  See Section
+<a href="graph_theory_review.html#sec:network-flow-algorithms">Network Flow
+Algorithms</a> for a description of maximum flow.  The calculated maximum flow
+will be the return value of the function.  The function also calculates the
+flow values <i>f(u,v)</i> for all <i>(u,v)</i> in <i>E</i>, which are returned
+in the form of the residual capacity <i>r(u,v) = c(u,v) - f(u,v)</i>.</p>
+
+<dl>
+<dt>Requirements:</dt>
+<dd>The directed graph <i>G=(V,E)</i> that represents the network must include
+a reverse edge for every edge in <i>E</i>.  That is, the input graph should be
+<i>G<sub>in</sub> = (V, {E U E<sup>T</sup>})</i>.  The <span class="cxx_code"
+>ReverseEdgeMap</span> argument <span class="cxx_code">rev</span> must map
+each edge in the original graph to its reverse edge: that is,
+<i>(u,v) -&gt; (v,u)</i> for all <i>(u,v)</i> in <i>E</i>.</dd>
+<dt>Remarks:</dt>
+<dd>While the push-relabel method states that each edge in
+<i>E<sup>T</sup></i> has to have capacity of 0, the reverse edges for this
+algorithm ARE allowed to carry capacities.  If there are already reverse edges
+in the input Graph <span class="cxx_code">G</span>, those can be used.  This
+can halve the amount of edges and will noticeably increase the
+performance.</dd>
+<dt>Algorithm description:</dt>
+<dd>
+<p>The Boykov-Kolmogorov max-flow (or often BK max-flow) algorithm is a
+variety of the augmenting-path algorithm.  Standard augmenting path algorithms
+find shortest paths from source to sink vertex and augment them by subtracting
+the bottleneck capacity found on that path from the residual capacities of
+each edge and adding it to the total flow.  Additionally the minimum capacity
+is added to the residual capacity of the reverse edges.  If no more paths in
+the residual-edge tree are found, the algorithm terminates.  Instead of
+finding a new shortest path from source to sink in the graph in each
 iteration, the Boykov-Kolmogorov algorithm keeps the already found paths as
-follows:</P>
+follows:</p>
+<p>The algorithm builds up two search trees, a source-tree and a
+sink-tree.  Each vertex has a label (stored in <span class="cxx_code"
+>ColorMap</span>) to which tree it belongs and a status-flag if this vertex is
+active or passive.  In the beginning of the algorithm only the source and the
+sink are colored (source==black, sink==white) and have active status.  All
+other vertices are colored gray.  The algorithm consists of three phases:</p>
+<dl>
+<dt>grow-phase</dt>
+<dd>In this phase active vertices are allowed to acquire neighbor vertices
+that are connected through an edge that has a capacity-value greater than
+zero.  Acquiring means that those vertices become active and belong now to the
+search tree of the current active vertex.  If there are no more valid
+connections to neighbor vertices, the current vertex becomes passive and the
+grow phase continues with the next active vertex.  The grow phase terminates
+if there are no more active vertices left or a vertex discovers a vertex from
+the other search tree through an unsaturated edge.  In this case a path from
+source to sink is found.</dd>
+<dt>augment-phase</dt>
+<dd>This phase augments the path that was found in the grow phase.  First it
+finds the bottleneck capacity of the found path, and then it updates the
+residual-capacity of the edges from this path by subtracting the bottleneck
+capacity from the residual capacity.  Furthermore the residual capacity of the
+reverse edges are updated by adding the bottleneck capacity.  This phase can
+destroy the built up search trees, as it creates at least one saturated
+edge.  That means, that the search trees collapse to forests, because a
+condition for the search trees is, that each vertex in them has a valid
+(=non-saturated) connection to a terminal.</dd>
+<dt>adoption-phase</dt>
+<dd>Here the search trees are reconstructed.  A simple solution would be to
+mark all vertices coming after the first orphan in the found path free
+vertices (gray).  A more sophisticated solution is to give those orphans new
+parents: The neighbor vertices are checked if they have a valid connection to
+the same terminal like this vertex had (a path with unsaturated edges).  If
+there is one, this vertex becomes the new parent of the current orphan and
+this forest is re-included into the search tree.  If no new valid parent is
+found, this vertex becomes a free vertex (marked gray), and it's children
+become orphans.  The adoption phase terminates if there are no more
+orphans.</dd>
+</dl>
+</dd>
+<dt><img src="figs/bk_max_flow.gif" name="Grafik2" align="left" width="827"
+height="311" border="0" /><br />Details:</dt>
+<dd>
+<dl>
+<dt>Marking heuristics:</dt>
+<dd>
+<ul>
+<li>This distance is used and gets calculated in the adoption-phase.  In order
+to find a valid new parent for an orphan, the possible parent is checked for a
+connection to the terminal to which tree it belongs.  If there is such a
+connection, the path is tagged with the current time-stamp, and the distance
+value.  If another orphan has to find a parent and it comes across a vertex
+with a current timestamp, this information is used.</li>
+<li>The distance is also used in the grow-phase.  If a vertex comes across
+another vertex of the same tree while searching for new vertices, the other's
+distance is compared to its distance.  If it is smaller, that other vertex
+becomes the new parent of the current.  This can decrease the length of the
+search paths, and so amount of adoptions.</li>
+</ul>
+<p>A timestamp is stored for each vertex which shows in which iteration of the
+algorithm the distance to the corresponding terminal was calculated.</p>
+</dd>
+<dt>Ordering of orphans:</dt>
+<dd>As described above, the augment-phase and the adoption phase can create
+orphans.  The orphans the augment-phase generates, are ordered according to
+their distance to the terminals (smallest first).  This combined with the
+distance/timestamp heuristics results in the possibility for not having to
+recheck terminal-connections too often.  New orphans which are generated in
+adoption phase are processed before orphans from the main queue for the same
+reason.</dd>
+</dl>
+</dd>
+<dt>Implementation notes:</dt>
+<dd>
+<p>The algorithm is mainly implemented as described by Boykov and Kolmogorov
+in [<a href="bibliography.html#boykov-kolmogorov04">69</a>].  An extended
+version can be found in the PhD Thesis of Kolmogorov
+[<a href="bibliography.html#kolmogorov03">68</a>].  The following changes are
+made to improve performance:</p>
+<dl>
+<dt>initialization:</dt>
+<dd>the algorithm first augments all paths from source-&gt;sink and all paths
+from source-&gt;VERTEX-&gt;sink.  This improves especially graph-cuts used in
+image vision where nearly each vertex has a source and sink connect.  During
+this step, all vertices that have an unsaturated connection from source are
+added to the active vertex list and so the source is not.</dd>
+<dt>active vertices:</dt>
+<dd>Boykov-Kolmogorov uses two lists for active nodes and states that new
+active vertices are added to the rear of the second.  Fetching an active
+vertex is done from the beginning of the first list.  If the first list is
+empty, it is exchanged by the second.  This implementation uses just one
+list.</dd>
+<dt>grow-phase:</dt>
+<dd>In the grow phase the first vertex in the active-list is taken and all
+outgoing edges are checked if they are unsaturated.  This decreases
+performance for graphs with high-edge density.  This implementation stores the
+last accessed edge and continues with it, if the first vertex in the
+active-list is the same one as during the last grow-phase.</dd>
+</dl>
+</dd>
+</dl>
 
-<P>The algorithm builds up two search trees, a source-tree and a
-sink-tree. Each vertex has a label (stored in <I>ColorMap</I>) to
-which tree it belongs and a status-flag if this vertex is active or
-passive. In the beginning of the algorithm only the source and the
-sink are colored (source==black, sink==white) and have active status.
-All other vertices are colored gray. The algorithm consists of three
-phases:</P>
-<P><I>grow-phase</I>: In this phase active vertices are allowed to
-acquire neighbor vertices that are connected through an edge that has
-a capacity-value greater than zero. Acquiring means that those vertices
-become active and belong now to the search tree of the current
-active vertex. If there are no more valid connections to neighbor
-vertices, the current vertex becomes passive and the grow phase
-continues with the next active vertex. The grow phase terminates if
-there are no more active vertices left or a vertex discovers a vertex
-from the other search tree through an unsaturated edge. In this case
-a path from source to sink is found.</P>
-<P><I>augment-phase</I>: This phase augments the path that was found
-in the grow phase. First it finds the bottleneck capacity of the
-found path, and then it updates the residual-capacity of the edges
-from this path by subtracting the bottleneck capacity from the
-residual capacity. Furthermore the residual capacity of the reverse
-edges are updated by adding the bottleneck capacity. This phase can
-destroy the built up search trees, as it creates at least one
-saturated edge. That means, that the search trees collapse to
-forests, because a condition for the search trees is, that each
-vertex in them has a valid (=non-saturated) connection to a terminal.</P>
-<P><I>adoption-phase</I>: Here the search trees are reconstructed. A
-simple solution would be to mark all vertices coming after the first
-orphan in the found path free vertices (gray). A more sophisticated
-solution is to give those orphans new parents: The neighbor vertices
-are checked if they have a valid connection to the same terminal like
-this vertex had (a path with unsaturated edges). If there is one,
-this vertex becomes the new parent of the current orphan and this
-forest is re-included into the search tree. If no new valid parent is
-found, this vertex becomes a free vertex (marked gray), and it's
-children become orphans. The adoption phase terminates if there are
-no more orphans.</P>
-<P><IMG SRC="figs/bk_max_flow.gif" NAME="Grafik2" ALIGN=LEFT WIDTH=827 HEIGHT=311 BORDER=0><BR CLEAR=LEFT><B>Details:</B></P>
-<UL>
-	<LI><P>Marking heuristics: A timestamp is stored for each vertex
-	which shows in which iteration of the algorithm the distance to the
-	corresponding terminal was calculated.
-	</P>
-	<UL>
-		<LI><P>This distance is used and gets calculated in the
-		adoption-phase. In order to find a valid new parent for an orphan,
-		the possible parent is checked for a connection to the terminal to
-		which tree it belongs. If there is such a connection, the path is
-		tagged with the current time-stamp, and the distance value. If
-		another orphan has to find a parent and it comes across a vertex
-		with a current timestamp, this information is used.</P>
-		<LI><P>The distance is also used in the grow-phase. If a vertex
-		comes across another vertex of the same tree while searching for
-		new vertices, the other's distance is compared to its distance. If
-		it is smaller, that other vertex becomes the new parent of the
-		current. This can decrease the length of the search paths, and so
-		amount of adoptions.</P>
-	</UL>
-	<LI><P>Ordering of orphans: As described above, the augment-phase
-	and the adoption phase can create orphans. The orphans the
-	augment-phase generates, are ordered according to their distance to
-	the terminals (smallest first). This combined with the
-	distance/timestamp heuristics results in the possibility for not
-	having to recheck terminal-connections too often. New orphans which
-	are generated in adoption phase are processed before orphans from
-	the main queue for the same reason.</P>
-</UL>
-<P><BR><B>Implementation notes:</B></P>
-<P>The algorithm is mainly implemented as described by Boykov and Kolmogorov in
-[<a href="bibliography.html#boykov-kolmogorov04">69</a>]. An extended version
-can be found in the PhD Thesis of Kolmogorov [<A HREF="bibliography.html#kolmogorov03">68</a>].
-The following changes are made to improve performance:</P>
-<UL>
-	<LI>initialization: the algorithm first augments all paths from
-	source-&gt;sink and all paths from source-&gt;VERTEX-&gt;sink. This
-	improves especially graph-cuts used in image vision where nearly
-	each vertex has a source and sink connect. During this step, all
-	vertices that have an unsaturated connection from source are added
-	to the active vertex list and so the source is not.</LI>
-	<LI>active vertices: Boykov-Kolmogorov uses two lists for active nodes
-	and states that new active vertices are added to the rear of the
-	second. Fetching an active vertex is done from the beginning of the
-	first list. If the first list is empty, it is exchanged by the
-	second. This implementation uses just one list.</LI>
-	<LI>grow-phase: In the grow phase the first vertex in the
-	active-list is taken and all outgoing edges are checked if they are
-	unsaturated. This decreases performance for graphs with high-edge
-	density. This implementation stores the last accessed edge and
-	continues with it, if the first vertex in the active-list is the
-	same one as during the last grow-phase.</LI>
-</UL>
-<H3>Where Defined</H3>
-<P><TT><A HREF="../../../boost/graph/boykov_kolmogorov_max_flow.hpp">boost/graph/boykov_kolmogorov_max_flow.hpp</A></TT>
-</P>
-<H3>Parameters</H3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
+
+<p><a href="../../../boost/graph/boykov_kolmogorov_max_flow.hpp"
+><tt>boost/graph/boykov_kolmogorov_max_flow.hpp</tt></a></p>
+
+<h3><a name="sec:parameters"></a>Parameters</h3>
+
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>Graph&amp; g</tt></td>
+<td class="cxx_code">Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>A directed graph.  Its type must be a model of <a
-href="./EdgeListGraph.html"><b>Edge List Graph</b></a> and <a
-href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="EdgeListGraph.html">Edge List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.  For each edge
 <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
 graph.  Performance of the algorithm will be slightly improved if the graph
-type also models <a href="AdjacencyMatrix.html"><b>Adjacency
-Matrix</b></a>.</td>
+type also models <a  class="cxx_concept" href="AdjacencyMatrix.html">Adjacency
+Matrix</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor src</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The source vertex for the flow network graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor sink</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The sink vertex for the flow network graph.</td>
 </tr>
 </table>
-<H3>Named Parameters</H3>
+
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
+
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+<td class="cxx_code">capacity_map(CapacityEdgeMap cap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The edge capacity property map.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+<td>The edge capacity property map.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_residual_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
-res)</tt></td>
+<td class="cxx_code">residual_capacity_map(ResidualCapacityEdgeMap res)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The edge residual capacity property map.  Its type must be a model of a
-mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type of the map must be the graph's edge
-descriptor type.</td>
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type of the map must be
+the graph's edge descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_residual_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_reverse_edge_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_reverse_edge_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>reverse_edge_map(ReverseEdgeMap rev)</tt></td>
+<td class="cxx_code">reverse_edge_map(ReverseEdgeMap rev)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>An edge property map that maps every edge <i>(u,v)</i> in the graph to the
-reverse edge <i>(v,u)</i>.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+reverse edge <i>(v,u)</i>.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_reverse, g)</tt></td>
+<td class="cxx_code">get(edge_reverse, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredecessorMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A vertex property map that stores the edge to the predecessor of the key
-vertex.  The argument type must be a mutable
-<a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type must be the graph's vertex descriptor type
+vertex.  The argument type must be a mutable <a class="cxx_concept"
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
+Map</a>.  The key type must be the graph's vertex descriptor type
 and the value type must be the graph's edge descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_predecessor, g)</tt></td>
+<td class="cxx_code">get(vertex_predecessor, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL/OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_color_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>color_map(ColorMap c_map)</tt></td>
+<td class="cxx_code">color_map(ColorMap c_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A vertex property map that stores a color for edge vertex.  If the color
 of a vertex after running the algorithm is black the vertex belongs to the
 source tree else it belongs to the sink-tree (used for minimum cuts).  The
-argument type must be a mutable <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
-type, and the value type of the map must be a model of
-<a href="./ColorValue.html"><b>Color Value</b></a>.</td>
+argument type must be a mutable <a class="cxx_concept"
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
+Map</a>.  The key type of the map must be the graph's vertex descriptor type,
+and the value type of the map must be a model of <a class="cxx_concept"
+href="ColorValue.html">Color Value</a>.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_color, g)</tt></td>
+<td class="cxx_code">get(vertex_color, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>A vertex property map that stores the distance to the corresponding
 terminal.  It's a utility-map for speeding up the algorithm.  The argument
-type must be a mutable <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
+type must be a mutable <a class="cxx_concept"
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
+Map</a>.  The key type of the map must be the graph's vertex descriptor
 type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_distance, g)</tt></td>
+<td class="cxx_code">get(vertex_distance, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>This maps each vertex to a unique integer in the range <tt>[0,
-num_vertices(g))</tt>.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
-type.</td>
+<td>This maps each vertex to a unique integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(g)</span>)</tt>.  The argument type must be a
+model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The key type of the map must
+be the graph's vertex descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 </table>
-<H3>Example</H3>
-<P>This reads an example maximum flow problem (a graph with edge
-capacities) from a file in the DIMACS format (<TT><A HREF="../example/max_flow.dat">example/max_flow.dat</A></TT>).
-The source for this example can be found in
-<TT><A HREF="../example/boykov_kolmogorov-eg.cpp">example/boykov_kolmogorov-eg.cpp</A></TT>.
-</P>
-<PRE>#include &lt;boost/config.hpp&gt;
+
+<h3><a name="sec:example"></a>Example</h3>
+
+<p>This reads an example maximum flow problem (a graph with edge capacities)
+from a file in the DIMACS format (<a href="../example/max_flow.dat"><tt
+>example/max_flow.dat</tt></a>).  The source for this example can be found in
+<a href="../example/boykov_kolmogorov-eg.cpp"><tt
+>example/boykov_kolmogorov-eg.cpp</tt></a>.</p>
+
+<pre class="cxx_code">
+#include &lt;boost/config.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;string&gt;
 #include &lt;boost/graph/adjacency_list.hpp&gt;
@@ -557,10 +580,11 @@ main()
           &lt;&lt; (capacity[*ei] - residual_capacity[*ei]) &lt;&lt; std::endl;
 
   return EXIT_SUCCESS;
-}</PRE><P>
-The output is:
-</P>
-<PRE>c  The total flow:
+}</pre>
+
+<p>The output is:</p>
+
+<pre>c  The total flow:
 s 13
 
 c flow values:
@@ -583,25 +607,25 @@ f 5 7 5
 f 6 7 3
 f 6 4 0
 f 7 6 0
-f 7 5 0</PRE><H3>
-See Also</H3>
-<P STYLE="margin-bottom: 0cm">
-<TT><A HREF="edmonds_karp_max_flow.html">edmonds_karp_max_flow()</A></TT>,
-<TT><A HREF="push_relabel_max_flow.html">push_relabel_max_flow()</A></TT>.
-</P>
-<HR>
-<TABLE CELLPADDING=2 CELLSPACING=2>
-	<TR VALIGN=TOP>
-		<TD>
-			<P>Copyright &copy; 2006</P>
-		</TD>
-		<TD>
-			<P>Stephan Diederich, University
-			Mannheim(<A HREF="mailto:diederich@ti.uni-manheim.de">diederich@ti.uni-manheim.de</A>)</P>
-		</TD>
-	</TR>
-</TABLE>
-<P><BR><BR>
-</P>
-</BODY>
-</HTML>
+f 7 5 0</pre>
+
+<h3><a name="sec:see_also"></a>See Also</h3>
+
+<p style="margin-bottom: 0cm;"><a class="cxx_code"
+href="edmonds_karp_max_flow.html">edmonds_karp_max_flow()</a>,
+<a class="cxx_code" href="push_relabel_max_flow.html"
+>push_relabel_max_flow()</a>.</p>
+
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2006</td>
+<td>Stephan Diederich, University Mannheim (<a
+href="mailto:diederich@ti.uni-manheim.de"
+>diederich@ti.uni-manheim.de</a>)</td>
+</tr>
+</table>
+
+</body>
+</html>

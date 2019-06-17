@@ -1,93 +1,159 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2002
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-<Head>
-<Title>Boost Graph Library: Undirected Depth-First Search</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2002
 
-<BR Clear>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Undirected Depth-First Search</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<H1><A NAME="sec:depth-first-search"></A>
-<img src="figs/python.gif" alt="(Python)"/>
-<TT>undirected_dfs</TT>
-</H1>
+<br />
 
-<P>
-<PRE>
-<i>// named parameter version</i>
+<h1><a NAME="sec:depth-first-search"></a><img src="figs/python.gif"
+alt="(Python)" /><tt>undirected_dfs</tt></h1>
+
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// old-style named parameter version</span>
 template &lt;typename Graph, typename P, typename T, typename R&gt;
 void undirected_dfs(Graph&amp; G, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+</pre>
 
-<i>// non-named parameter version</i>
-template &lt;typename Graph, typename <a href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
-void undirected_dfs(const Graph&amp; g, DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
 
-template &lt;typename Graph, typename <a href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), undirected_dfs, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , <span class="comment">// unspecified predicate</span>
+        )
+    )
+    (deduced
+        (required
+            (edge_color_map
+              , <span class="comment">// unspecified predicate</span>
+            )
+        )
+        (optional
+            (vertex_index_map
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
+            )
+            (color_map
+              , <span class="comment">// unspecified predicate</span>
+              , <a
+href="../../property_map/doc/shared_array_property_map.html"
+>make_shared_array_property_map</a>(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+            (visitor
+              , <span class="comment">// unspecified predicate</span>
+              , default_dfs_visitor()
+            )
+            (root_vertex
+              , <span class="comment">// unspecified predicate</span>
+              , <span class="comment">// see parameter table for default value</span>
+            )
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definitions are available.</p>
+
+<pre class="cxx_code">
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+void undirected_dfs(
+    const Graph&amp; graph,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    ...,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg4
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<span class="comment">// non-named parameter versions</span>
+template &lt;typename Graph, typename <a class="cxx_concept"
+href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
+void undirected_dfs(const Graph&amp; g, DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color);
+
+template &lt;typename Graph, typename <a class="cxx_concept"
+href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
 void undirected_dfs(const Graph&amp; g, DFSVisitor vis,
                     VertexColorMap vertex_color, EdgeColorMap edge_color,
-                    typename graph_traits&lt;Graph&gt;::vertex_descriptor start)
+                    typename graph_traits&lt;Graph&gt;::vertex_descriptor start);
+</pre>
 
-</PRE>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-The <tt>undirected_dfs()</tt> function performs a depth-first
-traversal of the vertices in an undirected graph.  When possible, a
-depth-first traversal chooses a vertex adjacent to the current vertex
-to visit next. If all adjacent vertices have already been discovered,
-or there are no adjacent vertices, then the algorithm backtracks to
-the last vertex that had undiscovered neighbors. Once all reachable
-vertices have been visited, the algorithm selects from any remaining
-undiscovered vertices and continues the traversal. The algorithm
-finishes when all vertices have been visited. Depth-first search is
-useful for categorizing edges in a graph, and for imposing an ordering
-on the vertices. Section <a
-href="./graph_theory_review.html#sec:dfs-algorithm">Depth-First
-Search</a> describes the various properties of DFS and walks through
-an example.
-</p>
+<p>The <span class="cxx_code">undirected_dfs()</span> function performs a
+depth-first traversal of the vertices in an undirected graph.  When possible,
+a depth-first traversal chooses a vertex adjacent to the current vertex to
+visit next.  If all adjacent vertices have already been discovered, or there
+are no adjacent vertices, then the algorithm backtracks to the last vertex
+that had undiscovered neighbors.  Once all reachable vertices have been
+visited, the algorithm selects from any remaining undiscovered vertices and
+continues the traversal.  The algorithm finishes when all vertices have been
+visited.  Depth-first search is useful for categorizing edges in a graph, and
+for imposing an ordering on the vertices.  Section
+<a href="graph_theory_review.html#sec:dfs-algorithm">Depth-First Search</a>
+describes the various properties of DFS and walks through an example.</p>
 
-<p>
-Similar to BFS, color markers are used to keep track of which vertices
-have been discovered. White marks vertices that have yet to be
-discovered, gray marks a vertex that is discovered but still has
-vertices adjacent to it that are undiscovered. A black vertex is
-discovered vertex that is not adjacent to any white vertices.
-</p>
+<p>Similar to BFS, color markers are used to keep track of which vertices have
+been discovered.  White marks vertices that have yet to be discovered, gray
+marks a vertex that is discovered but still has vertices adjacent to it that
+are undiscovered.  A black vertex is discovered vertex that is not adjacent to
+any white vertices.</p>
 
-<p>
-Edges are also colored during the search to disambiguate tree and back
-edges.
-</p>
+<p>Edges are also colored during the search to disambiguate tree and back
+edges.</p>
 
-<p>
-The <tt>undirected_dfs()</tt> function invokes user-defined actions at
-certain event-points within the algorithm. This provides a mechanism
-for adapting the generic DFS algorithm to the many situations in which
-it can be used.  In the pseudo-code below, the event points for DFS
-are indicated in by the triangles and labels on the right. The
-user-defined actions must be provided in the form of a visitor object,
-that is, an object whose type meets the requirements for a <a
-href="./DFSVisitor.html">DFS Visitor</a>. In the pseudo-code we show
-the algorithm computing predecessors <i>p</i>, discover time <i>d</i>
-and finish time <i>t</i>.  By default, the <tt>undirected_dfs()</tt>
-function does not compute these properties, however there are
-pre-defined visitors such as <a
-href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
-and <a href="./time_stamper.html"><tt>time_stamper</tt></a> that can
-be used to do this.
-</p>
+<p>The <span class="cxx_code">undirected_dfs()</span> function invokes
+user-defined actions at certain event-points within the algorithm.  This
+provides a mechanism for adapting the generic DFS algorithm to the many
+situations in which it can be used.  In the pseudo-code below, the event
+points for DFS are indicated in by the triangles and labels on the right.  The
+user-defined actions must be provided in the form of a visitor object: that
+is, an object whose type meets the requirements for a <a class="cxx_concept"
+href="DFSVisitor.html">DFS Visitor</a>.  In the pseudo-code we show the
+algorithm computing predecessors <i>p</i>, discover time <i>d</i> and finish
+time <i>t</i>.  By default, the <span class="cxx_code">undirected_dfs()</span>
+function does not compute these properties; however, there are pre-defined
+visitors such as <a class="cxx_code" href="predecessor_recorder.html"
+>predecessor_recorder</a> and <a class="cxx_code" href="time_stamper.html"
+>time_stamper</a> that can be used to do this.</p>
 
 <table>
 <tr>
-<td valign="top">
+<td>
 <pre>
 DFS(<i>G</i>)
   <b>for</b> each vertex <i>u in V</i> 
@@ -122,7 +188,7 @@ DFS-VISIT(<i>G</i>, <i>u</i>)
   <i>f_time[u] := time := time + 1</i> 
 <pre>
 </td>
-<td valign="top">
+<td>
 <pre>
 -
 -
@@ -162,181 +228,382 @@ finish vertex <i>u</i>
 </tr>
 </table>
 
+<h3><a name="sec:example"></a>Example</h3>
 
+<p>One overload of <span class="cxx_code">undirected_dfs()</span> can take in
+named parameter arguments, courtesy of
+<a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  Given the
+following definitions:</p>
 
-<H3>Where Defined</H3>
+<pre class="cxx_code">
+template &lt;typename ...&gt;
+struct dfs_test_visitor
+{
+    <span class="comment">// Overload the necessary member functions...</span>
+};
 
-<P>
-<a href="../../../boost/graph/undirected_dfs.hpp"><TT>boost/graph/undirected_dfs.hpp</TT></a>
+<span class="comment">// ...</span>
+typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
+    boost::vecS, boost::vecS, boost::undirectedS,
+    boost::<a href="property.html">property</a>&lt;boost::vertex_color_t, boost::default_color_type&gt;
+    boost::<a href="property.html">property</a>&lt;boost::edge_color_t, boost::default_color_type&gt;
+&gt; Graph;
+typedef boost::<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::vertex_descriptor Vertex;
+typedef boost::property_map&lt;Graph, boost::vertex_index_t&gt;::const_type VIndexMap;
+typedef boost::property_map&lt;Graph, boost::vertex_color_t&gt;::type ColorMap;
+typedef boost::property_map&lt;Graph, boost::edge_color_t&gt;::type EdgeColorMap;
 
-<h3>Parameters</h3>
+Graph g;
+<span class="comment">// ...</span>
+ColorMap color = get(boost::vertex_color, g);
+EdgeColorMap e_color = get(boost::edge_color, g);
+dfs_test_visitor&lt;...&gt; vis;
+</pre>
 
-IN: <tt>Graph&amp; g</tt>
-<blockquote>
-  An undirected graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>,
-  <a href="./VertexListGraph.html">Vertex List Graph</a>,
-  and <a href="./EdgeListGraph.html">Edge List Graph</a>.<br>
+<p>The following call illustrates the syntax for passing arguments by
+name.</p>
 
-  <b>Python</b>: The parameter is named <tt>graph</tt>.  
-</blockquote>
+<pre class="cxx_code">
+undirected_dfs(
+    g,
+    <b>boost::graph::keywords::_visitor =</b> vis,
+    <b>boost::graph::keywords::_color_map =</b> color,
+    <b>boost::graph::keywords::_edge_color_map =</b> e_color
+);
+</pre>
 
+<p>If the configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then the
+same function overload can deduce the non-graph arguments, so the following
+calls are equivalent to the previous one.</p>
 
-<h3>Named Parameters</h3>
+<pre class="cxx_code">
+undirected_dfs(g, vis, e_color, color);
+undirected_dfs(g, color, e_color, vis);
+undirected_dfs(g, color, vis, e_color);
+undirected_dfs(g, e_color, color, vis);
+undirected_dfs(g, e_color, vis, color);
+</pre>
 
-IN: <tt>visitor(DFSVisitor vis)</tt>
-<blockquote>
-  A visitor object that is invoked inside the algorithm at the
-  event-points specified by the <a href="./DFSVisitor.html">DFS
-  Visitor</a> concept. The visitor object is passed by value <a
-  href="#1">[1]</a>. <br> <b>Default:</b>
-  <tt>dfs_visitor&lt;null_visitor&gt;</tt><br>
+<p>The full program is in
+<a href="../test/undirected_dfs.cpp"><tt>test/undirected_dfs.cpp</tt></a></p>
 
-  <b>Python</b>: The parameter should be an object that derives from
-  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
-  the graph.
-</blockquote>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-UTIL/OUT: <tt>vertex_color_map(VertexColorMap vertex_color)</tt>
-<blockquote>
-  This is used by the algorithm to keep track of its progress through
-  the graph. The type <tt>VertexColorMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> and its key type must be the graph's vertex
-  descriptor type and the value type of the color map must model
-  <a href="./ColorValue.html">ColorValue</a>.<br>
-  <b>Default:</b> an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of <tt>default_color_type</tt> of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.<br>
+<p><a href="../../../boost/graph/undirected_dfs.hpp"
+><tt>boost/graph/undirected_dfs.hpp</tt></a></p>
 
-  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
-  the graph.
-</blockquote>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-UTIL: <tt>edge_color_map(EdgeColorMap edge_color)</tt>
-<blockquote>
-  This is used by the algorithm to keep track of which edges
-  have been visited. The type <tt>EdgeColorMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> and its key type must be the graph's edge
-  descriptor type and the value type of the color map must model
-  <a href="./ColorValue.html">ColorValue</a>.<br>
-  <b>Default:</b> none.<br>
-
-  <b>Python</b>: The color map must be an <tt>edge_color_map</tt> for
-  the graph.
-</blockquote>
-
-IN: <tt>root_vertex(typename
-graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)</tt>
-<blockquote>
-  This specifies the vertex that the depth-first search should
-  originate from. The type is the type of a vertex descriptor for the
-  given graph.<br>
-  <b>Default:</b> <tt>*vertices(g).first</tt>
-</blockquote>
-
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-  num_vertices(g))</tt>. This parameter is only necessary when the
-  default color property map is used. The type <tt>VertexIndexMap</tt>
-  must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  vertex descriptor type of the graph needs to be usable as the key
-  type of the map.<br>
-
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-   <br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-<P>
-
-<H3><A NAME="SECTION001340300000000000000">
-Complexity</A>
-</H3>
-
-<P>
-The time complexity is <i>O(E + V)</i>.
-
-<P>
-
-<h3>Visitor Event Points</h3>
+<p>If <strong>any</strong> of the following are true:</p>
 
 <ul>
-
-<li><b><tt>vis.initialize_vertex(s, g)</tt></b> is invoked on every
-  vertex of the graph before the start of the graph search.
-
-<li><b><tt>vis.start_vertex(s, g)</tt></b> is invoked on the source
-  vertex once before the start of the search.
-  
-<li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked when a vertex
-  is encountered for the first time.
-  
-<li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
-  of each vertex after it is discovered.
-
-<li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked on each edge as it
-  becomes a member of the edges that form the search tree. If you
-  wish to record predecessors, do so at this event point.
-  
-<li><b><tt>vis.back_edge(e, g)</tt></b> is invoked on the back edges in
-  the graph. 
-
-<li><b><tt>vis.finish_edge(e, g)</tt></b> is invoked on the back edges in 
-  the graph as well as on each tree edge after its target vertex is finished. 
-
-<li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked on a vertex after
-  all of its out edges have been added to the search tree and all of
-  the adjacent vertices have been discovered (but before their
-  out-edges have been examined).
-
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
 </ul>
 
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
-<H3>Example</H3>
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
 
-<P>
-An example is in <a href="../example/undirected_dfs.cpp">
-<TT>examples/undirected_dfs.cpp</TT></a>.
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
-<h3>See Also</h3>
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
 
-<a href="./depth_first_search.html"><tt>depth_first_search</tt></a>
+<table>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const Graph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>, <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>, and <a class="cxx_concept"
+href="EdgeListGraph.html">Edge List Graph</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_edge_color_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">edge_color_map(EdgeColorMap edge_color)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of which edges have been
+visited.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's edge descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The color map must be an <span class="python_code">edge_color_map</span>
+for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">visitor(DFSVisitor vis)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A visitor object that is invoked inside the algorithm at the event-points
+specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">boost::graph::default_dfs_visitor()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter should be an object that derives from the
+<a class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of
+the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of its progress through the
+graph.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's vertex descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <span class="cxx_code"><a
+href="../../property_map/doc/shared_array_property_map.html"
+>shared_array_property_map</a></span> of <span class="cxx_code"
+>white_color</span> values, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The color map must be a <span class="python_code">vertex_color_map</span>
+for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor start)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The vertex that the depth-first search should originate from.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">(0 &lt; num_vertices(graph)) ? *vertices(graph).first :
+<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">root_vertex</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is only
+necessary when the default color property map is used.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type of the map must
+be an integer type.  The vertex descriptor type of the graph needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">get(vertex_index, graph)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+</table>
 
-<h3>Notes</h3>
+<h3><a name="complexity"></a>Complexity</h3>
 
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
+<p>The time complexity is <i>O(E + V)</i>.</p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>,
-Indiana University (<A
-HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
-<A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
-Indiana University (<A
-HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-</BODY>
-</HTML> 
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<td>is invoked on every vertex of the graph before the start of the graph
+search.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.start_vertex(s, g)</th>
+<td>is invoked on the source vertex once before the start of the search.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</th>
+<td>is invoked when a vertex is encountered for the first time.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on every out-edge of each vertex after it is discovered.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</th>
+<td>is invoked on each edge as it becomes a member of the edges that form the
+search tree.  If you wish to record predecessors, do so at this event
+point.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.back_edge(e, g)</th>
+<td>is invoked on the back edges in the graph.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_edge(e, g)</th>
+<td>is invoked on the back edges in the graph as well as on each tree edge
+after its target vertex is finished.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex after all of its out edges have been added to the
+search tree and all of the adjacent vertices have been discovered (but before
+their out-edges have been examined).</td>
+</tr>
+</table>
+
+<h3><a name="sec:see_also"></a>See Also</h3>
+
+<p><a class="cxx_code" href="depth_first_search.html"
+>depth_first_search()</a></p>
+
+<h3><a name="sec:notes"></a>Notes</h3>
+
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore you may want the visitor to hold this state by pointer or
+reference.</p>
+
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td>
+<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
+<a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
+Indiana University (<a href="mailto:llee@cs.indiana.edu"
+>llee@cs.indiana.edu</a>)<br />
+<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
+Indiana University (<a
+href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)
+</td>
+</tr>
+</table>
+
+</body>
+</html> 

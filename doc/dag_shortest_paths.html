@@ -12,28 +12,31 @@
 <title>Boost Graph Library: Directed Acyclic Graph Shortest Paths</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:dag_shortest_paths"></a><img src="figs/python.gif"
 alt="(Python)" /><tt>dag_shortest_paths</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
 &gt;
 void dag_shortest_paths(
-    const Graph&amp; g,
+    const VertexListGraph&amp; g,
     typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor s,
+>&lt;VertexListGraph&gt;::vertex_descriptor s,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg9&amp; a9 = <i>unspecified</i>,
+    const TaggedArg9&amp; a9 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -44,7 +47,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;class VertexListGraph, class Param, class Tag, class Rest&gt;
 void dag_shortest_paths(
     const VertexListGraph&amp; g,
@@ -53,7 +56,7 @@ void dag_shortest_paths(
     const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params
 );
 
-<i>// non-named parameter version</i>
+<span class="comment">// non-named parameter version</span>
 template &lt;
     typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
@@ -71,21 +74,20 @@ void dag_shortest_paths(
 );
 </pre>
 
-<p>
-This algorithm&nbsp;[<a href="bibliography.html#clr90">8</a>] solves the
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>This algorithm [<a href="bibliography.html#clr90">8</a>] solves the
 single-source shortest-paths problem on a weighted, directed acyclic graph
-(DAG).  This algorithm is more efficient for DAG's than either the <a
-href="dijkstra_shortest_paths.html">Dijkstra</a> or <a
-href="bellman_ford_shortest.html">Bellman-Ford</a> algorithm.  Use <a
-href="breadth_first_search.html">breadth-first search</a> instead of this
+(DAG).  This algorithm is more efficient for DAG's than either the
+<a href="dijkstra_shortest_paths.html">Dijkstra</a> or
+<a href="bellman_ford_shortest.html">Bellman-Ford</a> algorithm.  Use
+<a href="breadth_first_search.html">breadth-first search</a> instead of this
 algorithm when all edge weights are equal to one.  For the definition of the
 shortest-path problem see Section <a
 href="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</a> for some background to the shortest-path problem.
-</p>
+Algorithms</a> for some background to the shortest-path problem.</p>
 
-<p>
-There are two main options for obtaining output from the <span
+<p>There are two main options for obtaining output from the <span
 class="cxx_code">dag_shortest_paths()</span> function.  If you provide a
 distance property map through the <span class="cxx_code">distance_map()</span>
 parameter then the shortest distance from the source vertex to every other
@@ -95,17 +97,14 @@ the shortest paths tree in a predecessor map: for each vertex <i>u in V</i>,
 (unless <i>p[u] = u</i>, in which case <i>u</i> is either the source or a
 vertex unreachable from the source).  In addition to these two options, the
 user can provide there own custom-made visitor that can takes actions during
-any of the algorithm's event points.
-</p>
+any of the algorithm's event points.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code">dag_shortest_paths()</span> can take in
-named parameter arguments, courtesy of <a
+<p>One overload of <span class="cxx_code">dag_shortest_paths()</span> can take
+in named parameter arguments, courtesy of <a
 href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</p>
+example illustrates the syntax for passing arguments by name.</p>
 
 <pre class="cxx_code">
 boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -120,17 +119,13 @@ dag_shortest_paths(
 );
 </pre>
 
-<p>
-The full program is in <a href="../example/dag_shortest_paths.cpp"
-><tt>example/dag_shortest_paths.cpp</tt></a>.
-</p>
+<p>The full program is in <a href="../example/dag_shortest_paths.cpp"
+><tt>example/dag_shortest_paths.cpp</tt></a>.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/dag_shortest_paths.hpp"><tt
->boost/graph/dag_shortest_paths.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/dag_shortest_paths.hpp"><tt
+>boost/graph/dag_shortest_paths.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -568,60 +563,67 @@ type of the graph.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V + E)</i>.
-</p>
+<p>The time complexity is <i>O(V + E)</i>.</p>
 
 <h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-<ul>
-<li><b><tt>vis.initialize_vertex(u, g)</tt></b>
-  is invoked on each vertex in the graph before the start of the
-  algorithm.</li>
-<li><b><tt>vis.examine_vertex(u, g)</tt></b>
-  is invoked on a vertex as it is added to set <i>S</i>. 
-  At this point we know that <i>(p[u],u)</i>
-  is a shortest-paths tree edge so 
-  <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
-  of the examined vertices is monotonically increasing
-  <i>d[u<sub>1</sub>] &lt;= d[u<sub>2</sub>] &lt;= d[u<sub>n</sub>]</i>.</li>
-<li><b><tt>vis.examine_edge(e, g)</tt></b>
-  is invoked on each out-edge of a vertex immediately after it has
-  been added to set <i>S</i>.</li>
-<li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.
-  The edge <i>(u,v)</i> that participated in the last
-  relaxation for vertex <i>v</i> is an edge in the shortest paths tree.</li>
-<li><b><tt>vis.discover_vertex(v, g)</tt></b>
-  is invoked on vertex <i>v</i> when the edge 
-  <i>(u,v)</i> is examined and <i>v</i> is WHITE.  Since
-  a vertex is colored GRAY when it is discovered,
-  each reacable vertex is discovered exactly once.</li>
-<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
-  is invoked if the edge is not relaxed (see above).</li>
-<li><b><tt>vis.finish_vertex(u, g)</tt></b>
-   is invoked on a vertex after all of its out edges have
-  been examined.</li>
-</ul>
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(u, g)</th>
+<td>is invoked on each vertex in the graph before the start of the
+algorithm.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<td>is invoked on a vertex as it is added to set <i>S</i>.   At this point we
+know that <i>(p[u],u)</i> is a shortest-paths tree edge so <i>d[u] =
+delta(s,u) = d[p[u]] + w(p[u],u)</i>.  Also, the distances of the examined
+vertices is monotonically increasing <i>d[u<sub>1</sub>] &lt;=
+d[u<sub>2</sub>] &lt;= d[u<sub>n</sub>]</i>.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on each out-edge of a vertex immediately after it has been
+added to set <i>S</i>.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<td>is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.  The
+edge <i>(u,v)</i> that participated in the last relaxation for vertex <i>v</i>
+is an edge in the shortest paths tree.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(v, g)</th>
+<td>is invoked on vertex <i>v</i> when the edge <i>(u,v)</i> is examined and
+<i>v</i> is WHITE.  Since a vertex is colored GRAY when it is discovered, each
+reacable vertex is discovered exactly once.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<td>is invoked if the edge is not relaxed (see above).</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex after all of its out edges have been examined.</td>
+</tr>
+</table>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.</p>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
 <br />
 <hr />
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000-2001</td>
-<td>
-<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>, Indiana
-University (<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University
+(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

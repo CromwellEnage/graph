@@ -12,18 +12,21 @@
 <title>Floyd-Warshall All Pairs Shortest Paths</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a name="sec:floyd-warshall"></a><tt
 >floyd_warshall_all_pairs_shortest_paths</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled versions</i>
+<span class="comment">// Boost.Parameter-enabled versions</span>
 template &lt;
-    typename VertexListGraph, typename DistanceMatrix,
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename DistanceMatrix,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 typename boost::enable_if&lt;
@@ -37,14 +40,15 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 floyd_warshall_initialized_all_pairs_shortest_paths(
     const VertexListGraph&amp; g,
     DistanceMatrix&amp; d,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg4&amp; a4 = <i>unspecified</i>
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>
 );
 
 template &lt;
-    typename VertexListGraph, typename DistanceMatrix,
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename DistanceMatrix,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 typename boost::enable_if&lt;
@@ -58,13 +62,13 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 floyd_warshall_all_pairs_shortest_paths(
     const VertexListGraph&amp; g,
     DistanceMatrix&amp; d,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg4&amp; a4 = <i>unspecified</i>
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>
 );
 
-<i>// old-style named paramter versions</i>
+<span class="comment">// old-style named paramter versions</span>
 template &lt;class VertexListGraph, class DistanceMatrix,
     class P, class T, class R&gt;
 bool floyd_warshall_initialized_all_pairs_shortest_paths(
@@ -77,8 +81,8 @@ bool floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph&amp; g, DistanceMatrix&amp; d,
     const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<i>// positional parameter versions</i>
-\begin{verbatim}
+<span class="comment">// positional parameter versions
+// \begin{verbatim}</span>
 template &lt;typename VertexListGraph, typename DistanceMatrix,
     typename BinaryPredicate, typename BinaryFunction,
     typename Infinity, typename Zero&gt;
@@ -97,29 +101,27 @@ bool floyd_warshall_all_pairs_shortest_paths(
     const Infinity&amp; inf, const Zero&amp; zero);
 </pre>
 
-<p>
-These algorithms find the shortest distance between every pair of vertices in
-the graph.  The algorithms return false if there is a negative weight cycle in
-the graph, true otherwise.  The shortest distance between each pair of
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>These algorithms find the shortest distance between every pair of vertices
+in the graph.  The algorithms return false if there is a negative weight cycle
+in the graph, true otherwise.  The shortest distance between each pair of
 vertices is stored in the distance matrix <span class="cxx_code"
 >d</span>.  The difference between the two algorithms is in whether the
 distance matrix is assumed to be initialized or not, as discussed below under
-the <a href="#sec:parameters">Parameters</a> section.
-</p>
+the <a href="#sec:parameters">Parameters</a> section.</p>
 
-<p>
-This algorithm should be used to compute shortest paths between every pair of
-vertices for dense graphs.  For sparse graphs, use <a class="cxx_code"
-href="johnson_all_pairs_shortest.html">johnson_all_pairs_shortest_paths()</a>.
-</p>
+<p>This algorithm should be used to compute shortest paths between every pair
+of vertices for dense graphs.  For sparse graphs, use
+<a class="cxx_code" href="johnson_all_pairs_shortest.html"
+>johnson_all_pairs_shortest_paths()</a>.</p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-The Floyd-Warshall algorithms can take in named parameter arguments, courtesy
-of <a href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The
-following example illustrates the syntax for passing arguments by name.
-</p>
+<p>The Floyd-Warshall algorithms can take in named parameter arguments,
+courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -154,10 +156,8 @@ bool floyd2 = floyd_warshall_all_pairs_shortest_paths(
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/floyd_warshall_shortest.hpp"
-><tt>boost/graph/floyd_warshall_shortest.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/floyd_warshall_shortest.hpp"
+><tt>boost/graph/floyd_warshall_shortest.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -168,7 +168,7 @@ bool floyd2 = floyd_warshall_all_pairs_shortest_paths(
 </tr>
 <tr>
 <th>Signature:</th>
-<td class="cxx_code">const Graph&amp; g</td>
+<td class="cxx_code">const VertexListGraph&amp; g</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -364,9 +364,7 @@ type</i>&gt;::value_type</span>.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V<sup>3</sup>)</i>.
-</p>
+<p>The time complexity is <i>O(V<sup>3</sup>)</i>.</p>
 
 <br />
 <hr />

@@ -12,18 +12,20 @@
 <title>Boost Graph Library: Dijkstra's Shortest Paths (No Color Map)</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
-<body> 
-<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <br />
 
 <h1><a
 name="sec:dijkstra"></a><tt>dijkstra_shortest_paths_no_color_map</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
-<i>// Boost.Parameter-enabled version</i>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg8
 &gt;
 void dijkstra_shortest_paths_no_color_map(
@@ -31,9 +33,9 @@ void dijkstra_shortest_paths_no_color_map(
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor start_vertex,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg8&amp; a8 = <i>unspecified</i>,
+    const TaggedArg8&amp; a8 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -44,7 +46,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
+<span class="comment">// old-style named parameter version</span>
 template &lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
 void dijkstra_shortest_paths_no_color_map(
     const Graph&amp; graph,
@@ -53,10 +55,11 @@ void dijkstra_shortest_paths_no_color_map(
     const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params
 );
 
-<i>// non-named parameter version</i>
+<span class="comment">// non-named parameter version</span>
 template &lt;
-    typename Graph, typename <a class="cxx_concept"
-href="DijkstraVisitor.html">DijkstraVisitor</a>, typename PredecessorMap,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename <a
+class="cxx_concept" href="DijkstraVisitor.html"
+>DijkstraVisitor</a>, typename PredecessorMap,
     typename DistanceMap, typename WeightMap, typename VertexIndexMap,
     typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryPredicate.html"
@@ -76,10 +79,12 @@ void dijkstra_shortest_paths_no_color_map(
     DistanceInfinity distance_infinity, DistanceZero distance_zero
 );
 
-<i>// version that does not initialize the property maps</i>
+<span class="comment"
+>// version that does not initialize the property maps</span>
 template &lt;
-    typename Graph, typename <a class="cxx_concept"
-href="DijkstraVisitor.html">DijkstraVisitor</a>, typename PredecessorMap,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename <a
+class="cxx_concept" href="DijkstraVisitor.html"
+>DijkstraVisitor</a>, typename PredecessorMap,
     typename DistanceMap, typename WeightMap, typename VertexIndexMap,
     typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/BinaryPredicate.html">DistanceCompare</a
@@ -100,8 +105,9 @@ void dijkstra_shortest_paths_no_color_map_no_init(
 );
 </pre>
 
-<p>
-This algorithm [<a href="bibliography.html#dijkstra59">10</a>, <a
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>This algorithm [<a href="bibliography.html#dijkstra59">10</a>, <a
 href="bibliography.html#clr90">8</a>] solves the single-source shortest-paths
 problem on a weighted, directed or undirected graph for the case where all
 edge weights are nonnegative.  Use the <a href="bellman_ford_shortest.html"
@@ -110,22 +116,18 @@ negative.  Use <a href="breadth_first_search.html">breadth-first search</a>
 instead of Dijkstra's algorithm when all edge weights are equal to one.  For
 the definition of the shortest-path problem see Section <a
 href="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</a> for some background to the shortest-path problem.
-</p>
+Algorithms</a> for some background to the shortest-path problem.</p>
 
-<p>
-The <span class="cxx_code">dijkstra_shortest_paths_no_color_map()</span>
+<p>The <span class="cxx_code">dijkstra_shortest_paths_no_color_map()</span>
 algorithm differs from the original <span class="cxx_code"
 >dijkstra_shortest_paths()</span> algorithm by not using a color map to
 identify vertices as discovered or undiscovered.  Instead, this is done with
 the distance map: a vertex <i>u</i> such that
 <i>distance_compare(distance_map[u], distance_infinity) == false</i> is
 considered to be undiscovered.  Note that this means that edges with infinite
-weight will not work correctly in this algorithm.
-</p>
+weight will not work correctly in this algorithm.</p>
 
-<p>
-There are two main options for obtaining output from the <span
+<p>There are two main options for obtaining output from the <span
 class="cxx_code">dijkstra_shortest_paths_no_color_map()</span> function.  If
 you provide a distance property map through the <span class="cxx_code"
 >distance_map()</span> parameter then the shortest distance from the start
@@ -135,11 +137,10 @@ each vertex <i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in
 the shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
 either the source or a vertex unreachable from the source).  In addition to
 these two options, the user can provide their own custom-made visitor that
-takes actions during any of the algorithm's event points <a href="#4">[4]</a>.
-</p>
+takes actions during any of the algorithm's event points
+<a href="#4">[4]</a>.</p>
 
-<p>
-Dijkstra's algorithm finds all the shortest paths from the source
+<p>Dijkstra's algorithm finds all the shortest paths from the source
 vertex to every other vertex by iteratively &quot;growing&quot; the set of
 vertices <i>S</i> to which it knows the shortest path. At each step of
 the algorithm, the next vertex added to <i>S</i> is determined by a
@@ -151,18 +152,15 @@ and each of its out-edges is relaxed: if the distance to <i>u</i> plus
 the weight of the out-edge <i>(u,v)</i> is less than the distance
 label for <i>v</i> then the estimated distance for vertex <i>v</i> is
 reduced.  The algorithm then loops back, processing the next vertex at
-the top of the priority queue. The algorithm finishes when the
-priority queue is empty.
-</p>
+the top of the priority queue.  The algorithm finishes when the
+priority queue is empty.</p>
 
-<p>
-The following is the pseudo-code for Dijkstra's single-source shortest
+<p>The following is the pseudo-code for Dijkstra's single-source shortest
 paths algorithm.  <i>w</i> is the edge weight, <i>d</i> is the distance label,
 and <i>p</i> is the predecessor of each vertex which is used to encode
 the shortest paths tree.  <i>Q</i> is a priority queue that supports the
 DECREASE-KEY operation.  The visitor event points for the algorithm are
-indicated by the labels on the right.
-</p>
+indicated by the labels on the right.</p>
 
 <table>
 <tr>
@@ -213,13 +211,11 @@ finish vertex <i>u</i>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code"
+<p>One overload of <span class="cxx_code"
 >dijkstra_shortest_paths_no_color_map()</span> can take in named parameter
 arguments, courtesy of <a href="../../parameter/doc/html/index.html"
 >Boost.Parameter</a>.  The following example illustrates the syntax for
-passing arguments by name.
-</p>
+passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -237,17 +233,14 @@ dijkstra_shortest_paths_no_color_map(
 );
 </pre>
 
-<p>
-The full program is in <a href="../example/dijkstra-no-color-map-example.cpp"
-><tt>example/dijkstra-no-color-map-example.cpp</tt></a>.
-</p>
+<p>The full program is in
+<a href="../example/dijkstra-no-color-map-example.cpp"
+><tt>example/dijkstra-no-color-map-example.cpp</tt></a>.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/dijkstra_shortest_paths_no_color_map.hpp"><tt
->boost/graph/dijkstra_shortest_paths_no_color_map.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/dijkstra_shortest_paths_no_color_map.hpp"
+><tt>boost/graph/dijkstra_shortest_paths_no_color_map.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -263,8 +256,8 @@ The full program is in <a href="../example/dijkstra-no-color-map-example.cpp"
 <tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
-Graph</a> and <a class="cxx_concept" href="./IncidenceGraph.html">Incidence
+a model of <a class="cxx_concept" href="VertexListGraph.html">Vertex List
+Graph</a> and <a class="cxx_concept" href="IncidenceGraph.html">Incidence
 Graph</a>.</td>
 </tr>
 <tr>
@@ -321,9 +314,8 @@ href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
 Map</a>.  The edge descriptor type of the graph needs to be usable as the key
 type for the weight map.  The value type for this map must be the same as the
 value type of the distance map argument, and that type must be
-<a class="cxx_concept"
-href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
-Comparable</a>.</td>
+<a href="http://www.boost.org/sgi/stl/LessThanComparable.html"
+class="cxx_concept">Less Than Comparable</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
@@ -456,9 +448,9 @@ href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"
 </tr>
 <tr>
 <th>Default:</th>
-<td>An <a class="cxx_code"
-href="../../property_map/doc/iterator_property_map.html"
->iterator_property_map</a> created from a <span class="cxx_code">std::<a
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
 the value type of the weight map argument type, and of size <span
 class="cxx_code">num_vertices(graph)</span>, and using the index map argument
@@ -646,78 +638,83 @@ type of the graph.</td>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-The time complexity is <i>O(V log V + E)</i>.
-</p>
+<p>The time complexity is <i>O(V log V + E)</i>.</p>
 
 <h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
 
-<ul>
-<li><b><tt>vis.initialize_vertex(u, g)</tt></b>
-  is invoked on each vertex in the graph before the start of the
-  algorithm.</li>
-<li><b><tt>vis.examine_vertex(u, g)</tt></b>
-  is invoked on a vertex as it is removed from the priority queue
-  and added to set <i>S</i>. At this point we know that <i>(p[u],u)</i>
-  is a shortest-paths tree edge so 
-  <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
-  of the examined vertices is monotonically increasing
-  <i>d[u<sub>1</sub>] &lt;= d[u<sub>2</sub>] &lt;= d[u<sub>n</sub>]</i>.</li>
-<li><b><tt>vis.examine_edge(e, g)</tt></b>
-  is invoked on each out-edge of a vertex immediately after it has
-  been added to set <i>S</i>.</li>
-<li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.
-  The edge <i>(u,v)</i> that participated in the last
-  relaxation for vertex <i>v</i> is an edge in the shortest paths tree.</li>
-<li><b><tt>vis.discover_vertex(v, g)</tt></b>
-  is invoked on vertex <i>v</i> when the edge 
-  <i>(u,v)</i> is examined and <i>v</i> has not yet been discovered (i.e. its
-  distance was infinity before relaxation was attempted on the edge).  This
-  is also when the vertex is inserted into the priority queue.</li>
-<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
-  is invoked if the edge is not relaxed (see above).</li>
-<li><b><tt>vis.finish_vertex(u, g)</tt></b>
-   is invoked on a vertex after all of its out edges have
-  been examined.</li>
-</ul>
+<table>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(u, g)</th>
+<td>is invoked on each vertex in the graph before the start of the
+algorithm.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<td>is invoked on a vertex as it is removed from the priority queue and added
+to set <i>S</i>.  At this point we know that <i>(p[u],u)</i> is a
+shortest-paths tree edge so <i>d[u] = delta(s,u) = d[p[u]] +
+w(p[u],u)</i>.  Also, the distances of the examined vertices is monotonically
+increasing <i>d[u<sub>1</sub>] &lt;= d[u<sub>2</sub>] &lt;=
+d[u<sub>n</sub>]</i>.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<td>is invoked on each out-edge of a vertex immediately after it has been
+added to set <i>S</i>.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<td>is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.  The
+edge <i>(u,v)</i> that participated in the last relaxation for vertex <i>v</i>
+is an edge in the shortest paths tree.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(v, g)</th>
+<td>is invoked on vertex <i>v</i> when the edge <i>(u,v)</i> is examined and
+<i>v</i> has not yet been discovered (i.e. its distance was infinity before
+relaxation was attempted on the edge).  This is also when the vertex is
+inserted into the priority queue.</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<td>is invoked if the edge is not relaxed (see above).</td>
+</tr>
+<tr>
+<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<td>is invoked on a vertex after all of its out edges have been examined.</td>
+</tr>
+</table>
 
 <h3><a name="sec:see_also"></a>See also</h3>
 
-<p>
-<a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a> for a
-version of Dijkstra's shortest path that uses a color map.
-</p>
+<p><a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a> for a
+version of Dijkstra's shortest path that uses a color map.</p>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
 <p>Based on the documentation for <a href="dijkstra_shortest_paths.html"
 >dijkstra_shortest_paths</a>.</p>
 
-<p><a name="1">[1]</a>
-The algorithm used here saves a little space by not putting all <i>V -
-S</i> vertices in the priority queue at once, but instead only those
-vertices in <i>V - S</i> that are discovered and therefore have a
+<p><a name="1">[1]</a> The algorithm used here saves a little space by not
+putting all <i>V - S</i> vertices in the priority queue at once, but instead
+only those vertices in <i>V - S</i> that are discovered and therefore have a
 distance less than infinity.</p>
 
-<p><a name="2">[2]</a> 
-Since the visitor parameter is passed by value, if your visitor
-contains state then any changes to the state during the algorithm
-will be made to a copy of the visitor object, not the visitor object
-passed in.  Therefore you may want the visitor to hold this state by
-pointer or reference.</p>
+<p><a name="2">[2]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore, you may want the visitor to hold this state by pointer or
+reference.</p>
 
-<p><a name="3">[3]</a> 
-The algorithm will not work correctly if any of the edge weights are equal to
-infinity since the infinite distance value is used to determine if a vertex
-has been discovered.</p>
+<p><a name="3">[3]</a> The algorithm will not work correctly if any of the
+edge weights are equal to infinity since the infinite distance value is used
+to determine if a vertex has been discovered.</p>
 
-<p><a name="4">[4]</a> 
-Calls to the visitor events occur in the same order as <span class="cxx_code"
->dijkstra_shortest_paths()</span> (i.e. <i>discover_vertex(u)</i> will always
-be called after <i>examine_vertex(u)</i> for an undiscovered vertex
-<i>u</i>).  However, the vertices of the graph given to
-<i class="cxx_code">dijkstra_shortest_paths_no_color_map()</i> will
+<p><a name="4">[4]</a> Calls to the visitor events occur in the same order as
+<span class="cxx_code">dijkstra_shortest_paths()</span> (i.e.
+<i>discover_vertex(u)</i> will always be called after <i>examine_vertex(u)</i>
+for an undiscovered vertex <i>u</i>).  However, the vertices of the graph
+given to <i class="cxx_code">dijkstra_shortest_paths_no_color_map()</i> will
 <strong>not</strong> necessarily be visited in the same order as
 <i class="cxx_code">dijkstra_shortest_paths()</i>.</p>
 

@@ -1,28 +1,32 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Piotr Wygocki 2013
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
+    Copyright (c) Piotr Wygocki 2013
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 -->
-<Head>
-<Title>Boost Graph Library: Successive Shortest Path for  Min Cost Max Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<head>
+<title>Boost Graph Library: Successive Shortest Path for Min Cost Max
+Flow</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<BR Clear>
+<br />
 
-<H1><A NAME="sec:successive_shortest_path_nonnegative_weights">
-<TT>successive_shortest_path_nonnegative_weights</TT>
-</H1>
+<h1><a name="sec:successive_shortest_path_nonnegative_weights"
+></a><tt>successive_shortest_path_nonnegative_weights</tt></h1>
 
-<PRE>
-<i>// Boost.Parameter-enabled version</i>
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename <a href="./Graph.html">Graph</a>,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
 &gt;
 void successive_shortest_path_nonnegative_weights(
@@ -31,10 +35,10 @@ void successive_shortest_path_nonnegative_weights(
 >&lt;Graph&gt;::vertex_descriptor s,
     typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor t,
-    const TaggedArg0&amp; a0 = <i>unspecified</i>,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg7&amp; a7 = <i>unspecified</i>,
+    const TaggedArg7&amp; a7 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -45,18 +49,19 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<i>// old-style named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
+<span class="comment">// old-style named parameter version</span>
+template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a>, class P, class T, class R&gt;
 void successive_shortest_path_nonnegative_weights(
-        Graph &amp;g, 
-        typename <a href="graph_traits.html">graph_traits</a
+    Graph &amp;g, 
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor s, 
-        typename <a href="graph_traits.html">graph_traits</a
+    typename <a href="graph_traits.html">graph_traits</a
 >&lt;Graph&gt;::vertex_descriptor t,
-        const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>);
+    const bgl_named_params&lt;P, T, R&gt; &amp; params = <span class="comment"
+>/* all defaults */</span>);
 
-<i>// non-named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex&gt;
+<span class="comment">// non-named parameter version</span>
+template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex&gt;
 void successive_shortest_path_nonnegative_weights(
         const Graph &amp; g, 
         typename <a href="graph_traits.html">graph_traits</a
@@ -71,55 +76,50 @@ void successive_shortest_path_nonnegative_weights(
         Pred pred, 
         Distance distance,
         Distance2 distance_prev);
-</PRE>
+</pre>
 
-<P>
-The <tt>successive_shortest_path_nonnegative_weights()</tt> function calculates the minimum cost maximum flow of a network. See Section <a
-href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  
- The function calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
-<i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
-</P>
+<h3><a name="sec:description"></a>Description</h3>
 
-<p>
-There are several special requirements on the input graph and property
-map parameters for this algorithm. First, the directed graph
-<i>G=(V,E)</i> that represents the network must be augmented to
-include the reverse edge for every edge in <i>E</i>.  That is, the
-input graph should be <i>G<sub>in</sub> = (V,{E U
-E<sup>T</sup>})</i>. The <tt>ReverseEdgeMap</tt> argument <tt>rev</tt>
-must map each edge in the original graph to its reverse edge, that is
-<i>(u,v) -> (v,u)</i> for all <i>(u,v)</i> in <i>E</i>. The
-<tt>CapacityEdgeMap</tt> argument <tt>cap</tt> must map each edge in
-<i>E</i> to a positive number, and each edge in <i>E<sup>T</sup></i>
-to 0. The <tt>WeightMap</tt> has to map each edge from  <i>E</i> to  nonnegative number, and each edge from <i>E<sup>T</sup></i> to <i>-weight</i> of its reversed edge.
-</p> 
+<p>The <span class="cxx_code"
+>successive_shortest_path_nonnegative_weights()</span> function calculates the
+minimum cost maximum flow of a network.  See Section
+<a href="graph_theory_review.html#sec:network-flow-algorithms">Network Flow
+Algorithms</a> for a description of maximum flow.  The function calculates the
+flow values <i>f(u,v)</i> for all <i>(u,v)</i> in <i>E</i>, which are returned
+in the form of the residual capacity <i>r(u,v) = c(u,v) - f(u,v)</i>.</p>
 
-<p>
-The algorithm is described in <a
-href="./bibliography.html#ahuja93:_network_flows">Network Flows</a>.
-</p> 
+<p>There are several special requirements on the input graph and property map
+parameters for this algorithm.  First, the directed graph <i>G = (V, E)</i>
+that represents the network must be augmented to include the reverse edge for
+every edge in <i>E</i>.  That is, the input graph should be <i>G<sub>in</sub>
+= (V, {E U E<sup>T</sup>})</i>.  The <span class="cxx_code"
+>ReverseEdgeMap</span> argument <span class="cxx_code">rev</span> must map
+each edge in the original graph to its reverse edge, that is <i>(u,v) -&gt;
+(v,u)</i> for all <i>(u,v)</i> in <i>E</i>.  The <span class="cxx_code"
+>CapacityEdgeMap</span> argument <span class="cxx_code">cap</span> must map
+each edge in <i>E</i> to a positive number, and each edge in <i>E<sup
+>T</sup></i> to 0.  The <span class="cxx_code">WeightMap</span> has to map
+each edge from <i>E</i> to nonnegative number, and each edge from <i>E<sup
+>T</sup></i> to <i>-weight</i> of its reversed edge.</p> 
 
-<p>
-This algorithm starts with empty flow and in each round augments the shortest path (in terms of weight) in the residual graph.
-</p> 
+<p>The algorithm is described in <a
+href="./bibliography.html#ahuja93:_network_flows">Network Flows</a>.</p>
 
-<p> 
-In order to find the cost of the result flow use:
-<a href="./find_flow_cost.html"><tt>find_flow_cost()</tt></a>.
-</p> 
+<p>This algorithm starts with empty flow and in each round augments the
+shortest path (in terms of weight) in the residual graph.</p> 
 
-<h3>Example</h3>
+<p>In order to find the cost of the result flow use:
+<a class="cxx_code" href="find_flow_cost.html">find_flow_cost()</a>.</p>
 
-<P>
-One overload of <tt>successive_shortest_path_nonnegative_weights()</tt> can
-take in named parameter arguments, courtesy of <a
-href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</P>
+<h3><a name="sec:example"></a>Example</h3>
 
-<pre>
+<p>One overload of <span class="cxx_code"
+>successive_shortest_path_nonnegative_weights()</span> can take in named
+parameter arguments, courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.</p>
+
+<pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
     boost::vecS, boost::vecS, boost::directedS, boost::no_property,
     boost::<a href="property.html">property</a>&lt; boost::edge_capacity_t, long,
@@ -133,13 +133,13 @@ typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
 
 Graph g;
 boost::<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::vertex_descriptor s, t;
-<i>// ...</i>
+<span class="comment">// ...</span>
 std::size_t N = boost::num_vertices(g);
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;long&gt; dist(N);
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;long&gt; dist_prev(N);
 std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a>&lt;boost::<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::edge_descriptor&gt; pred(N);
 boost::property_map&lt;Graph, boost::vertex_index_t&gt;::type idx = get(boost::vertex_index, g);
-<i>// ...</i>
+<span class="comment">// ...</span>
 successive_shortest_path_nonnegative_weights(
     g, s, t,
     <b>boost::graph::keywords::_distance_map =</b> <a href="../../property_map/doc/iterator_property_map.html">make_iterator_property_map</a>(dist.begin(), idx),
@@ -149,361 +149,365 @@ successive_shortest_path_nonnegative_weights(
 );
 </pre>
 
-<P>
-The full program is in <a
+<p>The full program is in <a
 href="../test/successive_shortest_path_nonnegative_weights_test.cpp"><tt
->test/successive_shortest_path_nonnegative_weights_test.cpp</tt></a>.
-</P>
+>test/successive_shortest_path_nonnegative_weights_test.cpp</tt></a>.</p>
 
-<h3>Where Defined</h3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/successive_shortest_path_nonnegative_weights.hpp"><TT>boost/graph/successive_shortest_path_nonnegative_weights.hpp</TT></a>
-</P>
+<p><a
+href="../../../boost/graph/successive_shortest_path_nonnegative_weights.hpp"
+><tt>boost/graph/successive_shortest_path_nonnegative_weights.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>const Graph&amp; g</tt></td>
+<td class="cxx_code">const Graph&amp; g</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>A directed graph.  Its type must be a model of <a
-href="./VertexListGraph.html"><b>Vertex List Graph</b></a> and <a
-href="./IncidenceGraph.html"><b>Incidence Graph</b></a>.  For each edge
-<i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also be in the
-graph.</td>
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.  For each edge <i>(u,v)</i> in
+the graph, the reverse edge <i>(v,u)</i> must also be in the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor src</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor src</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The source vertex for the flow network graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Signature:</th>
-<td bgcolor="#dfdfdf"><tt>typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor sink</tt></td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor sink</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The sink vertex for the flow network graph.</td>
 </tr>
 </table>
 
-<h3>Named Parameters</h3>
+<h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
 <table>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>capacity_map(CapacityEdgeMap cap)</tt></td>
+<td class="cxx_code">capacity_map(CapacityEdgeMap cap)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
-<td>The edge capacity property map.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+<td>The edge capacity property map.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>OUT</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"
-><tt>boost::graph::keywords::_residual_capacity_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_residual_capacity_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>residual_capacity_map(ResidualCapacityEdgeMap
-res)</tt></td>
+<td class="cxx_code">residual_capacity_map(ResidualCapacityEdgeMap res)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This maps edges to their residual capacity.  Its type must be a model of a
-mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type of the map must be the graph's edge
-descriptor type.</td>
+mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type of the map must be
+the graph's edge descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_residual_capacity, g)</tt></td>
+<td class="cxx_code">get(edge_residual_capacity, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_reverse_edge_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_reverse_edge_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>reverse_edge_map(ReverseEdgeMap rev)</tt></td>
+<td class="cxx_code">reverse_edge_map(ReverseEdgeMap rev)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>An edge property map that maps every edge <i>(u,v)</i> in the graph to the
-reverse edge <i>(v,u)</i>.  Its type must be a model of a constant <a
-href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue Property
-Map</b></a>.  The key type of the map must be the graph's edge descriptor
-type.</td>
+reverse edge <i>(v,u)</i>.  Its type must be a model of a constant
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+>Lvalue Property Map</a>.  The key type of the map must be the graph's edge
+descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_reverse, g)</tt></td>
+<td class="cxx_code">get(edge_reverse, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_weight_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>weight_map(WeightMap w_map)</tt></td>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>The weight or ``cost'' of each edge in the graph.  The weights must all be
-non-negative, and the algorithm will throw a <a
-href="./exception.html#negative_edge"><tt>negative_edge</tt></a> exception if
-one of the edges is negative.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The edge descriptor type of the graph needs to be usable as the
-key type for the weight map.  The value type for this map must be the same as
-the value type of the distance map argument.</td>
+non-negative, and the algorithm will throw a <a class="cxx_code"
+href="exception.html#negative_edge">negative_edge</a> exception if one of
+the edges is negative.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+>Readable Property Map</a>.  The edge descriptor type of the graph needs to be
+usable as the key type for the weight map.  The value type for this map must
+be the same as the value type of the distance map argument.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(edge_weight, g)</tt></td>
+<td class="cxx_code">get(edge_weight, g)</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_predecessor_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>predecessor_map(PredEdgeMap p_map)</tt></td>
+<td class="cxx_code">predecessor_map(PredEdgeMap p_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>Use by the algorithm to store augmenting paths.  The argument type must be
-a mutable <a href="../../property_map/doc/LvaluePropertyMap.html"><b>Lvalue
-Property Map</b></a>.  The key type must be the graph's vertex descriptor type
-and the value type must be the graph's edge descriptor type.</td>
-</tr>
-<tr valign="top">
-<th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-edge descriptors, and of size <tt>num_vertices(g)</tt>, and using the index
-map argument for the index map.</td>
+a mutable <a href="../../property_map/doc/LvaluePropertyMap.html"
+class="cxx_concept">Lvalue Property Map</a>.  The key type must be the graph's
+vertex descriptor type and the value type must be the graph's edge descriptor
+type.</td>
 </tr>
 <tr>
-<td colspan="2"><hr /></td>
-</tr>
-<tr valign="top">
-<th>Category:</th>
-<td>UTIL</td>
-</tr>
-<tr valign="top">
-<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
-keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map</tt></td>
-</tr>
-<tr valign="top">
-<th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map(DistanceMap d_map)</tt></td>
-</tr>
-<tr valign="top">
-<th>Description:</th>
-<td>The shortest path weight from the source vertex <tt>s</tt> to each vertex
-in the graph <tt>g</tt> is recorded in this property map.  The shortest path
-weight is the sum of the edge weights along the shortest path.  The argument
-type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.</td>
-</tr>
-<tr valign="top">
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+edge descriptors, and of size <span class="cxx_code"
+>num_vertices(g)</span>, and using the index map argument for the index
 map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>UTIL</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_distance_map2</tt></td>
+<td class="cxx_code">boost::graph::keywords::_distance_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>distance_map2(DistanceMap2 d_map2)</tt></td>
+<td class="cxx_code">distance_map(DistanceMap d_map)</td>
 </tr>
-<tr valign="top">
+<tr>
+<th>Description:</th>
+<td>The shortest path weight from the source vertex <span class="cxx_code"
+>s</span> to each vertex in the graph <span class="cxx_code">g</span> is
+recorded in this property map.  The shortest path weight is the sum of the
+edge weights along the shortest path.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
+to be usable as the key type of the distance map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_distance_map2</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">distance_map2(DistanceMap2 d_map2)</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>The shortest path computation in iteration nr <i>k</i> uses distances
-computed in iteration <i>k</i>.  The argument type must be a model of <a
-href="../../property_map/doc/ReadWritePropertyMap.html"><b>Read/Write Property
-Map</b></a>.  The vertex descriptor type of the graph needs to be usable as
-the key type of the distance map.</td>
+computed in iteration <i>k</i>.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
+to be usable as the key type of the distance map.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf">An <a
-href="../../property_map/doc/iterator_property_map.html"><tt
->iterator_property_map</tt></a> created from a <tt>std::<a
-href="http://en.cppreference.com/w/cpp/container/vector">vector</a></tt> of
-the value type of the weight map argument type, and of size
-<tt>num_vertices(g)</tt>, and using the index map argument for the index
-map.</td>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code">std::<a
+href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span> of
+the value type of the weight map argument type, and of size <span
+class="cxx_code">num_vertices(g)</span>, and using the index map argument for
+the index map.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Category:</th>
 <td>IN</td>
 </tr>
-<tr valign="top">
+<tr>
 <th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
 keyword:</th>
-<td bgcolor="#dfdfdf"><tt>boost::graph::keywords::_vertex_index_map</tt></td>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Old-style signature:</th>
-<td bgcolor="#dfdfdf"><tt>vertex_index_map(VertexIndexMap i_map)</tt></td>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Description:</th>
 <td>This maps each vertex to a unique integer in the range <tt>[0,
-num_vertices(g))</tt>.  This property map is only needed if the default for
-the distance map argument is used, or if the default for the
-<tt>_distance_map2</tt> argument is used, or if the default for the
-predecessor map argument is used.  The argument type must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html"><b>Readable Property
-Map</b></a>.  The key type of the map must be the graph's vertex descriptor
-type.</td>
+<span class="cxx_code">num_vertices(g)</span>)</tt>.  This property map is
+only needed if the default for the distance map argument is used, or if the
+default for the <span class="cxx_code">_distance_map2</span> argument is used,
+or if the default for the predecessor map argument is used.  The argument type
+must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The key type of the map must
+be the graph's vertex descriptor type.</td>
 </tr>
-<tr valign="top">
+<tr>
 <th>Default:</th>
-<td bgcolor="#dfdfdf"><tt>get(vertex_index, g)</tt><br />Note: if you use this
-default, make sure your graph has an internal <tt>vertex_index</tt>
-property.  For example, <tt>adjacency_list</tt> with <tt>VertexList=listS</tt>
-does not have an internal <tt>vertex_index</tt> property.</td>
+<td class="cxx_code">get(vertex_index, g)</td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If you use this default, make sure your graph has an internal <span
+class="cxx_code">vertex_index</span> property.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property.</td>
 </tr>
 </table>
 
-<h3>Complexity</h3>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<p>
-In the integer capacity case, if <i>U</i> is the value of the max flow, then the complexity is <i> O(U * (|E| + |V|*log|V|))</i>, 
-where <i>O(|E| + |V|*log|V|)</i> is the complexity of the dijkstra algorithm and <i>U</i> is upper bound on number of iteration.
-In many real world cases number of iterations is much smaller than <i>U</i>.
-</p>
+<p>In the integer capacity case, if <i>U</i> is the value of the max flow,
+then the complexity is <i> O(U * (|E| + |V|*log|V|))</i>, where <i>O(|E| +
+|V|*log|V|)</i> is the complexity of the dijkstra algorithm and <i>U</i> is
+upper bound on number of iteration.  In many real world cases number of
+iterations is much smaller than <i>U</i>.</p>
 
-<h3>See Also</h3>
+<h3><a name="sec:see_also"></a>See Also</h3>
 
-<a href="./cycle_canceling.html"><tt>cycle_canceling()</tt></a><br>
-<a href="./find_flow_cost.html"><tt>find_flow_cost()</tt></a>.
+<p><a class="cxx_code" href="cycle_canceling.html">cycle_canceling()</a><br />
+<a class="cxx_code" href="find_flow_cost.html">find_flow_cost()</a></p>
 
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2013</TD><TD>
-Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos at mimuw.edu.pl</A>)
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2013</td>
+<td>Piotr Wygocki, University of Warsaw (<a href="mailto:wygos@mimuw.edu.pl"
+>wygos at mimuw.edu.pl</a>)</td>
+</tr>
+</table>
 
-</BODY>
-</HTML> 
+</body>
+</html> 
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
- -->
+-->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt
- -->
+-->
 <!--  LocalWords:  typename VertexListGraph CapacityEdgeMap ReverseEdgeMap gt
- -->
+-->
 <!--  LocalWords:  ResidualCapacityEdgeMap VertexIndexMap src rev ColorMap pred
- -->
+-->
 <!--  LocalWords:  PredEdgeMap tt href html hpp ul li nbsp br LvaluePropertyMap
- -->
+-->
 <!--  LocalWords:  num ColorValue DIMACS cpp pre config iostream dimacs int std
- -->
+-->
 <!--  LocalWords:  namespace vecS directedS cout endl iter ei HR valign nowrap
- -->
+-->
 <!--  LocalWords:  jeremy siek htm Univ mailto jsiek lsc edu
 p -->
 
