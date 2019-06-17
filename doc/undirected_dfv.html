@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<!--
+    Copyright (c) Jeremy Siek 2002
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Undirected Depth-First Visit</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
+
+<br />
+
+<h1><a name="sec:dfs"></a><img src="figs/python.gif"
+alt="(Python)" /><tt>undirected_depth_first_visit</tt></h1>
+
+<h3>Synopsis</h3>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+        (graph, *(<span class="comment">/* unspecified predicate */</span>))
+    )
+    (deduced
+        (required
+            (root_vertex, *(<span class="comment"
+>/* unspecified predicate */</span>))
+            (visitor, *(<span class="comment"
+>/* unspecified predicate */</span>))
+            (color_map, *(<span class="comment"
+>/* unspecified predicate */</span>))
+            (edge_color_map, *(<span class="comment"
+>/* unspecified predicate */</span>))
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), undirected_depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (root_vertex, *)
+        (visitor, *)
+        (color_map, *)
+        (edge_color_map, *)
+    )
+)
+</pre>
+
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>This function visits all of the vertices in the same connected component as
+the source vertex <span class="cxx_code">s</span>, using the
+<a href="graph_theory_review.html#sec:dfs-algorithm">depth-first
+pattern</a>.  The main purpose of the function is for the implementation of
+<a class="cxx_code" href="undirected_dfs.html">undirected_dfs()</a>, though
+sometimes it is useful on its own.</p>
+
+<h3><a name="sec:where_defined"></a>Where Defined:</h3>
+
+<p><a href="../../../boost/graph/undirected_dfs.hpp"
+><tt>boost/graph/undirected_dfs.hpp</tt></a></p>
+
+<h3><a name="sec:parameters"></a>Parameters</h3>
+
+<p>If <strong>any</strong> of the following are true:</p>
+
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
+</ul>
+
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
+
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
+
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
+
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
+
+<table>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An udirected graph.  Its type must be a model of <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The source vertex from which to start the search.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">root_vertex</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A visitor object that is invoked inside the algorithm at the event-points
+specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter should be an object that derives from the
+<a class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of
+the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of its progress through the
+graph.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's vertex descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The color map must be a <span class="python_code">vertex_color_map</span>
+for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_edge_color_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of which edges have been
+visited.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's edge descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The color map must be an <span class="python_code">edge_color_map</span>
+for the graph.</td>
+</tr>
+</table>
+
+<h3><a name="sec:complexity"></a>Complexity</h3>
+
+<p>Time complexity is <i>O(E)</i>.</p>
+
+<h3><a name="sec:notes"></a>Notes</h3>
+
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore you may want the visitor to hold this state by pointer or
+reference.</p>
+
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+</tr>
+</table>
+
+</body>
+</html> 

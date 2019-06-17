@@ -124,21 +124,31 @@ flow values <i>f(u,v)</i> for all <i>(u,v)</i> in <i>E</i>, which are returned
 in the form of the residual capacity <i>r(u,v) = c(u,v) - f(u,v)</i>.</p>
 
 <dl>
-<dt>Requirements:</dt>
-<dd>The directed graph <i>G=(V,E)</i> that represents the network must include
+<dt>
+<h4>Requirements:</h4>
+</dt>
+<dd>
+<p>The directed graph <i>G=(V,E)</i> that represents the network must include
 a reverse edge for every edge in <i>E</i>.  That is, the input graph should be
 <i>G<sub>in</sub> = (V, {E U E<sup>T</sup>})</i>.  The <span class="cxx_code"
 >ReverseEdgeMap</span> argument <span class="cxx_code">rev</span> must map
 each edge in the original graph to its reverse edge: that is,
-<i>(u,v) -&gt; (v,u)</i> for all <i>(u,v)</i> in <i>E</i>.</dd>
-<dt>Remarks:</dt>
-<dd>While the push-relabel method states that each edge in
+<i>(u,v) -&gt; (v,u)</i> for all <i>(u,v)</i> in <i>E</i>.</p>
+</dd>
+<dt>
+<h4>Remarks:</h4>
+</dt>
+<dd>
+<p>While the push-relabel method states that each edge in
 <i>E<sup>T</sup></i> has to have capacity of 0, the reverse edges for this
 algorithm ARE allowed to carry capacities.  If there are already reverse edges
 in the input Graph <span class="cxx_code">G</span>, those can be used.  This
 can halve the amount of edges and will noticeably increase the
-performance.</dd>
-<dt>Algorithm description:</dt>
+performance.</p>
+</dd>
+<dt>
+<h4>Algorithm description:</h4>
+</dt>
 <dd>
 <p>The Boykov-Kolmogorov max-flow (or often BK max-flow) algorithm is a
 variety of the augmenting-path algorithm.  Standard augmenting path algorithms
@@ -190,8 +200,15 @@ become orphans.  The adoption phase terminates if there are no more
 orphans.</dd>
 </dl>
 </dd>
-<dt><img src="figs/bk_max_flow.gif" name="Grafik2" align="left" width="827"
-height="311" border="0" /><br />Details:</dt>
+</dl>
+
+<p><img src="figs/bk_max_flow.gif" name="Grafik2" width="827"
+height="311" border="0" /></p>
+
+<dl>
+<dt>
+<h4>Details:</h4>
+</dt>
 <dd>
 <dl>
 <dt>Marking heuristics:</dt>
@@ -213,16 +230,20 @@ search paths, and so amount of adoptions.</li>
 algorithm the distance to the corresponding terminal was calculated.</p>
 </dd>
 <dt>Ordering of orphans:</dt>
-<dd>As described above, the augment-phase and the adoption phase can create
+<dd>
+<p>As described above, the augment-phase and the adoption phase can create
 orphans.  The orphans the augment-phase generates, are ordered according to
 their distance to the terminals (smallest first).  This combined with the
 distance/timestamp heuristics results in the possibility for not having to
 recheck terminal-connections too often.  New orphans which are generated in
 adoption phase are processed before orphans from the main queue for the same
-reason.</dd>
+reason.</p>
+</dd>
 </dl>
 </dd>
-<dt>Implementation notes:</dt>
+<dt>
+<h4>Implementation notes:</h4>
+</dt>
 <dd>
 <p>The algorithm is mainly implemented as described by Boykov and Kolmogorov
 in [<a href="bibliography.html#boykov-kolmogorov04">69</a>].  An extended

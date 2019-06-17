@@ -15,20 +15,22 @@
 <body>
 <img src="../../../boost.png" alt="C++ Boost" width="277" height="86" /> 
 <h1><img src="figs/python.gif"
-alt="(Python)"/><tt>brandes_betweenness_centrality</tt></h1>
+alt="(Python)" /><tt>brandes_betweenness_centrality</tt></h1>
+
+<h3>Synopsis</h3>
 
 <pre class="cxx_code">
-<em>// Boost.Parameter-enabled version</em>
+<span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg7
 &gt;
 void brandes_betweenness_centrality(
     const Graph&amp; g,
     const TaggedArg0&amp; a0,
-    const TaggedArg1&amp; a1 = <i>unspecified</i>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
-    const TaggedArg7&amp; a7 = <i>unspecified</i>,
+    const TaggedArg7&amp; a7 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
@@ -39,13 +41,13 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     &gt;::type = mpl::true_()
 );
 
-<em>// old-style named parameter version</em>
+<span class="comment">// old-style named parameter version</span>
 template&lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
 void 
 brandes_betweenness_centrality(const Graph&amp; g,
                                const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
 
-<em>// non-named parameter versions</em>
+<span class="comment">// non-named parameter versions</span>
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
@@ -78,7 +80,7 @@ brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                VertexIndexMap vertex_index,
                                WeightMap weight_map);
 
-<em>// helper functions</em>
+<span class="comment">// helper functions</span>
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
 relative_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
@@ -87,6 +89,8 @@ template&lt;typename Graph, typename CentralityMap&gt;
 typename property_traits&lt;CentralityMap&gt;::value_type
 central_point_dominance(const Graph&amp; g, CentralityMap centrality_map);
 </pre>
+
+<h3><a name="sec:description"></a>Description</h3>
 
 <p>This algorithm [<a href="bibliography.html#brandes01">54</a>] computes the
 <em>betweenness centrality</em> [<a href="bibliography.html#freeman77">55</a>,
@@ -142,12 +146,11 @@ src="figs/central_point_dominance.gif" /></p>
 
 <h3><a name="sec:example"></a>Example</h3>
 
-<p>
-One overload of <span class="cxx_code">brandes_betweenness_centrality()</span>
-can take in named parameter arguments, courtesy of <a
-href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  The following
-example illustrates the syntax for passing arguments by name.
-</p>
+<p>One overload of <span class="cxx_code"
+>brandes_betweenness_centrality()</span> can take in named parameter
+arguments, courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  The following example illustrates the syntax for
+passing arguments by name.</p>
 
 <pre class="cxx_code">
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
@@ -168,16 +171,13 @@ brandes_betweenness_centrality(
 );
 </pre>
 
-<p>
-The full program is in <a href="../test/betweenness_centrality_test.cpp"
-><tt>test/betweenness_centrality_test.cpp</tt></a>
-</p>
+<p>The full program is in <a href="../test/betweenness_centrality_test.cpp"
+><tt>test/betweenness_centrality_test.cpp</tt></a></p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<p>
-<a href="../../../boost/graph/betweenness_centrality.hpp"><tt>boost/graph/betweenness_centrality.hpp</tt></a>
-</p>
+<p><a href="../../../boost/graph/betweenness_centrality.hpp"
+><tt>boost/graph/betweenness_centrality.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -193,8 +193,8 @@ The full program is in <a href="../test/betweenness_centrality_test.cpp"
 <tr>
 <th>Description:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
-a model of <a class="cxx_concept" href="./VertexListGraph.html">Vertex List
-Graph</a> and <a class="cxx_concept" href="./IncidenceGraph.html">Incidence
+a model of <a class="cxx_concept" href="VertexListGraph.html">Vertex List
+Graph</a> and <a class="cxx_concept" href="IncidenceGraph.html">Incidence
 Graph</a>.  When an edge centrality map is supplied, the graph type must also
 model <a class="cxx_concept" href="EdgeListGraph.html">Edge List
 Graph</a>.</td>
@@ -225,11 +225,11 @@ keyword:</th>
 <th>Description:</th>
 <td>This property map records the set of edges incoming to each vertex that
 comprise a shortest path from a particular source vertex through this vertex,
-and is used internally by the algorithm.  The argument type must be a <a
-class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
+and is used internally by the algorithm.  The argument type must be a
+<a class="cxx_concept" href="../../property_map/doc/LvaluePropertyMap.html"
 >Lvalue Property Map</a> whose key type is the same as the vertex descriptor
-type of the graph and whose value type is a Sequence (e.g., a <span
-class="cxx_code">std::<a
+type of the graph and whose value type is a Sequence (e.g., a
+<span class="cxx_code">std::<a
 href="http://en.cppreference.com/w/cpp/container/vector">vector</a></span>)
 containing edge descriptors.</td>
 </tr>
@@ -349,8 +349,8 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>Property map used internally to accumulate the number of paths that pass
-through each particular vertex.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+through each particular vertex.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
 >Read/Write Property Map</a>.  The vertex descriptor type of the graph needs
 to be usable as the key type of the dependency map.  The value type of the
 dependency map must be an integral type large enough to store the number of
@@ -514,9 +514,9 @@ keyword:</th>
 <th>Description:</th>
 <td>The weight or ``length'' of each edge in the graph.  The weights must all
 be non-negative, and the algorithm will throw a <a class="cxx_code"
-href="./exception.html#negative_edge">negative_edge</a> exception if
-one of the edges is negative.  The argument type must be a model of <a
-class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
+href="exception.html#negative_edge">negative_edge</a> exception if
+one of the edges is negative.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadablePropertyMap.html"
 >Readable Property Map</a>.  The edge descriptor type of the graph needs to be
 usable as the key type for the weight map.  The value type for this map must
 be the same as the value type of the distance map argument.</td>
@@ -543,17 +543,15 @@ is <em>O(VE)</em>.</p>
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2004</td>
-<td>
-<a href="http://www.boost.org/people/doug_gregor.htm">Douglas Gregor</a>, Indiana
-University (<a href="mailto:dgregor@cs.indiana.edu">dgregor@cs.indiana.edu</a>)
-</td>
+<td><a href="http://www.boost.org/people/doug_gregor.htm">Douglas Gregor</a>,
+Indiana University
+(<a href="mailto:dgregor@cs.indiana.edu">dgregor@cs.indiana.edu</a>)</td>
 </tr>
 <tr>
 <td></td>
-<td>
-<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>, Indiana
-University (<a href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)
-</td>
+<td><a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
+Indiana University
+(<a href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

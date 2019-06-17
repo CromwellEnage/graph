@@ -24,7 +24,7 @@
 <pre class="cxx_code">
 <span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename VertexAndEdgeListGraph, typename DistanceMatrix,
+    typename Graph, typename DistanceMatrix,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg5
 &gt;
 typename boost::enable_if&lt;
@@ -36,7 +36,7 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
     bool
 &gt;::type
 johnson_all_pairs_shortest_paths(
-    VertexAndEdgeListGraph&amp; g,
+    Graph&amp; g,
     DistanceMatrix&amp; d,
     const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
     const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
@@ -51,11 +51,11 @@ bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
 >/* all defaults */</span>);
 
 <span class="comment">// non-named parameter versions</span>
-  template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
+  template &lt;class Graph, class DistanceMatrix,
             class VertexID, class Weight, class BinaryPredicate, 
             class BinaryFunction, class Infinity, class DistanceZero&gt;
   bool
-  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1, 
+  johnson_all_pairs_shortest_paths(Graph&amp; g1, 
                DistanceMatrix&amp; D,
                VertexID id1, Weight w1, const BinaryPredicate&amp; compare, 
                const BinaryFunction&amp; combine, const Infinity&amp; inf,
@@ -64,7 +64,7 @@ bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
 template &lt;typename Graph, typename DistanceMatrix,
           typename VertexIndex, typename WeightMap, typename DT&gt;
 bool
-johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1, 
+johnson_all_pairs_shortest_paths(Graph&amp; g1, 
   DistanceMatrix&amp; D,
   VertexIndex i_map, WeightMap w_map, DT zero);
 </pre>

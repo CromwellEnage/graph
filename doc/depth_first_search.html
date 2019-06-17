@@ -38,17 +38,18 @@ is defined, then the following function overload definition is available.</p>
     (void), depth_first_search, ::boost::graph::keywords::tag,
     (required
         (graph
-          , <span class="comment">// unspecified predicate</span>
+          , *(<span class="comment">/* unspecified predicate */</span>)
         )
     )
     (deduced
         (optional
             (vertex_index_map
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
             (color_map
-              , <span class="comment">// unspecified predicate</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
               , <a
 href="../../property_map/doc/shared_array_property_map.html"
 >make_shared_array_property_map</a>(
@@ -58,12 +59,13 @@ href="../../property_map/doc/shared_array_property_map.html"
                 )
             )
             (visitor
-              , <span class="comment">// unspecified predicate</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
               , default_dfs_visitor()
             )
             (root_vertex
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
         )
     )
@@ -103,8 +105,11 @@ void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color);
 
 template &lt;typename Graph, typename <a class="cxx_concept"
 href="DFSVisitor.html">DFSVisitor</a>, typename ColorMap&gt;
-void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color, 
-                        typename graph_traits&lt;Graph&gt;::vertex_descriptor start);
+void depth_first_search(
+    const Graph&amp; g, DFSVisitor vis, ColorMap color,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor start
+);
 </pre>
 
 <h3><a name="sec:description"></a>Description</h3>
@@ -261,9 +266,10 @@ depth_first_search(
 <p>If the configuration macro <span class="cxx_code"
 >BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then the
 same function overload can deduce the non-graph arguments, so the following
-call is equivalent to the previous one.</p>
+calls are equivalent to the previous one.</p>
 
 <pre class="cxx_code">
+depth_first_search(g, vis, color);
 depth_first_search(g, color, vis);
 </pre>
 
@@ -391,9 +397,8 @@ href="ColorValue.html">ColorValue</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td>A <span class="cxx_code"><a
-href="../../property_map/doc/shared_array_property_map.html"
->shared_array_property_map</a></span> of <span class="cxx_code"
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
 >white_color</span> values, and of size <span class="cxx_code"
 >num_vertices(graph)</span>, and using the index map argument for the index
 map.</td>
@@ -418,7 +423,8 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">root_vertex(<a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertex_descriptor start)</td>
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+start)</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -427,7 +433,8 @@ keyword:</th>
 <tr>
 <th>Default:</th>
 <td class="cxx_code">(0 &lt; num_vertices(graph)) ? *vertices(graph).first :
-<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::null_vertex()</td>
+<a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::null_vertex()</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -461,15 +468,18 @@ usable as the key type of the map.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">get(vertex_index, graph)</td>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
 </tr>
 <tr>
 <th>Note:</th>
-<td>If you use this default, make sure your graph has an internal <span
-class="cxx_code">vertex_index</span> property.  For example, <span
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the color map argument must be specified.  For example, <span
 class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
->vertex_index</span> property.</td>
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -547,8 +557,7 @@ reference.</p>
 <table>
 <tr>
 <td nowrap="nowrap">Copyright &copy; 2000-2001</td>
-<td>
-<a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
 Indiana University (<a
 href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
 <a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
@@ -556,8 +565,7 @@ Indiana University (<a href="mailto:llee@cs.indiana.edu"
 >llee@cs.indiana.edu</a>)<br />
 <a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
 Indiana University (<a
-href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)
-</td>
+href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>
 </table>
 

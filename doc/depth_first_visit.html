@@ -1,144 +1,407 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-<Head>
-<Title>Boost Graph Library: Depth-First Visit</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    Copyright (c) Jeremy Siek 2000
 
-<BR Clear>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Depth-First Visit</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<H2><A NAME="sec:dfs"></A>
-<img src="figs/python.gif" alt="(Python)"/>
-<TT>depth_first_visit</TT>
-</H2>
+<br />
 
+<h1><a name="sec:dfs"></a><img src="figs/python.gif"
+alt="(Python)" /><tt>depth_first_visit</tt></h1>
 
-<P>
-<PRE>
-template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
-  DFSVisitor&amp; vis, ColorMap color)
+<h3>Synopsis</h3>
 
-template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class ColorMap, 
-          class TerminatorFunc&gt;
-void depth_first_visit(IncidenceGraph& g,
-  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
-  DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
-</PRE>
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
 
-<P>
-This function visits all of the vertices in the same connected
-component as the source vertex <tt>s</tt>, using the <a
-href="./graph_theory_review.html#sec:dfs-algorithm">depth-first
-pattern</a>. The main purpose of the function is for the
-implementation of <TT>depth_first_search()</TT> though sometimes it is
-useful on its own. 
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), depth_first_visit, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (optional
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (color_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a
+href="../../property_map/doc/shared_array_property_map.html"
+>make_shared_array_property_map</a>(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , default_dfs_visitor()
+            )
+            (root_vertex
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (terminator_function
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+        )
+    )
+)
+</pre>
 
-<p>
-The <tt>DFSVisitor</tt> supplied by the user determines what
-actions are taken at each event-point within the algorithm.
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definitions are available.</p>
 
-<p>
-The <tt>ColorMap</tt> is used by the algorithm to keep track
-of which vertices have been visited.
+<pre class="cxx_code">
+template &lt;
+    typename Graph,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+void depth_first_visit(
+    const Graph&amp; graph,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    ...,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg4
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
 
-<p>The second variant can be used, for example, to find all marked vertices
-reachable from a start vertex by a path which does not contain any another
-marked vertices.
+<span class="comment">// non-named parameter versions</span>
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept" href="DFSVisitor.html"
+>DFSVisitor</a>, typename ColorMap
+&gt;
+void depth_first_visit(
+    const IncidenceGraph& g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    DFSVisitor&amp; vis, ColorMap color
+);
 
+template &lt;
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>, typename <a class="cxx_concept" href="DFSVisitor.html"
+>DFSVisitor</a>, typename ColorMap,
+    typename TerminatorFunc
+&gt;
+void depth_first_visit(
+    const IncidenceGraph& g,
+    typename <a href="graph_traits.html">graph_traits</a
+>&lt;IncidenceGraph&gt;::vertex_descriptor s,
+    DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func
+);
+</pre>
 
-<P>
+<h3><a name="sec:description"></a>Description</h3>
 
-<h3>Where Defined:</h3>
+<p>This function visits all of the vertices in the same connected component as
+the source vertex <span class="cxx_code">s</span>, using the
+<a href="graph_theory_review.html#sec:dfs-algorithm">depth-first
+pattern</a>.  The main purpose of the function is for the implementation of
+<a class="cxx_code" href="depth_first_search.html">depth_first_search()</a>,
+though sometimes it is useful on its own.</p>
 
-<a href="../../../boost/graph/depth_first_search.hpp"><TT>boost/graph/depth_first_search.hpp</TT></a>
+<h3><a name="sec:where_defined"></a>Where Defined:</h3>
 
+<p><a href="../../../boost/graph/depth_first_search.hpp"
+><tt>boost/graph/depth_first_search.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-IN <tt>IncidenceGraph&amp; g</tt>
-<blockquote>
-A directed or undirected graph. The graph's type must be a model of
-<a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+<p>If <strong>any</strong> of the following are true:</p>
 
-<b>Python</b>: The parameter is named <tt>graph</tt>.
-</blockquote>
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
+</ul>
 
-IN: <tt>vertex_descriptor s</tt>
-<blockquote>
-  The source vertex from which to start the search.<br>
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
-  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
-</blockquote>
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
 
-IN: <tt>DFSVisitor visitor</tt>
-<blockquote>
-  A visitor object that is invoked inside the algorithm at the
-  event-points specified by the <a href="./DFSVisitor.html">DFS
-  Visitor</a> concept. The visitor object is passed by value <a
-  href="#1">[1]</a>.<br>
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
-  <b>Python</b>: The parameter should be an object that derives from
-  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
-  the graph.
-</blockquote>
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
 
-UTIL: <tt>ColorMap color</tt>
-<blockquote>
-  This is used by the algorithm to keep track of its progress through
-  the graph. The type <tt>ColorMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> and its key type must be the graph's vertex
-  descriptor type and the value type of the color map map must model
-  <a href="./ColorValue.html">Color Value</a>.<br>
+<table>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const IncidenceGraph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">visitor(DFSVisitor vis)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A visitor object that is invoked inside the algorithm at the event-points
+specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">boost::graph::default_dfs_visitor()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter should be an object that derives from the
+<a class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of
+the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of its progress through the
+graph.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's vertex descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <span class="cxx_code"><a
+href="../../property_map/doc/shared_array_property_map.html"
+>shared_array_property_map</a></span> of <span class="cxx_code"
+>white_color</span> values, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The color map must be a <span class="python_code">vertex_color_map</span>
+for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+start)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The source vertex from which to start the search.  By explicitly passing
+in a source vertex, one can find all marked vertices reachable from that
+vertex by a path which does not contain any another marked vertices.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">(0 &lt; num_vertices(graph)) ? *vertices(graph).first :
+<a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::null_vertex()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">root_vertex</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is only
+necessary when the default color property map is used.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type of the map must
+be an integer type.  The vertex descriptor type of the graph needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the color map argument must be specified.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_terminator_function</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">TerminatorFunc func</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+class="cxx_concept">Binary Function</a> callable with two parameters - the
+descriptor of vertex and the graph instance - and returning <span
+class="cxx_code">bool</span>.  The call is made immediately after the call to
+the <b class="cxx_code">discover_vertex</b> visitor event.  If <span
+class="cxx_code">true</span> is returned, then the out edges of the vertex are
+not examined, as if they don't exist.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A function object that always returns
+<span class="cxx_code">false</span>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+</table>
 
-  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
-  the graph.
-</blockquote>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-IN: <tt>TerminatorFunc func</tt>
-<blockquote>
-A function object callable with two parameters - the descriptor of
-vertex and the graph instance - and returning bool. The call is made
-immediately after call to 'discover_vertex' visitor
-event. If <tt>true</tt> is returned, the out edges of the vertex are
-not examined, as if they don't exist.<br>
+<p>Time complexity is <i>O(E)</i>.</p>
 
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-<P>
+<h3><a name="sec:notes"></a>Notes</h3>
 
-<h3>Complexity</h3>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore you may want the visitor to hold this state by pointer or
+reference.</p>
 
-Time complexity is <i>O(E)</i>.
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+</tr>
+</table>
 
-
-<h3>Notes</h3>
-
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
-
-
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
-
-</BODY>
-</HTML> 
+</body>
+</html> 
