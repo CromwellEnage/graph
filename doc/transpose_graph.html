@@ -1,127 +1,362 @@
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek 2000
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-<Head>
-<Title>Boost Graph Library: Transpose Graph</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    Copyright (c) Jeremy Siek 2000
 
-<BR Clear>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Boost Graph Library: Transpose Graph</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<H1><TT>transpose_graph</TT></H1>
+<br />
 
-<PRE>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>&gt; 
+<h1><tt>transpose_graph</tt></h1>
+
+<pre class="cxx_code">
+<span class="comment">// old-style named parameter version</span>
+template &lt;class <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, class <a class="cxx_concept" href="MutableGraph.html"
+>MutableGraph</a>&gt; 
 void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T,
-    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
-</PRE>
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
+>all defaults</span>);
+</pre>
 
-<P>
-This function computes the transpose of a directed graph. The
-transpose of a directed graph <i>G = (V, E)</i>is the graph
-<i>G<sup>T</sup> = (V, E<sup>T</sup>)</i> , where <i>E<sup>T</sup> =
-{(v, u) in V x V: (u, v) in E}</i> . i.e., <i>G<sup>T</sup></i> is
-<i>G</i> with all its edges reversed.  Graph <TT>G_T</TT> passed into
-the algorithm must have no vertices and
-no edges. The vertices and edges will be added by <tt>transpose_graph()</tt> by
-calling <tt>add_vertex</tt> and  <tt>add_edge</tt> as follows for each edge
-<i>(u,v)</i> in <tt>G</tt>.
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined but the configuration macro <a class="cxx_code"
+href="../../config/doc/html/boost_config/macro_reference.html"
+>BOOST_NO_CXX11_DECLTYPE</a> is <strong>not</strong> defined, then the
+following function overload definition is available.</p>
 
-<H3>Example</H3>
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), transpose_graph, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (result
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (vertex_copy
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (edge_copy
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (orig_to_copy
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+        )
+    )
+)
+</pre>
 
-Here's an example of transposing a graph:
-<a href="../example/transpose-example.cpp"><tt>example/transpose-example.cpp</tt></a>.
+<p>If the configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is <strong
+>not</strong> defined, or if the configuration macro <a class="cxx_code"
+href="../../config/doc/html/boost_config/macro_reference.html"
+>BOOST_NO_CXX11_DECLTYPE</a> <strong>is</strong> defined, then the
+following function overload definition is available instead.</p>
 
-<H3>Where Defined</H3>
+<pre class="cxx_code">
+template &lt;
+    typename <a class="cxx_concept" href="VertexListGraph.html"
+>VertexListGraph</a>, typename <a class="cxx_concept" href="MutableGraph.html"
+>MutableGraph</a>,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+void transpose_graph(
+    const VertexListGraph&amp; graph,
+    MutableGraph&amp; result,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    ...,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg4
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+</pre>
 
-<P>
-<a href="../../../boost/graph/transpose_graph.hpp"><TT>boost/graph/transpose_graph.hpp</TT></a>
+<h3><a name="sec:description"></a>Description</h3>
 
-<P>
+<p>This function computes the transpose of a directed graph.  The transpose of
+a directed graph <i>G = (V, E)</i>is the graph <i>G<sup>T</sup> = (V,
+E<sup>T</sup>)</i>, where <i>E<sup>T</sup> = {(v, u) in V x V: (u, v) in
+E}</i>; i.e., <i>G<sup>T</sup></i> is <i>G</i> with all its edges
+reversed.  Graph <span class="cxx_code">G_T</span> passed into the algorithm
+must have no vertices and no edges.  The vertices and edges will be added by
+<span class="cxx_code">transpose_graph()</span> by calling <span
+class="cxx_code">add_vertex()</span> and <span class="cxx_code"
+>add_edge()</span> as follows for each edge <i>(u,v)</i> in
+<span class="cxx_code">G</span>.</p>
 
-<H3>Parameters</H3>
+<h3><a name="example"></a>Example</h3>
 
-IN: <tt>const VertexListGraph&amp; G</tt>
-<blockquote>
-A directed graph. The graph type must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
-</blockquote>
+<p>Here's an example of transposing a graph:
+<a href="../example/transpose-example.cpp"
+><tt>example/transpose-example.cpp</tt></a>.</p>
 
-OUT: <tt>const MutableGraph&amp; G_T</tt>
-<blockquote>
-The transposed graph.  The graph type must be a model of <a
-href="./MutableGraph.html">Mutable Graph</a>.
-</blockquote>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<h3>Named Parameters</h3>
+<p><a href="../../../boost/graph/transpose_graph.hpp"
+><tt>boost/graph/transpose_graph.hpp</tt></a></p>
 
-IN: <tt>vertex_copy(VertexCopier vc)</tt>
-<blockquote>
-This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of a vertex in the original graph
-into the corresponding vertex in the copy.<br>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-<b>Default:</b> <tt>vertex_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
-which uses the property tag <tt>vertex_all</tt> to access a property
-map from the graph.
-</blockquote>
+<p>If <strong>any</strong> of the following are true:</p>
 
-IN: <tt>edge_copy(EdgeCopier ec)</tt>
-<blockquote>
-This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of an edge in the original graph
-into the corresponding edge in the copy.<br>
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined.</li>
+<li>The configuration macro <a class="cxx_code"
+href="../../config/doc/html/boost_config/macro_reference.html"
+>BOOST_NO_CXX11_DECLTYPE</a> is defined.</li>
+</ul>
 
-<b>Default:</b> <tt>edge_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
-which uses the property tag <tt>edge_all</tt> to access a property
-map from the graph.
-</blockquote>
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
-<blockquote>
-The vertex index map type must be a model of <a
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+<li>The configuration macro <a class="cxx_code"
+href="../../config/doc/html/boost_config/macro_reference.html"
+>BOOST_NO_CXX11_DECLTYPE</a> is <strong>not</strong> defined.</li>
+</ul>
+
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
+
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
+
+<table>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const VertexListGraph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A directed graph.  Its type must be a model of <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_result</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">MutableGraph&amp; result</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The resulting transposed graph.  Its type must be a model of
+<a class="cxx_concept" href="MutableGraph.html">Mutable Graph</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_copy</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_copy(VertexCopier vc)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is a <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary Function</a>
+that copies the properties of a vertex in the original graph into the
+corresponding vertex in the transposed graph.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A function object that copies the contents of <span class="cxx_code"
+>get(vertex_all, graph)</span> to <span class="cxx_code">get(vertex_all,
+result)</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_edge_copy</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">edge_copy(EdgeCopier ec)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is a <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary Function</a>
+that copies the properties of an edge in the original graph into the
+corresponding edge in the transposed graph.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A function object that copies the contents of <span class="cxx_code"
+>get(edge_all, graph)</span> to <span class="cxx_code">get(edge_all,
+result)</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0,
+<span class="cxx_code">num_vertices(graph)</span>)</tt>.  The argument type
+must be a model of <a class="cxx_concept"
 href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a> and must map the vertex descriptors of <tt>G</tt> to the
-integers from 0 to <tt>num_vertices(G)</tt>.<br>
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the color map argument must be specified.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_orig_to_copy</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">orig_to_copy(Orig2CopyMap c)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps vertices in the original graph to vertices in the transposed
+graph.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>An <a href="../../property_map/doc/iterator_property_map.html"
+class="cxx_code">iterator_property_map</a> created from a <span
+class="cxx_code"
+>std::<a href="http://en.cppreference.com/w/cpp/container/vector">vector</a
+></span> of the result graph's vertex descriptor type, and of size <span
+class="cxx_code">num_vertices(graph)</span>, and using the index map argument
+for the index map.</td>
+</tr>
+</table>
 
-<b>Default:</b> <tt>get(vertex_index, G)</tt>
-    Note: if you use this default, make sure your graph has
-    an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
-    not have an internal <tt>vertex_index</tt> property.
-</blockquote>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
+<p>The time complexity is <i>O(V + E)</i>.</p>
 
-UTIL/OUT: <tt>orig_to_copy(Orig2CopyMap c)</tt>
-<blockquote>
-This maps vertices in the original graph to vertices in the copy.
+<br />
+<hr />
+<table>
+<tr>
+<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+</tr>
+</table>
 
-<b>Default:</b> an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of the output graph's vertex descriptor type of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
-</blockquote>
-
-<H3>Complexity</H3>
-
-<P>
-The time complexity is <i>O(V + E)</i>.
-
-
-
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
-
-</BODY>
-</HTML> 
+</body>
+</html> 

@@ -42,31 +42,35 @@ following function overload definition is available.</p>
     (void), copy_graph, ::boost::graph::keywords::tag,
     (required
         (graph
-          , <span class="comment">// unspecified predicate</span>
+          , *(<span class="comment">/* unspecified predicate */</span>)
         )
     )
     (deduced
         (required
             (result
-              , <span class="comment">// unspecified predicate</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
             )
         )
         (optional
             (vertex_copy
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
             (edge_copy
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
             (vertex_index_map
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
             (orig_to_copy
-              , <span class="comment">// unspecified predicate</span>
-              , <span class="comment">// see parameter table for default value</span>
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
             )
         )
     )
@@ -84,21 +88,21 @@ following function overload definition is available instead.</p>
 template &lt;
     typename <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, typename <a class="cxx_concept"
-href="MutableGraph.html">MutableGraph</a>,
-    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg9
+href="MutableGraph.html">MutableGraph</a>, typename TaggedArg0,
+    typename TaggedArg1, typename TaggedArg2, typename TaggedArg3
 &gt;
 void copy_graph(
     const VertexListGraph&amp; graph,
     MutableGraph&amp; result,
     const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
     const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
-    ...,
-    const TaggedArg9&amp; a9 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg2&amp; a2 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg3&amp; a3 = <span class="comment">/* unspecified */</span>,
     typename boost::enable_if&lt;
         parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ..., TaggedArg9
+            TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
         &gt;,
         mpl::true_
     &gt;::type = mpl::true_()
@@ -286,15 +290,18 @@ map.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">get(vertex_index, graph)</td>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
 </tr>
 <tr>
 <th>Note:</th>
-<td>If you use this default, make sure your graph has an internal <span
-class="cxx_code">vertex_index</span> property.  For example, <span
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the color map argument must be specified.  For example, <span
 class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
->vertex_index</span> property.</td>
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
