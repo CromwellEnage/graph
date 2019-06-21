@@ -32,6 +32,9 @@ tr.deduced_param_0 {
 th {
     text-align: right;
 }
+tr.header_row th {
+    text-align: left;
+}
 .comment {
     color: #3f3f3f;
     font-style: italic;

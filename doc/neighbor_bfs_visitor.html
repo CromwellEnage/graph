@@ -9,7 +9,7 @@
     http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<title>Boost Graph Library: bfs_visitor</title>
+<title>Boost Graph Library: neighbor_bfs_visitor</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
@@ -17,41 +17,44 @@
 
 <br />
 
-<h1><tt>bfs_visitor&lt;EventVisitorList&gt;</tt></h1>
+<h1><tt>neighbor_bfs_visitor&lt;EventVisitorList&gt;</tt></h1>
 
 <p>This class is an adapter that converts a list of <a class="cxx_concept"
 href="EventVisitor.html">EventVisitor</a>s (constructed using <span
-class="cxx_code">std::<a href="https://en.cppreference.com/w/cpp/utility/pair"
->pair</a></span>) into a <a class="cxx_concept" href="BFSVisitor.html">BFS
-Visitor</a>.</p>
+class="cxx_code">std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a></span>) into a <a class="cxx_concept" href="NeighborBFSVisitor.html"
+>Neighbor BFS Visitor</a>.</p>
 
 <h3><a name="example"></a>Example</h3>
 
-<p>This is an excerpt from <a href="../example/bfs.cpp"><tt
->examples/bfs.cpp</tt></a> where three event-visitors are combined to make a
-<a class="cxx_concept" href="BFSVisitor.html">BFS Visitor</a>.  The functions
-<a class="cxx_code" href="distance_recorder.html">boost::record_distances()</a
->, <a class="cxx_code" href="predecessor_recorder.html"
->boost::record_predecessors()</a>, and <a class="cxx_code"
-href="copy_graph.html">copy_graph()</a> are all functions that create an event
-visitor.</p>
+<p>This is an excerpt from <a href="../example/bfs_neighbor.cpp"><tt
+>examples/bfs_neighbor.cpp</tt></a> where two event-visitors are combined to
+make a <a class="cxx_concept" href="NeighborBFSVisitor.html">Neighbor BFS
+Visitor</a>.  The functions <a class="cxx_code" href="distance_recorder.html"
+>boost::record_distances()</a> and <a href="predecessor_recorder.html"
+class="cxx_code">boost::record_predecessors()</a> are all functions that
+create an event visitor.</p>
 
 <pre class="cxx_code">
-  // Construct graph G and obtain the source vertex s ...
+// Construct graph `g` and obtain the source vertex `start` ...
 
-  boost::graph::breadth_first_search(G, s, 
-   boost::graph::make_bfs_visitor(
-    std::<a href="https://en.cppreference.com/w/cpp/utility/pair"
->make_pair</a>(boost::record_distances(d, boost::on_tree_edge()),
-    std::<a href="https://en.cppreference.com/w/cpp/utility/pair"
->make_pair</a>(boost::record_predecessors(p.begin(), 
-                                              boost::on_tree_edge()),
-                   copy_graph(G_copy, boost::on_examine_edge())))) );
+neighbor_breadth_first_search(
+    g,
+    start,
+    boost::graph::keywords::_color_map = <b>make_neighbor_bfs_visitor</b>(
+        std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>make_pair</a>(
+            boost::record_distances(d, boost::on_tree_edge()),
+            boost::record_predecessors(&p[0], boost::on_tree_edge())
+        )
+    )
+);
 </pre>
 
 <h3><a name="model_of"></a>Model of</h3>
 
-<p><a class="cxx_concept" href="BFSVisitor.html">BFS Visitor</a></p>
+<p><a class="cxx_concept" href="NeighborBFSVisitor.html">Neighbor BFS
+Visitor</a></p>
 
 <h3><a name="tpl_params"></a>Template Parameters</h3>
 
@@ -74,14 +77,14 @@ href="https://en.cppreference.com/w/cpp/utility/pair"
 
 <h3><a name="where_defined"></a>Where Defined</h3>
 
-<p><a href="../../../boost/graph/breadth_first_search.hpp"
-><tt>boost/graph/breadth_first_search.hpp</tt></a></p>
+<p><a href="../../../boost/graph/neighbor_bfs.hpp"
+><tt>boost/graph/neighbor_bfs.hpp</tt></a></p>
 
 <h3><a name="member_functions"></a>Member Functions</h3>
 
 <p>This class implements all of the member functions required by
-<a class="cxx_concept" href="BFSVisitor.html">BFS Visitor</a>.  In each
-function, the appropriate event is dispatched to the
+<a class="cxx_concept" href="NeighborBFSVisitor.html">Neighbor BFS
+Visitor</a>.  In each function, the appropriate event is dispatched to the
 <a class="cxx_concept" href="EventVisitor.html">Event Visitor</a> in the
 <span class="cxx_code">EventVisitorList</span>.</p>
 
@@ -97,13 +100,14 @@ function, the appropriate event is dispatched to the
 <td>
 <pre class="cxx_code">
 template &lt;class EventVisitorList&gt;
-bfs_visitor&lt;EventVisitorList&gt;
-make_bfs_visitor(EventVisitorList ev_list);
+neighbor_bfs_visitor&lt;EventVisitorList&gt;
+make_neighbor_bfs_visitor(EventVisitorList ev_list);
 </pre>
 </td>
 <td>
 <p>Returns the event visitor list adapted to be a
-<a class="cxx_concept" href="BFSVisitor.html">BFS Visitor</a>.</p>
+<a class="cxx_concept" href="NeighborBFSVisitor.html">Neighbor BFS
+Visitor</a>.</p>
 </td>
 </tr>
 
@@ -112,12 +116,6 @@ make_bfs_visitor(EventVisitorList ev_list);
 <h3><a name="see_also"></a>See Also</h3>
 
 <p><a href="visitor_concepts.html">Visitor concepts</a></p>
-
-<p>The following are event visitors: <a class="cxx_code"
-href="predecessor_recorder.html">predecessor_recorder</a>,
-<a class="cxx_code" href="distance_recorder.html">distance_recorder</a>,
-<a class="cxx_code" href="time_stamper.html">time_stamper</a>, and
-<a class="cxx_code" href="property_writer.html">property_writer</a>.</p>
 
 <br />
 <hr />

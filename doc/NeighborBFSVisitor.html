@@ -9,7 +9,7 @@
     http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<Title>Boost Graph Library: BFSVisitor</Title>
+<title>Boost Graph Library: Neighbor BFS Visitor</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
@@ -17,14 +17,15 @@
 
 <br />
 
-<h1><img src="figs/python.gif" alt="(Python)" />BFS Visitor Concept</h1>
+<h1><img src="figs/python.gif" alt="(Python)"/>Neighbor BFS Visitor
+Concept</h1>
 
 <p>This concept defines the visitor interface for <a class="cxx_code"
-href="breadth_first_search.html">breadth_first_search()</a>.  Users can define
-a class with the <span class="cxx_concept">BFS Visitor</span> interface and
-pass and object of the class to <a href="breadth_first_search.html"
-class="cxx_code">breadth_first_search()</a>, thereby augmenting the actions
-taken during the graph search.</p>
+href="neighbor_bfs.html">neighbor_breadth_first_search()</a>.  Users can
+define a class with the <span class="cxx_concept">Neighbor BFS Visitor</span>
+interface and pass and object of the class to <a class="cxx_code"
+href="neighbor_bfs.html">neighbor_breadth_first_search()</a>, thereby
+augmenting the actions taken during the graph search.</p>
 
 <h3><a name="refinement_of"></a>Refinement of</h3>
 
@@ -37,8 +38,7 @@ Constructible</a> (copying a visitor should be a lightweight operation).</p>
 
 <tr>
 <td class="cxx_code">V</td>
-<td>A type that is a model of <span class="cxx_concept">BFS
-Visitor</span>.</td>
+<td>A type that is a model of BFS Visitor.</td>
 </tr>
 
 <tr>
@@ -111,27 +111,51 @@ each of the out-edges of vertex <span class="cxx_code">u</span>.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Examine Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</td>
+<td nowrap="nowrap">Examine Out-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.examine_out_edge(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on every out-edge of each vertex after it is
 discovered.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Tree Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</td>
+<td nowrap="nowrap">Examine In-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.examine_in_edge(e, g)</td>
 <td class="cxx_code">void</td>
-<td>This is invoked on each edge as it becomes a member of the edges that form
+<td>This is invoked on every in-edge of each vertex after it is
+discovered.</td>
+</tr>
+
+<tr>
+<td nowrap="nowrap">Tree Out-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.tree_out_edge(e, g)</td>
+<td class="cxx_code">void</td>
+<td>This is invoked on each edge as it becomes a member of the out-edges of
 the search tree.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Non-Tree Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.non_tree_edge(e, g)</td>
+<td nowrap="nowrap">Tree In-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.tree_in_edge(e, g)</td>
 <td class="cxx_code">void</td>
-<td>This is invoked on back or cross edges for directed graphs and cross edges
-for undirected graphs.</td>
+<td>This is invoked on each edge as it becomes a member of the in-edges of the
+search tree.</td>
+</tr>
+
+<tr>
+<td nowrap="nowrap">Non-Tree Out-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.non_tree_out_edge(e, g)</td>
+<td class="cxx_code">void</td>
+<td>This is invoked on back or cross out-edges for bidirectional directed
+graphs.</td>
+</tr>
+
+<tr>
+<td nowrap="nowrap">Non-Tree In-Edge</td>
+<td class="cxx_code" nowrap="nowrap">vis.non_tree_in_edge(e, g)</td>
+<td class="cxx_code">void</td>
+<td>This is invoked on back or cross in-edges for bidirectional directed
+graphs.</td>
 </tr>
 
 <tr>
@@ -166,31 +190,9 @@ the out-edges of the adjacent vertices have been examined).</td>
 <h3><a name="models"></a>Models</h3>
 
 <ul>
-<li><a class="cxx_code" href="bfs_visitor.html">bfs_visitor</a></li>
+<li><a class="cxx_code" href="neighbor_bfs_visitor.html"
+>neighbor_bfs_visitor</a></li>
 </ul>
-
-<h3><a name="python"></a>Python</h3>
-
-<p>To implement a model of the <span class="python_code">BFSVisitor</span>
-concept in Python, create a new class that derives from the <span
-class="python_code">BFSVisitor</span> type of the graph, which will be named
-<span class="python_code"><i>GraphType</i>.BFSVisitor</span>.  The events and
-syntax are the same as with visitors in C++.  Here is an example for the
-Python <span class="python_code">bgl.Graph</span> graph type:</p>
-
-<pre class="python_code">
-class count_tree_edges_bfs_visitor(bgl.Graph.BFSVisitor):
-  def __init__(self, name_map):
-    bgl.Graph.BFSVisitor.__init__(self)
-    self.name_map = name_map
-
-  def tree_edge(self, e, g):
-    (u, v) = (g.source(e), g.target(e))
-    print "Tree edge ",
-    print self.name_map[u],
-    print " -&gt; ",
-    print self.name_map[v]
-</pre>
 
 <h3><a name="see_also"></a>See also</h3>
 

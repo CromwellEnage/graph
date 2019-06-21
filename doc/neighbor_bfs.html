@@ -9,7 +9,7 @@
     http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<title>Boost Graph Library: Breadth-First Search</title>
+<title>Boost Graph Library: Neighbor Breadth-First Search</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
@@ -17,15 +17,14 @@
 
 <br />
 
-<h1><a name="sec:bfs"></a><img src="figs/python.gif"
-alt="(Python)" /><tt>breadth_first_search</tt></h1>
+<h1><tt>neighbor_breadth_first_search</tt></h1>
 
 <h3>Synopsis</h3>
 
 <pre class="cxx_code">
 <span class="comment">// old-style named parameter version</span>
 template &lt;class Graph, class P, class T, class R&gt;
-void breadth_first_search(Graph&amp; G, 
+void neighbor_breadth_first_search(Graph&amp; G, 
   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 </pre>
@@ -36,7 +35,7 @@ is defined, then the following function overload definition is available.</p>
 
 <pre class="cxx_code">
 <a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
-    (void), breadth_first_search, ::boost::graph::keywords::tag,
+    (void), neighbor_breadth_first_search, ::boost::graph::keywords::tag,
     (required
         (graph, *(<span class="comment"
 >/* unspecified predicate */</span>))
@@ -63,14 +62,14 @@ is defined, then the following function overload definition is available.</p>
 <p>If the configuration macro
 <span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
 is <strong>not</strong> defined, then the following function overload
-definitions are available.</p>
+definition is available.</p>
 
 <pre class="cxx_code">
 template &lt;
     typename Graph,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
-void breadth_first_search(
+void neighbor_breadth_first_search(
     const Graph&amp; graph,
     const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
     const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
@@ -85,189 +84,84 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
         mpl::true_
     &gt;::type = mpl::true_()
 );
-
-<span class="comment">// non-named parameter version</span>
-template &lt;class Graph, class Buffer, class BFSVisitor, 
-	  class ColorMap&gt;
-void breadth_first_search(const Graph&amp; g, 
-   typename <a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertex_descriptor s, 
-   Buffer&amp; Q, BFSVisitor vis, ColorMap color);
 </pre>
 
 <h3><a name="sec:description"></a>Description</h3>
 
-<p>The <span class="cxx_code">breadth_first_search()</span> function performs
-a breadth-first traversal [<a href="./bibliography.html#moore59">49</a>] of a
-directed or undirected graph.  A breadth-first traversal visits vertices that
-are closer to the source before visiting vertices that are further away.  In
-this context ``distance'' is defined as the number of edges in the shortest
-path from the source vertex.  The <span class="cxx_code"
->breadth_first_search()</span> function can be used to compute the shortest
-path from the source to all reachable vertices and the resulting shortest-path
-distances.  For more definitions related to BFS see section
-<a href="graph_theory_review.html#sec:bfs-algorithm">Breadth-First
-Search</a>.</p>
+<p>The <span class="cxx_code">neighbor_breadth_first_search()</span> algorithm
+is like <a class="cxx_code" href="breadth_first_search.html"
+>breadth_first_search()</a>, except that it traverses in-edges as well as
+out-edges.</p>
 
-<p>BFS uses two data structures to to implement the traversal: a color marker
-for each vertex and a queue.  White vertices are undiscovered while gray
-vertices are discovered but have undiscovered adjacent vertices.  Black
-vertices are discovered and are adjacent to only other black or gray
-vertices.  The algorithm proceeds by removing a vertex </i>u</i> from the
-queue and examining each out-edge <i>(u,v)</i>.  If an adjacent vertex
-<i>v</i> is not already discovered, it is colored gray and placed in the
-queue.  After all of the out-edges are examined, vertex <i>u</i> is colored
-black and the process is repeated.  Pseudo-code for the BFS algorithm is a
-listed below.</p>
+<h3><a name="sec:example"></a>Example</h3>
 
-<table>
-<tr>
-<td>
-<pre>
-BFS(<i>G</i>, <i>s</i>)
-  <b>for</b> each vertex <i>u in V[G]</i>
-    <i>color[u] :=</i> WHITE 
-    <i>d[u] := infinity</i> 
-    <i>p[u] := u</i> 
-  <b>end for</b>
-  <i>color[s] :=</i> GRAY 
-  <i>d[s] := 0</i> 
-  ENQUEUE(<i>Q</i>, <i>s</i>)
-  <b>while</b> (<i>Q != &Oslash;</i>) 
-    <i>u :=</i> DEQUEUE(Q)
-    <b>for</b> each vertex <i>v in Adj[u]</i>
-      <b>if</b> (<i>color[v] =</i> WHITE)
-        <i>color[v] :=</i> GRAY 
-        <i>d[v] := d[u] + 1</i>  
-        <i>p[v] := u</i>  
-        ENQUEUE(<i>Q</i>, <i>v</i>)
-      <b>else</b>
-        <b>if</b> (<i>color[v] =</i> GRAY) 
-          ...
-        <b>else</b> 
-          ...
-    <b>end for</b>
-    <i>color[u] :=</i> BLACK
-  <b>end while</b>
-  return (<i>d</i>, <i>p</i>)
-</pre>
-</td>
-<td>
-<pre>
-
-initialize vertex <i>u</i> 
-
-
-
-
-
-
-discover vertex <i>s</i> 
-
-examine vertex <i>u</i> 
-examine edge <i>(u,v)</i>
-<i>(u,v)</i> is a tree edge 
-
-
-
-discover vertex <i>v</i> 
-<i>(u,v)</i> is a non-tree edge
-
-<i>(u,v)</i> has a gray target 
-
-<i>(u,v)</i> has a black target 
-
-finish vertex <i>u</i> 
-</pre>
-</tr>
-</table>
-
-<p>The <span class="cxx_code">breadth_first_search()</span> function can be
-extended with user-defined actions that will be called a certain event
-points. The actions must be provided in the form of a visitor object: that is,
-an object who's type meets the requirements for a <a class="cxx_concept"
-href="BFSVisitor.html">BFS Visitor</a>.  In the above pseudo-code, the event
-points are the labels on the right.  Also a description of each event point is
-given below.  By default, the <span class="cxx_code"
->breadth_first_search()</span> function does not carry out any actions, not
-even recording distances or predecessors.  However, these can be easily added
-using the <a class="cxx_code" href="distance_recorder.html"
->distance_recorder</a> and <a href="predecessor_recorder.html"
-class="cxx_code">predecessor_recorder</a> event visitors.</p>
-
-<h3><a name="sec:examples"></a>Examples</h3>
-
-<p>The example in <a href="../example/bfs-example.cpp"
-><tt>example/bfs-example.cpp</tt></a> demonstrates using the BGL Breadth-first
-search algorithm on the graph from
-<a href="graph_theory_review.html#fig:bfs-example">Figure 6</a>.  The file
-<a href="../example/bfs-example2.cpp"><tt>example/bfs-example2.cpp</tt></a>
-contains the same example, except that the <span class="cxx_code"
->adacency_list</span> class used has <span class="cxx_code">VertexList</span>
-and <span class="cxx_code">EdgeList</span> set to
-<span class="cxx_code">listS</span>.</p>
-
-<p>One overload of <span class="cxx_code">breadth_first_search()</span> can
-take in named parameter arguments, courtesy of <a
-href="../../parameter/doc/html/index.html">Boost.Parameter</a>.  For another
-example, given the following definitions:</p>
+<p>One overload of <span class="cxx_code"
+>neighbor_breadth_first_search()</span> can take in named parameter arguments,
+courtesy of <a href="../../parameter/doc/html/index.html"
+>Boost.Parameter</a>.  For example, given the following definitions:</p>
 
 <pre class="cxx_code">
-template &lt;typename ...&gt;
-struct bfs_testing_visitor
-{
-    <span class="comment">// Overload the necessary member functions...</span>
-};
-
-<span class="comment">// ...</span>
 typedef boost::<a href="adjacency_list.html">adjacency_list</a>&lt;
-    boost::vecS, boost::vecS, boost::directedS,
-    boost::<a href="property.html">property</a>&lt;boost::vertex_color_t, boost::default_color_type&gt;
+    boost::mapS, boost::vecS, boost::bidirectionalS,
+    boost::<a href="property.html">property</a>&lt;
+        boost::vertex_color_t, boost::default_color_type, <span
+class="comment">// ...</span>
+    &gt;
 &gt; Graph;
-typedef boost::<a href="graph_traits.html">graph_traits</a>&lt;Graph&gt;::vertex_descriptor Vertex;
-typedef boost::property_map&lt;Graph, boost::vertex_index_t&gt;::const_type VIndexMap;
-typedef boost::property_map&lt;Graph, boost::vertex_color_t&gt;::type ColorMap;
 
-Graph g;
+Graph G(5);
 <span class="comment">// ...</span>
-Vertex start = <span class="comment">// ...</span>
-ColorMap color_pm = get(boost::vertex_color, g);
-bfs_testing_visitor&lt;...&gt; vis;
+typedef boost::<a href="graph_traits.html">graph_traits</a
+>&lt;Graph&gt;::vertex_descriptor Vertex;
+std::<a href="http://en.cppreference.com/w/cpp/container/vector"
+>vector</a>&lt;Vertex&gt; p(boost::num_vertices(G));
+Vertex start = *boost::vertices(G).first;
 </pre>
 
 <p>The following call illustrates the syntax for passing arguments by
 name.</p>
 
 <pre class="cxx_code">
-breadth_first_search(
+neighbor_breadth_first_search(
     g,
     start,
-    <b>boost::graph::keywords::_visitor =</b> vis,
-    <b>boost::graph::keywords::_color_map =</b> color_pm
+    <b>boost::graph::keywords::_color_map =</b> <a
+href="neighbor_bfs_visitor.html">make_neighbor_bfs_visitor</a>(
+        std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>make_pair</a>(
+            boost::record_distances(d, boost::on_tree_edge()),
+            boost::record_predecessors(&p[0], boost::on_tree_edge())
+        )
+    )
 );
 </pre>
 
 <p>If the configuration macro <span class="cxx_code"
 >BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then the
 same function overload can deduce the non-graph arguments, so the following
-calls are equivalent to the previous one.</p>
+call is equivalent to the previous one.</p>
 
 <pre class="cxx_code">
-breadth_first_search(g, start, vis, color_pm);
-breadth_first_search(g, start, color_pm, vis);
-breadth_first_search(g, vis, start, color_pm);
-breadth_first_search(g, vis, color_pm, start);
-breadth_first_search(g, color_pm, start, vis);
-breadth_first_search(g, color_pm, vis, start);
+neighbor_breadth_first_search(
+    g,
+    start,
+    <a href="neighbor_bfs_visitor.html">make_neighbor_bfs_visitor</a>(
+        std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>make_pair</a>(
+            boost::record_distances(d, boost::on_tree_edge()),
+            boost::record_predecessors(&p[0], boost::on_tree_edge())
+        )
+    )
+);
 </pre>
 
-<p>The full program is in
-<a href="../test/bfs.cpp"><tt>test/bfs.cpp</tt></a></p>
+<p>The full program is in <a href="../example/bfs_neighbor.cpp"
+><tt>example/bfs_neighbor.cpp</tt></a></p>
 
 <h3><a name="sec:where_defined"></a>Where Defined:</h3>
 
-<p><a href="../../../boost/graph/breadth_first_search.hpp"
-><tt>boost/graph/breadth_first_search.hpp</tt></a></p>
+<p><a href="../../../boost/graph/neighbor_bfs.hpp"
+><tt>boost/graph/neighbor_bfs.hpp</tt></a></p>
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
@@ -318,13 +212,11 @@ keyword:</th>
 </tr>
 <tr>
 <th>Description:</th>
-<td>A directed or undirected graph.  Its type must be a model of
+<td>A bidirectional directed graph.  Its type must be a model of
 <a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a> and
-<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>.</td>
-</tr>
-<tr>
-<th>Python:</th>
-<td>The parameter is named <span class="python_code">graph</span>.</td>
+<a class="cxx_concept" href="VertexListGraph.html">Vertex List Graph</a>.  For
+undirected or non-bidirectional directed graphs, use <a class="cxx_code"
+href="breadth_first_search.html">breadth_first_search()</a>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -346,10 +238,6 @@ argument type</i>&gt;::vertex_descriptor s</td>
 <tr>
 <th>Description:</th>
 <td>The vertex that the breadth-first search should originate from.</td>
-</tr>
-<tr>
-<th>Python:</th>
-<td>The parameter is named <span class="python_code">root_vertex</span>.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -375,13 +263,8 @@ concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">boost::graph::default_bfs_visitor()</td>
-</tr>
-<tr>
-<th>Python:</th>
-<td>The parameter should be an object that derives from the
-<a class="python_code" href="BFSVisitor.html#python">BFSVisitor</a> type of
-the graph.</td>
+<td class="cxx_code">boost::graph::<a href="neighbor_bfs_visitor.html"
+>neighbor_bfs_visitor</a>&lt;&gt;()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -426,11 +309,6 @@ class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
 map.</td>
 </tr>
 <tr>
-<th>Python:</th>
-<td>The color map must be a <span class="python_code">vertex_color_map</span>
-for the graph.</td>
-</tr>
-<tr>
 <td colspan="2"><hr /></td>
 </tr>
 <tr class="deduced_param_0">
@@ -472,10 +350,6 @@ class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 <span class="cxx_code">dummy_property_map</span> object.</td>
 </tr>
 <tr>
-<th>Python:</th>
-<td>Unsupported parameter.</td>
-</tr>
-<tr>
 <td colspan="2"><hr /></td>
 </tr>
 <tr class="deduced_param_0">
@@ -509,76 +383,18 @@ vertex descriptor type of the graph.</p>
 <td>A default-constructed <span class="cxx_code">boost::queue</span> whose
 value type is the vertex descriptor type of the graph.</td>
 </tr>
-<tr>
-<th>Python:</th>
-<td>The buffer must derive from the <a class="python_code" href="Buffer.html"
->Buffer</a> type for the graph.</td>
-</tr>
 </table>
 
 <h3><a name="sec:complexity"></a>Complexity</h3>
 
 <p>The time complexity is <i>O(E + V)</i>.</p>
 
-<h3><a name="sec:visitor_event_points"></a>Visitor Event Points</h3>
-
-<table>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
-<td>is invoked on every vertex before the start of the search.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
-<td>is invoked on each vertex as it is removed from the buffer.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
-<td>is invoked on every out-edge of each vertex immediately after the vertex
-is removed from the buffer.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</th>
-<td>is invoked (in addition to <span class="cxx_code">examine_edge()</span>)
-if the edge is a tree edge.  The target vertex of edge
-<span class="cxx_code">e</span> is discovered at this time.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</th>
-<td>is invoked the first time the algorithm encounters vertex <span
-class="cxx_code">u</span>.  All vertices closer to the source vertex have been
-discovered, and vertices further from the source have not yet been
-discovered.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.non_tree_edge(e, g)</th>
-<td>is invoked (in addition to <span class="cxx_code">examine_edge()</span>)
-if the edge is not a tree edge.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.gray_target(e, g)</th>
-<td>is invoked (in addition to <span class="cxx_code">non_tree_edge()</span>)
-if the target vertex is colored gray at the time of examination.  The color
-gray indicates that the vertex is currently in the buffer.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.black_target(e, g)</th>
-<td>is invoked (in addition to <span class="cxx_code">non_tree_edge()</span>)
-if the target vertex is colored black at the time of examination.  The color
-black indicates that the vertex is no longer in the buffer.</td>
-</tr>
-<tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
-<td>is invoked after all of the out-edges of <span class="cxx_code">u</span>
-have been examined and all of the adjacent vertices have been discovered.</td>
-</tr>
-</table>
-
 <h3><a name="sec:see_also"></a>See Also</h3>
 
 <p><a class="cxx_code" href="breadth_first_visit.html"
->breadth_first_visit()</a>, <a class="cxx_code" href="bfs_visitor.html"
->bfs_visitor</a>, and <a class="cxx_code" href="neighbor_bfs.html"
->neighbor_breadth_first_search()</a></p>
+>breadth_first_visit()</a>, <a href="neighbor_bfs_visitor.html"
+class="cxx_code">neighbor_bfs_visitor</a>, and <a href="neighbor_bfs.html"
+class="cxx_code">neighbor_breadth_first_search()</a></p>
 
 <h3><a name="sec:notes"></a>Notes</h3>
 
