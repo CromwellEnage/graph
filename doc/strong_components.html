@@ -28,7 +28,7 @@ template &lt;class Graph, class ComponentMap, class P, class T, class R&gt;
 typename property_traits&lt;ComponentMap&gt;::value_type
 strong_components(Graph& g, ComponentMap comp,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
-  >/* all defaults */</span>);
+>/* all defaults */</span>);
 
 <span class="comment">// there is not a non-named parameter version of this function</span>
 </pre>
@@ -38,7 +38,7 @@ strong_components(Graph& g, ComponentMap comp,
 is defined, then the following function overload definition is available.</p>
 
 <pre class="cxx_code">
-<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (
         boost::lazy_enable_if&lt;
             typename mpl::has_key&lt;
@@ -95,7 +95,7 @@ is <strong>not</strong> defined, then the following function overload
 definition is available.</p>
 
 <pre class="cxx_code">
-<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (
         boost::lazy_enable_if&lt;
             <span class="comment"

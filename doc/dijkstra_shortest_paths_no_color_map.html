@@ -244,7 +244,7 @@ dijkstra_shortest_paths_no_color_map(
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -289,7 +289,7 @@ the shortest paths tree will be rooted at this vertex.</td>
 
 <h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -626,7 +626,8 @@ concept.  The visitor object is passed by value <a href="#2">[2]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">boost::graph::default_dijkstra_visitor()</td>
+<td class="cxx_code">boost::graph::<a href="dijkstra_visitor.html"
+>dijkstra_visitor</a>&lt;&gt;()</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -644,12 +645,12 @@ type of the graph.</td>
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(u, g)</th>
+<th class="cxx_code">vis.initialize_vertex(u, g)</th>
 <td>is invoked on each vertex in the graph before the start of the
 algorithm.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<th class="cxx_code">vis.examine_vertex(u, g)</th>
 <td>is invoked on a vertex as it is removed from the priority queue and added
 to set <i>S</i>.  At this point we know that <i>(p[u],u)</i> is a
 shortest-paths tree edge so <i>d[u] = delta(s,u) = d[p[u]] +
@@ -658,29 +659,29 @@ increasing <i>d[u<sub>1</sub>] &lt;= d[u<sub>2</sub>] &lt;=
 d[u<sub>n</sub>]</i>.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on each out-edge of a vertex immediately after it has been
 added to set <i>S</i>.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_relaxed(e, g)</th>
 <td>is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.  The
 edge <i>(u,v)</i> that participated in the last relaxation for vertex <i>v</i>
 is an edge in the shortest paths tree.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(v, g)</th>
+<th class="cxx_code">vis.discover_vertex(v, g)</th>
 <td>is invoked on vertex <i>v</i> when the edge <i>(u,v)</i> is examined and
 <i>v</i> has not yet been discovered (i.e. its distance was infinity before
 relaxation was attempted on the edge).  This is also when the vertex is
 inserted into the priority queue.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_not_relaxed(e, g)</th>
 <td>is invoked if the edge is not relaxed (see above).</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<th class="cxx_code">vis.finish_vertex(u, g)</th>
 <td>is invoked on a vertex after all of its out edges have been examined.</td>
 </tr>
 </table>
@@ -722,10 +723,10 @@ given to <i class="cxx_code">dijkstra_shortest_paths_no_color_map()</i> will
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2009</td>
+<td class="copyright">Copyright &copy; 2009</td>
 <td>Trustees of Indiana University</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

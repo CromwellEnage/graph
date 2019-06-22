@@ -30,7 +30,7 @@
 namespace boost { namespace detail {
 
     template < typename ParityMap, typename WeightMap, typename IndexMap >
-    class mas_min_cut_visitor : public boost::graph::default_mas_visitor
+    class mas_min_cut_visitor : public boost::graph::mas_visitor<>
     {
         typedef one_bit_color_map<IndexMap> InternalParityMap;
         typedef typename boost::property_traits<WeightMap>::value_type Weight;

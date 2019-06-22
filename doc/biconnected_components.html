@@ -1,107 +1,230 @@
-<HTML>
+<html>
 <!--
-     Copyright 2001-2004 The Trustees of Indiana University.
-    
-     Use, modification and distribution is subject to the Boost Software
-     License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-    
-      Authors: Douglas Gregor
-               Jeremy Siek
-               Andrew Lumsdaine
-  -->
-<Head>
-<Title>Boost Graph Library: Biconnected Components and Articulation Points</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    Copyright 2001-2004 The Trustees of Indiana University.
 
-<BR Clear>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 
-<h1>
-<TT>
-<img src="figs/python.gif" alt="(Python)"/>
-<A NAME="sec:biconnected-components">biconnected_components
-</A>
-</TT>
-and 
-<tt>articulation_points</tt>
-</h1>
+    Authors: Douglas Gregor, Jeremy Siek, Andrew Lumsdaine
+-->
+<head>
+<title>Boost Graph Library: Biconnected Components and Articulation
+Points</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<PRE>
-<i>// named parameter version</i>
+<br />
+
+<h1><img src="figs/python.gif" alt="(Python)" /><a
+name="sec:biconnected-components"></a><tt>biconnected_components</tt> and
+<a name="sec:articulation_points"></a><tt>articulation_points</tt></h1>
+
+<h3>Synopsis</h3>
+
+<pre class="cxx_code">
+<span class="comment">// old-style named parameter versions</span>
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
           typename P, typename T, typename R&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
-                       const bgl_named_params&lt;P, T, R&gt;&amp; params)
+biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out, 
+                       const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename Graph, typename ComponentMap,
           typename P, typename T, typename R&gt;
 std::size_t
-biconnected_components(const Graph& g, ComponentMap comp, 
-                       const bgl_named_params&lt;P, T, R&gt;&amp; params)
+biconnected_components(const Graph&amp; g, ComponentMap comp, 
+                       const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename Graph, typename OutputIterator, 
           typename P, typename T, typename R&gt;
-OutputIterator articulation_points(const Graph& g, OutputIterator out, 
-                                   const bgl_named_params&lt;P, T, R&gt;&amp; params)
+OutputIterator articulation_points(const Graph&amp; g, OutputIterator out, 
+                                   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
-<i>// non-named parameter version</i>
+<span class="comment">// non-named parameter versions</span>
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
           typename DiscoverTimeMap, typename LowPointMap&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
+biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out, 
                        DiscoverTimeMap discover_time, LowPointMap lowpt);
 
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out);
+biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out);
 
 template &lt;typename Graph, typename ComponentMap&gt;
-std::size_t biconnected_components(const Graph& g, ComponentMap comp);
-<a name="sec:articulation_points">
+std::size_t biconnected_components(const Graph&amp; g, ComponentMap comp);
+
 template &lt;typename Graph, typename OutputIterator&gt;
-OutputIterator articulation_points(const Graph& g, OutputIterator out);
-</PRE>
+OutputIterator articulation_points(const Graph&amp; g, OutputIterator out);
+</pre>
 
-<P>
-A connected graph is <i>biconnected</i> if the removal of any single
+<p>If the configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then the
+following function overload definitions are available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment"
+>/* unspecified metafunction predicate instantiation */</span>,
+            <span class="comment"
+>// unspecified metafunction instantiation</span>
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (component_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (result
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+    )
+    (optional
+        (discover_time_map
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (lowpoint_map
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (predecessor_map
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (visitor
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is <strong>not</strong
+> defined, then the following function overload definitions are available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment"
+>/* unspecified metafunction predicate instantiation */</span>,
+            <span class="comment"
+>// unspecified metafunction instantiation</span>
+        &gt;
+    ), strong_components, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (component_map, *)
+    )
+    (optional
+        (vertex_index_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (root_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (discover_time_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (color_map
+          , *
+          , <a
+href="../../property_map/doc/shared_array_property_map.html"
+>make_shared_array_property_map</a>(
+                num_vertices(graph),
+                white_color,
+                vertex_index_map
+            )
+        )
+    )
+)
+</pre>
+
+<p>However, for users of Microsoft Visual C++ 14.0 with 64-bit addressing,
+and for users of MinGW with GCC version 5 or less, only the following function
+overload definitions are available.</p>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
+template &lt;
+    typename Graph, typename ComponentMap,
+    typename TaggedArg0, typename TaggedArg1, .., typename TaggedArg1
+&gt;
+typename <a href="../../property_map/doc/property_map.html">property_traits</a
+>&lt;ComponentMap&gt;::value_type strong_components(
+    const Graph&amp; graph, ComponentMap component_map,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    ...,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ...,
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+</pre>
+
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>A connected graph is <b><i>biconnected</i></b> if the removal of any single
 vertex (and all edges incident on that vertex) can not disconnect the
-graph. More generally, the biconnected components of a graph are the
-maximal subsets of vertices such that the removal of a vertex from a
-particular component will not disconnect the component. Unlike
-connected components, vertices may belong to multiple biconnected
-components: those vertices that belong to more than one biconnected
-component are called <em>articulation points</em> or, equivalently,
-<em>cut vertices</em>. Articulation points are vertices whose removal
-would increase the number of connected components in the graph. Thus,
-a graph without articulation points is biconnected. The following
-figure illustrates the articulation points and biconnected components
-of a small graph:
+graph.  More generally, the biconnected components of a graph are the maximal
+subsets of vertices such that the removal of a vertex from a particular
+component will not disconnect the component.  Unlike connected components,
+vertices may belong to multiple biconnected components: those vertices that
+belong to more than one biconnected component are called <b><i>articulation
+points</i></b> or, equivalently, <b><i>cut vertices</i></b>.  Articulation
+points are vertices whose removal would increase the number of connected
+components in the graph.  Thus, a graph without articulation points is
+biconnected.  The following figure illustrates the articulation points and
+biconnected components of a small graph:</p>
 
-<p><center><img src="figs/biconnected.png"></center>
+<p style="text-align: center;"><img src="figs/biconnected.png"></p>
 
-<p>Vertices can be present in multiple biconnected components, but each
-edge can only be contained in a single biconnected component. The
-output of the <tt>biconnected_components</tt> algorithm records the
-biconnected component number of each edge in the property map
-<tt>comp</tt>. Articulation points will be emitted to the (optional)
-output iterator argument to <tt>biconnected_components</tt>, or can be
-computed without the use of a biconnected component number map via
-<tt>articulation_points</tt>. These functions return the number of
-biconnected components, the articulation point output iterator, or a
-pair of these quantities, depending on what information was
-recorded.
+<p>Vertices can be present in multiple biconnected components, but each edge
+can only be contained in a single biconnected component.  The output of the
+<span class="cxx_code">biconnected_components()</span> algorithm records the
+biconnected component number of each edge in the component map
+argument.  Articulation points will be emitted to the (optional) output
+iterator argument to <span class="cxx_code">biconnected_components()</span>,
+or can be computed without the use of a biconnected component number map via
+<span class="cxx_code">articulation_points()</span>.  These functions return
+the number of biconnected components, the articulation point output iterator,
+or a pair of these quantities, depending on what information was recorded.</p>
 
-<p>The algorithm implemented is due to Tarjan [<a href="bibliography.html#tarjan72:dfs_and_linear_algo">41</a>].
+<p>The algorithm implemented is due to Tarjan
+[<a href="bibliography.html#tarjan72:dfs_and_linear_algo">41</a>].</p>
 
-<H3>Where Defined</H3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/biconnected_components.hpp"><TT>boost/graph/biconnected_components.hpp</TT></a>
-
+<p><a href="../../../boost/graph/biconnected_components.hpp"
+><tt>boost/graph/biconnected_components.hpp</tt></a></p>
 
 <h3>Parameters</h3>
 
@@ -259,5 +382,5 @@ HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <a href="http://www.boost.org/people/doug_gregor.html">Doug Gregor</a>, Indiana University
 </TD></TR></TABLE>
 
-</BODY>
-</HTML> 
+</body>
+</html> 

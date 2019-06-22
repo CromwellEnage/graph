@@ -139,8 +139,6 @@ namespace boost { namespace graph {
     {
         return astar_visitor<Visitors>(vis);
     }
-
-    typedef astar_visitor<> default_astar_visitor;
 }} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
@@ -552,11 +550,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_astar_visitor
+                astar_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_astar_visitor>()
+            boost::value_factory<astar_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
@@ -679,11 +677,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_astar_visitor
+                astar_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_astar_visitor>()
+            boost::value_factory<astar_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
@@ -786,11 +784,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_astar_visitor
+                astar_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_astar_visitor>()
+            boost::value_factory<astar_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
@@ -913,11 +911,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_astar_visitor
+                astar_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_astar_visitor>()
+            boost::value_factory<astar_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
@@ -1058,7 +1056,6 @@ namespace boost {
     using ::boost::graph::astar_heuristic;
     using ::boost::graph::astar_visitor;
     using ::boost::graph::make_astar_visitor;
-    using ::boost::graph::default_astar_visitor;
 
   template <typename VertexListGraph,
             typename AStarHeuristic,

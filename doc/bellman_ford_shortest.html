@@ -241,7 +241,7 @@ bool r = bellman_ford_shortest_paths(
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -268,7 +268,7 @@ href="VertexListGraph.html">Vertex List Graph</a>.</td>
 
 <h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -453,12 +453,13 @@ keyword:</th>
 <tr>
 <th>Description:</th>
 <td>The visitor object, whose type must be a model of <a class="cxx_concept"
-href="./BellmanFordVisitor.html">Bellman-Ford Visitor</a>.  The visitor object
+href="BellmanFordVisitor.html">Bellman-Ford Visitor</a>.  The visitor object
 is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">boost::graph::default_bellman_visitor()</td>
+<td class="cxx_code">boost::graph::<a href="bellman_visitor.html"
+>bellman_visitor</a>&lt;&gt;()</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -540,28 +541,28 @@ type</i>&gt;::value_type</span>.</td>
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on every edge in the graph <i>|V|</i> times.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_relaxed(e, g)</th>
 <td>is invoked when the distance label for the target vertex is
 decreased.  The edge <i>(u,v)</i> that participated in the last relaxation for
 vertex <i>v</i> is an edge in the shortest paths tree.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_not_relaxed(e, g)</th>
 <td>is invoked if the distance label for the target vertex is not
 decreased.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_minimized(e, g)</th>
+<th class="cxx_code">vis.edge_minimized(e, g)</th>
 <td>is invoked during the second stage of the algorithm, during the test of
 whether each edge was minimized.  If the edge is minimized then this function
 is invoked.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_not_minimized(e, g)</th>
+<th class="cxx_code">vis.edge_not_minimized(e, g)</th>
 <td>is also invoked during the second stage of the algorithm, during the test
 of whether each edge was minimized.  If the edge was not minimized, this
 function is invoked.  This happens when there is a negative cycle in the
@@ -581,12 +582,12 @@ reference.</p>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2000</td>
+<td class="copyright">Copyright &copy; 2000</td>
 <td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
 Indiana University
-(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+(<a class="external" href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

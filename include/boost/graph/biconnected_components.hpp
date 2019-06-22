@@ -488,7 +488,7 @@ namespace boost { namespace graph {
             boost::detail::is_dfs_visitor
           >
         )
-        ,default_dfs_visitor()
+        ,dfs_visitor<>()
       )
     )
   )
@@ -567,7 +567,7 @@ namespace boost { namespace graph {
       )
       (visitor
         ,*
-        ,default_dfs_visitor()
+        ,dfs_visitor<>()
       )
     )
   )
@@ -636,7 +636,7 @@ namespace boost { namespace graph {
               boost::detail::is_dfs_visitor
             >
           )
-          ,default_dfs_visitor()
+          ,dfs_visitor<>()
         )
       )
     )
@@ -691,7 +691,7 @@ namespace boost { namespace graph {
       (vertex_index_map, *)
     )
     (optional
-      (visitor, *, default_dfs_visitor())
+      (visitor, *, dfs_visitor<>())
     )
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
@@ -794,7 +794,7 @@ namespace boost { namespace graph {
               boost::detail::is_dfs_visitor
             >
           )
-          ,default_dfs_visitor()
+          ,dfs_visitor<>()
         )
       )
     )
@@ -885,7 +885,7 @@ namespace boost { namespace graph {
           get(vertex_index, graph)
         )
       )
-      (visitor, *, default_dfs_visitor())
+      (visitor, *, dfs_visitor<>())
       (lowpoint_map
         ,*
         ,make_shared_array_property_map(
@@ -955,7 +955,7 @@ namespace boost { namespace graph {
               boost::detail::is_dfs_visitor
             >
           )
-          ,default_dfs_visitor()
+          ,dfs_visitor<>()
         )
       )
     )
@@ -998,7 +998,7 @@ namespace boost { namespace graph {
       (vertex_index_map, *)
     )
     (optional
-      (visitor, *, default_dfs_visitor())
+      (visitor, *, dfs_visitor<>())
     )
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
@@ -1088,7 +1088,7 @@ namespace boost { namespace graph {
               boost::detail::is_dfs_visitor
             >
           )
-          ,default_dfs_visitor()
+          ,dfs_visitor<>()
         )
       )
     )
@@ -1156,7 +1156,7 @@ namespace boost { namespace graph {
           get(vertex_index, graph)
         )
       )
-      (visitor, *, default_dfs_visitor())
+      (visitor, *, dfs_visitor<>())
       (lowpoint_map
         ,*
         ,make_shared_array_property_map(
@@ -1225,7 +1225,7 @@ namespace boost { namespace graph {
               boost::detail::is_dfs_visitor
             >
           )
-          ,default_dfs_visitor()
+          ,dfs_visitor<>()
         )
       )
     )
@@ -1264,7 +1264,7 @@ namespace boost { namespace graph {
       (vertex_index_map, *)
     )
     (optional
-      (visitor, *, default_dfs_visitor())
+      (visitor, *, dfs_visitor<>())
     )
   )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
@@ -1360,11 +1360,11 @@ namespace boost { namespace graph { namespace detail {
                 typename parameter::value_type<
                     ArgPack,
                     boost::graph::keywords::tag::visitor,
-                    default_dfs_visitor
+                    dfs_visitor<>
                 >::type
             >::type vis = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ];
             return boost::detail::biconnected_components_impl(
                 g,
@@ -1438,11 +1438,11 @@ namespace boost { namespace graph { namespace detail {
                 typename parameter::value_type<
                     ArgPack,
                     boost::graph::keywords::tag::visitor,
-                    default_dfs_visitor
+                    dfs_visitor<>
                 >::type
             >::type vis = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ];
             return boost::detail::biconnected_components_impl(
                 g,
@@ -1554,7 +1554,10 @@ namespace boost {
           ]
         )
       ],
-      arg_pack[boost::graph::keywords::_visitor | default_dfs_visitor()]
+      arg_pack[
+        boost::graph::keywords::_visitor |
+        boost::graph::dfs_visitor<>()
+      ]
     );
 #else
     typedef typename get_param_type< vertex_discover_time_t, bgl_named_params<P,T,R> >::type dispatch_type;

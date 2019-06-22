@@ -124,11 +124,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_dijkstra_visitor
+                dijkstra_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_dijkstra_visitor>()
+            boost::value_factory<dijkstra_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::lazy_value_type<

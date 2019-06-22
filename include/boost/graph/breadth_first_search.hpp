@@ -542,7 +542,6 @@ namespace boost { namespace graph {
   make_bfs_visitor(Visitors vis) {
     return bfs_visitor<Visitors>(vis);
   }
-  typedef bfs_visitor<> default_bfs_visitor;
 }} // namespace boost::graph
 
 #include <boost/core/enable_if.hpp>
@@ -697,11 +696,11 @@ namespace boost { namespace graph {
         typename parameter::value_type<
             Args,
             boost::graph::keywords::tag::visitor,
-            default_bfs_visitor
+            bfs_visitor<>
         >::type
     >::type vis = args[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<default_bfs_visitor>()
+        boost::value_factory<bfs_visitor<> >()
     ];
     typename boost::detail::map_maker<
         VertexListGraph,
@@ -792,11 +791,11 @@ namespace boost { namespace graph {
         typename parameter::value_type<
             Args,
             boost::graph::keywords::tag::visitor,
-            default_bfs_visitor
+            bfs_visitor<>
         >::type
     >::type vis = args[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<default_bfs_visitor>()
+        boost::value_factory<bfs_visitor<> >()
     ];
     typename boost::detail::map_maker<
         VertexListGraph,
@@ -963,11 +962,11 @@ namespace boost {
         typename parameter::value_type<
             arg_pack_type,
             boost::graph::keywords::tag::visitor,
-            boost::graph::default_bfs_visitor
+            boost::graph::bfs_visitor<>
         >::type
     >::type vis = arg_pack[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<boost::graph::default_bfs_visitor>()
+        boost::value_factory<boost::graph::bfs_visitor<> >()
     ];
     typename boost::detail::map_maker<
         VertexListGraph,
@@ -1021,11 +1020,11 @@ namespace boost {
         typename parameter::value_type<
             arg_pack_type,
             boost::graph::keywords::tag::visitor,
-            boost::graph::default_bfs_visitor
+            boost::graph::bfs_visitor<>
         >::type
     >::type vis = arg_pack[
         boost::graph::keywords::_visitor ||
-        boost::value_factory<boost::graph::default_bfs_visitor>()
+        boost::value_factory<boost::graph::bfs_visitor<> >()
     ];
     typename boost::detail::map_maker<
         IncidenceGraph,
@@ -1083,7 +1082,7 @@ namespace boost { namespace graph { namespace detail {
                 ],
                 arg_pack[
                     boost::graph::keywords::_visitor ||
-                    boost::value_factory<default_bfs_visitor>()
+                    boost::value_factory<bfs_visitor<> >()
                 ],
                 boost::detail::make_color_map_from_arg_pack(g, arg_pack)
             );
@@ -1114,7 +1113,7 @@ namespace boost { namespace graph { namespace detail {
                 ],
                 arg_pack[
                     boost::graph::keywords::_visitor ||
-                    boost::value_factory<default_bfs_visitor>()
+                    boost::value_factory<bfs_visitor<> >()
                 ],
                 boost::detail::make_color_map_from_arg_pack(g, arg_pack)
             );
@@ -1136,7 +1135,6 @@ namespace boost {
     using ::boost::graph::breadth_first_search;
     using ::boost::graph::bfs_visitor;
     using ::boost::graph::make_bfs_visitor;
-    using ::boost::graph::default_bfs_visitor;
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)

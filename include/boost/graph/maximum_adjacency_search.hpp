@@ -119,8 +119,6 @@ namespace boost { namespace graph {
     {
         return mas_visitor<Visitors>(vis);
     }
-
-    typedef mas_visitor<> default_mas_visitor;
 }}
 
 #include <boost/graph/buffer_concepts.hpp>
@@ -357,11 +355,11 @@ namespace boost { namespace graph {
             typename parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_mas_visitor
+                mas_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_mas_visitor>()
+            boost::value_factory<mas_visitor<> >()
         ];
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
         Vertex s = arg_pack[
@@ -479,11 +477,11 @@ namespace boost { namespace graph { namespace detail {
                 typename boost::parameter::value_type<
                     ArgPack,
                     boost::graph::keywords::tag::visitor,
-                    default_mas_visitor
+                    mas_visitor<>
                 >::type
             >::type vis = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_mas_visitor>()
+                boost::value_factory<mas_visitor<> >()
             ];
             boost::detail::make_property_map_from_arg_pack_gen<
                 boost::graph::keywords::tag::vertex_assignment_map,
@@ -512,7 +510,6 @@ namespace boost {
     using ::boost::graph::maximum_adjacency_search;
     using ::boost::graph::mas_visitor;
     using ::boost::graph::make_mas_visitor;
-    using ::boost::graph::default_mas_visitor;
 
     // Old-style named parameter interface
     template <typename Graph, typename P, typename T, typename R>

@@ -156,7 +156,7 @@ maximum_adjacency_search(
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -175,7 +175,7 @@ maximum_adjacency_search(
 
 <h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -227,7 +227,7 @@ concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">boost::graph::default_mas_visitor()</td>
+<td class="cxx_code">boost::graph::mas_visitor&lt;&gt;()</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -260,7 +260,7 @@ from.  The type is the type of a vertex descriptor for the given graph.</td>
 
 <h4><a name="sec:expert_parameters"></a>Expert Parameters</h4>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -458,7 +458,7 @@ empty.</td>
 <ul>
 <li>
 <p>David Matula (1993).</p>
-<blockquote><a
+<blockquote><a class="external"
 href="http://dl.acm.org/citation.cfm?id=313872&dl=ACM&coll=DL&CFID=85991501&CFTOKEN=44461131"
 >A linear time 2 + epsilon approximation algorightm for edge
 connectivity</a></blockquote>
@@ -473,20 +473,20 @@ Vol 19. Page 55. 1995. Amer Mathematical Society</li>
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<th class="cxx_code">vis.initialize_vertex(s, g)</th>
 <td>is invoked on every vertex of the graph before the start of the graph
 search.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.start_vertex(s, g)</th>
+<th class="cxx_code">vis.start_vertex(s, g)</th>
 <td>is invoked on the source vertex once before processing its out edges.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on every out-edge of each vertex after it is started.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<th class="cxx_code">vis.finish_vertex(u, g)</th>
 <td>is invoked on a vertex after all of its out edges have been examined and
 the reach counts of the unvisited targets have been updated.</td>
 </tr>
@@ -503,10 +503,10 @@ reference.</p>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2012</td>
+<td class="copyright">Copyright &copy; 2012</td>
 <td>Fernando Vilas</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

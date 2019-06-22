@@ -235,7 +235,7 @@ namespace boost { namespace graph {
                 )
                 (visitor
                   , *(boost::detail::dfs_visitor_predicate)
-                  , default_dfs_visitor()
+                  , dfs_visitor<>()
                 )
                 (root_vertex
                   , *(
@@ -375,7 +375,7 @@ namespace boost { namespace graph {
             g,
             arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ],
             arg_pack[
                 boost::graph::keywords::_color_map |
@@ -447,7 +447,7 @@ namespace boost {
             g,
             boost::graph::keywords::_visitor = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ],
             boost::graph::keywords::_color_map = arg_pack[
                 boost::graph::keywords::_color_map |
@@ -686,7 +686,7 @@ namespace boost { namespace graph { namespace detail {
                 >::type
             >::type vis = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ];
             typename boost::detail::map_maker<
                 Graph,
@@ -733,11 +733,11 @@ namespace boost { namespace graph { namespace detail {
                 typename parameter::value_type<
                     ArgPack,
                     boost::graph::keywords::tag::visitor,
-                    default_dfs_visitor
+                    dfs_visitor<>
                 >::type
             >::type vis = arg_pack[
                 boost::graph::keywords::_visitor ||
-                boost::value_factory<default_dfs_visitor>()
+                boost::value_factory<dfs_visitor<> >()
             ];
             typename boost::detail::map_maker<
                 Graph,

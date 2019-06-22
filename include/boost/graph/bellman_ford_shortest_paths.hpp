@@ -97,14 +97,12 @@ namespace boost { namespace graph {
         Visitors m_vis;
     };
 
-    template <class Visitors>
+    template <typename Visitors>
     bellman_visitor<Visitors>
     make_bellman_visitor(Visitors vis)
     {
         return bellman_visitor<Visitors>(vis);
     }
-
-    typedef bellman_visitor<> default_bellman_visitor;
 }}
 
 #include <boost/graph/graph_concepts.hpp>
@@ -331,11 +329,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_bellman_visitor
+                bellman_visitor<>
             >::type
         >::type vis = args[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_bellman_visitor>()
+            boost::value_factory<bellman_visitor<> >()
         ];
         return bellman_ford_shortest_paths(
             g,
@@ -407,7 +405,6 @@ namespace boost {
     using ::boost::graph::bellman_ford_shortest_paths;
     using ::boost::graph::bellman_visitor;
     using ::boost::graph::make_bellman_visitor;
-    using ::boost::graph::default_bellman_visitor;
 }
 
 namespace boost { namespace detail {

@@ -110,8 +110,6 @@ namespace boost { namespace graph {
     {
         return dijkstra_visitor<Visitors>(vis);
     }
-
-    typedef dijkstra_visitor<> default_dijkstra_visitor;
 }} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
@@ -593,11 +591,11 @@ namespace boost { namespace graph {
             typename boost::parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_dijkstra_visitor
+                dijkstra_visitor<>
             >::type
         >::type vis = arg_pack[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_dijkstra_visitor>()
+            boost::value_factory<dijkstra_visitor<> >()
         ];
         typename boost::remove_const<
             typename boost::parameter::value_type<
@@ -696,7 +694,6 @@ namespace boost {
     using ::boost::graph::dijkstra_shortest_paths;
     using ::boost::graph::dijkstra_visitor;
     using ::boost::graph::make_dijkstra_visitor;
-    using ::boost::graph::default_dijkstra_visitor;
 } // namespace boost
 
 #include <boost/graph/overloading.hpp>

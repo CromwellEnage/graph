@@ -475,7 +475,7 @@ astar_search_tree(
 
 <h3><a name="sec:parameters"></a>Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -537,7 +537,7 @@ concept.</td>
 
 <h3><a name="sec:named_parameters"></a>Named Parameters</h3>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -918,7 +918,8 @@ visitor object is passed by value <a href="#1">[1]</a>.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td class="cxx_code">boost::graph::default_astar_visitor()</td>
+<td class="cxx_code">boost::graph::<a href="astar_visitor.html"
+>astar_visitor</a>&lt;&gt;()</td>
 </tr>
 </table>
 
@@ -930,40 +931,40 @@ visitor object is passed by value <a href="#1">[1]</a>.</td>
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(u, g)</th>
+<th class="cxx_code">vis.initialize_vertex(u, g)</th>
 <td>is invoked on each vertex in the graph before the start of the
 algorithm.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(v, g)</th>
+<th class="cxx_code">vis.discover_vertex(v, g)</th>
 <td>is invoked when a vertex is first discovered and is added to the OPEN
 list.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<th class="cxx_code">vis.examine_vertex(u, g)</th>
 <td>is invoked when a vertex is popped from the queue (i.e., it has the lowest
 cost on the OPEN list).</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on each out-edge of a vertex immediately after it is
 examined.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_relaxed(e, g)</th>
 <td>is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.edge_not_relaxed(e, g)</th>
+<th class="cxx_code">vis.edge_not_relaxed(e, g)</th>
 <td>is invoked if the edge is not relaxed (see above).</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.black_target(e, g)</th>
+<th class="cxx_code">vis.black_target(e, g)</th>
 <td>is invoked when a vertex that is on the CLOSED list is "rediscovered" via
 a more efficient path, and is re-added to the OPEN list.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<th class="cxx_code">vis.finish_vertex(u, g)</th>
 <td>is invoked on a vertex when it is added to the CLOSED list, which happens
 after all of its out edges have been examined.</td>
 </tr>
@@ -981,12 +982,12 @@ reference.</p>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2004</td>
-<td><a href="http://cs.krisbeevers.com/">Kristopher Beevers</a>, Rensselaer
-Polytechnic Institute
-(<a href="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</a>)</td>
+<td class="copyright">Copyright &copy; 2004</td>
+<td><a class="external" href="http://cs.krisbeevers.com/">Kristopher
+Beevers</a>, Rensselaer Polytechnic Institute (<a class="external"
+href="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>
