@@ -178,7 +178,7 @@ struct bfs_test
         switch (dfs_rand())
         {
           case 0:
-            boost::breadth_first_search(
+            breadth_first_search(
               g,
               start,
               visitor(vis).color_map(color_pm)
@@ -186,9 +186,9 @@ struct bfs_test
             break;
           case 1:
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
-            boost::breadth_first_search(g, start, vis, color_pm);
+            breadth_first_search(g, start, vis, color_pm);
 #else
-            boost::breadth_first_search(
+            breadth_first_search(
               g,
               start,
               boost::graph::keywords::_visitor = vis,
@@ -198,19 +198,19 @@ struct bfs_test
             break;
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
           case 2:
-            boost::breadth_first_search(g, start, color_pm, vis);
+            breadth_first_search(g, start, color_pm, vis);
             break;
           case 3:
-            boost::breadth_first_search(g, vis, start, color_pm);
+            breadth_first_search(g, vis, start, color_pm);
             break;
           case 4:
-            boost::breadth_first_search(g, vis, color_pm, start);
+            breadth_first_search(g, vis, color_pm, start);
             break;
           case 5:
-            boost::breadth_first_search(g, color_pm, start, vis);
+            breadth_first_search(g, color_pm, start, vis);
             break;
           case 6:
-            boost::breadth_first_search(g, color_pm, vis, start);
+            breadth_first_search(g, color_pm, vis, start);
             break;
 #endif
         }

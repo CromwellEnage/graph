@@ -43,7 +43,7 @@ namespace boost { namespace detail {
     // This visitor is used both in the connected_components algorithm and in
     // the kosaraju strong components algorithm during the 2nd DFS traversal.
     template <typename ComponentsMap>
-    class components_recorder : public dfs_visitor<>
+    class components_recorder : public boost::graph::dfs_visitor<>
     {
         typedef typename property_traits<ComponentsMap>::value_type comp_type;
 

@@ -125,13 +125,13 @@ int main(int , char* [])
   // The source vertex
   Vertex s = *(boost::vertices(G).first);
   p[s] = s;
-  boost::neighbor_breadth_first_search(
+  neighbor_breadth_first_search(
     G,
     s,
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     boost::graph::keywords::_visitor =
 #endif
-    boost::make_neighbor_bfs_visitor(
+    make_neighbor_bfs_visitor(
       std::make_pair(
         boost::record_distances(d, boost::on_tree_edge()),
         boost::record_predecessors(&p[0], boost::on_tree_edge())

@@ -131,7 +131,7 @@ int main(int , char* [])
   // The source vertex
   Vertex s = *(boost::vertices(G).first);
   p[s] = s;
-  boost::breadth_first_search
+  breadth_first_search
     (G, s,
      boost::graph::keywords::_visitor = boost::make_bfs_visitor
      (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
