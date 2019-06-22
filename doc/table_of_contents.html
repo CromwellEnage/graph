@@ -1,359 +1,470 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<HTML>
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+          "http://www.w3.org/TR/html4/strict.dtd">
+<html>
 <!--
-     Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
+    Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
 
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
-<Head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-<Title>Table of Contents: Boost Graph Library</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
-        ALINK="#ff0000">
-<IMG SRC="../../../boost.png"
-     ALT="C++ Boost" width="277" height="86">
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<head>
+<title>Table of Contents: Boost Graph Library</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
 <h1>Table of Contents: the Boost Graph Library
-<a href="http://www.awprofessional.com/title/0201729148">
-<img src="bgl-cover.jpg" ALT="BGL Book" ALIGN="RIGHT"></a>
-</h1>
+<a class="external" href="http://www.awprofessional.com/title/0201729148"><img
+src="bgl-cover.jpg" alt="BGL Book" style="text-align: right;" /></a></h1>
 
-      <OL>
-        <LI><A Href="./index.html">Introduction to the BGL</A>
-        <li><a href="../../graph_parallel/doc/html/index.html">Parallel BGL (distributed-memory parallel graph data structures and algorithms)</a>
-        <LI><A Href="./history.html">History</A>
-        <LI><A Href="./users.html">List of BGL Users</A>
-        <LI><A Href="./publications.html">Publications</A>
-        <LI><A Href="./acknowledgements.html">Acknowledgements</A>
-        <LI><A href="./quick_tour.html">A Quick Tour of the Boost Graph Library.</a>
-        <LI><A Href="graph_theory_review.html">Review of Elementary Graph Theory</A>
-        <LI>Boost Graph Library Tutorial
-           <OL>
-            <LI><a
-            href="./using_property_maps.html">Property Maps</a>
-            <LI><a
-            href="./using_adjacency_list.html">The <tt>adjacency_list</tt> class</a>
-           </OL>
-        <LI>Examples
-           <OL>
-            <LI><a href="./file_dependency_example.html">File
-            Dependency Example</a>
-            <LI><a href="./kevin_bacon.html">Six Degrees of Kevin Bacon</a>
-            <LI><a href="./graph_coloring.html">Graph Coloring</a>
-            <LI><a href="./sparse_matrix_ordering.html">Sparse Matrix
-            Ordering</a>
-           </OL>
-        <LI>Extending the Boost Graph Library
-         <OL>
-           <LI><a href="./constructing_algorithms.html">Constructing graph algorithms with BGL</a>
-           <LI><a href="./leda_conversion.html">Converting Existing Graphs to BGL</a>
-         </OL>
-        <LI><A href="./graph_concepts.html">The Boost Graph Interface</A>
-         <OL>
-           <LI><A href="./Graph.html">Graph</A>
-           <LI><A href="./IncidenceGraph.html">Incidence Graph</A>
-           <LI><A href="./BidirectionalGraph.html">Bidirectional Graph</A>
-           <LI><A href="./AdjacencyGraph.html">Adjacency Graph</A>
-           <LI><A href="./VertexListGraph.html">Vertex List Graph</A>
-           <LI><A href="./EdgeListGraph.html">Edge List Graph</A>
-           <LI><A href="./VertexAndEdgeListGraph.html">Vertex and Edge List Graph</A>
-           <LI><A href="./AdjacencyMatrix.html">Adjacency Matrix</A>
-           <LI><A href="./MutableGraph.html">Mutable Graph</A>
-           <LI><A href="./PropertyGraph.html">Property Graph</A>
-           <LI><A href="./MutablePropertyGraph.html">Mutable Property Graph</A>
-         </OL>
-        <li><a href="../../property_map/doc/property_map.html">The Property Map Library</a> (technically not part of the graph library, but used a lot here)
-         <li><img src="figs/python_ico.gif" alt="(Python)"><a href="python.html">Python bindings</a></li>
-        <li><a href="./visitor_concepts.html">Visitor Concepts</a>
-          <OL>
-            <LI><a href="./BFSVisitor.html">BFS Visitor</a>
-            <LI><a href="./DFSVisitor.html">DFS Visitor</a>
-            <LI><a href="./DijkstraVisitor.html">Dijkstra Visitor</a>
-            <LI><a href="./BellmanFordVisitor.html">Bellman Ford Visitor</a>
-            <LI><a href="AStarVisitor.html">A* Visitor</a></LI>
-            <LI><a href="./EventVisitor.html">Event Visitor</a>
-            <LI><a href="./PlanarFaceVisitor.html">Planar Face Visitor</a>
-            <li><a href="TSPTourVisitor.html">TSP Tour Visitor</a></li>
-          </OL>
-        <li>EventVisitorList Adaptors
-          <OL>
-            <LI><a href="EventVisitorList.html">Event Visitor List</a>
-            <LI><a href="bfs_visitor.html"><tt>bfs_visitor</tt></a>
-            <LI><a href="dfs_visitor.html"><tt>dfs_visitor</tt></a>
-            <LI><a href="dijkstra_visitor.html"><tt>dijkstra_visitor</tt></a>
-            <LI><a href="bellman_visitor.html"><tt>bellman_visitor</tt></a>
-            <li><a href="astar_visitor.html"><tt>astar_visitor</tt></a></li>
-          </OL>
-        <li>Event Visitors
-          <OL>
-            <LI><a href="predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
-            <LI><a href="edge_predecessor_recorder.html"><tt>edge_predecessor_recorder</tt></a>
-            <LI><a href="distance_recorder.html"><tt>distance_recorder</tt></a>
-            <LI><a href="time_stamper.html"><tt>time_stamper</tt></a>
-            <LI><a href="property_writer.html"><tt>property_writer</tt></a>
-            <LI><a href="property_put.html"><tt>property_put</tt></a>
-            <li><a href="tsp_tour_visitor.html"><tt>tsp_tour_visitor</tt></a></li>
-            <li><a href="tsp_tour_len_visitor.html"><tt>tsp_tour_len_visitor</tt></a></li>
-          </OL>
-        <LI>Graph classes
-          <OL>
-            <LI><A href="./adjacency_list.html"><tt>adjacency_list</tt></a></li>
-              <OL>
-               <LI><A href="./directed_graph.html"><tt>directed_graph</tt></a></li>
-               <LI><A href="./undirected_graph.html"><tt>undirected_graph</tt></a></li>
-              </OL>
-            <LI><A href="./adjacency_matrix.html"><tt>adjacency_matrix</tt></a></li>
-            <li><a href="compressed_sparse_row.html"><tt>compressed_sparse_row_graph</tt></a></li>
-          </OL></li>
-        <LI>Graph Adaptors
-          <OL>
-            <LI><A href="./subgraph.html"><tt>subgraph</tt></A>
-            <LI><A href="./edge_list.html"><tt>edge_list</tt></A>
-            <LI><A href="./reverse_graph.html"><tt>reverse_graph</tt></A>
-            <LI><A href="./filtered_graph.html"><tt>filtered_graph</tt></A>
-            <LI><A href="../../../boost/graph/vector_as_graph.hpp">Vector as Graph </A><a href="#*">*</a>
-            <LI><A href="../../../boost/graph/matrix_as_graph.hpp">Matrix as Graph</A><a href="#*">*</a>
-            <LI><A href="../../../boost/graph/leda_graph.hpp">Leda Graph </A><a href="#*">*</a>
-            <LI><A href="./stanford_graph.html">Stanford GraphBase</A>
-        <LI>Implicit Graphs
-          <OL>
-            <LI><A href="./grid_graph.html">Multi-dimensional grid graph</A>
-           </OL>
-        </ol>
-      <LI>Iterator Adaptors
-        <OL>
-          <LI><a
-          href="./adjacency_iterator.html"><tt>adjacency_iterator</tt></a>
-          <LI><a
-          href="./inv_adjacency_iterator.html"><tt>inv_adjacency_iterator</tt></a>
-        </OL>
-      <LI>Traits classes
-        <OL>
-          <LI><a href="./graph_traits.html"><tt>graph_traits</tt></a>
-          <LI><a href="./adjacency_list_traits.html"><tt>adjacency_list_traits</tt></a>
-          <LI><a href="./property_map.html"><tt>property_map</tt></a>
-        </OL>
-      <LI>Algorithms
-        <OL>
-          <LI><a href="./bgl_named_params.html">Named parameters (used in many graph algorithms)</a>
-          <li>Basic Operations
-            <ol>
-              <LI><A href="copy_graph.html"><tt>copy_graph</tt></A>
-              <LI><A href="copy_component.html"><tt>copy_component</tt></A>
-              <LI><A href="transpose_graph.html"><tt>transpose_graph</tt></A>
-            </ol>
-          <LI>Core Searches
-            <OL>
-              <LI><A href="./breadth_first_search.html"><tt>breadth_first_search</tt></A>
-              <LI><A href="./breadth_first_visit.html"><tt>breadth_first_visit</tt></A>
-              <LI><A
-              href="./depth_first_search.html"><tt>depth_first_search</tt></A>
-              <LI><A href="./depth_first_visit.html"><tt>depth_first_visit</tt></A>
-              <LI><A
-              href="./undirected_dfs.html"><tt>undirected_dfs</tt></A>
-              <LI><A href="./undirected_dfv.html"><tt>undirected_depth_first_visit</tt></A>
-            </OL>
+<ol>
+<li><a href="index.html">Introduction to the BGL</a></li>
+<li><a href="../../graph_parallel/doc/html/index.html">Parallel BGL
+(distributed-memory parallel graph data structures and algorithms)</a></li>
+<li><a href="history.html">History</a></li>
+<li><a href="users.html">List of BGL Users</a></li>
+<li><a href="publications.html">Publications</a></li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+<li><a href="quick_tour.html">A Quick Tour of the Boost Graph Library.</a></li>
+<li><a href="graph_theory_review.html">Review of Elementary Graph
+Theory</a></li>
+<li>Boost Graph Library Tutorial
+<ol>
+<li><a href="using_property_maps.html">Property Maps</a></li>
+<li><a href="using_adjacency_list.html">The
+<span class="cxx_code">adjacency_list</span> class</a></li>
+</ol>
+</li>
+<li>Examples
+<ol>
+<li><a href="file_dependency_example.html">File Dependency Example</a></li>
+<li><a href="kevin_bacon.html">Six Degrees of Kevin Bacon</a></li>
+<li><a href="graph_coloring.html">Graph Coloring</a></li>
+<li><a href="sparse_matrix_ordering.html">Sparse Matrix Ordering</a></li>
+</ol>
+</li>
+<li>Extending the Boost Graph Library
+<ol>
+<li><a href="constructing_algorithms.html">Constructing graph algorithms with
+BGL</a></li>
+<li><a href="leda_conversion.html">Converting Existing Graphs to BGL</a></li>
+</ol>
+</li>
+<li><a href="graph_concepts.html">The Boost Graph Interface</a>
+<ol>
+<li><a class="cxx_concept" href="Graph.html">Graph</a></li>
+<li><a class="cxx_concept" href="IncidenceGraph.html">Incidence Graph</a></li>
+<li><a class="cxx_concept" href="BidirectionalGraph.html">Bidirectional
+Graph</a></li>
+<li><a class="cxx_concept" href="AdjacencyGraph.html">Adjacency Graph</a></li>
+<li><a class="cxx_concept" href="VertexListGraph.html">Vertex List
+Graph</a></li>
+<li><a class="cxx_concept" href="EdgeListGraph.html">Edge List Graph</a></li>
+<li><a class="cxx_concept" href="VertexAndEdgeListGraph.html">Vertex and Edge
+List Graph</a></li>
+<li><a class="cxx_concept" href="AdjacencyMatrix.html">Adjacency
+Matrix</a></li>
+<li><a class="cxx_concept" href="MutableGraph.html">Mutable Graph</a></li>
+<li><a class="cxx_concept" href="PropertyGraph.html">Property Graph</a></li>
+<li><a class="cxx_concept" href="MutablePropertyGraph.html">Mutable Property
+Graph</a></li>
+</ol>
+</li>
+<li><a href="../../property_map/doc/property_map.html">The Property Map
+Library</a> (technically not part of the graph library, but used a lot
+here)</li>
+<li><img src="figs/python_ico.gif" alt="(Python)"
+/><a href="python.html">Python bindings</a></li>
+<li><a href="visitor_concepts.html">Visitor Concepts</a>
+<ol>
+<li><a class="cxx_concept" href="BFSVisitor.html">BFS Visitor</a></li>
+<li><a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a></li>
+<li><a class="cxx_concept" href="NeighborBFSVisitor.html">Neighbor BFS
+Visitor</a></li>
+<li><a class="cxx_concept" href="DijkstraVisitor.html">Dijkstra
+Visitor</a></li>
+<li><a class="cxx_concept" href="BellmanFordVisitor.html">Bellman Ford
+Visitor</a></li>
+<li><a class="cxx_concept" href="AStarVisitor.html">A* Visitor</a></li>
+<li><a class="cxx_concept" href="EventVisitor.html">Event Visitor</a></li>
+<li><a class="cxx_concept" href="PlanarFaceVisitor.html">Planar Face
+Visitor</a></li>
+<li><a class="cxx_concept" href="TSPTourVisitor.html">TSP Tour
+Visitor</a></li>
+</ol>
+</li>
+<li>EventVisitorList Adaptors
+<ol>
+<li><a href="EventVisitorList.html">Event Visitor List</a></li>
+<li><a class="cxx_code" href="bfs_visitor.html">bfs_visitor</a></li>
+<li><a class="cxx_code" href="dfs_visitor.html">dfs_visitor</a></li>
+<li><a class="cxx_code" href="neighbor_bfs_visitor.html">neighbor_bfs_visitor</a></li>
+<li><a class="cxx_code" href="dijkstra_visitor.html">dijkstra_visitor</a></li>
+<li><a class="cxx_code" href="bellman_visitor.html">bellman_visitor</a></li>
+<li><a class="cxx_code" href="astar_visitor.html">astar_visitor</a></li>
+</ol>
+</li>
+<li>Event Visitors
+<ol>
+<li><a class="cxx_code" href="predecessor_recorder.html"
+>predecessor_recorder</a></li>
+<li><a class="cxx_code" href="edge_predecessor_recorder.html"
+>edge_predecessor_recorder</a></li>
+<li><a class="cxx_code" href="distance_recorder.html"
+>distance_recorder</a></li>
+<li><a class="cxx_code" href="time_stamper.html">time_stamper</a></li>
+<li><a class="cxx_code" href="property_writer.html">property_writer</a></li>
+<li><a class="cxx_code" href="property_put.html">property_put</a></li>
+<li><a class="cxx_code" href="tsp_tour_visitor.html">tsp_tour_visitor</a></li>
+<li><a class="cxx_code" href="tsp_tour_len_visitor.html"
+>tsp_tour_len_visitor</a></li>
+</ol>
+</li>
+<li>Graph classes
+<ol>
+<li><a class="cxx_code" href="adjacency_list.html">adjacency_list</a>
+<ol>
+<li><a class="cxx_code" href="directed_graph.html">directed_graph</a></li>
+<li><a class="cxx_code" href="undirected_graph.html">undirected_graph</a></li>
+</ol>
+</li>
+<li><a class="cxx_code" href="adjacency_matrix.html">adjacency_matrix</a></li>
+<li><a class="cxx_code" href="compressed_sparse_row.html"
+>compressed_sparse_row_graph</a></li>
+</ol>
+</li>
+<li>Graph Adaptors
+<ol>
+<li><a class="cxx_code" href="subgraph.html">subgraph</a></li>
+<li><a class="cxx_code" href="edge_list.html">edge_list</a></li>
+<li><a class="cxx_code" href="reverse_graph.html">reverse_graph</a></li>
+<li><a class="cxx_code" href="filtered_graph.html">filtered_graph</a></li>
+<li><a href="../../../boost/graph/vector_as_graph.hpp">Vector as
+Graph</a><a href="#*">*</a></li>
+<li><a href="../../../boost/graph/matrix_as_graph.hpp">Matrix as
+Graph</a><a href="#*">*</a></li>
+<li><a href="../../../boost/graph/leda_graph.hpp">Leda
+Graph</a><a href="#*">*</a></li>
+<li><a href="stanford_graph.html">Stanford GraphBase</a></li>
+<li>Implicit Graphs
+<ol>
+<li><a href="grid_graph.html">Multi-dimensional grid graph</a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Iterator Adaptors
+<ol>
+<li><a class="cxx_code" href="adjacency_iterator.html"
+>adjacency_iterator</a></li>
+<li><a class="cxx_code" href="inv_adjacency_iterator.html"
+>inv_adjacency_iterator</a></li>
+</ol>
+</li>
+<li>Traits classes
+<ol>
+<li><a class="cxx_code" href="graph_traits.html">graph_traits</a></li>
+<li><a class="cxx_code" href="adjacency_list_traits.html"
+>adjacency_list_traits</a></li>
+<li><a class="cxx_code" href="property_map.html">property_map</a></li>
+</ol>
+</li>
+<li>Algorithms
+<ol>
+<li><a href="bgl_named_params.html">Old-style named parameters (still used in
+many graph algorithms)</a></li>
+<li>Basic Operations
+<ol>
+<li><a class="cxx_code" href="copy_graph.html">copy_graph</a></li>
+<li><a class="cxx_code" href="copy_component.html">copy_component</a></li>
+<li><a class="cxx_code" href="transpose_graph.html">transpose_graph</a></li>
+</ol>
+</li>
+<li>Core Searches
+<ol>
+<li><a class="cxx_code" href="breadth_first_search.html"
+>breadth_first_search</a></li>
+<li><a class="cxx_code" href="breadth_first_visit.html"
+>breadth_first_visit</a></li>
+<li><a class="cxx_code" href="neighbor_breadth_first_search.html"
+>neighbor_breadth_first_search</a></li>
+<li><a class="cxx_code" href="neighbor_breadth_first_visit.html"
+>neighbor_breadth_first_visit</a></li>
+<li><a class="cxx_code" href="depth_first_search.html"
+>depth_first_search</a></li>
+<li><a class="cxx_code" href="depth_first_visit.html"
+>depth_first_visit</a></li>
+<li><a class="cxx_code" href="undirected_dfs.html">undirected_dfs</a></li>
+<li><a class="cxx_code" href="undirected_dfv.html"
+>undirected_depth_first_visit</a></li>
+</ol>
+</li>
+<li>Other Core Algorithms
+<ol>
+<li><a class="cxx_code" href="topological_sort.html">topological_sort</a></li>
+<li><a class="cxx_code" href="transitive_closure.html"
+>transitive_closure</a></li>
+<li><a class="cxx_code" href="lengauer_tarjan_dominator.htm"
+>lengauer_tarjan_dominator_tree</a></li>
+</ol>
+</li>
+<li>Shortest Paths / Cost Minimization Algorithms
+<ol>
+<li><a class="cxx_code" href="dijkstra_shortest_paths.html"
+>dijkstra_shortest_paths</a></li>
+<li><a href="dijkstra_shortest_paths_no_color_map.html"
+class="cxx_code">dijkstra_shortest_paths_no_color_map</a></li>
+<li><a class="cxx_code" href="bellman_ford_shortest.html"
+>bellman_ford_shortest_paths</a></li>
+<li><a class="cxx_code" href="dag_shortest_paths.html"
+>dag_shortest_paths</a></li>
+<li><a class="cxx_code" href="johnson_all_pairs_shortest.html"
+>johnson_all_pairs_shortest_paths</a></li>
+<li><a class="cxx_code" href="floyd_warshall_shortest.html"
+>floyd_warshall_all_pairs_shortest_paths</a></li>
+<li><a href="r_c_shortest_paths.html"><span class="cxx_code"
+>r_c_shortest_paths</span> - resource-constrained shortest paths</a></li>
+<li><a href="astar_search.html"><span class="cxx_code">astar_search</span> (A*
+search algorithm)</a></li>
+</ol>
+</li>
+<li>Minimum Spanning Tree Algorithms
+<ol>
+<li><a class="cxx_code" href="kruskal_min_spanning_tree.html"
+>kruskal_minimum_spanning_tree</a></li>
+<li><a class="cxx_code" href="prim_minimum_spanning_tree.html"
+>prim_minimum_spanning_tree</a></li>
+</ol>
+</li>
+<li>Random Spanning Tree Algorithm
+<ol>
+<li><a class="cxx_code" href="random_spanning_tree.html"
+>random_spanning_tree</a></li>
+</ol>
+<li>Algorithm for Common Spanning Trees of Two Graphs
+<ol>
+<li><a class="cxx_code" href="two_graphs_common_spanning_trees.html"
+>two_graphs_common_spanning_trees</a></li>
+</ol>
+<li>Connected Components Algorithms
+<ol>
+<li><a class="cxx_code" href="connected_components.html"
+>connected_components</a></li>
+<li><a class="cxx_code" href="strong_components.html"
+>strong_components</a></li>
+<li><a class="cxx_code" href="biconnected_components.html"
+>biconnected_components</a></li>
+<li><a href="biconnected_components.html#sec:articulation_points"
+class="cxx_code">articulation_points</a></li>
+<li><a href="incremental_components.html">Incremental Connected Components</a>
+<ol>
+<li><a class="cxx_code"
+href="incremental_components.html#sec:initialize-incremental-components"
+>initialize_incremental_components</a></li>
+<li><a href="incremental_components.html#sec:incremental-components"
+class="cxx_code">incremental_components</a></li>
+<li><a class="cxx_code"
+href="incremental_components.html#sec:same-component">same_component</a></li>
+<li><a class="cxx_code" href="incremental_components.html#sec:component-index"
+>component_index</a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Maximum Flow and Matching Algorithms
+<ol>
+<li><a class="cxx_code" href="edmonds_karp_max_flow.html"
+>edmonds_karp_max_flow</a></li>
+<li><a class="cxx_code" href="push_relabel_max_flow.html"
+>push_relabel_max_flow</a></li>
+<li><a class="cxx_code" href="boykov_kolmogorov_max_flow.html"
+>boykov_kolmogorov_max_flow</a></li>
+<li><a class="cxx_code" href="maximum_matching.html"
+>edmonds_maximum_cardinality_matching</a></li>
+<li><a class="cxx_code" href="maximum_weighted_matching.html"
+>maximum_weighted_matching</a></li>
+</ol>
+</li>
+<li>Minimum Cost Maximum Flow Algorithms
+<ol>
+<li><a class="cxx_code" href="cycle_canceling.html">cycle_canceling</a></li>
+<li><a href="successive_shortest_path_nonnegative_weights.html"
+class="cxx_code">successive_shortest_path_nonnegative_weights</a></li>
+<li><a class="cxx_code" href="find_flow_cost.html">find_flow_cost</a></li>
+</ol>
+</li>
+<li>Minimum Cut Algorithms
+<ol>
+<li><a class="cxx_code" href="stoer_wagner_min_cut.html"
+>stoer_wagner_min_cut</a></li>
+</ol>
+</li>
+<li>Sparse Matrix Ordering Algorithms
+<ol>
+<li><a class="cxx_code" href="cuthill_mckee_ordering.html"
+>cuthill_mckee_ordering</a></li>
+<li><a class="cxx_code" href="king_ordering.html">king_ordering</a></li>
+<li><a class="cxx_code" href="minimum_degree_ordering.html"
+>minimum_degree_ordering</a></li>
+<li><a class="cxx_code" href="sloan_ordering.htm">sloan_ordering</a></li>
+<li><a class="cxx_code" href="sloan_start_end_vertices.htm"
+>sloan_start_end_vertices</a></li>
+</ol>
+</li>
+<li>Graph Metrics
+<ol>
+<li><a href="wavefront.htm"><span class="cxx_code">ith_wavefront</span>,
+<span class="cxx_code">max_wavefront</span>,
+<span class="cxx_code">aver_wavefront</span>, and
+<span class="cxx_code">rms_wavefront</span></a></li>
+<li><a class="cxx_code" href="bandwidth.html#sec:bandwidth">bandwidth</a></li>
+<li><a class="cxx_code" href="bandwidth.html#sec:ith-bandwidth"
+>ith_bandwidth</a></li>
+<li><a class="cxx_code" href="betweenness_centrality.html"
+>brandes_betweenness_centrality</a></li>
+<li><a href="howard_cycle_ratio.html"
+><span class="cxx_code">minimum_cycle_ratio</span> and
+<span class="cxx_code">maximum_cycle_ratio</span></a></li>
+</ol>
+</li>
+<li>Graph Structure Comparisons
+<ol>
+<li><a class="cxx_code" href="isomorphism.html">isomorphism</a></li>
+<li><a href="vf2_sub_graph_iso.html"><span class="cxx_code"
+>vf2_sub_graph_iso</span> (VF2 subgraph isomorphism algorithm)</a></li>
+<li><a class="cxx_code" href="mcgregor_common_subgraphs.html"
+>mcgregor_common_subgraphs</a></li>
+</ol>
+</li>
+<li>Layout Algorithms
+<ol>
+<li><a href="topology.html">Topologies used as spaces for graph
+drawing</a></li>
+<li><a class="cxx_code" href="random_layout.html">random_graph_layout</a></li>
+<li><a class="cxx_code" href="circle_layout.html">circle_layout</a></li>
+<li><a class="cxx_code" href="kamada_kawai_spring_layout.html"
+>kamada_kawai_spring_layout</a></li>
+<li><a class="cxx_code" href="fruchterman_reingold.html"
+>fruchterman_reingold_force_directed_layout</a></li>
+<li><a class="cxx_code" href="gursoy_atun_layout.html"
+>gursoy_atun_layout</a></li>
+</ol>
+</li>
+<li>Clustering algorithms
+<ol>
+<li><a class="cxx_code" href="bc_clustering.html"
+>betweenness_centrality_clustering</a></li>
+</ol>
+</li>
+<li><a href="planar_graphs.html">Planar Graph Algorithms</a>
+<ol>
+<li><a class="cxx_code" href="boyer_myrvold.html"
+>boyer_myrvold_planarity_test</a></li>
+<li><a class="cxx_code" href="planar_face_traversal.html"
+>planar_face_traversal</a></li>
+<li><a class="cxx_code" href="planar_canonical_ordering.html"
+>planar_canonical_ordering</a></li>
+<li><a class="cxx_code" href="straight_line_drawing.html"
+>chrobak_payne_straight_line_drawing</a></li>
+<li><a class="cxx_code" href="is_straight_line_drawing.html"
+>is_straight_line_drawing</a></li>
+<li><a class="cxx_code" href="is_kuratowski_subgraph.html"
+>is_kuratowski_subgraph</a></li>
+<li><a class="cxx_code" href="make_connected.html">make_connected</a></li>
+<li><a class="cxx_code" href="make_biconnected_planar.html"
+>make_biconnected_planar</a></li>
+<li><a class="cxx_code" href="make_maximal_planar.html"
+>make_maximal_planar</a></li>
+</ol>
+</li>
+<li>Miscellaneous Algorithms
+<ol>
+<li><a class="cxx_code" href="metric_tsp_approx.html"
+>metric_tsp_approx</a></li>
+<li><a class="cxx_code" href="sequential_vertex_coloring.html"
+>sequential_vertex_coloring</a></li>
+<li><a class="cxx_code" href="edge_coloring.html">edge_coloring</a></li>
+<li><a class="cxx_code" href="is_bipartite.html">is_bipartite</a> (including
+two-coloring of bipartite graphs)</li>
+<li><a class="cxx_code" href="find_odd_cycle.html">find_odd_cycle</a></li>
+<li><a class="cxx_code" href="maximum_adjacency_search.html"
+>maximum_adjacency_search</a></li>
+<li><a class="cxx_code" href="hawick_circuits.html">hawick_circuits</a> (find
+all circuits of a directed graph)</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Graph Input/Output
+<ol>
+<li>AT&amp;T Graphviz:
+<a class="cxx_code" href="read_graphviz.html">read_graphviz</a>,
+<a class="cxx_code" href="write-graphviz.html">write_graphviz</a></li>
+<li>DIMACS Max-flow:
+<a href="read_dimacs.html"><span class="cxx_code">read_dimacs_max_flow</span>
+and <span class="cxx_code">read_dimacs_min_cut</span></a>,
+<a class="cxx_code" href="write_dimacs.html">write_dimacs_max_flow</a></li>
+<li>GraphML: <a class="cxx_code" href="read_graphml.html">read_graphml</a> and
+<a class="cxx_code" href="write_graphml.html">write_graphml</a></li>
+</ol>
+</li>
+<li>Auxiliary Concepts, Classes, and Functions
+<ol>
+<li><a class="cxx_code" href="property.html">property</a></li>
+<li><a class="cxx_concept" href="ColorValue.html">ColorValue</a></li>
+<li><a class="cxx_concept" href="Buffer.html">Buffer</a></li>
+<li><a class="cxx_concept" href="BasicMatrix.html">BasicMatrix</a></li>
+<li><a class="cxx_code" href="incident.html">incident</a></li>
+<li><a class="cxx_code" href="opposite.html">opposite</a></li>
+<li><a href="random.html">Tools for random graphs</a>
+<ol>
+<li><a class="cxx_code" href="random.html#random_vertex"
+>random_vertex</a></li>
+<li><a class="cxx_code" href="random.html#random_edge">random_edge</a></li>
+<li><a class="cxx_code" href="random.html#generate_random_graph"
+>generate_random_graph</a></li>
+<li><a class="cxx_code" href="random.html#randomize_property"
+>randomize_property</a></li>
+<li><a class="cxx_code" href="erdos_renyi_generator.html"
+>erdos_renyi_iterator</a></li>
+<li><a class="cxx_code" href="sorted_erdos_renyi_gen.html"
+>sorted_erdos_renyi_iterator</a></li>
+<li><a class="cxx_code" href="plod_generator.html">plod_iterator</a></li>
+<li><a class="cxx_code" href="small_world_generator.html"
+>small_world_iterator</a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="challenge.html">Challenge and To-Do List</a></li>
+<li><a href="trouble_shooting.html">Trouble Shooting</a></li>
+<li><a href="known_problems.html">Known Problems</a></li>
+<li><a href="faq.html">FAQ</a></li>
+<li><a class="external"
+href="https://web.archive.org/web/20071012123707/http://siek.info/bgl.html"
+>BGL Book Errata</a></li>
+</ol>
 
-          <li>Other Core Algorithms
-            <ol>
-              <LI><A href="topological_sort.html"><tt>topological_sort</tt></A>
-              <li><a href="transitive_closure.html"><tt>transitive_closure</tt></a>
-              <li><a href="lengauer_tarjan_dominator.htm"><tt>lengauer_tarjan_dominator_tree</tt></a></li>
-            </ol>
+<p><a name="*">*</a> Items marked have not yet been documented.</p>
 
-      <LI>Shortest Paths / Cost Minimization Algorithms
-        <OL>
-          <LI><A href="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths</tt></A>
-          <LI><A href="./dijkstra_shortest_paths_no_color_map.html"><tt>dijkstra_shortest_paths_no_color_map</tt></A>
-          <LI><A href="./bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></A>
-          <LI><A href="./dag_shortest_paths.html"><tt>dag_shortest_paths</tt></A>
-          <LI><A
-          href="./johnson_all_pairs_shortest.html"><tt>johnson_all_pairs_shortest_paths</tt></A>
-          <li><a href="floyd_warshall_shortest.html"><tt>floyd_warshall_all_pairs_shortest_paths</tt></a></li>
-          <li><a href="r_c_shortest_paths.html"><tt>r_c_shortest_paths</tt> - resource-constrained shortest paths</a></li>
-          <li><a href="astar_search.html"><tt>astar_search</tt> (A* search algorithm)</a></li>
-        </OL>
-      <LI>Minimum Spanning Tree Algorithms
-        <OL>
-          <LI><A
-          href="./kruskal_min_spanning_tree.html"><tt>kruskal_minimum_spanning_tree</tt></A>
-          <LI><A
-          href="./prim_minimum_spanning_tree.html"><tt>prim_minimum_spanning_tree</tt></A>
-        </OL>
-      <LI>Random Spanning Tree Algorithm
-        <OL>
-          <LI><A
-          href="./random_spanning_tree.html"><tt>random_spanning_tree</tt></A>
-        </OL>
-      <LI>Algorithm for Common Spanning Trees of Two Graphs
-        <OL>
-          <LI><A
-          href="./two_graphs_common_spanning_trees.html"><tt>two_graphs_common_spanning_trees</tt></A>
-        </OL>
-      <LI>Connected Components Algorithms
-      <OL>
-          <LI><A href="./connected_components.html"><tt>connected_components</tt></A>
-          <LI><A href="./strong_components.html"><tt>strong_components</tt></A>
+<br />
+<hr />
+<table>
+<tr>
+<td class="copyright">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a class="external"
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
+<a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
+Indiana University (<a class="external" href="mailto:llee@cs.indiana.edu"
+>llee@cs.indiana.edu</a>)<br />
+<a class="external" href="https://homes.cs.washington.edu/~al75">Andrew
+Lumsdaine</a>, Indiana University (<a class="external"
+href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
+</tr>
+</table>
 
-          <LI><a href="biconnected_components.html"><tt>biconnected_components</tt></a>
-          <LI><a href="biconnected_components.html#sec:articulation_points"><tt>articulation_points</tt></a>
-          <LI><a href="./incremental_components.html">Incremental Connected Components</a>
-          <OL>
-            <LI><A href="./incremental_components.html#sec:initialize-incremental-components"><tt>initialize_incremental_components</tt></A>
-            <LI><A href="./incremental_components.html#sec:incremental-components"><tt>incremental_components</tt></A>
-            <LI><A
-            href="./incremental_components.html#sec:same-component"><tt>same_component</tt></A>
-            <LI><A href="./incremental_components.html#sec:component-index"><tt>component_index</tt></A>
-          </OL>
-      </OL></LI>
-              <LI>Maximum Flow and Matching Algorithms
-                <OL>
-                  <LI><A href="edmonds_karp_max_flow.html"><tt>edmonds_karp_max_flow</tt></A>
-                  <LI><A href="push_relabel_max_flow.html"><tt>push_relabel_max_flow</tt></A>
-                  <li><a href="boykov_kolmogorov_max_flow.html"><tt>boykov_kolmogorov_max_flow</tt></a></li>
-                  <LI><A href="maximum_matching.html"><tt>edmonds_maximum_cardinality_matching</tt></A>
-                  <LI><A href="maximum_weighted_matching.html"><tt>maximum_weighted_matching</tt></A>
-                </OL>
-              <LI>Minimum Cost Maximum Flow Algorithms
-                <OL>
-                  <LI><A href="cycle_canceling.html"><tt>cycle_canceling</tt></A>
-                  <LI><A href="successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights</tt></A>
-                  <li><a href="find_flow_cost.html"><tt>find_flow_cost</tt></a></li>
-                </OL>
-              <LI>Minimum Cut Algorithms
-                <OL>
-                  <LI><A href="stoer_wagner_min_cut.html"><tt>stoer_wagner_min_cut</tt></A>
-                </OL>
-              <li>Sparse Matrix Ordering Algorithms
-                <ol>
-                  <LI><A
-              href="./cuthill_mckee_ordering.html"><tt>cuthill_mckee_ordering</tt></a>
-                  <li><a href="king_ordering.html"><tt>king_ordering</tt></a></li>
-                  <LI><a href="./minimum_degree_ordering.html"><tt>minimum_degree_ordering</tt></a>
-                  <li><a href="sloan_ordering.htm"><tt>sloan_ordering</tt></a></li>
-                  <li><a href="sloan_start_end_vertices.htm"><tt>sloan_start_end_vertices</tt></a></li>
-                </ol>
-              </li>
-              <li>Graph Metrics
-                <ol>
-                  <LI><A href="./wavefront.htm"><tt>ith_wavefront</tt>, <tt>max_wavefront</tt>, <tt>aver_wavefront</tt>, and <tt>rms_wavefront</tt></A></LI>
-                  <LI><a href="./bandwidth.html#sec:bandwidth"><tt>bandwidth</tt></a>
-                  <LI><a href="./bandwidth.html#sec:ith-bandwidth"><tt>ith_bandwidth</tt></a>
-                  <LI><A href="betweenness_centrality.html"><tt>brandes_betweenness_centrality</tt></A></LI>
-                  <li><a href="howard_cycle_ratio.html"><tt>minimum_cycle_ratio</tt> and <tt>maximum_cycle_ratio</tt></a></li>
-                </ol>
-              </li>
-              <li>Graph Structure Comparisons
-                <ol>
-                  <LI><A href="isomorphism.html"><tt>isomorphism</tt></A>
-                  <LI><A href="vf2_sub_graph_iso.html"><tt>vf2_sub_graph_iso</tt> (VF2 subgraph isomorphism algorithm)</A>
-                  <li><a href="mcgregor_common_subgraphs.html"><tt>mcgregor_common_subgraphs</tt></a></li>
-                </ol>
-
-              <li>Layout Algorithms
-                <ol>
-                  <li><a href="topology.html">Topologies used as spaces for graph drawing</a></li>
-                  <li><a href="random_layout.html"><tt>random_graph_layout</tt></a></li>
-                  <li><a href="circle_layout.html"><tt>circle_layout</tt></a></li>
-                  <li><a href="kamada_kawai_spring_layout.html"><tt>kamada_kawai_spring_layout</tt></a></li>
-                  <li><a href="fruchterman_reingold.html"><tt>fruchterman_reingold_force_directed_layout</tt></a></li>
-                  <li><a href="gursoy_atun_layout.html"><tt>gursoy_atun_layout</tt></a></li>
-                  </ol>
-                  </li>
-              <li>Clustering algorithms
-                  <ol>
-                  <li><a href="bc_clustering.html"><tt>betweenness_centrality_clustering</tt></a></li>
-                  </ol>
-              </li>
-              <li><a href="planar_graphs.html">Planar Graph Algorithms</a>
-              <ol>
-              <li><a href="boyer_myrvold.html">
-              <tt>boyer_myrvold_planarity_test</tt></a>
-              <li><a href="planar_face_traversal.html">
-              <tt>planar_face_traversal</tt></a>
-              <li><a href="planar_canonical_ordering.html">
-              <tt>planar_canonical_ordering</tt></a>
-              <li><a href="straight_line_drawing.html">
-              <tt>chrobak_payne_straight_line_drawing</tt></a>
-              <li><a href="is_straight_line_drawing.html">
-              <tt>is_straight_line_drawing</tt></a>
-              <li><a href="is_kuratowski_subgraph.html">
-              <tt>is_kuratowski_subgraph</tt></a>
-              <li><a href="make_connected.html">
-              <tt>make_connected</tt></a>
-              <li><a href="make_biconnected_planar.html">
-              <tt>make_biconnected_planar</tt></a>
-              <li><a href="make_maximal_planar.html">
-              <tt>make_maximal_planar</tt></a>
-              </ol>
-
-              <li>Miscellaneous Algorithms
-                  <ol>
-                      <li><a href="metric_tsp_approx.html"><tt>metric_tsp_approx</tt></a></li>
-                      <LI><A href="sequential_vertex_coloring.html"><tt>sequential_vertex_coloring</tt></A></li>
-                      <LI><A href="edge_coloring.html"><tt>edge_coloring</tt></A></li>
-                      <LI><A href="is_bipartite.html"><tt>is_bipartite</tt></A> (including two-coloring of bipartite graphs)</li>
-                      <LI><A href="find_odd_cycle.html"><tt>find_odd_cycle</tt></A></li>
-                      <LI><A href="maximum_adjacency_search.html"><tt>maximum_adjacency_search</tt></A></li>
-                      <LI><A href="hawick_circuits.html"><tt>hawick_circuits</tt></A> (find all circuits of a directed graph)</li>
-                  </ol>
-              </li>
-
-       </OL>
-
-         <li>Graph Input/Output
-           <ol>
-             <li>AT&amp;T Graphviz: <a href="read_graphviz.html">read_graphviz</a>, <a href="./write-graphviz.html">write_graphviz</a></li>
-             <li>DIMACS Max-flow: <a href="read_dimacs.html">read_dimacs_max_flow and read_dimacs_min_cut</a>, <a href="write_dimacs.html">write_dimacs_max_flow</a></li>
-             <li>GraphML: <a href="read_graphml.html">read_graphml</a> and <a href="write_graphml.html">write_graphml</a></li>
-           </ol></li>
-
-      <LI>Auxiliary Concepts, Classes, and Functions
-        <OL>
-          <LI><a href="./property.html"><tt>property</tt></a>
-          <LI><a href="./ColorValue.html">ColorValue</a>
-          <LI><a href="./Buffer.html">Buffer</a>
-          <LI><a href="./BasicMatrix.html">BasicMatrix</a>
-          <LI><a href="./incident.html"><tt>incident</tt></a>
-          <LI><a href="./opposite.html"><tt>opposite</tt></a>
-          <LI><a href="./random.html">Tools for random graphs</a>
-          <OL>
-          <LI><a href="./random.html#random_vertex">random_vertex</a>
-          <LI><a href="./random.html#random_edge">random_edge</a>
-          <LI><a href="./random.html#generate_random_graph">generate_random_graph</a>
-          <LI><a href="./random.html#randomize_property">randomize_property</a>
-          <li><a href="erdos_renyi_generator.html"><tt>erdos_renyi_iterator</tt></a></li>
-          <li><a href="sorted_erdos_renyi_gen.html"><tt>sorted_erdos_renyi_iterator</tt></a></li>
-          <li><a href="plod_generator.html"><tt>plod_iterator</tt></a></li>
-          <li><a href="small_world_generator.html"><tt>small_world_iterator</tt></a></li>
-          </OL>
-        </OL>
-      <LI><a href="./challenge.html">Challenge and To-Do List</a>
-      <LI><a href="./trouble_shooting.html">Trouble Shooting</a>
-      <LI><a href="./known_problems.html">Known Problems</a>
-      <LI><a href="./faq.html">FAQ</a>
-      <LI><a href="https://web.archive.org/web/20071012123707/http://siek.info/bgl.html">BGL Book Errata</a>
-      </OL>
-<p>
-
-<a name="*">*</a> Items marked have not yet been documented.
-
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>,
-Indiana University (<A
-HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
-<A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
-Indiana University (<A
-HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
-</TD></TR></TABLE>
-
-</BODY>
-</HTML>
+</body>
+</html>

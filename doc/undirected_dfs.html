@@ -340,7 +340,7 @@ long as <strong>all</strong> of the following are true:</p>
 is rendered by this document such that the text is of the same color.</li>
 </ul>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -552,39 +552,39 @@ class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<th class="cxx_code">vis.initialize_vertex(s, g)</th>
 <td>is invoked on every vertex of the graph before the start of the graph
 search.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.start_vertex(s, g)</th>
+<th class="cxx_code">vis.start_vertex(s, g)</th>
 <td>is invoked on the source vertex once before the start of the search.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</th>
+<th class="cxx_code">vis.discover_vertex(u, g)</th>
 <td>is invoked when a vertex is encountered for the first time.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on every out-edge of each vertex after it is discovered.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</th>
+<th class="cxx_code">vis.tree_edge(e, g)</th>
 <td>is invoked on each edge as it becomes a member of the edges that form the
 search tree.  If you wish to record predecessors, do so at this event
 point.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.back_edge(e, g)</th>
+<th class="cxx_code">vis.back_edge(e, g)</th>
 <td>is invoked on the back edges in the graph.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_edge(e, g)</th>
+<th class="cxx_code">vis.finish_edge(e, g)</th>
 <td>is invoked on the back edges in the graph as well as on each tree edge
 after its target vertex is finished.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<th class="cxx_code">vis.finish_vertex(u, g)</th>
 <td>is invoked on a vertex after all of its out edges have been added to the
 search tree and all of the adjacent vertices have been discovered (but before
 their out-edges have been examined).</td>
@@ -610,18 +610,18 @@ reference.</p>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td class="copyright">Copyright &copy; 2000-2001</td>
 <td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
-Indiana University (<a
+Indiana University (<a class="external"
 href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
 <a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
-Indiana University (<a href="mailto:llee@cs.indiana.edu"
+Indiana University (<a class="external" href="mailto:llee@cs.indiana.edu"
 >llee@cs.indiana.edu</a>)<br />
-<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
-Indiana University (<a
+<a class="external" href="https://homes.cs.washington.edu/~al75">Andrew
+Lumsdaine</a>, Indiana University (<a class="external"
 href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

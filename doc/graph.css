@@ -16,8 +16,11 @@ a:link {
 a.python_code:link {
     color: #003f00;
 }
+a.external:link {
+    color: #7f00ee;
+}
 a:visited {
-    color: #551a8b;
+    color: #0000ee; /*#551a8b;*/
 }
 a:active {
     color: #ff0000;
@@ -30,10 +33,17 @@ tr.deduced_param_0 {
     background-color: #000000;
 }
 th {
-    text-align: right;
+    text-align: left;
+    white-space: nowrap;
 }
 tr.header_row th {
-    text-align: left;
+    font-style: italic;
+}
+table.parameters tr th {
+    text-align: right;
+}
+td.cxx_code {
+    white-space: nowrap;
 }
 .comment {
     color: #3f3f3f;
@@ -50,5 +60,8 @@ tr.header_row th {
     font-family: monospace;
     color: #003f00;
     background-color: #ffffdf;
+}
+.copyright {
+    white-space: nowrap;
 }
 

@@ -9,7 +9,7 @@
     http://www.boost.org/LICENSE_1_0.txt)
 -->
 <head>
-<Title>Boost Graph Library: BFSVisitor</Title>
+<title>Boost Graph Library: BFSVisitor</title>
 <link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
@@ -82,28 +82,28 @@ href="graph_traits.html">graph_traits</a>&lt;G&gt;::edge_descriptor</span
 <tr class="header_row">
 <th>Name</th>
 <th>Expression</th>
-<th nowrap="nowrap">Return Type</th>
+<th>Return Type</th>
 <th>Description</th>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Initialize Vertex</td>
-<td class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</td>
+<th>Initialize Vertex</th>
+<td class="cxx_code">vis.initialize_vertex(s, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on every vertex of the graph before the start of the graph
 search.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Discover Vertex</td>
-<td class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</td>
+<th>Discover Vertex</th>
+<td class="cxx_code">vis.discover_vertex(u, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked when a vertex is encountered for the first time.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Examine Vertex</td>
-<td class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</td>
+<th>Examine Vertex</th>
+<td class="cxx_code">vis.examine_vertex(u, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on a vertex as it is popped from the queue.  This happens
 immediately before <span class="cxx_code">examine_edge()</span> is invoked on
@@ -111,32 +111,32 @@ each of the out-edges of vertex <span class="cxx_code">u</span>.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Examine Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</td>
+<th>Examine Edge</th>
+<td class="cxx_code">vis.examine_edge(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on every out-edge of each vertex after it is
 discovered.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Tree Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</td>
+<th>Tree Edge</th>
+<td class="cxx_code">vis.tree_edge(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on each edge as it becomes a member of the edges that form
 the search tree.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Non-Tree Edge</td>
-<td class="cxx_code" nowrap="nowrap">vis.non_tree_edge(e, g)</td>
+<th>Non-Tree Edge</th>
+<td class="cxx_code">vis.non_tree_edge(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on back or cross edges for directed graphs and cross edges
 for undirected graphs.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Gray Target</td>
-<td class="cxx_code" nowrap="nowrap">vis.gray_target(e, g)</td>
+<th>Gray Target</th>
+<td class="cxx_code">vis.gray_target(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on the subset of non-tree edges whose target vertex is
 colored gray at the time of examination.  The color gray indicates that the
@@ -144,8 +144,8 @@ vertex is currently in the queue.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Black Target</td>
-<td class="cxx_code" nowrap="nowrap">vis.black_target(e, g)</td>
+<th>Black Target</th>
+<td class="cxx_code">vis.black_target(e, g)</td>
 <td class="cxx_code">void</td>
 <td>This is invoked on the subset of non-tree edges whose target vertex is
 colored black at the time of examination.  The color black indicates that the
@@ -153,8 +153,8 @@ vertex has been removed from the queue.</td>
 </tr>
 
 <tr>
-<td nowrap="nowrap">Finish Vertex</td>
-<td class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</td>
+<th>Finish Vertex</th>
+<td class="cxx_code">vis.finish_vertex(u, g)</td>
 <td class="cxx_code">void</td>
 <td>This invoked on a vertex after all of its out edges have been added to the
 search tree and all of the adjacent vertices have been discovered (but before
@@ -200,18 +200,18 @@ class count_tree_edges_bfs_visitor(bgl.Graph.BFSVisitor):
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td class="copyright">Copyright &copy; 2000-2001</td>
 <td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
-Indiana University (<a
+Indiana University (<a class="external"
 href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
 <a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
-Indiana University (<a href="mailto:llee@cs.indiana.edu"
+Indiana University (<a class="external" href="mailto:llee@cs.indiana.edu"
 >llee@cs.indiana.edu</a>)<br />
-<a href="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</a>,
-Indiana University (<a
+<a class="external" href="https://homes.cs.washington.edu/~al75">Andrew
+Lumsdaine</a>, Indiana University (<a class="external"
 href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

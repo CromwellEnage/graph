@@ -1,127 +1,264 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
-     Authors: Matthias Walter
-    
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-  -->
+    Author: Matthias Walter
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
 <head>
 <title>Boost Graph Library: is_bipartite</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
 </head>
 <body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<IMG SRC="../../../boost.png" 
-ALT="C++ Boost" width="277" height="86"> 
-<h1>
-<tt>is_bipartite</tt>
-</h1>
+<br />
 
-<pre>
-<i>// Version with a colormap to retrieve the bipartition</i>
-template &lt;typename Graph, typename IndexMap, typename PartitionMap&gt;
-bool is_bipartite (const Graph&amp; graph, const IndexMap index_map, PartitionMap partition_map)
+<h1><tt>is_bipartite</tt></h1>
 
-template &lt;typename Graph, typename IndexMap&gt;
-bool is_bipartite (const Graph&amp; graph, const IndexMap index_map)
+<h3>Synopsis</h3>
 
-<i>// Version which uses the internal index map</i>
-template &lt;typename Graph&gt;
-bool is_bipartite (const Graph&amp; graph);
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+    (bool), is_bipartite, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (optional
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (partition_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+        )
+    )
+)
 </pre>
 
-<p>
-The <tt>is_bipartite()</tt> functions tests a given graph for
-bipartiteness using a DFS-based coloring approach.
-</p>
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function definition is
+available.</p>
 
-<p>
-An undirected graph is bipartite if one can partition its set of vertices
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+    (bool), is_bipartite, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+    )
+    (optional
+        (vertex_index_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (partition_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+    )
+)
+</pre>
+
+<p>However, for users of Microsoft Visual C++ 14.0 with 64-bit addressing,
+only the following function definitions are available.</p>
+
+<pre class="cxx_code">
+<span class="comment">// version with a colormap to retrieve the bipartition</span>
+template &lt;typename Graph, typename IndexMap, typename PartitionMap&gt;
+bool is_bipartite(const Graph&amp; graph, const IndexMap index_map, PartitionMap partition_map);
+
+<span class="comment">// version which uses the specified index map to build a colormap</span>
+template &lt;typename Graph, typename IndexMap&gt;
+bool is_bipartite(const Graph&amp; graph, const IndexMap index_map);
+
+<span class="comment">// version which uses the internal index map</span>
+template &lt;typename Graph&gt;
+bool is_bipartite(const Graph&amp; graph);
+</pre>
+
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The <span class="cxx_code">is_bipartite()</span> algorithm tests a given
+graph for bipartiteness using a DFS-based coloring approach.</p>
+
+<p>An undirected graph is bipartite if one can partition its set of vertices
 into two sets "left" and "right", such that each edge goes from either side
-to the other. Obviously, a two-coloring of the graph is exactly the same as
-a two-partition. <tt>is_bipartite()</tt> tests whether such a two-coloring
-is possible and can return it in a given property map.
-</p>
+to the other.  Obviously, a two-coloring of the graph is exactly the same as
+a two-partition.  The <span class="cxx_code">is_bipartite()</span> algorithm
+tests whether such a two-coloring is possible and can return it in a given
+property map.</p>
 
-<p>
-The bipartition is recorded in the color map <tt>partition_map</tt>,
-which will contain a two-coloring of the graph, i.e. an assignment of
-<i>black</i> and <i>white</i> to the vertices such that no edge is monochromatic.
-The predicate whether the graph is bipartite is the return value of the function.
-</p>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<h3>Where Defined</h3>
+<p><a href="../../../boost/graph/bipartite.hpp"
+><tt>boost/graph/bipartite.hpp</tt></a></p>
 
-<p>
-<a href="../../../boost/graph/bipartite.hpp"><tt>boost/graph/bipartite.hpp</tt></a>
-</p>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-<h3>Parameters</h3>
+<p>If <strong>any</strong> of the following are true:</p>
 
-<p>
-IN: <tt>const Graph&amp; graph</tt>
-</p>
-<blockquote><p>
-An undirected graph. The graph type must be a model of <a
-href="VertexListGraph.html">Vertex List Graph</a> and <a
-href="IncidenceGraph.html">Incidence Graph</a>.<br/>
-</p></blockquote>
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
+</ul>
 
-<p>
-IN: <tt>const IndexMap index_map</tt>
-</p>
-<blockquote><p>
-This maps each vertex to an integer in the range <tt>[0,
-num_vertices(graph))</tt>. The type <tt>VertexIndexMap</tt>
-must be a model of <a
-href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a>. The value type of the map must be an integer type. The
-vertex descriptor type of the graph needs to be usable as the key
-type of the map.<br/>
-</p></blockquote>
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
 
-<p>
-OUT: <tt>PartitionMap partition_map</tt>
-</p>
-<blockquote><p>
-The algorithm tests whether the graph is bipartite and assigns each
-vertex either a white or a black color, according to the partition.
-The <tt>PartitionMap</tt> type must be a model of
-<a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-Map</a> and
-<a href="../../property_map/doc/WritablePropertyMap.html">Writable Property
-Map</a> The value type must model <a href="./ColorValue.html">ColorValue</a>.
-</p></blockquote>
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
 
-<h3>Complexity</h3>
+<table class="parameters">
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const Graph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const IndexMap index_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  The argument type must be
+a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type of the map must
+be an integer type.  The vertex descriptor type of the graph needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the partition map argument must be specified.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_partition_map</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">PartitionMap partition_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This argument records the bipartition and will contain a two-coloring of
+the graph, i.e. an assignment of <i>black</i> and <i>white</i> to the vertices
+such that no edge is monochromatic.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/ReadWritePropertyMap.html"
+>Read/Write Property Map</a>, its key type must be the graph's vertex
+descriptor type, and the value type of the color map must model
+<a class="cxx_concept" href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A two-bit color map of <span class="cxx_code">white_color</span> values,
+and of size <span class="cxx_code">num_vertices(graph)</span>, and using the
+index map argument for the index map.</td>
+</tr>
+</table>
 
-<p>
-The time complexity for the algorithm is <i>O(V + E)</i>.
-</p>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<h3>See Also</h3>
+<p>The time complexity for the algorithm is <i>O(V + E)</i>.</p>
 
-<p>
-<a href="./find_odd_cycle.html"><tt>find_odd_cycle()</tt></a>
-</p>
+<h3><a name="sec:see_also"></a>See Also</h3>
 
-<h3>Example</h3>
+<p><a class="cxx_code" href="find_odd_cycle.html">find_odd_cycle()</a></p>
 
-<p>
-The file <a href="../example/bipartite_example.cpp"><tt>examples/bipartite.cpp</tt></a>
-contains an example of testing an undirected graph for bipartiteness.
-<br/>
-</p>
+<h3><a name="sec:example"></a>Example</h3>
 
-<hr/>
+<p>The file <a href="../example/bipartite_example.cpp"
+><tt>examples/bipartite.cpp</tt></a> contains an example of testing an
+undirected graph for bipartiteness.</p>
 
-<p>
-Copyright &copy; 2010 Matthias Walter
-(<a class="external" href="mailto:xammy@xammy.homelinux.net">xammy@xammy.homelinux.net</a>)
-</p>
+<br />
+<hr />
+<table>
+<tr>
+<td class="copyright">Copyright &copy; 2010</td>
+<td>Matthias Walter (<a class="external"
+href="xammy@xammy.homelinux.net">xammy@xammy.homelinux.net</a>)</td>
+</tr>
+</table>
 
 </body>
-</html> 
+</html>

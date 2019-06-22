@@ -19,14 +19,16 @@
 
 <h1><tt>transpose_graph</tt></h1>
 
+<h3>Synopsis</h3>
+
 <pre class="cxx_code">
 <span class="comment">// old-style named parameter version</span>
 template &lt;class <a class="cxx_concept" href="VertexListGraph.html"
 >VertexListGraph</a>, class <a class="cxx_concept" href="MutableGraph.html"
 >MutableGraph</a>&gt; 
-void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T,
+void transpose_graph(const VertexListGraph&amp; graph, MutableGraph&amp; result,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
->all defaults</span>);
+>/* all defaults */</span>);
 </pre>
 
 <p>If the configuration macro
@@ -171,7 +173,7 @@ long as <strong>all</strong> of the following are true:</p>
 is rendered by this document such that the text is of the same color.</li>
 </ul>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -351,12 +353,12 @@ for the index map.</td>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td class="copyright">Copyright &copy; 2000-2001</td>
 <td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
-Indiana University (<a
-href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+Indiana University
+(<a class="external" href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>

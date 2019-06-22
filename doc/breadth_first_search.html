@@ -302,7 +302,7 @@ long as <strong>all</strong> of the following are true:</p>
 is rendered by this document such that the text is of the same color.</li>
 </ul>
 
-<table>
+<table class="parameters">
 <tr>
 <th>Category:</th>
 <td>IN</td>
@@ -524,50 +524,50 @@ value type is the vertex descriptor type of the graph.</td>
 
 <table>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.initialize_vertex(s, g)</th>
+<th class="cxx_code">vis.initialize_vertex(s, g)</th>
 <td>is invoked on every vertex before the start of the search.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_vertex(u, g)</th>
+<th class="cxx_code">vis.examine_vertex(u, g)</th>
 <td>is invoked on each vertex as it is removed from the buffer.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.examine_edge(e, g)</th>
+<th class="cxx_code">vis.examine_edge(e, g)</th>
 <td>is invoked on every out-edge of each vertex immediately after the vertex
 is removed from the buffer.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.tree_edge(e, g)</th>
+<th class="cxx_code">vis.tree_edge(e, g)</th>
 <td>is invoked (in addition to <span class="cxx_code">examine_edge()</span>)
 if the edge is a tree edge.  The target vertex of edge
 <span class="cxx_code">e</span> is discovered at this time.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.discover_vertex(u, g)</th>
+<th class="cxx_code">vis.discover_vertex(u, g)</th>
 <td>is invoked the first time the algorithm encounters vertex <span
 class="cxx_code">u</span>.  All vertices closer to the source vertex have been
 discovered, and vertices further from the source have not yet been
 discovered.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.non_tree_edge(e, g)</th>
+<th class="cxx_code">vis.non_tree_edge(e, g)</th>
 <td>is invoked (in addition to <span class="cxx_code">examine_edge()</span>)
 if the edge is not a tree edge.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.gray_target(e, g)</th>
+<th class="cxx_code">vis.gray_target(e, g)</th>
 <td>is invoked (in addition to <span class="cxx_code">non_tree_edge()</span>)
 if the target vertex is colored gray at the time of examination.  The color
 gray indicates that the vertex is currently in the buffer.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.black_target(e, g)</th>
+<th class="cxx_code">vis.black_target(e, g)</th>
 <td>is invoked (in addition to <span class="cxx_code">non_tree_edge()</span>)
 if the target vertex is colored black at the time of examination.  The color
 black indicates that the vertex is no longer in the buffer.</td>
 </tr>
 <tr>
-<th class="cxx_code" nowrap="nowrap">vis.finish_vertex(u, g)</th>
+<th class="cxx_code">vis.finish_vertex(u, g)</th>
 <td>is invoked after all of the out-edges of <span class="cxx_code">u</span>
 have been examined and all of the adjacent vertices have been discovered.</td>
 </tr>
@@ -592,12 +592,12 @@ reference.</p>
 <hr />
 <table>
 <tr>
-<td nowrap="nowrap">Copyright &copy; 2000-2001</td>
+<td class="copyright">Copyright &copy; 2000-2001</td>
 <td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
 Indiana University
-(<a href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
+(<a class="external" href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)</td>
 </tr>
 </table>
 
 </body>
-</html> 
+</html>
