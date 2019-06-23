@@ -13,9 +13,10 @@
 
 #include <iostream>
 
-using namespace boost;
-template < typename TimeMap > class bfs_time_visitor:public default_bfs_visitor {
-  typedef typename property_traits < TimeMap >::value_type T;
+template < typename TimeMap >
+class bfs_time_visitor : public boost::graph::bfs_visitor<>
+{
+  typedef typename boost::property_traits < TimeMap >::value_type T;
 public:
   bfs_time_visitor(TimeMap tmap, T & t):m_timemap(tmap), m_time(t) { }
   template < typename Vertex, typename Graph >
@@ -37,10 +38,10 @@ struct VertexProps {
 int
 main()
 {
-  using namespace boost;
   // Select the graph type we wish to use
-  typedef adjacency_list < listS, listS, undirectedS,
-    VertexProps> graph_t;
+  typedef boost::adjacency_list<
+    boost::listS, boost::listS, boost::undirectedS, VertexProps
+  > graph_t;
   // Set up the vertex IDs and names
   enum { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
@@ -54,21 +55,23 @@ main()
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   graph_t g;
-  std::vector<graph_traits<graph_t>::vertex_descriptor> verts;
+  std::vector<boost::graph_traits<graph_t>::vertex_descriptor> verts;
   for (std::size_t i = 0; i < N; ++i)
     verts.push_back(add_vertex(g));
   for (std::size_t j = 0; j < n_edges; ++j)
     add_edge(verts[edge_array[j].first], verts[edge_array[j].second], g);
 #else
-  typedef graph_traits<graph_t>::vertices_size_type v_size_t;
+  typedef boost::graph_traits<graph_t>::vertices_size_type v_size_t;
   graph_t g(edge_array, edge_array + n_edges, v_size_t(N));
 #endif
 
   // Typedefs
-  typedef graph_traits<graph_t>::vertices_size_type Size;
+  typedef boost::graph_traits<graph_t>::vertices_size_type Size;
 
   Size time = 0;
-  typedef property_map<graph_t, std::size_t VertexProps::*>::type dtime_map_t;
+  typedef boost::property_map<
+    graph_t, std::size_t VertexProps::*
+  >::type dtime_map_t;
   dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
@@ -84,11 +87,11 @@ main()
 
   // a vector to hold the discover time property for each vertex
   std::vector < Size > dtime(num_vertices(g));
-  typedef
-    iterator_property_map<std::vector<Size>::iterator,
-                          property_map<graph_t, std::size_t VertexProps::*>::type>
-    dtime_pm_type;
-  graph_traits<graph_t>::vertex_iterator vi, vi_end;
+  typedef boost::iterator_property_map<
+    std::vector<Size>::iterator,
+    boost::property_map<graph_t, std::size_t VertexProps::*>::type
+  > dtime_pm_type;
+  boost::graph_traits<graph_t>::vertex_iterator vi, vi_end;
   std::size_t c = 0;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++c) {
     dtime[c] = dtime_map[*vi];
@@ -97,15 +100,21 @@ main()
   dtime_pm_type dtime_pm(dtime.begin(), get(&VertexProps::index, g));
 
   // Use std::sort to order the vertices by their discover time
-  std::vector<graph_traits<graph_t>::vertices_size_type > discover_order(N);
-  integer_range < int >range(0, N);
+  std::vector<
+    boost::graph_traits<graph_t>::vertices_size_type
+  > discover_order(N);
+  boost::integer_range < int >range(0, N);
   std::copy(range.begin(), range.end(), discover_order.begin());
-  std::sort(discover_order.begin(), discover_order.end(),
-            make_indirect_cmp(
-              std::less<Size>(),
-              make_iterator_property_map(
-                dtime.begin(),
-                typed_identity_property_map<std::size_t>())));
+  std::sort(
+    discover_order.begin(), discover_order.end(),
+    make_indirect_cmp(
+      std::less<Size>(),
+      make_iterator_property_map(
+        dtime.begin(),
+        boost::typed_identity_property_map<std::size_t>()
+      )
+    )
+  );
 
   std::cout << "order of discovery: ";
   for (int i = 0; i < N; ++i)

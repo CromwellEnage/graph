@@ -139,6 +139,8 @@ namespace boost { namespace graph {
     {
         return astar_visitor<Visitors>(vis);
     }
+
+    typedef astar_visitor<> default_astar_visitor;
 }} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
@@ -1056,6 +1058,7 @@ namespace boost {
     using ::boost::graph::astar_heuristic;
     using ::boost::graph::astar_visitor;
     using ::boost::graph::make_astar_visitor;
+    using ::boost::graph::default_astar_visitor;
 
   template <typename VertexListGraph,
             typename AStarHeuristic,

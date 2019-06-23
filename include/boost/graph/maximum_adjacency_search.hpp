@@ -119,6 +119,8 @@ namespace boost { namespace graph {
     {
         return mas_visitor<Visitors>(vis);
     }
+
+    typedef mas_visitor<> default_mas_visitor;
 }}
 
 #include <boost/graph/buffer_concepts.hpp>
@@ -510,6 +512,7 @@ namespace boost {
     using ::boost::graph::maximum_adjacency_search;
     using ::boost::graph::mas_visitor;
     using ::boost::graph::make_mas_visitor;
+    using ::boost::graph::default_mas_visitor;
 
     // Old-style named parameter interface
     template <typename Graph, typename P, typename T, typename R>

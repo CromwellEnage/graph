@@ -19,7 +19,7 @@
 using namespace boost;
 
 template <typename DistanceMap>
-class bacon_number_recorder : public default_bfs_visitor
+class bacon_number_recorder : public boost::graph::bfs_visitor<>
 {
 public:
   bacon_number_recorder(DistanceMap dist) : d(dist) { }

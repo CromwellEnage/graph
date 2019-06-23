@@ -51,7 +51,7 @@ typedef adjacency_list<vecS, vecS, undirectedS,
 typedef graph_traits<Graph>::vertex_descriptor Vertex;
 typedef graph_traits<Graph>::edge_descriptor Edge;
 
-class bacon_number_recorder : public default_bfs_visitor
+class bacon_number_recorder : public boost::graph::bfs_visitor<>
 {
 public:
   bacon_number_recorder(int* dist) : d(dist) { }

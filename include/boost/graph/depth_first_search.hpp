@@ -687,6 +687,7 @@ namespace boost { namespace graph {
   make_dfs_visitor(Visitors vis) {
     return dfs_visitor<Visitors>(vis);
   }
+  typedef dfs_visitor<> default_dfs_visitor;
 }} // namespace boost::graph
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
@@ -1066,6 +1067,7 @@ namespace boost {
     using ::boost::graph::depth_first_visit;
     using ::boost::graph::dfs_visitor;
     using ::boost::graph::make_dfs_visitor;
+    using ::boost::graph::default_dfs_visitor;
 
     // Old-style named parameter variant
     template <typename Graph, typename P, typename T, typename R>

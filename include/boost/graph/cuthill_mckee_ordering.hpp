@@ -24,17 +24,17 @@
 namespace boost { namespace detail {
 
     template <typename OutputIterator, typename Buffer, typename DegreeMap>
-    struct bfs_rcm_visitor : public boost::graph::default_bfs_visitor
+    struct bfs_rcm_visitor : public boost::graph::bfs_visitor<>
     {
         inline bfs_rcm_visitor(
             OutputIterator& iter, Buffer& b, DegreeMap deg
-        ) : boost::graph::default_bfs_visitor(), permutation(iter),
+        ) : boost::graph::bfs_visitor<>(), permutation(iter),
             index_begin(0), Qref(b), degree(deg)
         {
         }
 
         inline bfs_rcm_visitor(bfs_rcm_visitor const& copy) :
-            boost::graph::default_bfs_visitor(),
+            boost::graph::bfs_visitor<>(),
             permutation(copy.permutation), index_begin(copy.index_begin),
             Qref(copy.Qref), degree(copy.degree)
         {

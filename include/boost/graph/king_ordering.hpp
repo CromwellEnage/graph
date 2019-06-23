@@ -29,14 +29,14 @@ namespace boost { namespace detail {
         typename OutputIterator, typename Buffer, typename Compare,
         typename PseudoDegreeMap, typename VecMap, typename VertexIndexMap
     >
-    class bfs_king_visitor : public boost::graph::default_bfs_visitor
+    class bfs_king_visitor : public boost::graph::bfs_visitor<>
     {
     public:
         bfs_king_visitor(
             OutputIterator& iter, Buffer& b, Compare compare,
             PseudoDegreeMap deg, std::vector<int> loc, VecMap color,
             VertexIndexMap vertices
-        ) : boost::graph::default_bfs_visitor(), permutation(iter), Qref(b),
+        ) : boost::graph::bfs_visitor<>(), permutation(iter), Qref(b),
             degree(deg), comp(compare), Qlocation(loc), colors(color),
             vertex_map(vertices)
         {

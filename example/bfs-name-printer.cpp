@@ -50,7 +50,7 @@ build_router_network(Graph & g, VertexNameMap name_map,
 
 
 template <typename VertexNameMap>
-class bfs_name_printer : public default_bfs_visitor {
+class bfs_name_printer : public boost::graph::bfs_visitor<> {
                          // inherit default (empty) event point actions
 public:
   bfs_name_printer(VertexNameMap n_map) : m_name_map(n_map) {

@@ -18,7 +18,7 @@
 
 char name[] = "abcdefghij";
 
-struct parenthesis_visitor : public boost::graph::default_dfs_visitor
+struct parenthesis_visitor : public boost::graph::dfs_visitor<>
 {
   template <class Vertex, class Graph> void
   start_vertex(Vertex v, const Graph &)

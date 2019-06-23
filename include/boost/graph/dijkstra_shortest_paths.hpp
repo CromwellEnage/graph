@@ -110,6 +110,8 @@ namespace boost { namespace graph {
     {
         return dijkstra_visitor<Visitors>(vis);
     }
+
+    typedef dijkstra_visitor<> default_dijkstra_visitor;
 }} // namespace boost::graph
 
 #include <boost/graph/relax.hpp>
@@ -694,6 +696,7 @@ namespace boost {
     using ::boost::graph::dijkstra_shortest_paths;
     using ::boost::graph::dijkstra_visitor;
     using ::boost::graph::make_dijkstra_visitor;
+    using ::boost::graph::default_dijkstra_visitor;
 } // namespace boost
 
 #include <boost/graph/overloading.hpp>

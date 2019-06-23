@@ -47,15 +47,14 @@
 
  */
 
-using namespace boost;
 using namespace std;
 
 
 template <class VisitorList>
-struct edge_categorizer : public dfs_visitor<VisitorList> {
-  typedef dfs_visitor<VisitorList> Base;
+struct edge_categorizer : public boost::graph::dfs_visitor<VisitorList> {
+  typedef boost::graph::dfs_visitor<VisitorList> Base;
 
-  edge_categorizer(const VisitorList& v = null_visitor()) : Base(v) { }
+  edge_categorizer(const VisitorList& v = boost::null_visitor()) : Base(v) { }
 
   template <class Edge, class Graph>
   void tree_edge(Edge e, Graph& G) {
@@ -92,9 +91,7 @@ int
 main(int , char* [])
 {
 
-  using namespace boost;
-  
-  typedef adjacency_list<> Graph;
+  typedef boost::adjacency_list<> Graph;
   
   Graph G(5);
   add_edge(0, 2, G);
@@ -107,7 +104,7 @@ main(int , char* [])
   add_edge(4, 0, G);
   add_edge(4, 1, G);
 
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+  typedef boost::graph_traits<Graph>::vertices_size_type size_type;
 
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
@@ -116,8 +113,8 @@ main(int , char* [])
     G,
     boost::graph::keywords::_visitor = categorize_edges(
       make_pair(
-        stamp_times(&d[0], t, on_discover_vertex()),
-        stamp_times(&f[0], t, on_finish_vertex())
+        stamp_times(&d[0], t, boost::on_discover_vertex()),
+        stamp_times(&f[0], t, boost::on_finish_vertex())
       )
     )
   );

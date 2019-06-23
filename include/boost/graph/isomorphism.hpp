@@ -81,8 +81,8 @@ namespace boost { namespace detail {
         Invariant1 invariant1;
         size_type* multiplicity;
       };
-    
-      struct record_dfs_order : default_dfs_visitor
+
+      struct record_dfs_order : boost::graph::dfs_visitor<>
       {
         record_dfs_order(std::vector<vertex1_t>& v, std::vector<edge1_t>& e) 
           : vertices(v), edges(e) { }

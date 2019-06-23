@@ -338,8 +338,8 @@ int test_main (int argc, char *argv[]) {
   boost::randomize_property<boost::vertex_name_t>(common_subgraph, generator);
   boost::randomize_property<boost::edge_name_t>(common_subgraph, generator);
 
-  boost::copy_graph(common_subgraph, graph1);
-  boost::copy_graph(common_subgraph, graph2);
+  copy_graph(common_subgraph, graph1);
+  copy_graph(common_subgraph, graph2);
 
   // Randomly add vertices and edges to graph1 and graph2.
   add_random_vertices(graph1, generator, vertices_to_create,

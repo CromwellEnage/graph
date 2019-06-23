@@ -91,7 +91,7 @@ struct found_goal {}; // exception for termination
 
 // visitor that terminates when we find the goal
 template <class Vertex>
-class astar_goal_visitor : public boost::graph::default_astar_visitor
+class astar_goal_visitor : public boost::graph::astar_visitor<>
 {
 public:
   astar_goal_visitor(Vertex goal) : m_goal(goal) {}

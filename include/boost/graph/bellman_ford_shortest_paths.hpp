@@ -103,6 +103,8 @@ namespace boost { namespace graph {
     {
         return bellman_visitor<Visitors>(vis);
     }
+
+    typedef bellman_visitor<> default_bellman_visitor;
 }}
 
 #include <boost/graph/graph_concepts.hpp>
@@ -405,6 +407,7 @@ namespace boost {
     using ::boost::graph::bellman_ford_shortest_paths;
     using ::boost::graph::bellman_visitor;
     using ::boost::graph::make_bellman_visitor;
+    using ::boost::graph::default_bellman_visitor;
 }
 
 namespace boost { namespace detail {
@@ -420,7 +423,7 @@ namespace boost { namespace detail {
        const bgl_named_params<P, T, R>& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
-      bellman_visitor<> null_vis;
+      boost::graph::bellman_visitor<> null_vis;
       typedef typename property_traits<WeightMap>::value_type weight_type;
       typename graph_traits<VertexAndEdgeListGraph>::vertex_iterator v, v_end;
       for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
@@ -450,7 +453,7 @@ namespace boost { namespace detail {
        const bgl_named_params<P, T, R>& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
-      bellman_visitor<> null_vis;
+      boost::graph::bellman_visitor<> null_vis;
       return bellman_ford_shortest_paths
                (g, N, weight, pred, distance,
                 choose_param(get_param(params, distance_combine_t()),

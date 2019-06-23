@@ -32,7 +32,7 @@ std::string name[] = { "C0", "C1", "C2", "C3", "C4", "C5", "C6", "O7",
                        "H8", "H9", "H10", "H11", "H12", "H13", "H14", "H15"};
 
 
-struct detect_loops : public boost::dfs_visitor<>
+struct detect_loops : public boost::graph::dfs_visitor<>
 {
   template <class Edge, class Graph>
   void back_edge(Edge e, const Graph& g) {

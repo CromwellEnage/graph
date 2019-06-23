@@ -143,7 +143,7 @@ private:
 // This calculates the Euclidean distance between a vertex and a goal
 // vertex.
 class euclidean_heuristic:
-      public boost::astar_heuristic<filtered_grid, double>
+      public boost::graph::astar_heuristic<filtered_grid, double>
 {
 public:
   euclidean_heuristic(vertex_descriptor goal):m_goal(goal) {};
@@ -160,7 +160,8 @@ private:
 struct found_goal {};
 
 // Visitor that terminates when we find the goal vertex
-struct astar_goal_visitor:public boost::default_astar_visitor {
+struct astar_goal_visitor : public boost::graph::astar_visitor<>
+{
   astar_goal_visitor(vertex_descriptor goal):m_goal(goal) {};
 
   void examine_vertex(vertex_descriptor u, const filtered_grid&) {

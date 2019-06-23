@@ -86,7 +86,7 @@ main()
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   bool r = bellman_ford_shortest_paths
     (g, int(N), weight_pmap, &parent[0], &distance[0], 
-     closed_plus<int>(), std::less<int>(), default_bellman_visitor());
+     closed_plus<int>(), std::less<int>(), boost::graph::bellman_visitor<>());
 #else
   bool r = bellman_ford_shortest_paths(
     g,

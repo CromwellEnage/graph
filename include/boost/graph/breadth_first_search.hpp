@@ -542,6 +542,7 @@ namespace boost { namespace graph {
   make_bfs_visitor(Visitors vis) {
     return bfs_visitor<Visitors>(vis);
   }
+  typedef bfs_visitor<> default_bfs_visitor;
 }} // namespace boost::graph
 
 #include <boost/core/enable_if.hpp>
@@ -1135,6 +1136,7 @@ namespace boost {
     using ::boost::graph::breadth_first_search;
     using ::boost::graph::bfs_visitor;
     using ::boost::graph::make_bfs_visitor;
+    using ::boost::graph::default_bfs_visitor;
 } // namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/breadth_first_search.hpp>)
