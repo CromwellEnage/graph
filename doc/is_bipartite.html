@@ -80,15 +80,15 @@ only the following function definitions are available.</p>
 
 <pre class="cxx_code">
 <span class="comment">// version with a colormap to retrieve the bipartition</span>
-template &lt;typename Graph, typename IndexMap, typename PartitionMap&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename IndexMap, typename PartitionMap&gt;
 bool is_bipartite(const Graph&amp; graph, const IndexMap index_map, PartitionMap partition_map);
 
 <span class="comment">// version which uses the specified index map to build a colormap</span>
-template &lt;typename Graph, typename IndexMap&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename IndexMap&gt;
 bool is_bipartite(const Graph&amp; graph, const IndexMap index_map);
 
 <span class="comment">// version which uses the internal index map</span>
-template &lt;typename Graph&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a>&gt;
 bool is_bipartite(const Graph&amp; graph);
 </pre>
 

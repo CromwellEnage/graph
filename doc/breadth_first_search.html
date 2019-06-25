@@ -67,7 +67,7 @@ definitions are available.</p>
 
 <pre class="cxx_code">
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 void breadth_first_search(
@@ -87,7 +87,8 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 <span class="comment">// non-named parameter version</span>
-template &lt;class Graph, class Buffer, class BFSVisitor, 
+template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a
+>, class Buffer, class BFSVisitor, 
 	  class ColorMap&gt;
 void breadth_first_search(const Graph&amp; g, 
    typename <a href="graph_traits.html"

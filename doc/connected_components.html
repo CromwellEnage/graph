@@ -44,8 +44,10 @@ is defined, then the following function overload definition is available.</p>
                 Args,
                 boost::graph::keywords::tag::component_map
             &gt;::type,
-            <span class="comment"
->// unspecified metafunction instantiation</span>
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the value type of component_map
+            */</span>
         &gt;
     ), connected_components, ::boost::graph::keywords::tag,
     (required
@@ -87,10 +89,15 @@ definition is available.</p>
 <a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (
         boost::lazy_enable_if&lt;
-            <span class="comment"
->/* unspecified metafunction predicate instantiation */</span>,
-            <span class="comment"
->// unspecified metafunction instantiation</span>
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff Args contains component_map and
+                vertex_index_map is not bound to a bgl_named_params instance
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the value type of component_map
+            */</span>
         &gt;
     ), connected_components, ::boost::graph::keywords::tag,
     (required
@@ -123,7 +130,8 @@ only the following function overload definition is available.</p>
 <pre class="cxx_code">
 <span class="comment">// Boost.Parameter-enabled version</span>
 template &lt;
-    typename Graph, typename ComponentMap,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename ComponentMap,
     typename TaggedArg0, typename TaggedArg1
 &gt;
 typename <a href="../../property_map/doc/property_map.html">property_traits</a

@@ -33,8 +33,10 @@ is defined, then the following function definition is available.</p>
                 Args,
                 boost::graph::keywords::tag::result
             &gt;::type,
-            <span class="comment"
->// unspecified metafunction instantiation</span>
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the result argument type
+            */</span>
         &gt;
     ), find_odd_cycle, ::boost::graph::keywords::tag,
     (required
@@ -71,15 +73,21 @@ definitions are available.</p>
 
 <pre class="cxx_code">
 <span class="comment">// version with a colormap to retrieve the bipartition</span>
-template &lt;typename Graph, typename IndexMap, typename PartitionMap, typename OutputIterator&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename IndexMap, typename PartitionMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>&gt;
 OutputIterator find_odd_cycle(const Graph&amp; graph, const IndexMap index_map, PartitionMap partition_map, OutputIterator result);
 
 <span class="comment">// version which uses the specified index map to build a colormap</span>
-template &lt;typename Graph, typename IndexMap, typename OutputIterator&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename IndexMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>&gt;
 OutputIterator find_odd_cycle(const Graph&amp; graph, const IndexMap index_map, OutputIterator result);
 
 <span class="comment">// version which uses the internal index map</span>
-template &lt;typename Graph, typename OutputIterator&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>&gt;
 OutputIterator find_odd_cycle(const Graph&amp; graph, OutputIterator result);
 </pre>
 

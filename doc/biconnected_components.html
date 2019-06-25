@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright 2001-2004 The Trustees of Indiana University.
@@ -44,21 +45,17 @@ OutputIterator articulation_points(const Graph&amp; g, OutputIterator out,
                                    const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <span class="comment">// non-named parameter versions</span>
-template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename ComponentMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>,
           typename DiscoverTimeMap, typename LowPointMap&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
 biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out, 
                        DiscoverTimeMap discover_time, LowPointMap lowpt);
 
-template &lt;typename Graph, typename ComponentMap, typename OutputIterator&gt;
-std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out);
-
-template &lt;typename Graph, typename ComponentMap&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename ComponentMap&gt;
 std::size_t biconnected_components(const Graph&amp; g, ComponentMap comp);
-
-template &lt;typename Graph, typename OutputIterator&gt;
-OutputIterator articulation_points(const Graph&amp; g, OutputIterator out);
 </pre>
 
 <p>If the configuration macro <span class="cxx_code"
@@ -66,13 +63,21 @@ OutputIterator articulation_points(const Graph&amp; g, OutputIterator out);
 following function overload definitions are available.</p>
 
 <pre class="cxx_code">
+<span class="comment"><a name="overload_b_1"></a>// Overload B.1</span>
 <a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (
         boost::lazy_enable_if&lt;
-            <span class="comment"
->/* unspecified metafunction predicate instantiation */</span>,
-            <span class="comment"
->// unspecified metafunction instantiation</span>
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and graph
+                contains an internal vertex index map
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to a
+                std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a> whose first type is that of the number of components
+                and whose second type is the result argument type
+            */</span>
         &gt;
     ), biconnected_components, ::boost::graph::keywords::tag,
     (required
@@ -112,6 +117,223 @@ following function overload definitions are available.</p>
         )
     )
 )
+
+<span class="comment"><a name="overload_b_2"></a>// Overload B.2</span>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and graph
+                does not contain an internal vertex index map.
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to a
+                std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a> whose first type is that of the number of components
+                and whose second type is the result argument type
+            */</span>
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (result
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (component_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+            )
+        )
+    )
+)
+
+<span class="comment"><a name="overload_b_3"></a>// Overload B.3</span>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::disable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and graph
+                does not contain an internal vertex index map.
+            */</span>,
+            std::size_t
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (component_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (discover_time_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (predecessor_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+            )
+        )
+    )
+    (optional
+        (lowpoint_map
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+    )
+)
+
+<span class="comment"><a name="overload_b_4"></a>// Overload B.4</span>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::disable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified or graph
+                contains an internal vertex index map.
+            */</span>,
+            std::size_t
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (component_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+            )
+        )
+    )
+)
+
+<span class="comment"><a name="overload_a_1"></a>// Overload A.1</span>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and graph
+                contains an internal vertex index map.
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the result argument type
+            */</span>
+        &gt;
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (result
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (discover_time_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (predecessor_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+            )
+        )
+    )
+    (optional
+        (lowpoint_map
+          , *(<span class="comment">/* unspecified predicate */</span>)
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+    )
+)
+
+<span class="comment"><a name="overload_a_2"></a>// Overload A.2</span>
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and graph
+                does not contain an internal vertex index map.
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the result argument type
+            */</span>
+        &gt;
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (result
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (visitor
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+            )
+        )
+    )
+)
 </pre>
 
 <p>If the configuration macro <span class="cxx_code"
@@ -119,45 +341,222 @@ following function overload definitions are available.</p>
 > defined, then the following function overload definitions are available.</p>
 
 <pre class="cxx_code">
-<a href="../../parameter/doc/html/reference.html#boost-parameter-basic-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_BASIC_FUNCTION</a>(
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
     (
         boost::lazy_enable_if&lt;
-            <span class="comment"
->/* unspecified metafunction predicate instantiation */</span>,
-            <span class="comment"
->// unspecified metafunction instantiation</span>
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff all of the following are true
+                  * the result argument is deducible/specified
+                  * the result argument is not a vertex property map
+                  * neither the result argument nor discover_time_map are
+                    bgl_named_params instances
+                  * the graph argument contains an internal vertex_index_map
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to a
+                std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a> whose first type is that of the number of components
+                and whose second type is the result argument type
+            */</span>
         &gt;
-    ), strong_components, ::boost::graph::keywords::tag,
+    ), biconnected_components, ::boost::graph::keywords::tag,
     (required
         (graph, *)
         (component_map, *)
+        (result, *)
     )
     (optional
-        (vertex_index_map
-          , *
-          , <span class="comment"
->// see parameter table for default value</span>
-        )
-        (root_map
-          , *
-          , <span class="comment"
->// see parameter table for default value</span>
-        )
         (discover_time_map
           , *
           , <span class="comment"
 >// see parameter table for default value</span>
         )
-        (color_map
+        (lowpoint_map
           , *
-          , <a
-href="../../property_map/doc/shared_array_property_map.html"
->make_shared_array_property_map</a>(
-                num_vertices(graph),
-                white_color,
-                vertex_index_map
-            )
+          , <span class="comment"
+>// see parameter table for default value</span>
         )
+        (predecessor_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (visitor
+          , *
+          , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+        )
+    )
+)
+
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff all of the following are true
+                  * the result argument is deducible/specified
+                  * the result argument is not a vertex property map
+                  * neither the result argument nor vertex_index_map are
+                    bgl_named_params instances
+                  * the graph argument does not contain an internal
+                    vertex_index_map
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to a
+                std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a> whose first type is that of the number of components
+                and whose second type is the result argument type
+            */</span>
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (result, *)
+        (component_map, *)
+        (vertex_index_map, *)
+    )
+    (optional
+        (visitor, *, <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;())
+    )
+)
+
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::disable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff result is deducible/specified and none of
+                the following are true:
+                  * discover_time_map, if specified, is a bgl_named_params
+                    instance
+                  * discover_time_map, if specified, is not a vertex property
+                    map
+                  * predecessor_map is a bgl_named_params instance
+                  * the graph argument contains an internal vertex_index_map
+            */</span>,
+            std::size_t
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (component_map, *)
+    )
+    (optional
+        (discover_time_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (predecessor_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (visitor
+          , *
+          , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+        )
+        (lowpoint_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+    )
+)
+
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::disable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff any of the following are true
+                  * the result argument is deducible/specified
+                  * the graph argument contains an internal vertex_index_map
+                  * vertex_index_map is a bgl_named_params instance
+                  * the visitor argument is a bgl_named_params instance
+            */</span>,
+            std::size_t
+        &gt;
+    ), biconnected_components, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (component_map, *)
+        (vertex_index_map, *)
+    )
+    (optional
+        (visitor, *, <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;())
+    )
+)
+
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff all of the following are true
+                  * the result argument is deducible/specified
+                  * discover_time_map is not a bgl_named_params instance
+                  * the graph argument does not contain an internal
+                    vertex_index_map
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the result argument type
+            */</span>
+        &gt;
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (result, *)
+    )
+    (optional
+        (discover_time_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (predecessor_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+        (visitor
+          , *
+          , <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;()
+        )
+        (lowpoint_map
+          , *
+          , <span class="comment"
+>// see parameter table for default value</span>
+        )
+    )
+)
+
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (
+        boost::lazy_enable_if&lt;
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                mpl::true_ iff all of the following are true
+                  * the result argument is deducible/specified
+                  * the graph argument does not contain an internal
+                    vertex_index_map
+                  * vertex_index_map is not a bgl_named_params instance
+            */</span>,
+            <span class="comment">/*
+                unspecified metafunction instantiation that evaluates to
+                the result argument type
+            */</span>
+        &gt;
+    ), articulation_points, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+        (result, *)
+        (vertex_index_map, *)
+    )
+    (optional
+        (visitor, *, <a href="dfs_visitor.html">dfs_visitor</a>&lt&gt;())
     )
 )
 </pre>
@@ -167,26 +566,50 @@ and for users of MinGW with GCC version 5 or less, only the following function
 overload definitions are available.</p>
 
 <pre class="cxx_code">
-<span class="comment">// Boost.Parameter-enabled version</span>
+<span class="comment">// Boost.Parameter-enabled versions</span>
 template &lt;
-    typename Graph, typename ComponentMap,
-    typename TaggedArg0, typename TaggedArg1, .., typename TaggedArg1
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename ComponentMap, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>,
+    typename TaggedArg0, typename TaggedArg1,
+    typename TaggedArg2, typename TaggedArg3
 &gt;
-typename <a href="../../property_map/doc/property_map.html">property_traits</a
->&lt;ComponentMap&gt;::value_type strong_components(
-    const Graph&amp; graph, ComponentMap component_map,
-    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
-    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
-    ...,
-    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
-    typename boost::enable_if&lt;
-        parameter::<a
+typename boost::disable_if&lt;
+    parameter::<a
 href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 >are_tagged_arguments</a>&lt;
-            TaggedArg0, TaggedArg1, ...,
-        &gt;,
-        mpl::true_
-    &gt;::type = mpl::true_()
+        TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
+    &gt;,
+    std::<a href="http://en.cppreference.com/w/cpp/utility/pair"
+>pair</a>&lt;std::size_t, OutputIterator&gt;
+&gt;::type biconnected_components(
+    const Graph&amp; graph, ComponentMap component_map, OutputIterator out,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg2&amp; a2 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg3&amp; a3 = <span class="comment">/* unspecified */</span>
+);
+
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename <a class="cxx_concept"
+href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>,
+    typename TaggedArg0, typename TaggedArg1,
+    typename TaggedArg2, typename TaggedArg3
+&gt;
+typename boost::disable_if&lt;
+    parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+        TaggedArg0, TaggedArg1, TaggedArg2, TaggedArg3
+    &gt;,
+    OutputIterator
+&gt;::type articulation_points(
+    const Graph&amp; graph, OutputIterator out,
+    const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg2&amp; a2 = <span class="comment">/* unspecified */</span>,
+    const TaggedArg3&amp; a3 = <span class="comment">/* unspecified */</span>
 );
 </pre>
 
@@ -205,7 +628,7 @@ components in the graph.  Thus, a graph without articulation points is
 biconnected.  The following figure illustrates the articulation points and
 biconnected components of a small graph:</p>
 
-<p style="text-align: center;"><img src="figs/biconnected.png"></p>
+<p style="text-align: center;"><img src="figs/biconnected.png" /></p>
 
 <p>Vertices can be present in multiple biconnected components, but each edge
 can only be contained in a single biconnected component.  The output of the
@@ -226,161 +649,395 @@ or a pair of these quantities, depending on what information was recorded.</p>
 <p><a href="../../../boost/graph/biconnected_components.hpp"
 ><tt>boost/graph/biconnected_components.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt>
-<blockquote>
-An undirected graph. The graph type must be a model of <a
-href="VertexListGraph.html">Vertex List Graph</a> and <a
-href="IncidenceGraph.html">Incidence Graph</a>.<br>
-<b>Python</b>: The parameter is named <tt>graph</tt>.
-</blockquote>
+<p>If the configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined, then all arguments must be bound to their
+parameters either by name or by position.  On the other hand, if the
+configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined, then
+<a href="../../parameter/doc/html/index.html">Boost.Parameter's</a> type
+deduction facilities can bind an unnamed non-graph argument to a listed
+parameter as long as <strong>all</strong> of the following are true:</p>
 
-OUT: <tt>ComponentMap c</tt>
-<blockquote>
-The algorithm computes how many biconnected components are in the graph,
-and assigning each component an integer label. The algorithm then
-records which component each edge in the graph belongs to by
-recording the component number in the component property map. The
-<tt>ComponentMap</tt> type must be a model of <a
-href="../../property_map/doc/WritablePropertyMap.html">Writable Property
-Map</a>. The value type should be an integer type, preferably the same
-as the <tt>edges_size_type</tt> of the graph. The key type must be
-the graph's edge descriptor type.<br>
-<b>Default</b>: <tt>dummy_property_map</tt>.<br>
-  <b>Python</b>: Must be an <tt>edge_int_map</tt> for the graph.<br>
-  <b>Python default</b>: <tt>graph.get_edge_int_map("bicomponent")</tt>
-</blockquote>
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The function overload taking in the argument is among those listed in the
+table for that parameter.</li>
+</ul>
 
-OUT: <tt>OutputIterator out</tt>
-<blockquote>
-The algorithm writes articulation points via this output
-iterator and returns the resulting iterator.<br>
-<b>Default</b>: a dummy iterator that ignores values written to it.<br>
+<table class="parameters">
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>No</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const Graph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a> and <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a>.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter is named <span class="python_code">graph</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_component_map</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_1">B.1</a>,
+<a href="#overload_b_2">B.2</a>, <a href="#overload_b_3">B.3</a>, and
+<a href="#overload_b_4">B.4</a>.</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ComponentMap component_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The algorithm computes how many connected components are in the graph, and
+it assigns each component an integer label.  The algorithm then records which
+component each vertex in the graph belongs to by recording the component
+number in the component property map.  The argument type must be a model of
+<a class="cxx_concept" href="../../property_map/doc/WritablePropertyMap.html"
+>Writable Property Map</a>.  The value type must be an integer type,
+preferably the same as the type of the number of edges in the graph.  The
+key type must be the graph's edge descriptor type.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">dummy_property_map()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Must be an <span class="python_code">edge_int_map</span> for the
+graph.</td>
+</tr>
+<tr>
+<th>Python default:</th>
+<td class="python_code">graph.get_edge_int_map("component")</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_result</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_1">B.1</a>,
+<a href="#overload_b_2">B.2</a>, <a href="#overload_a_1">A.1</a>, and
+<a href="#overload_a_2">A.2</a>.</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">OutputIterator result</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The algorithm writes articulation points into this argument, whose type
+must be a model of <a href="http://www.boost.org/sgi/stl/OutputIterator.html"
+class="cxx_concept">Output Iterator</a>.  The value type of the iterator must
+be convertible to the graph's vertex descriptor type.  The final value is
+returned by the function.  If the graph is bipartite (i.e. no odd-length cycle
+exists), nothing is written, thus the given iterator matches the return
+value.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A dummy iterator that ignores values written to it.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>This parameter is not used in Python.  Instead, both algorithms return a
+Python <span class="python_code">list</span> containing the articulation
+points.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_2">B.2</a>,
+<a href="#overload_b_4">B.4</a>, and <a href="#overload_b_4">A.2</a>.</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is only
+necessary when the default discover-time, root, and/or color property maps are
+used.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the other property map arguments must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_discover_time_map</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_3">B.3</a> and
+<a href="#overload_a_1">A.1</a>.</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">discover_time_map(TimeMap t_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The discovery time of each vertex in the depth-first search.  The argument
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
+><a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::vertices_size_type</span> objects of value <span
+class="cxx_code">0</span>, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_lowpoint_map</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>No</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">lowpoint_map(LowPointMap lowpt)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The low point of each vertex in the depth-first search, which is the
+smallest vertex reachable from a given vertex with at most one back edge.  The
+argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The value type of the map must be an integer type.  The vertex
+descriptor type of the graph needs to be usable as the key type of the
+map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
+><a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::vertices_size_type</span> objects of value <span
+class="cxx_code">0</span>, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Unsupported parameter.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_3">B.3</a> and
+<a href="#overload_a_1">A.1</a>.</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The predecessor map records the depth first search tree.  The argument
+type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, where the key type and the value type are the vertex descriptor type
+of the graph.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
+><a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::null_vertex()</span> values, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>Must be a <span class="python_code">vertex_vertex_map</span> for the graph.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_visitor</td>
+</tr>
+<tr>
+<th>Deducible?</th>
+<td>By overloads <a href="#overload_b_2">B.2</a>,
+<a href="#overload_b_3">B.3</a>, <a href="#overload_b_4">B.4</a>,
+<a href="#overload_a_1">A.1</a>, and <a href="#overload_a_2">A.2</a>.</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">visitor(DFSVisitor vis)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A visitor object that is invoked inside the algorithm at the event-points
+specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
+concept.  The visitor object is passed by value <a href="#1">[1]</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">boost::graph::<a href="dfs_visitor.html"
+>dfs_visitor</a>&lt&gt;()</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The parameter should be an object that derives from the
+<a class="python_code" href="DFSVisitor.html#python">DFSVisitor</a> type of
+the graph.</td>
+</tr>
+</table>
 
-<b>Python</b>: this parameter is not used in Python. Instead, both
-algorithms return a Python <tt>list</tt> containing the articulation
-points.
-</blockquote>
+<h3><a name="sec:complexity"></a>Complexity</h3>
 
-<h3>Named Parameters</h3>
+<p>The time complexity for the biconnected components and articulation points
+algorithms is <i>O(V + E)</i>.</p>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. The type 
-  <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
-  integer type. The vertex descriptor type of the graph needs to be
-  usable as the key type of the map.<br>
-  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+<h3><a name="sec:example"></a>Example</h3>
 
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
+<p>The file <a href="../example/biconnected_components.cpp"
+><tt>examples/biconnected_components.cpp</tt></a> contains an example of
+calculating the biconnected components and articulation points of an
+undirected graph.</p>
 
-UTIL/OUT: <tt>discover_time_map(DiscoverTimeMap discover_time)</tt>
-<blockquote>
-  The discovery time of each vertex in the depth-first search. The
-  type <tt>DiscoverTimeMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>. The value type of the map must be an integer
-  type. The vertex descriptor type of the graph needs to be usable as
-  the key type of the map.<br>
-<b>Default</b>: an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
-  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
-  the index map.<br>
+<h3><a name="sec:notes"></a>Notes</h3>
 
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
+<p><a name="1">[1]</a> Since the visitor parameter is passed by value, if your
+visitor contains state then any changes to the state during the algorithm will
+be made to a copy of the visitor object, not the visitor object passed
+in.  Therefore you may want the visitor to hold this state by pointer or
+reference.</p>
 
-UTIL/OUT: <tt>lowpoint_map(LowPointMap lowpt)</tt>
-<blockquote>
-  The low point of each vertex in the depth-first search, which is the
-  smallest vertex reachable from a given vertex with at most one back
-  edge.  The type <tt>LowPointMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>. The value type of the map must be an integer
-  type. The vertex descriptor type of the graph needs to be usable as
-  the key type of the map.<br>
-<b>Default</b>: an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
-  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
-  the index map.<br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-UTIL/OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
-<blockquote>
-  The predecessor map records the depth first search tree. 
-  The <tt>PredecessorMap</tt> type
-  must be a <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> whose key and value types are the same as the vertex
-  descriptor type of the graph.<br>
-  <b>Default:</b> an <a
-  href="../../property_map/doc/iterator_property_map.html">
-  </tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of <tt>vertex_descriptor</tt> of size
-  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
-  the index map.<br>
-
-  <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
-</blockquote>
-
-IN: <tt>visitor(DFSVisitor vis)</tt>
-<blockquote>
-  A visitor object that is invoked inside the algorithm at the
-  event-points specified by the <a href="./DFSVisitor.html">DFS
-  Visitor</a> concept. The visitor object is passed by value <a
-  href="#1">[1]</a>. <br> <b>Default:</b>
-  <tt>dfs_visitor&lt;null_visitor&gt;</tt><br>
-
-  <b>Python</b>: The parameter should be an object that derives from
-  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
-  the graph.
-</blockquote>
-
-<H3>Complexity</H3>
-
-<P>
-The time complexity for the biconnected components and articulation
-points algorithms
-<i>O(V + E)</i>.
-
-<P>
-
-<H3>Example</H3>
-
-<P> The file <a
-href="../example/biconnected_components.cpp"><tt>examples/biconnected_components.cpp</tt></a>
-contains an example of calculating the biconnected components and
-articulation points of an undirected graph.
-
-<h3>Notes</h3>
-
-<p><a name="1">[1]</a> 
-  Since the visitor parameter is passed by value, if your visitor
-  contains state then any changes to the state during the algorithm
-  will be made to a copy of the visitor object, not the visitor object
-  passed in. Therefore you may want the visitor to hold this state by
-  pointer or reference.
-
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2004</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana
-University (<A
-HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
-<a href="http://www.boost.org/people/doug_gregor.html">Doug Gregor</a>, Indiana University
-</TD></TR></TABLE>
+<br />
+<hr />
+<table>
+<tr>
+<td class="copyright">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a class="external"
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
+<a href="http://www.boost.org/people/doug_gregor.htm">Douglas Gregor</a>,
+Indiana University (<a class="external"
+href="mailto:dgregor@cs.indiana.edu">dgregor@cs.indiana.edu</a>)</td>
+</tr>
+</table>
 
 </body>
 </html> 

@@ -79,7 +79,8 @@ definitions are available.</p>
 
 <pre class="cxx_code">
 template &lt;
-    typename Graph, typename TaggedArg0, typename TaggedArg1,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename TaggedArg0, typename TaggedArg1,
     typename TaggedArg2, typename TaggedArg3
 &gt;
 void depth_first_search(
@@ -99,12 +100,14 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 <span class="comment">// non-named parameter versions</span>
-template &lt;typename Graph, typename <a class="cxx_concept"
-href="DFSVisitor.html">DFSVisitor</a>, typename ColorMap&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename <a class="cxx_concept" href="DFSVisitor.html">DFSVisitor</a
+>, typename ColorMap&gt;
 void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color);
 
-template &lt;typename Graph, typename <a class="cxx_concept"
-href="DFSVisitor.html">DFSVisitor</a>, typename ColorMap&gt;
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename <a class="cxx_concept" href="DFSVisitor.html">DFSVisitor</a
+>, typename ColorMap&gt;
 void depth_first_search(
     const Graph&amp; g, DFSVisitor vis, ColorMap color,
     typename <a href="graph_traits.html">graph_traits</a
