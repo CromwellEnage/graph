@@ -43,7 +43,16 @@ void gen_rand_graph(TG &g, size_t nV, size_t nE)
 
 int main(int argc, char* argv[])
 {
+#if ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1910) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1920) \
+    )
+    // Once in a while MSVC-14.1 needs this leeway.
+    // Hopefully MSVC-14.2 does not.
+    const double epsilon = 0.000001;
+#else
     const double epsilon = 0.0000001;
+#endif
     double min_cr, max_cr; ///Minimum and maximum cycle ratio
     typedef std::vector<graph_traits<grap_real_t>::edge_descriptor> ccReal_t;
     ccReal_t cc; ///critical cycle
