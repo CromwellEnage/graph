@@ -29,7 +29,7 @@
 using namespace boost;
 
 template < typename OutputIterator > 
-class back_edge_recorder : public default_dfs_visitor
+class back_edge_recorder : public boost::graph::dfs_visitor<>
 {
 public:
   back_edge_recorder(OutputIterator out):m_out(out) { }
