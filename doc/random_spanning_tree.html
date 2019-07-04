@@ -1,48 +1,145 @@
-<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
 <!--
-     Copyright 2010 The Trustees of Indiana University.
-     
-     Distributed under the Boost Software License, Version 1.0.
-     (See accompanying file LICENSE_1_0.txt or copy at
-     http://www.boost.org/LICENSE_1_0.txt)
-     
-      Authors: Jeremiah Willcock
-               Jeremy Siek (due to adaptation from depth_first_search.html)
-               Andrew Lumsdaine
-  -->
-<Head>
-<Title>Boost Graph Library: Random Spanning Tree</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+    Copyright 2010 The Trustees of Indiana University.
 
-<BR Clear>
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
 
-<TT>random_spanning_tree</TT>
-</H1>
+    Authors:
+    Jeremiah Willcock
+    Jeremy Siek (due to adaptation from depth_first_search.html)
+    Andrew Lumsdaine
+-->
+<head>
+<title>Boost Graph Library: Random Spanning Tree</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
 
-<P>
-<PRE>
-<i>// named parameter versions</i>
-template &lt;class Graph, class Gen, class P, class T, class R&gt;
-void random_spanning_tree(Graph&amp; G,
-  Gen&amp; gen,
-  const <a href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params);
+<br />
 
-template &lt;class Graph, class Gen, class ArgumentPack&gt;
-void random_spanning_tree(Graph&amp; G,
-  Gen&amp; gen,
-  const <a href="../../parameter/doc/html/reference.html#argumentpack">ArgumentPack</a>&amp; arg_pack);
+<h1><tt>random_spanning_tree</tt></h1>
 
-<i>// non-named parameter version</i>
-template &lt;class Graph, class Gen, class PredMap, class WeightMap, class ColorMap&gt;
-void random_spanning_tree(const Graph&amp; g, Gen&amp; gen, vertex_descriptor root,
-  PredMap pred, WeightMap weight, ColorMap color);
-</PRE>
+<h3>Synopsis</h3>
 
-<p>
-The <tt>random_spanning_tree()</tt> function generates a random spanning tree
+<pre class="cxx_code">
+<span class="comment">// old-style named parameter version</span>
+template &lt;
+    typename Graph, typename UniformRandomNumberGenerator,
+    typename P, typename T, typename R
+&gt;
+void random_spanning_tree(
+    const Graph&amp; graph,
+    UniformRandomNumberGenerator&amp; generator_function,
+    const <a
+href="bgl_named_params.html">bgl_named_params</a>&lt;P, T, R&gt;&amp; params
+);
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), random_spanning_tree, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (generator_function
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (predecessor_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+        (optional
+            (root_vertex
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (weight_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (vertex_index_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <span class="comment"
+>// see parameter table for default value</span>
+            )
+            (color_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+              , <a
+href="../../property_map/doc/shared_array_property_map.html"
+>make_shared_array_property_map</a>(
+                    num_vertices(graph),
+                    white_color,
+                    vertex_index_map
+                )
+            )
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definitions are available.</p>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled version</span>
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename <a
+href="../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator"
+class="cxx_concept">UniformRandomNumberGenerator</a>,
+    typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
+&gt;
+void random_spanning_tree(
+    const Graph&amp; graph,
+    UniformRandomNumberGenerator&amp; generator_function,
+    const TaggedArg0&amp; a0,
+    const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
+    ...,
+    const TaggedArg4&amp; a4 = <span class="comment">/* unspecified */</span>,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;
+            TaggedArg0, TaggedArg1, ..., TaggedArg4
+        &gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<span class="comment">// non-named parameter version</span>
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>, typename <a
+href="../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator"
+class="cxx_concept">UniformRandomNumberGenerator</a>,
+    typename PredMap, typename WeightMap, typename ColorMap
+&gt;
+void random_spanning_tree(
+    const Graph&amp; graph,
+    UniformRandomNumberGenerator&amp; generator_function,
+    typename <a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor root_vertex,
+    PredMap predecessor_map, WeightMap weight_map, ColorMap color_map
+);
+</pre>
+
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The <span class="cxx_code">random_spanning_tree()</span> function generates a random spanning tree
 on a directed or undirected graph.  The algorithm used is Wilson's algorithm (<a
 href="bibliography.html#wilson96generating">73</a>, based on <!-- (FIXME: add
 documentation for loop_erased_random_walk()) <a
@@ -50,121 +147,286 @@ href="loop_erased_random_walk.html"> -->loop-erased random walks<!-- </a> -->.  
 be a path from every non-root vertex of the graph to the root;
 the algorithm typically enters an infinite loop when
 given a graph that does not satisfy this property, but may also throw the
-exception <tt>loop_erased_random_walk_stuck</tt> if the search reaches a vertex
+exception <span class="cxx_code">loop_erased_random_walk_stuck</span> if the search reaches a vertex
 with no outgoing edges.  Both weighted and unweighted versions of
-<tt>random_spanning_tree()</tt> are
+<span class="cxx_code">random_spanning_tree()</span> are
 implemented.  In the unweighted version, all spanning trees are equally likely.
 In the weighted version, the probability of a particular spanning tree being
 selected is the product of its edge weights.
 In the non-named-parameter
 version of the algorithm, the unweighted version can be selected by passing an
-object of type <tt>static_property_map&lt;double&gt;</tt> as the weight map.
-In the named-parameter version, leaving off the <tt>weight_map</tt> parameter
-has the same effect.
-</p>
+object of type <span class="cxx_code">static_property_map&lt;double&gt;</span> as the weight map.
+In the named-parameter version, leaving off the <span class="cxx_code">weight_map</span> parameter
+has the same effect.</p>
 
-<H3>Where Defined</H3>
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
 
-<P>
-<a href="../../../boost/graph/random_spanning_tree.hpp"><TT>boost/graph/random_spanning_tree.hpp</TT></a>
+<p><a href="../../../boost/graph/random_spanning_tree.hpp"
+><tt>boost/graph/random_spanning_tree.hpp</tt></a></p>
 
-<h3>Parameters</h3>
+<h3><a name="sec:parameters"></a>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt>
-<blockquote>
-  An undirected graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>
-  and <a href="./VertexListGraph.html">Vertex List Graph</a>.<br>
-</blockquote>
+<p>If <strong>any</strong> of the following are true:</p>
 
-IN: <tt>Gen&amp; gen</tt>
-<blockquote>
-  A random number generator. The generator type must
-  be a model of <a
-  href="../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator">Uniform
-  Random Number Generator</a> or a pointer or reference to such a type.<br>
-</blockquote>
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
+</ul>
 
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
 
-<h3>Named Parameters</h3>
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
 
-IN: <tt>root_vertex(vertex_descriptor root)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_root_vertex = root</tt>
-<blockquote>
-  This parameter, whose type must be the vertex descriptor type of
-  <tt>Graph</tt>, gives the root of the tree to be generated.  The default is
-  <tt>*vertices(g).first</tt>.<br>
-</blockquote>
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
 
-UTIL: <tt>color_map(ColorMap color)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_color_map = color</tt>
-<blockquote>
-  This is used by the algorithm to keep track of its progress through
-  the graph. The type <tt>ColorMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> and its key type must be the graph's vertex
-  descriptor type and the value type of the color map must model
-  <a href="./ColorValue.html">ColorValue</a>.<br>
-  <b>Default:</b> a <tt>two_bit_color_map</tt> of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.<br>
-</blockquote>
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_vertex_index_map = i_map</tt>
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-  num_vertices(g))</tt>. This parameter is only necessary when the
-  default color property map is used. The type <tt>VertexIndexMap</tt>
-  must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  vertex descriptor type of the graph needs to be usable as the key
-  type of the map.<br>
-</blockquote>
+<table class="parameters">
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const Graph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a> and <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_generator_function</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">UniformRandomNumberGenerator&amp; generator_function</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A random number generator.  The generator type must be a model of <a
+href="../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator"
+class="cxx_concept">Uniform Random Number Generator</a> or a pointer or
+reference to such a type.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_predecessor_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">predecessor_map(PredecessorMap p_map)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">PredMap predecessor_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This map, on output, will contain the predecessor of each vertex in the
+graph in the spanning tree.  The value <span class="cxx_code"><a
+href="graph_traits.html">graph_traits</a>&lt;<i>graph argument type</i
+>&gt;::null_vertex()</span> will be used as the predecessor of the root of the
+tree.  The argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>.  The key and value types of the map must both be the graph's vertex
+descriptor type.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+start)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The root of the tree to be generated.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code">(0 &lt; num_vertices(graph)) ? *vertices(graph).first :
+<a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
+type</i>&gt;::null_vertex()</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of its progress through the
+graph.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's vertex descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
+>white_color</span> values, and of size <span class="cxx_code"
+>num_vertices(graph)</span>, and using the index map argument for the index
+map.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This maps each vertex to an integer in the range <tt>[0, <span
+class="cxx_code">num_vertices(graph)</span>)</tt>.  This parameter is only
+necessary when the default color property map is used.  The argument type must
+be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The value type of the map must
+be an integer type.  The vertex descriptor type of the graph needs to be
+usable as the key type of the map.</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
+internal <span class="cxx_code">vertex_index</span> property, otherwise
+<span class="cxx_code">dummy_property_map()</span></td>
+</tr>
+<tr>
+<th>Note:</th>
+<td>If this argument is a <span class="cxx_code">dummy_property_map</span>
+object, then the color map argument must be specified.  For example, <span
+class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+>VertexList=listS</span> does not have an internal <span class="cxx_code"
+>vertex_index</span> property, so the default value of this argument will be a
+<span class="cxx_code">dummy_property_map</span> object.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_weight_map</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">weight_map(WeightMap w_map)</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>
+<p>This map contains the weight of each edge in the graph.  The probability of
+any given spanning tree being produced as the result of the algorithm is
+proportional to the product of its edge weights.  If this argument is omitted,
+a default that gives an equal weight to each edge will be used; a faster
+algorithm that relies on constant weights will also be invoked.</p>
+<p>The weight or ``length'' of each edge in the graph.  The argument type
+must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html"
+class="cxx_concept">Readable Property Map</a>.  The key type of this map needs
+to be the graph's edge descriptor type.  The value type must be a real number
+type (such as <span class="cxx_code">double</span>).</p>
+</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td class="cxx_code"><a href="../../property_map/doc/static_property_map.html"
+>static_property_map</a>&lt;double&gt;(1.)</td>
+</tr>
+</table>
 
-OUT: <tt>predecessor_map(PredMap pred)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_predecessor_map = pred</tt>
-<blockquote>
-  This map, on output, will contain the predecessor of each vertex in the graph
-  in the spanning tree.  The value
-  <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> will be used as the
-  predecessor of the root of the tree.  The type <tt>PredMap</tt> must be a
-  model of
-  <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
-  Map</a>. The key and value types of the map must both be the graph's vertex type.<br>
-</blockquote>
+<br />
+<hr />
+<table>
+<tr>
+<td class="copyright">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a class="external"
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
+<a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
+Indiana University (<a class="external" href="mailto:llee@cs.indiana.edu"
+>llee@cs.indiana.edu</a>)<br />
+<a class="external" href="https://homes.cs.washington.edu/~al75">Andrew
+Lumsdaine</a>, Indiana University (<a class="external"
+href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
+</tr>
+</table>
 
-IN: <tt>weight_map(WeightMap weight)</tt><br />
-Alternative usage: <tt>boost::graph::keywords::_weight_map = weight</tt>
-<blockquote>
-  This map contains the weight of each edge in the graph.  The probability of
-  any given spanning tree being produced as the result of the algorithm is
-  proportional to the product of its edge weights.  If the weight map is
-  omitted, a default that gives an equal weight to each edge will be used; a
-  faster algorithm that relies on constant weights will also be invoked.
-  The type <tt>WeightMap</tt> must be a
-  model of
-  <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The key type of the map must be the graph's edge type, and the value
-  type must be a real number type (such as <tt>double</tt>).<br>
-</blockquote>
-
-<br>
-<HR>
-<TABLE>
-<TR valign=top>
-<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>,
-Indiana University (<A
-HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
-<A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
-Indiana University (<A
-HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
-</TD></TR></TABLE>
-
-</BODY>
-</HTML> 
+</body>
+</html>

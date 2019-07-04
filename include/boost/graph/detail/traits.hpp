@@ -1755,12 +1755,8 @@ namespace boost { namespace detail {
             > type;
         };
     };
-}}
 
-#include <boost/mpl/quote.hpp>
-
-namespace boost { namespace detail {
-
+    template <typename RetMF = mpl::always<mpl::true_> >
     struct binary_function_graph_predicate
     {
         template <typename Arg, typename ArgPack>
@@ -1784,10 +1780,15 @@ namespace boost { namespace detail {
                         >::type
                     >::type
                 >::type,
-                mpl::quote1<is_boolean_expression>
+                RetMF
             > type;
         };
     };
+}}
+
+#include <boost/mpl/quote.hpp>
+
+namespace boost { namespace detail {
 
     template <typename T, typename G>
     struct is_clustering_terminator_function

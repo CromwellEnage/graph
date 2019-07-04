@@ -797,6 +797,11 @@ namespace boost { namespace graph {
 
         return true;
     }
+}} // namespace boost::graph
+
+#include <boost/mpl/quote.hpp>
+
+namespace boost { namespace graph {
 
     BOOST_PARAMETER_FUNCTION(
         (bool), depth_first_visit, ::boost::graph::keywords::tag,
@@ -841,7 +846,13 @@ namespace boost { namespace graph {
                   , boost::detail::get_default_starting_vertex(graph)
                 )
                 (terminator_function
-                  , *(boost::detail::binary_function_graph_predicate)
+                  , *(
+                        boost::detail::binary_function_graph_predicate<
+                            boost::mpl::quote1<
+                                boost::detail::is_boolean_expression
+                            >
+                        >
+                    )
                   , boost::detail::nontruth2()
                 )
             )
