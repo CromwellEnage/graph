@@ -139,25 +139,23 @@ void random_spanning_tree(
 
 <h3><a name="sec:description"></a>Description</h3>
 
-<p>The <span class="cxx_code">random_spanning_tree()</span> function generates a random spanning tree
-on a directed or undirected graph.  The algorithm used is Wilson's algorithm (<a
-href="bibliography.html#wilson96generating">73</a>, based on <!-- (FIXME: add
-documentation for loop_erased_random_walk()) <a
-href="loop_erased_random_walk.html"> -->loop-erased random walks<!-- </a> -->.  There must
-be a path from every non-root vertex of the graph to the root;
-the algorithm typically enters an infinite loop when
-given a graph that does not satisfy this property, but may also throw the
-exception <span class="cxx_code">loop_erased_random_walk_stuck</span> if the search reaches a vertex
-with no outgoing edges.  Both weighted and unweighted versions of
-<span class="cxx_code">random_spanning_tree()</span> are
-implemented.  In the unweighted version, all spanning trees are equally likely.
-In the weighted version, the probability of a particular spanning tree being
-selected is the product of its edge weights.
-In the non-named-parameter
-version of the algorithm, the unweighted version can be selected by passing an
-object of type <span class="cxx_code">static_property_map&lt;double&gt;</span> as the weight map.
-In the named-parameter version, leaving off the <span class="cxx_code">weight_map</span> parameter
-has the same effect.</p>
+<p>The <span class="cxx_code">random_spanning_tree()</span> function generates
+a random spanning tree on a directed or undirected graph.  The algorithm used
+is Wilson's algorithm (<a href="bibliography.html#wilson96generating">73</a>,
+based on <a href="loop_erased_random_walk.html">loop-erased random
+walks</a>.  There must be a path from every non-root vertex of the graph to
+the root; the algorithm typically enters an infinite loop when given a graph
+that does not satisfy this property, but may also throw the exception <span
+class="cxx_code">loop_erased_random_walk_stuck</span> if the search reaches a
+vertex with no outgoing edges.  Both weighted and unweighted versions of
+<span class="cxx_code">random_spanning_tree()</span> are implemented.  In the
+unweighted version, all spanning trees are equally likely.  In the weighted
+version, the probability of a particular spanning tree being selected is the
+product of its edge weights.  In the non-named-parameter version of the
+algorithm, the unweighted version can be selected by passing an object of type
+<span class="cxx_code">static_property_map&lt;double&gt;</span> as the weight
+map.  In the named-parameter version, leaving off the
+<span class="cxx_code">weight_map</span> parameter has the same effect.</p>
 
 <h3><a name="sec:where_defined"></a>Where Defined</h3>
 

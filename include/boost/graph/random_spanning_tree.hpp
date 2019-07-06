@@ -16,6 +16,7 @@
 #include <boost/graph/loop_erased_random_walk.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
 #include <vector>

@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<!--
+    Copyright 2010 The Trustees of Indiana University.
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+
+    Authors:
+    Jeremiah Willcock
+    Jeremy Siek (due to adaptation from depth_first_search.html)
+    Andrew Lumsdaine
+-->
+<head>
+<title>Boost Graph Library: Loop-Erased Random Walk</title>
+<link rel="stylesheet" type="text/css" href="graph.css" />
+</head>
+<body>
+<img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
+
+<br />
+
+<h1><tt>loop_erased_random_walk</tt></h1>
+
+<h3>Synopsis</h3>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is defined, then the following function overload definition is available.</p>
+
+<pre class="cxx_code">
+<a href="../../parameter/doc/html/reference.html#boost-parameter-function-result-name-tag-namespace-arguments">BOOST_PARAMETER_FUNCTION</a>(
+    (void), loop_erased_random_walk, ::boost::graph::keywords::tag,
+    (required
+        (graph
+          , *(<span class="comment">/* unspecified predicate */</span>)
+        )
+    )
+    (deduced
+        (required
+            (root_vertex
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (generator_function
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (color_map
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+            (buffer
+              , *(<span class="comment">/* unspecified predicate */</span>)
+            )
+        )
+    )
+)
+</pre>
+
+<p>If the configuration macro
+<span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
+is <strong>not</strong> defined, then the following function overload
+definitions are available.</p>
+
+<pre class="cxx_code">
+<span class="comment">// Boost.Parameter-enabled versions</span>
+template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename Args&gt;
+void loop_erased_random_walk(
+    const Graph&amp; graph,
+    const Args&amp; arg_pack,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#is-argument-pack"
+>is_argument_pack</a>&lt;Args&gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename TA0, typename TA1, typename TA2, typename TA3
+&gt;
+void loop_erased_random_walk(
+    const Graph&amp; graph,
+    const TA0&amp; a0,
+    const TA1&amp; a1,
+    const TA2&amp; a2,
+    const TA3&amp; a3,
+    typename boost::enable_if&lt;
+        parameter::<a
+href="../../parameter/doc/html/reference.html#are-tagged-arguments"
+>are_tagged_arguments</a>&lt;TA0, TA1, TA2, TA3&gt;,
+        mpl::true_
+    &gt;::type = mpl::true_()
+);
+
+<span class="comment">// non-named parameter version</span>
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename NextEdge, typename ColorMap, typename VertSeq
+&gt;
+void loop_erased_random_walk(
+    const Graph&amp; graph,
+    typename <a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor root_vertex,
+    NextEdge generator_function,
+    ColorMap color_map,
+    VertSeq&amp; buffer
+);
+</pre>
+
+<h3><a name="sec:description"></a>Description</h3>
+
+<p>The <span class="cxx_code">loop_erased_random_walk()</span> performs a <a
+href="http://everything2.com/title/loop-erased+random+walk">loop-erased random
+walk</a> from the root vertex to any vertex colored black (or actually any
+color other than white or gray) in the color map.  The color white is for
+vertices that are not part of the path, while gray is for those that are on
+the path (for cycle detection).  The root vertex must start off colored
+white.</p>
+
+<h3><a name="sec:where_defined"></a>Where Defined</h3>
+
+<p><a href="../../../boost/graph/loop_erased_random_walk.hpp"
+><tt>boost/graph/loop_erased_random_walk.hpp</tt></a></p>
+
+<h3><a name="sec:parameters"></a>Parameters</h3>
+
+<p>If <strong>any</strong> of the following are true:</p>
+
+<ul>
+<li>This document renders the category of a parameter as black text on a white
+background.</li>
+<li>The configuration macro <span
+class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
+<strong>not</strong> defined.</li>
+</ul>
+
+<p>Then the argument must be bound to this parameter either by name or by
+position.  On the other hand, if <strong>all</strong> of the following are
+true:</p>
+
+<ul>
+<li>This document renders the category of a parameter as colored text on a
+black background.</li>
+<li>The configuration macro <span class="cxx_code"
+>BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is defined.</li>
+</ul>
+
+<p>Then <a href="../../parameter/doc/html/index.html">Boost.Parameter's</a>
+type deduction facilities can bind an unnamed argument to this parameter as
+long as <strong>all</strong> of the following are true:</p>
+
+<ul>
+<li>The argument type fulfills the parameter type requirements.</li>
+<li>The argument's position is the same as that of a parameter whose category
+is rendered by this document such that the text is of the same color.</li>
+</ul>
+
+<table class="parameters">
+<tr>
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_graph</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">const Graph&amp; graph</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>An undirected graph.  Its type must be a model of <a class="cxx_concept"
+href="IncidenceGraph.html">Incidence Graph</a> and <a class="cxx_concept"
+href="VertexListGraph.html">Vertex List Graph</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_root_vertex</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code"><a href="graph_traits.html">graph_traits</a>&lt;<i>graph
+argument type</i>&gt;::vertex_descriptor root_vertex</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>The root of the path to be generated.  It must start off colored
+white.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>IN</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_generator_function</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">NextEdge generator_function</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
+class="cxx_concept">Binary Function</a> callable with two parameters - the
+source vertex argument and the graph argument - and returning a valid
+out-edge.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_color_map</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ColorMap color_map</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>This is used by the algorithm to keep track of its progress through the
+graph.  Its argument type must be a model of <a class="cxx_concept"
+href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+Map</a>, its key type must be the graph's vertex descriptor type, and the
+value type of the color map must model <a class="cxx_concept"
+href="ColorValue.html">ColorValue</a>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_buffer</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">VertSeq&amp; buffer</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>A container that is used for temporary storage and to store the resulting
+path of the algorithm.  All vertices in the path except the last have their
+colors set to gray upon return.  The argument type must be a model of
+<a href="http://www.boost.org/sgi/stl/BackInsertionSequence.html"
+class="cxx_concept">SGI Back Insertion Sequence</a>.  The value type of the
+argument must be the vertex descriptor type of the graph.</td>
+</tr>
+</table>
+
+<br />
+<hr />
+<table>
+<tr>
+<td class="copyright">Copyright &copy; 2000-2001</td>
+<td><a href="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</a>,
+Indiana University (<a class="external"
+href="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</a>)<br />
+<a href="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</a>,
+Indiana University (<a class="external" href="mailto:llee@cs.indiana.edu"
+>llee@cs.indiana.edu</a>)<br />
+<a class="external" href="https://homes.cs.washington.edu/~al75">Andrew
+Lumsdaine</a>, Indiana University (<a class="external"
+href="mailto:lums@osl.iu.edu">lums@osl.iu.edu</a>)</td>
+</tr>
+</table>
+
+</body>
+</html>

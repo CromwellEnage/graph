@@ -86,7 +86,6 @@ namespace boost { namespace graph {
 
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/next_prior.hpp>
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
 
@@ -149,14 +148,14 @@ namespace boost { namespace graph {
     )
 #else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
     template <
-        typename Graph, typename NextEdge, typename ColorMap, typename Buffer
+        typename Graph, typename NextEdge, typename ColorMap, typename VertSeq
     >
     void loop_erased_random_walk(
         const Graph& graph,
         typename boost::graph_traits<Graph>::vertex_descriptor root_vertex,
         NextEdge generator_function,
         ColorMap color_map,
-        Buffer& buffer
+        VertSeq& buffer
     )
 #endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
     {
@@ -169,7 +168,7 @@ namespace boost { namespace graph {
         >::type ColorMap;
         typedef typename boost::remove_const<
             typename boost::remove_reference<buffer_type>::type
-        >::type Buffer;
+        >::type VertSeq;
 #endif
         typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
         typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
@@ -198,20 +197,20 @@ namespace boost { namespace graph {
             {
                 // Found a loop; delete from path from the first occurrence
                 // of t to the end, coloring vertices white.
-                typename Buffer::iterator it = std::find(
+                typename VertSeq::iterator i = std::find(
                     buffer.begin(),
                     buffer.end(),
                     t
                 );
-                BOOST_ASSERT(it != buffer.end());
-                ++it;
+                BOOST_ASSERT(i != buffer.end());
+                ++i;
 
-                for (typename Buffer::iterator j = it; j != buffer.end(); ++j)
+                for (typename VertSeq::iterator j = i; j != buffer.end(); ++j)
                 {
                     put(color_map, *j, color_gen::white());
                 }
 
-                buffer.erase(it, buffer.end());
+                buffer.erase(i, buffer.end());
                 s = t;
             }
             else
@@ -227,6 +226,72 @@ namespace boost { namespace graph {
 #endif
     }
 }}
+
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/parameter/value_type.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost { namespace graph {
+
+    template <typename Graph, typename Args>
+    void loop_erased_random_walk(
+        const Graph& graph, const Args& arg_pack,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+        Vertex s = arg_pack[boost::graph::keywords::_root_vertex];
+        typename boost::parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::generator_function
+        >::type next_edge = arg_pack[
+            boost::graph::keywords::_generator_function
+        ];
+        typename boost::parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::color_map
+        >::type v_c_map = arg_pack[boost::graph::keywords::_color_map];
+        typename boost::parameter::binding<
+            Args,
+            boost::graph::keywords::tag::buffer
+        >::type path = arg_pack[
+            boost::graph::keywords::_buffer
+        ];
+        loop_erased_random_walk(graph, s, next_edge, v_c_map, path);
+    }
+}}
+
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/compose.hpp>
+
+namespace boost { namespace graph {
+
+    template <
+        typename Graph, typename TA0, typename TA1, typename TA2, typename TA3
+    >
+    void loop_erased_random_walk(
+        const Graph& graph,
+        const TA0& ta0, const TA1& ta1, const TA2& ta2, const TA3& ta3
+        typename boost::enable_if<
+            parameter::are_tagged_arguments<TA0, TA1, TA2, TA3>,
+            mpl::true_
+        >::type = mpl::true_()
+    )
+    {
+        loop_erased_random_walk(
+            graph, parameter::compose(ta0, ta1, ta2, ta3)
+        );
+    }
+}}
+
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
 namespace boost {
 
