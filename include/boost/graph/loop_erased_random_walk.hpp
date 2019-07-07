@@ -278,7 +278,7 @@ namespace boost { namespace graph {
     >
     void loop_erased_random_walk(
         const Graph& graph,
-        const TA0& ta0, const TA1& ta1, const TA2& ta2, const TA3& ta3
+        const TA0& ta0, const TA1& ta1, const TA2& ta2, const TA3& ta3,
         typename boost::enable_if<
             parameter::are_tagged_arguments<TA0, TA1, TA2, TA3>,
             mpl::true_

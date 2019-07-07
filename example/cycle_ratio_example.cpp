@@ -43,14 +43,11 @@ void gen_rand_graph(TG &g, size_t nV, size_t nE)
 
 int main(int argc, char* argv[])
 {
-#if ( \
-        BOOST_WORKAROUND(BOOST_MSVC, >= 1910) && \
-        BOOST_WORKAROUND(BOOST_MSVC, < 1920) \
-    )
-    // Once in a while MSVC-14.1 needs this leeway.
-    // Hopefully MSVC-14.2 does not.
+#if 1
     const double epsilon = 0.000001;
 #else
+    // Once in a while this test fails on the more modern compilers
+    // if epsilon is set to a value too small.
     const double epsilon = 0.0000001;
 #endif
     double min_cr, max_cr; ///Minimum and maximum cycle ratio
