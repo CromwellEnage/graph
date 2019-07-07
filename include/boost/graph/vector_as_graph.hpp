@@ -170,184 +170,387 @@ namespace boost { namespace detail {
     }
 }} // namesapce boost::detail
 
+namespace boost { namespace graph {
+
+    template <typename EdgeList, typename Alloc>
+    typename boost::detail::val_out_edge_ret<EdgeList>::type
+    out_edges(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        typedef typename boost::detail::val_out_edge_iter<
+            EdgeList
+        >::type Iter;
+        typedef typename boost::detail::val_out_edge_ret<
+            EdgeList
+        >::type return_type;
+        return return_type(Iter(v, g[v].begin()), Iter(v, g[v].end()));
+    }
+
+    template <typename EdgeList, typename Alloc>
+    typename EdgeList::size_type
+    out_degree(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        return g[v].size();
+    }
+
+    template <typename EdgeList, typename Alloc>
+    std::pair<
+        typename EdgeList::const_iterator,
+        typename EdgeList::const_iterator
+    >
+    adjacent_vertices(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        return std::make_pair(g[v].begin(), g[v].end());
+    }
+
+    // source() and target() already provided for pairs in graph_traits.hpp
+
+    template <typename EdgeList, typename Alloc>
+    std::pair<
+        boost::counting_iterator<typename EdgeList::value_type>,
+        boost::counting_iterator<typename EdgeList::value_type>
+    >
+    vertices(const std::vector<EdgeList, Alloc>& g)
+    {
+        typedef boost::counting_iterator<typename EdgeList::value_type> Iter;
+        return std::make_pair(
+            Iter(0),
+            Iter(static_cast<typename EdgeList::value_type>(g.size()))
+        );
+    }
+
+    template <typename EdgeList, typename Alloc>
+    typename std::vector<EdgeList, Alloc>::size_type
+    num_vertices(const std::vector<EdgeList, Alloc>& g)
+    {
+        return g.size();
+    }
+
+    template <typename EdgeList, typename Allocator>
+    std::pair<typename boost::detail::val_edge<EdgeList>::type, bool>
+    add_edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        typedef typename boost::detail::val_edge<EdgeList>::type edge_type;
+        g[u].insert(g[u].end(), v);
+        return std::make_pair(edge_type(u, v), true);
+    }
+
+    template <typename EdgeList, typename Allocator>
+    std::pair<typename boost::detail::val_edge<EdgeList>::type, bool>
+    edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        typedef typename boost::detail::val_edge<EdgeList>::type edge_type;
+        typename EdgeList::iterator end = g[u].end();
+
+        for (typename EdgeList::iterator i = g[u].begin(); i != end; ++i)
+        {
+            if (*i == v)
+            {
+                return std::make_pair(edge_type(u, v), true);
+            }
+        }
+
+        return std::make_pair(edge_type(), false);
+    }
+
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        typename EdgeList::iterator i = std::remove(
+            g[u].begin(),
+            g[u].end(),
+            v
+        );
+
+        if (i != g[u].end())
+        {
+            g[u].erase(i, g[u].end());
+        }
+    }
+
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_edge(
+        typename boost::detail::val_edge<EdgeList>::type e,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        typename EdgeList::value_type u, v;
+        u = e.first;
+        v = e.second;
+        // FIXME: edge type does not fully specify the edge to be deleted
+        typename EdgeList::iterator i = std::remove(
+            g[u].begin(),
+            g[u].end(),
+            v
+        );
+
+        if (i != g[u].end())
+        {
+            g[u].erase(i, g[u].end());
+        }
+    }
+
+    template <typename EdgeList, typename Allocator, typename Predicate>
+    void remove_edge_if(Predicate p, std::vector<EdgeList, Allocator>& g)
+    {
+        for (std::size_t u = 0; u < g.size(); ++u)
+        {
+            // Oops! gcc gets internal compiler error on compose_.......
+
+            typedef typename EdgeList::iterator iterator;
+            iterator b = g[u].begin(), e = g[u].end();
+
+            if (!g[u].empty())
+            {
+                for(; b != e;)
+                {
+                    if (p(std::make_pair(u, *b)))
+                    {
+                        if (b == --e)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            iter_swap(b, e);
+                        }
+                    }
+                    else
+                    {
+                        ++b;
+                    }
+                }
+            }
+
+            if (e != g[u].end())
+            {
+                g[u].erase(e, g[u].end());
+            }
+        }
+    }
+
+    template <typename EdgeList, typename Allocator>
+    typename EdgeList::value_type
+    add_vertex(std::vector<EdgeList, Allocator>& g)
+    {
+        g.resize(g.size()+1);
+        return g.size()-1;
+    }
+
+    template <typename EdgeList, typename Allocator>
+    void
+    clear_vertex(
+        typename EdgeList::value_type u,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        g[u].clear();
+
+        for (std::size_t i = 0; i < g.size(); ++i)
+        {
+            remove_edge(i, u, g);
+        }
+    }
+
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_vertex(
+        typename EdgeList::value_type u,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        typedef typename EdgeList::iterator iterator;
+        clear_vertex(u, g);
+        g.erase(g.begin() + u);
+
+        for (std::size_t i = 0; i < g.size(); ++i)
+        {
+            for (iterator it = g[i].begin(); it != g[i].end(); ++it)
+            {
+                // after clear_vertex *it is never equal to u
+                if (*it > u)
+                {
+                    --*it;
+                }
+            }
+        }
+    }
+}} // namesapce boost::graph
+
 namespace boost {
 
-  template <typename EdgeList, typename Alloc>
-  typename detail::val_out_edge_ret<EdgeList>::type
-  out_edges(typename EdgeList::value_type v,
-            const std::vector<EdgeList, Alloc>& g)
-  {
-    typedef typename detail::val_out_edge_iter<EdgeList>::type Iter;
-    typedef typename detail::val_out_edge_ret<EdgeList>::type return_type;
-    return return_type(Iter(v, g[v].begin()), Iter(v, g[v].end()));
-  }
+    template <typename EdgeList, typename Alloc>
+    typename boost::detail::val_out_edge_ret<EdgeList>::type
+    out_edges(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        return boost::graph::out_edges(v, g);
+    }
 
-  template <typename EdgeList, typename Alloc>
-  typename EdgeList::size_type
-  out_degree(typename EdgeList::value_type v,
-             const std::vector<EdgeList, Alloc>& g)
-  {
-    return g[v].size();
-  }
+    template <typename EdgeList, typename Alloc>
+    typename EdgeList::size_type
+    out_degree(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        return boost::graph::out_degree(v, g);
+    }
 
-  template <typename EdgeList, typename Alloc>
-  std::pair<typename EdgeList::const_iterator,
-            typename EdgeList::const_iterator>
-  adjacent_vertices(typename EdgeList::value_type v,
-                    const std::vector<EdgeList, Alloc>& g)
-  {
-    return std::make_pair(g[v].begin(), g[v].end());
-  }
+    template <typename EdgeList, typename Alloc>
+    std::pair<
+        typename EdgeList::const_iterator,
+        typename EdgeList::const_iterator
+    >
+    adjacent_vertices(
+        typename EdgeList::value_type v,
+        const std::vector<EdgeList, Alloc>& g
+    )
+    {
+        return boost::graph::adjacent_vertices(v, g);
+    }
 
-  // source() and target() already provided for pairs in graph_traits.hpp
+    // source() and target() already provided for pairs in graph_traits.hpp
 
-  template <typename EdgeList, typename Alloc>
-  std::pair<boost::counting_iterator<typename EdgeList::value_type>,
-            boost::counting_iterator<typename EdgeList::value_type> >
-  vertices(const std::vector<EdgeList, Alloc>& v)
-  {
-    typedef boost::counting_iterator<typename EdgeList::value_type> Iter;
-    return std::make_pair(Iter(0), Iter(static_cast<typename EdgeList::value_type>(v.size())));
-  }
+    template <typename EdgeList, typename Alloc>
+    std::pair<
+        boost::counting_iterator<typename EdgeList::value_type>,
+        boost::counting_iterator<typename EdgeList::value_type>
+    >
+    vertices(const std::vector<EdgeList, Alloc>& g)
+    {
+        return boost::graph::vertices(g);
+    }
 
-  template <typename EdgeList, typename Alloc>
-  typename std::vector<EdgeList, Alloc>::size_type
-  num_vertices(const std::vector<EdgeList, Alloc>& v)
-  {
-    return v.size();
-  }
+    template <typename EdgeList, typename Alloc>
+    typename std::vector<EdgeList, Alloc>::size_type
+    num_vertices(const std::vector<EdgeList, Alloc>& g)
+    {
+        return boost::graph::num_vertices(g);
+    }
 
-  template <typename EdgeList, typename Allocator>
-  typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
-  add_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
-           std::vector<EdgeList, Allocator>& g)
-  {
-    typedef typename detail::val_edge<EdgeList>::type edge_type;
-    g[u].insert(g[u].end(), v);
-    return std::make_pair(edge_type(u, v), true);
-  }
+    template <typename EdgeList, typename Allocator>
+    std::pair<typename boost::detail::val_edge<EdgeList>::type, bool>
+    add_edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        return boost::graph::add_edge(u, v, g);
+    }
 
-  template <typename EdgeList, typename Allocator>
-  typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
-  edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
-       std::vector<EdgeList, Allocator>& g)
-  {
-    typedef typename detail::val_edge<EdgeList>::type edge_type;
-    typename EdgeList::iterator i = g[u].begin(), end = g[u].end();
-    for (; i != end; ++i)
-      if (*i == v)
-        return std::make_pair(edge_type(u, v), true);
-    return std::make_pair(edge_type(), false);
-  }
+    template <typename EdgeList, typename Allocator>
+    std::pair<typename boost::detail::val_edge<EdgeList>::type, bool>
+    edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        return boost::graph::edge(u, v, g);
+    }
 
-  template <typename EdgeList, typename Allocator>
-  void
-  remove_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
-              std::vector<EdgeList, Allocator>& g)
-  {
-    typename EdgeList::iterator i = std::remove(g[u].begin(), g[u].end(), v);
-    if (i != g[u].end())
-      g[u].erase(i, g[u].end());
-  }
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_edge(
+        typename EdgeList::value_type u,
+        typename EdgeList::value_type v,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        boost::graph::remove_edge(u, v, g);
+    }
 
-  template <typename EdgeList, typename Allocator>
-  void
-  remove_edge(typename detail::val_edge<EdgeList>::type e,
-              std::vector<EdgeList, Allocator>& g)
-  {
-    typename EdgeList::value_type u, v;
-    u = e.first;
-    v = e.second;
-    // FIXME: edge type does not fully specify the edge to be deleted
-    typename EdgeList::iterator i = std::remove(g[u].begin(), g[u].end(), v);
-    if (i != g[u].end())
-      g[u].erase(i, g[u].end());
-  }
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_edge(
+        typename boost::detail::val_edge<EdgeList>::type e,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        boost::graph::remove_edge(e, g);
+    }
 
-  template <typename EdgeList, typename Allocator, typename Predicate>
-  void
-  remove_edge_if(Predicate p,
-                 std::vector<EdgeList, Allocator>& g)
-  {
-      for (std::size_t u = 0; u < g.size(); ++u) {
-          // Oops! gcc gets internal compiler error on compose_.......
+    template <typename EdgeList, typename Allocator, typename Predicate>
+    void remove_edge_if(Predicate p, std::vector<EdgeList, Allocator>& g)
+    {
+        boost::graph::remove_edge_if(p, g);
+    }
 
-          typedef typename EdgeList::iterator iterator;
-          iterator b = g[u].begin(), e = g[u].end();
+    template <typename EdgeList, typename Allocator>
+    typename EdgeList::value_type
+    add_vertex(std::vector<EdgeList, Allocator>& g)
+    {
+        return boost::graph::add_vertex(g);
+    }
 
-          if (!g[u].empty()) {
+    template <typename EdgeList, typename Allocator>
+    void
+    clear_vertex(
+        typename EdgeList::value_type u,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        boost::graph::clear_vertex(u, g);
+    }
 
-              for(; b != e;) {
-                  if (p(std::make_pair(u, *b))) {
-                      --e;
-                      if (b == e)
-                          break;
-                      else
-                          iter_swap(b, e);
-                  } else {
-                      ++b;
-                  }
-              }
-          }
+    template <typename EdgeList, typename Allocator>
+    void
+    remove_vertex(
+        typename EdgeList::value_type u,
+        std::vector<EdgeList, Allocator>& g
+    )
+    {
+        boost::graph::remove_vertex(u, g);
+    }
 
-          if (e != g[u].end())
-              g[u].erase(e, g[u].end());
-      }
-  }
+    template <typename EdgeList, typename Allocator>
+    struct property_map<std::vector<EdgeList, Allocator>, vertex_index_t>
+    {
+        typedef typed_identity_property_map<
+            typename EdgeList::value_type
+        > type;
+        typedef type const_type;
+    };
 
-  template <typename EdgeList, typename Allocator>
-  typename EdgeList::value_type
-  add_vertex(std::vector<EdgeList, Allocator>& g)
-  {
-    g.resize(g.size()+1);
-    return g.size()-1;
-  }
+    template <typename EdgeList, typename Allocator>
+    typed_identity_property_map<typename EdgeList::value_type>
+    get(vertex_index_t, const std::vector<EdgeList, Allocator>&)
+    {
+        return typed_identity_property_map<typename EdgeList::value_type>();
+    }
 
-  template <typename EdgeList, typename Allocator>
-  void
-  clear_vertex(typename EdgeList::value_type u,
-               std::vector<EdgeList, Allocator>& g)
-  {
-    g[u].clear();
-    for (std::size_t i = 0; i < g.size(); ++i)
-      remove_edge(i, u, g);
-  }
-
-  template <typename EdgeList, typename Allocator>
-  void
-  remove_vertex(typename EdgeList::value_type u,
-                std::vector<EdgeList, Allocator>& g)
-  {
-    typedef typename EdgeList::iterator iterator;
-    clear_vertex(u, g);
-    g.erase(g.begin() + u);
-    for (std::size_t i = 0; i < g.size(); ++i)
-      for ( iterator it = g[i].begin(); it != g[i].end(); ++it )
-        // after clear_vertex *it is never equal to u
-        if ( *it > u )
-          --*it;
-  }
-
-  template <typename EdgeList, typename Allocator>
-  struct property_map< std::vector<EdgeList, Allocator>, vertex_index_t>
-  {
-    typedef typed_identity_property_map<typename EdgeList::value_type> type;
-    typedef type const_type;
-  };
-
-  template <typename EdgeList, typename Allocator>
-  typed_identity_property_map<typename EdgeList::value_type>
-  get(vertex_index_t, const std::vector<EdgeList, Allocator>&)
-  {
-    return typed_identity_property_map<typename EdgeList::value_type>();
-  }
-
-  template <typename EdgeList, typename Allocator>
-  typed_identity_property_map<typename EdgeList::value_type>
-  get(vertex_index_t, std::vector<EdgeList, Allocator>&)
-  {
-    return typed_identity_property_map<typename EdgeList::value_type>();
-  }
+    template <typename EdgeList, typename Allocator>
+    typed_identity_property_map<typename EdgeList::value_type>
+    get(vertex_index_t, std::vector<EdgeList, Allocator>&)
+    {
+        return typed_identity_property_map<typename EdgeList::value_type>();
+    }
 } // namespace boost
 
 #endif // BOOST_VECTOR_AS_GRAPH_HPP

@@ -19,8 +19,6 @@ alt="(Python)" /><tt>betweenness_centrality_clustering</tt></h1>
 
 <h3>Synopsis</h3>
 
-<p>Graph clustering based on edge betweenness centrality.</p>
-
 <p>If the configuration macro
 <span class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span>
 is defined, then the following function overload definition is available.</p>
@@ -112,9 +110,8 @@ class="cxx_code">BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS</span> is
 <strong>not</strong> defined.</li>
 </ul>
 
-<p>Then the argument must be bound to this parameter either by name or by
-position.  On the other hand, if <strong>all</strong> of the following are
-true:</p>
+<p>Then the argument must be bound to this parameter by position.  On the
+other hand, if <strong>all</strong> of the following are true:</p>
 
 <ul>
 <li>This document renders the category of a parameter as colored text on a
@@ -152,9 +149,10 @@ keyword:</th>
 <td>The graph object on which the algorithm will be applied.  Its type must be
 a model of <a class="cxx_concept" href="VertexListGraph.html">Vertex List
 Graph</a> and <a class="cxx_concept" href="IncidenceGraph.html">Incidence
-Graph</a>.  When an edge centrality map is supplied, it must also model
-<a class="cxx_concept" href="EdgeListGraph.html">Edge List Graph</a> and
-<a class="cxx_concept" href="MutableGraph.html">MutableGraph</a>.</td>
+Graph</a>.  When the default edge centrality map is used, the graph type must
+also model <a class="cxx_concept" href="EdgeListGraph.html">Edge List
+Graph</a> and <a class="cxx_concept" href="MutableGraph.html">Mutable
+Graph</a>.</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -181,7 +179,9 @@ keyword:</th>
 <td>The function object that determines when the algorithm terminates.  (The
 edge found when the algorithm terminates will not be removed.)  It must be a
 ternary function object thats accepts the maximum centrality, the descriptor
-of the edge that will be removed, and the graph argument.</td>
+of the edge that will be removed, and the graph argument.  Furthermore, it
+must have a nested <span class="cxx_code">centrality_type</span> type
+definition.</td>
 </tr>
 <tr>
 <th>Python:</th>
@@ -205,9 +205,8 @@ keyword:</th>
 </tr>
 <tr>
 <th>Description:</th>
-<td>This property map is used to accumulate the betweenness centrality
-  of each edge, and is a secondary form of output for the
-  algorithm.  The argument type
+<td>This property map is used to accumulate the betweenness centrality of each
+edge, and is a secondary form of output for the algorithm.  The argument type
 must be a model of <a href="../../property_map/doc/ReadWritePropertyMap.html"
 class="cxx_concept">Read/Write Property Map</a>, with the graph's edge
 descriptor type as its key type.  The value type of this property map should
@@ -215,13 +214,17 @@ be the same as the value type of the centrality map argument.</td>
 </tr>
 <tr>
 <th>Default:</th>
-<td>A <span class="cxx_code">dummy_property_map</span>, which requires no work
-to compute and returns no answer.</td>
+<td>A <a href="../../property_map/doc/shared_array_property_map.html"
+class="cxx_code">shared_array_property_map</a> of default-constructed <span
+class="cxx_code">centrality_type</span> objects (where <span class="cxx_code"
+>centrality_type</span> is that of the terminator function argument), and of
+size <span class="cxx_code">num_edges(graph)</span>, and using the graph's
+internal edge index map.</td>
 </tr>
 <tr>
 <th>Python:</th>
-<td>The color map must be an <span class="python_code">edge_double_map</span>
-for the graph.</td>
+<td>This map must be an <span class="python_code">edge_double_map</span> for
+the graph.</td>
 </tr>
 <tr>
 <th>Python default:</th>
@@ -240,8 +243,8 @@ keyword:</th>
 <td class="cxx_code">boost::graph::keywords::_vertex_index_map</td>
 </tr>
 <tr>
-<th>Old-style signature:</th>
-<td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+<th>Unnamed version:</th>
+<td class="cxx_code">VertexIndexMap vertex_index_map</td>
 </tr>
 <tr>
 <th>Description:</th>

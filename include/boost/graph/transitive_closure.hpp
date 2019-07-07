@@ -69,7 +69,7 @@ namespace boost { namespace detail {
 #include <boost/type_traits/remove_reference.hpp>
 #endif
 
-namespace boost {
+namespace boost { namespace graph {
 
 #if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
   BOOST_PARAMETER_FUNCTION(
@@ -329,11 +329,11 @@ namespace boost {
 
     return true;
   }
-} // namespace boost
+}} // namespace boost::graph
 
 #if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
-namespace boost {
+namespace boost { namespace graph {
 
     template <typename Graph, typename GraphTC>
     void transitive_closure(const Graph& g, GraphTC& tc)
@@ -352,47 +352,11 @@ namespace boost {
 
         transitive_closure(g, tc, g_to_tc_map, index_map);
     }
-} // namespace boost
+}} // namespace boost::graph
 
 #endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 
-namespace boost { namespace detail {
-
-    template < typename Graph, typename GraphTC, typename G_to_TC_VertexMap,
-      typename VertexIndexMap>
-    void transitive_closure_dispatch
-      (const Graph & g, GraphTC & tc,
-       G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map)
-    {
-      typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
-      typename std::vector < tc_vertex >::size_type
-        n = is_default_param(g_to_tc_map) ? num_vertices(g) : 1;
-      std::vector < tc_vertex > to_tc_vec(n);
-
-      transitive_closure
-        (g, tc,
-         choose_param(g_to_tc_map, make_iterator_property_map
-                      (to_tc_vec.begin(), index_map, to_tc_vec[0])),
-         index_map);
-    }
-}} // namespace boost::detail
-
-namespace boost {
-
-//    using ::boost::graph::transitive_closure;
-
-  template < typename Graph, typename GraphTC,
-    typename P, typename T, typename R >
-    void transitive_closure(const Graph & g, GraphTC & tc,
-                            const bgl_named_params < P, T, R > &params)
-  {
-    if (num_vertices(g) == 0)
-      return;
-    detail::transitive_closure_dispatch
-      (g, tc, get_param(params, orig_to_copy_t()),
-       choose_const_pmap(get_param(params, vertex_index), g, vertex_index) );
-  }
-
+namespace boost { namespace graph {
 
   template < typename G > void warshall_transitive_closure(G & g)
   {
@@ -416,7 +380,6 @@ namespace boost {
               add_edge(*ii, *ji, g);
             }
   }
-
 
   template < typename G > void warren_transitive_closure(G & g)
   {
@@ -458,8 +421,46 @@ namespace boost {
               add_edge(*ic, *jc, g);
             }
   }
+}} // namespace boost::graph
 
+namespace boost { namespace detail {
 
+    template < typename Graph, typename GraphTC, typename G_to_TC_VertexMap,
+      typename VertexIndexMap>
+    void transitive_closure_dispatch
+      (const Graph & g, GraphTC & tc,
+       G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map)
+    {
+      typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
+      typename std::vector < tc_vertex >::size_type
+        n = is_default_param(g_to_tc_map) ? num_vertices(g) : 1;
+      std::vector < tc_vertex > to_tc_vec(n);
+
+      transitive_closure
+        (g, tc,
+         choose_param(g_to_tc_map, make_iterator_property_map
+                      (to_tc_vec.begin(), index_map, to_tc_vec[0])),
+         index_map);
+    }
+}} // namespace boost::detail
+
+namespace boost {
+
+    using ::boost::graph::transitive_closure;
+    using ::boost::graph::warshall_transitive_closure;
+    using ::boost::graph::warren_transitive_closure;
+
+  template < typename Graph, typename GraphTC,
+    typename P, typename T, typename R >
+    void transitive_closure(const Graph & g, GraphTC & tc,
+                            const bgl_named_params < P, T, R > &params)
+  {
+    if (num_vertices(g) == 0)
+      return;
+    detail::transitive_closure_dispatch
+      (g, tc, get_param(params, orig_to_copy_t()),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index) );
+  }
 }                               // namespace boost
 
 #endif // BOOST_GRAPH_TRANSITIVE_CLOSURE_HPP
