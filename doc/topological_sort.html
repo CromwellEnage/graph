@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-          "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright (c) Jeremy Siek 2000
@@ -255,7 +254,6 @@ class="cxx_concept">Readable Property Map</a>.  The value type of the map must
 be an integer type.  The vertex descriptor type of the graph needs to be
 usable as the key type of the map.</td>
 </tr>
-<tr valign="top">
 <tr>
 <th>Default:</th>
 <td><span class="cxx_code">get(vertex_index, graph)</span> if the graph has an
@@ -265,8 +263,8 @@ internal <span class="cxx_code">vertex_index</span> property, otherwise
 <tr>
 <th>Note:</th>
 <td>If this argument is a <span class="cxx_code">dummy_property_map</span>
-object, then the color map argument must be specified.  For example, <span
-class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+object, then the color map argument must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
 >vertex_index</span> property, so the default value of this argument will be a
 <span class="cxx_code">dummy_property_map</span> object.</td>

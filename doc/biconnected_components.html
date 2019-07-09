@@ -30,18 +30,18 @@ name="sec:biconnected-components"></a><tt>biconnected_components</tt> and
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
           typename P, typename T, typename R&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out, 
+biconnected_components(const Graph&amp; graph, ComponentMap component_map, OutputIterator out, 
                        const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename Graph, typename ComponentMap,
           typename P, typename T, typename R&gt;
 std::size_t
-biconnected_components(const Graph&amp; g, ComponentMap comp, 
+biconnected_components(const Graph&amp; graph, ComponentMap component_map, 
                        const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 template &lt;typename Graph, typename OutputIterator, 
           typename P, typename T, typename R&gt;
-OutputIterator articulation_points(const Graph&amp; g, OutputIterator out, 
+OutputIterator articulation_points(const Graph&amp; graph, OutputIterator out, 
                                    const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <span class="comment">// non-named parameter versions</span>
@@ -50,12 +50,12 @@ template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>,
           typename DiscoverTimeMap, typename LowPointMap&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
-biconnected_components(const Graph&amp; g, ComponentMap comp, OutputIterator out, 
+biconnected_components(const Graph&amp; graph, ComponentMap component_map, OutputIterator out, 
                        DiscoverTimeMap discover_time, LowPointMap lowpt);
 
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 >, typename ComponentMap&gt;
-std::size_t biconnected_components(const Graph&amp; g, ComponentMap comp);
+std::size_t biconnected_components(const Graph&amp; graph, ComponentMap component_map);
 </pre>
 
 <p>If the configuration macro <span class="cxx_code"
@@ -761,7 +761,7 @@ keyword:</th>
 </tr>
 <tr>
 <th>Unnamed version:</th>
-<td class="cxx_code">OutputIterator result</td>
+<td class="cxx_code">OutputIterator out</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -869,8 +869,8 @@ map.</td>
 <td>A <a href="../../property_map/doc/shared_array_property_map.html"
 class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
 ><a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
-type</i>&gt;::vertices_size_type</span> objects of value <span
-class="cxx_code">0</span>, and of size <span class="cxx_code"
+type</i>&gt;::vertices_size_type</span> objects of value
+<span class="cxx_code">0</span>, and of size <span class="cxx_code"
 >num_vertices(graph)</span>, and using the index map argument for the index
 map.</td>
 </tr>
@@ -913,8 +913,8 @@ map.</td>
 <td>A <a href="../../property_map/doc/shared_array_property_map.html"
 class="cxx_code">shared_array_property_map</a> of <span class="cxx_code"
 ><a href="graph_traits.html">graph_traits</a>&lt;<i>graph argument
-type</i>&gt;::vertices_size_type</span> objects of value <span
-class="cxx_code">0</span>, and of size <span class="cxx_code"
+type</i>&gt;::vertices_size_type</span> objects of value
+<span class="cxx_code">0</span>, and of size <span class="cxx_code"
 >num_vertices(graph)</span>, and using the index map argument for the index
 map.</td>
 </tr>

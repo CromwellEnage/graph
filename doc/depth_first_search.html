@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-          "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
@@ -24,9 +23,10 @@ alt="(Python)" /><tt>depth_first_search</tt></h1>
 
 <pre class="cxx_code">
 <span class="comment">// old-style named parameter version</span>
-template &lt;class Graph, class class P, class T, class R&gt;
-void depth_first_search(Graph&amp; G,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
+template &lt;typename Graph, typename P, typename T, typename R&gt;
+void depth_first_search(
+    const Graph&amp; graph, const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 </pre>
 
 <p>If the configuration macro
@@ -103,15 +103,17 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 >, typename <a class="cxx_concept" href="DFSVisitor.html">DFSVisitor</a
 >, typename ColorMap&gt;
-void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color);
+void depth_first_search(
+    const Graph&amp; graph, DFSVisitor visitor, ColorMap color_map
+);
 
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 >, typename <a class="cxx_concept" href="DFSVisitor.html">DFSVisitor</a
 >, typename ColorMap&gt;
 void depth_first_search(
-    const Graph&amp; g, DFSVisitor vis, ColorMap color,
+    const Graph&amp; graph, DFSVisitor visitor, ColorMap color_map,
     typename <a href="graph_traits.html">graph_traits</a
->&lt;Graph&gt;::vertex_descriptor start
+>&lt;Graph&gt;::vertex_descriptor root_vertex
 );
 </pre>
 
@@ -167,7 +169,7 @@ DFS(<i>G</i>)
     <b>if</b> <i>color[u] =</i> WHITE
       <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
-  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br>
+  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br />
 DFS-VISIT(<i>G</i>, <i>u</i>) 
   <i>color[u] :=</i> GRAY
   <i>d_time[u] := time := time + 1</i> 
@@ -183,7 +185,7 @@ DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
   <i>color[u] :=</i> BLACK
   <i>f_time[u] := time := time + 1</i> 
-<pre>
+</pre>
 </td>
 <td>
 <pre>
@@ -358,6 +360,10 @@ keyword:</th>
 <td class="cxx_code">visitor(DFSVisitor vis)</td>
 </tr>
 <tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">DFSVisitor visitor</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>A visitor object that is invoked inside the algorithm at the event-points
 specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
@@ -389,6 +395,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ColorMap color_map</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -426,9 +436,15 @@ keyword:</th>
 </tr>
 <tr>
 <th>Old-style signature:</th>
-<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+<td class="cxx_code">root_vertex(typename <a href="graph_traits.html"
 >graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
 start)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">typename <a href="graph_traits.html"
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+root_vertex</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -479,8 +495,8 @@ internal <span class="cxx_code">vertex_index</span> property, otherwise
 <tr>
 <th>Note:</th>
 <td>If this argument is a <span class="cxx_code">dummy_property_map</span>
-object, then the color map argument must be specified.  For example, <span
-class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+object, then the color map argument must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
 >vertex_index</span> property, so the default value of this argument will be a
 <span class="cxx_code">dummy_property_map</span> object.</td>

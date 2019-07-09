@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-          "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2002
@@ -25,7 +24,9 @@ alt="(Python)" /><tt>undirected_dfs</tt></h1>
 <pre class="cxx_code">
 <span class="comment">// old-style named parameter version</span>
 template &lt;typename Graph, typename P, typename T, typename R&gt;
-void undirected_dfs(Graph&amp; G, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+void undirected_dfs(
+    const Graph&amp; graph, const bgl_named_params&lt;P, T, R&gt;&amp; params
+);
 </pre>
 
 <p>If the configuration macro
@@ -83,7 +84,7 @@ definitions are available.</p>
 
 <pre class="cxx_code">
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="Graph.html">Graph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 void undirected_dfs(
@@ -109,8 +110,8 @@ template &lt;
     typename VertexColorMap, typename EdgeColorMap
 &gt;
 void undirected_dfs(
-    const Graph&amp; g, DFSVisitor vis, VertexColorMap vertex_color,
-    EdgeColorMap edge_color
+    const Graph&amp; graph, DFSVisitor visitor, VertexColorMap color_map,
+    EdgeColorMap edge_color_map
 );
 
 template &lt;
@@ -119,9 +120,9 @@ template &lt;
     typename VertexColorMap, typename EdgeColorMap
 &gt;
 void undirected_dfs(
-    const Graph&amp; g, DFSVisitor vis, VertexColorMap vertex_color,
-    EdgeColorMap edge_color, typename <a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertex_descriptor start
+    const Graph&amp; graph, DFSVisitor visitor, VertexColorMap color_map,
+    EdgeColorMap edge_color_map, typename <a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor root_vertex
 );
 </pre>
 
@@ -183,7 +184,7 @@ DFS(<i>G</i>)
     <b>if</b> <i>vcolor[u] =</i> WHITE
       <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
-  <b>return</b> (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br>
+  <b>return</b> (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br />
 DFS-VISIT(<i>G</i>, <i>u</i>) 
   <i>vcolor[u] :=</i> GRAY
   <i>d_time[u] := time := time + 1</i> 
@@ -199,7 +200,7 @@ DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
   <i>vcolor[u] :=</i> BLACK
   <i>f_time[u] := time := time + 1</i> 
-<pre>
+</pre>
 </td>
 <td>
 <pre>
@@ -382,6 +383,10 @@ keyword:</th>
 <td class="cxx_code">edge_color_map(EdgeColorMap edge_color)</td>
 </tr>
 <tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">EdgeColorMap edge_color_map</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>This is used by the algorithm to keep track of which edges have been
 visited.  Its argument type must be a model of <a class="cxx_concept"
@@ -410,6 +415,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">visitor(DFSVisitor vis)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">DFSVisitor visitor</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -443,6 +452,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ColorMap color_map</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -480,9 +493,15 @@ keyword:</th>
 </tr>
 <tr>
 <th>Old-style signature:</th>
-<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+<td class="cxx_code">root_vertex(typename <a href="graph_traits.html"
 >graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
 start)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">typename <a href="graph_traits.html"
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+root_vertex</td>
 </tr>
 <tr>
 <th>Description:</th>

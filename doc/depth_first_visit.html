@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-          "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright (c) Jeremy Siek 2000
@@ -77,11 +76,12 @@ definitions are available.</p>
 
 <pre class="cxx_code">
 template &lt;
-    typename Graph,
+    typename <a class="cxx_concept" href="IncidenceGraph.html"
+>IncidenceGraph</a>,
     typename TaggedArg0, typename TaggedArg1, ..., typename TaggedArg4
 &gt;
 void depth_first_visit(
-    const Graph&amp; graph,
+    const IncidenceGraph&amp; graph,
     const TaggedArg0&amp; a0 = <span class="comment">/* unspecified */</span>,
     const TaggedArg1&amp; a1 = <span class="comment">/* unspecified */</span>,
     ...,
@@ -103,10 +103,11 @@ template &lt;
 >DFSVisitor</a>, typename ColorMap
 &gt;
 void depth_first_visit(
-    const IncidenceGraph& g,
+    const IncidenceGraph&amp; graph,
     typename <a href="graph_traits.html">graph_traits</a
->&lt;IncidenceGraph&gt;::vertex_descriptor s,
-    DFSVisitor&amp; vis, ColorMap color
+>&lt;IncidenceGraph&gt;::vertex_descriptor root_vertex,
+    DFSVisitor&amp; visitor,
+    ColorMap color_map
 );
 
 template &lt;
@@ -116,10 +117,12 @@ template &lt;
     typename TerminatorFunc
 &gt;
 void depth_first_visit(
-    const IncidenceGraph& g,
+    const IncidenceGraph&amp; graph,
     typename <a href="graph_traits.html">graph_traits</a
->&lt;IncidenceGraph&gt;::vertex_descriptor s,
-    DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func
+>&lt;IncidenceGraph&gt;::vertex_descriptor root_vertex,
+    DFSVisitor&amp; visitor,
+    ColorMap color_map,
+    TerminatorFunc terminator_function
 );
 </pre>
 
@@ -210,6 +213,10 @@ keyword:</th>
 <td class="cxx_code">visitor(DFSVisitor vis)</td>
 </tr>
 <tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">DFSVisitor visitor</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>A visitor object that is invoked inside the algorithm at the event-points
 specified by the <a class="cxx_concept" href="DFSVisitor.html">DFS Visitor</a>
@@ -241,6 +248,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ColorMap color_map</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -279,9 +290,15 @@ keyword:</th>
 </tr>
 <tr>
 <th>Old-style signature:</th>
-<td class="cxx_code">root_vertex(<a href="graph_traits.html"
+<td class="cxx_code">root_vertex(typename <a href="graph_traits.html"
 >graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
 start)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">typename <a href="graph_traits.html"
+>graph_traits</a>&lt;<i>graph argument type</i>&gt;::vertex_descriptor
+root_vertex</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -334,8 +351,8 @@ internal <span class="cxx_code">vertex_index</span> property, otherwise
 <tr>
 <th>Note:</th>
 <td>If this argument is a <span class="cxx_code">dummy_property_map</span>
-object, then the color map argument must be specified.  For example, <span
-class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+object, then the color map argument must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
 >vertex_index</span> property, so the default value of this argument will be a
 <span class="cxx_code">dummy_property_map</span> object.</td>
@@ -364,11 +381,11 @@ keyword:</th>
 <th>Description:</th>
 <td>A <a href="http://www.boost.org/sgi/stl/BinaryFunction.html"
 class="cxx_concept">Binary Function</a> callable with two parameters - the
-descriptor of vertex and the graph instance - and returning <span
-class="cxx_code">bool</span>.  The call is made immediately after the call to
-the <b class="cxx_code">discover_vertex</b> visitor event.  If <span
-class="cxx_code">true</span> is returned, then the out edges of the vertex are
-not examined, as if they don't exist.</td>
+descriptor of vertex and the graph instance - and returning
+<span class="cxx_code">bool</span>.  The call is made immediately after the
+call to the <b class="cxx_code">discover_vertex</b> visitor event.  If
+<span class="cxx_code">true</span> is returned, then the out edges of the
+vertex are not examined, as if they don't exist.</td>
 </tr>
 <tr>
 <th>Default:</th>

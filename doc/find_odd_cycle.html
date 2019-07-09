@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Author: Matthias Walter
@@ -76,13 +75,13 @@ definitions are available.</p>
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 >, typename IndexMap, typename PartitionMap, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>&gt;
-OutputIterator find_odd_cycle(const Graph&amp; graph, const IndexMap index_map, PartitionMap partition_map, OutputIterator result);
+OutputIterator find_odd_cycle(const Graph&amp; graph, IndexMap vertex_index_map, PartitionMap partition_map, OutputIterator result);
 
 <span class="comment">// version which uses the specified index map to build a colormap</span>
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
 >, typename IndexMap, typename <a class="cxx_concept"
 href="http://www.boost.org/sgi/stl/OutputIterator.html">OutputIterator</a>&gt;
-OutputIterator find_odd_cycle(const Graph&amp; graph, const IndexMap index_map, OutputIterator result);
+OutputIterator find_odd_cycle(const Graph&amp; graph, IndexMap vertex_index_map, OutputIterator result);
 
 <span class="comment">// version which uses the internal index map</span>
 template &lt;typename <a class="cxx_concept" href="Graph.html">Graph</a
@@ -210,7 +209,7 @@ keyword:</th>
 </tr>
 <tr>
 <th>Unnamed version:</th>
-<td class="cxx_code">const IndexMap index_map</td>
+<td class="cxx_code">IndexMap vertex_index_map</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -230,8 +229,8 @@ internal <span class="cxx_code">vertex_index</span> property, otherwise
 <tr>
 <th>Note:</th>
 <td>If this argument is a <span class="cxx_code">dummy_property_map</span>
-object, then the partition map argument must be specified.  For example, <span
-class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+object, then the partition map argument must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
 >vertex_index</span> property, so the default value of this argument will be a
 <span class="cxx_code">dummy_property_map</span> object.</td>

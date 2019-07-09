@@ -82,7 +82,9 @@ int main(int argc, char* argv[])
     }
     std::cout << std::endl << "Cumulative cycle ratio: " << cr.first << " / ";
     std::cout << cr.second << std::endl;
-    BOOST_TEST(std::abs(cr.first / cr.second - min_cr) < epsilon);
+    double abs_diff = std::abs(cr.first / cr.second - min_cr);
+    std::cout << "Absolute difference: " << abs_diff << std::endl;
+    BOOST_TEST(abs_diff < epsilon);
     return boost::report_errors();
 }
 
