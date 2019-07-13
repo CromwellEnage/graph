@@ -25,7 +25,7 @@ alt="(Python)" /><tt>transitive_closure</tt></h1>
 template &lt;
     typename Graph, typename GraphTC, typename P, typename T, typename R
 &gt;
-void transitive_closure(const Graph&amp; g, GraphTC&amp; tc,
+void transitive_closure(const Graph&amp; graph, GraphTC&amp; result,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <span class="comment"
 >/* all defaults */</span>);
 </pre>
@@ -200,6 +200,10 @@ keyword:</th>
 <td class="cxx_code">orig_to_copy(G_to_TC_VertexMap g_to_tc_map)</td>
 </tr>
 <tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">G_to_TC_VertexMap orig_to_copy</td>
+</tr>
+<tr>
 <th>Description:</th>
 <td>This maps each vertex in the input graph to the new matching vertices in
 the output transitive closure graph.</td>
@@ -234,6 +238,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">vertex_index_map(VertexIndexMap i_map)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">VertexIndexMap vertex_index_map</td>
 </tr>
 <tr>
 <th>Description:</th>

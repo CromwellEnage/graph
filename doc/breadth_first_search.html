@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-          "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <!--
     Copyright (c) Jeremy Siek 2000, 2001
@@ -25,8 +24,8 @@ alt="(Python)" /><tt>breadth_first_search</tt></h1>
 <pre class="cxx_code">
 <span class="comment">// old-style named parameter version</span>
 template &lt;class Graph, class P, class T, class R&gt;
-void breadth_first_search(Graph&amp; G, 
-  typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
+void breadth_first_search(const Graph&amp; graph, 
+  typename graph_traits&lt;Graph&gt;::vertex_descriptor root_vertex, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 </pre>
 
@@ -87,13 +86,18 @@ href="../../parameter/doc/html/reference.html#are-tagged-arguments"
 );
 
 <span class="comment">// non-named parameter version</span>
-template &lt;class <a class="cxx_concept" href="Graph.html">Graph</a
->, class Buffer, class BFSVisitor, 
-	  class ColorMap&gt;
-void breadth_first_search(const Graph&amp; g, 
-   typename <a href="graph_traits.html"
->graph_traits</a>&lt;Graph&gt;::vertex_descriptor s, 
-   Buffer&amp; Q, BFSVisitor vis, ColorMap color);
+template &lt;
+    typename <a class="cxx_concept" href="Graph.html">Graph</a
+>, typename <a class="cxx_concept" href="Buffer.html">Buffer</a
+>, typename <a class="cxx_concept" href="BFSVisitor.html"
+>BFSVisitor</a>, typename ColorMap
+&gt;
+void breadth_first_search(
+    const Graph&amp; graph, 
+    typename <a href="graph_traits.html"
+>graph_traits</a>&lt;Graph&gt;::vertex_descriptor root_vertex, 
+    Buffer&amp; buffer, BFSVisitor visitor, ColorMap color_map
+);
 </pre>
 
 <h3><a name="sec:description"></a>Description</h3>
@@ -114,7 +118,7 @@ Search</a>.</p>
 for each vertex and a queue.  White vertices are undiscovered while gray
 vertices are discovered but have undiscovered adjacent vertices.  Black
 vertices are discovered and are adjacent to only other black or gray
-vertices.  The algorithm proceeds by removing a vertex </i>u</i> from the
+vertices.  The algorithm proceeds by removing a vertex <i>u</i> from the
 queue and examining each out-edge <i>(u,v)</i>.  If an adjacent vertex
 <i>v</i> is not already discovered, it is colored gray and placed in the
 queue.  After all of the out-edges are examined, vertex <i>u</i> is colored
@@ -180,6 +184,7 @@ discover vertex <i>v</i>
 
 finish vertex <i>u</i> 
 </pre>
+</td>
 </tr>
 </table>
 
@@ -341,8 +346,8 @@ keyword:</th>
 </tr>
 <tr>
 <th>Unnamed version:</th>
-<td class="cxx_code"><a href="graph_traits.html">graph_traits</a>&lt;<i>graph
-argument type</i>&gt;::vertex_descriptor s</td>
+<td class="cxx_code">typename <a href="graph_traits.html">graph_traits</a
+>&lt;<i>graph argument type</i>&gt;::vertex_descriptor root_vertex</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -351,6 +356,49 @@ argument type</i>&gt;::vertex_descriptor s</td>
 <tr>
 <th>Python:</th>
 <td>The parameter is named <span class="python_code">root_vertex</span>.</td>
+</tr>
+<tr>
+<td colspan="2"><hr /></td>
+</tr>
+<tr class="deduced_param_0">
+<th>Category:</th>
+<td>UTIL/OUT</td>
+</tr>
+<tr>
+<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
+keyword:</th>
+<td class="cxx_code">boost::graph::keywords::_buffer</td>
+</tr>
+<tr>
+<th>Old-style signature:</th>
+<td class="cxx_code">buffer(Buffer&amp; Q)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">Buffer&amp; buffer</td>
+</tr>
+<tr>
+<th>Description:</th>
+<td>
+<p>The queue used to determine the order in which vertices will be
+discovered.  If a FIFO queue is used, then the traversal will be according to
+the usual BFS ordering.  Other types of queues can be used, but the traversal
+order will be different.  For example, <a href="dijkstra_shortest_paths.html"
+>Dijkstra's algorithm</a> can be implemented using a priority queue.</p>
+<p>The argument type must be a model of <a class="cxx_concept"
+href="Buffer.html">Buffer</a>.  The value type of the argument must be the
+vertex descriptor type of the graph.</p>
+</td>
+</tr>
+<tr>
+<th>Default:</th>
+<td>A default-constructed <span class="cxx_code">boost::queue</span> whose
+value type is the vertex descriptor type of the graph.</td>
+</tr>
+<tr>
+<th>Python:</th>
+<td>The buffer must derive from the <a class="python_code" href="Buffer.html"
+>Buffer</a> type for the graph.</td>
 </tr>
 <tr>
 <td colspan="2"><hr /></td>
@@ -367,6 +415,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">visitor(BFSVisitor vis)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">BFSVisitor visitor</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -400,6 +452,10 @@ keyword:</th>
 <tr>
 <th>Old-style signature:</th>
 <td class="cxx_code">color_map(ColorMap color)</td>
+</tr>
+<tr>
+<th>Unnamed version:</th>
+<td class="cxx_code">ColorMap color_map</td>
 </tr>
 <tr>
 <th>Description:</th>
@@ -467,8 +523,8 @@ internal <span class="cxx_code">vertex_index</span> property, otherwise
 <tr>
 <th>Note:</th>
 <td>If this argument is a <span class="cxx_code">dummy_property_map</span>
-object, then the color map argument must be specified.  For example, <span
-class="cxx_code">adjacency_list</span> with <span class="cxx_code"
+object, then the color map argument must be specified.  For example,
+<span class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 >VertexList=listS</span> does not have an internal <span class="cxx_code"
 >vertex_index</span> property, so the default value of this argument will be a
 <span class="cxx_code">dummy_property_map</span> object.</td>
@@ -476,45 +532,6 @@ class="cxx_code">adjacency_list</span> with <span class="cxx_code"
 <tr>
 <th>Python:</th>
 <td>Unsupported parameter.</td>
-</tr>
-<tr>
-<td colspan="2"><hr /></td>
-</tr>
-<tr class="deduced_param_0">
-<th>Category:</th>
-<td>UTIL/OUT</td>
-</tr>
-<tr>
-<th><a href="../../parameter/doc/html/index.html">Boost.Parameter</a>
-keyword:</th>
-<td class="cxx_code">boost::graph::keywords::_buffer</td>
-</tr>
-<tr>
-<th>Old-style signature:</th>
-<td class="cxx_code">buffer(Buffer&amp; Q)</td>
-</tr>
-<tr>
-<th>Description:</th>
-<td>
-<p>The queue used to determine the order in which vertices will be
-discovered.  If a FIFO queue is used, then the traversal will be according to
-the usual BFS ordering.  Other types of queues can be used, but the traversal
-order will be different.  For example, <a href="dijkstra_shortest_paths.html"
->Dijkstra's algorithm</a> can be implemented using a priority queue.</p>
-<p>The argument type must be a model of <a class="cxx_concept"
-href="Buffer.html">Buffer</a>.  The value type of the argument must be the
-vertex descriptor type of the graph.</p>
-</td>
-</tr>
-<tr>
-<th>Default:</th>
-<td>A default-constructed <span class="cxx_code">boost::queue</span> whose
-value type is the vertex descriptor type of the graph.</td>
-</tr>
-<tr>
-<th>Python:</th>
-<td>The buffer must derive from the <a class="python_code" href="Buffer.html"
->Buffer</a> type for the graph.</td>
 </tr>
 </table>
 

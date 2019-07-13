@@ -597,7 +597,7 @@ namespace boost { namespace graph {
                 )
                 (visitor
                   , *(boost::detail::core_numbers_visitor_predicate)
-                  , default_core_numbers_visitor()
+                  , core_numbers_visitor<>()
                 )
             )
         )
@@ -719,11 +719,11 @@ namespace boost { namespace graph {
             typename parameter::value_type<
                 Args,
                 boost::graph::keywords::tag::visitor,
-                default_core_numbers_visitor
+                core_numbers_visitor<>
             >::type
         >::type vis = args[
             boost::graph::keywords::_visitor ||
-            boost::value_factory<default_core_numbers_visitor>()
+            boost::value_factory<core_numbers_visitor<> >()
         ];
         return boost::detail::core_numbers_dispatch(
             g,
